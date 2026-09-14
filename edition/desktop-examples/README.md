@@ -4,20 +4,20 @@
 
 模型请求总并发默认 3 路，当前客户端的主会话、子代理和辅助模型请求共用上限，超出的请求排队。用户可在设置 → 通用设置 → 模型请求总并发中修改并保存，即时生效。顶层 `features.maxConcurrentRequests` 提供发行默认值（1–64），改文件需重启；用户已保存的并发偏好优先。旧 `maxParallelSubagents: 2` 兼容换算为总并发 3。更新设置可选择“公测版”或“开发版（含公测版）”；徽标按实际安装版本显示，切换更新渠道不会降级。
 
-ECNU 示例中 `ecnu-max` 已按 DeepSeek V4.1 声明 `input: ["text", "image"]`。ECNU 客户端会在启动时自动更新已知旧企业目录中的图片能力，无需用户修改或重新登录。同步只作用于匹配机构身份、官方网关和模型的企业有效配置；不改个人 Provider、自定义网关、Key、默认模型选择或配置文件原文。ECNU 版可通过顶层 `"features": { "visionFallback": false }` 关闭纯文本模型的图片辅助，原生图片模型不受此开关影响。其他文本模型是否能使用辅助，取决于它是否在辅助插件所配置的企业 Provider 中。
+ECNU 示例中 `ecnu-max` 已按 DeepSeek V4.1 声明 `input: ["text", "image"]`。学校维护的完整配置随版本更新，无需用户修改或重新登录。学校管理的网关、模型目录与限制以新发行配置为准；个人 Provider、Key、默认模型选择和历史单独保留。ECNU 版可通过顶层 `"features": { "visionFallback": false }` 关闭纯文本模型的图片辅助，原生图片模型不受此开关影响。其他文本模型是否能使用辅助，取决于它是否在辅助插件所配置的企业 Provider 中。
 
-企业配置只从 `config/eduwork.jsonc` 读取，设置页展示当前企业、登录状态和模型详情，不提供添加或修改企业的表单。配额由 ECNU 发行扩展提供，不属于公版 OIDC。
+ECNU Electron 企业配置从与程序版本对应的 `config/eduwork.<产品版本>.jsonc` 读取，设置页展示当前企业、登录状态和模型详情，不提供添加或修改企业的表单。配额由 ECNU 发行扩展提供，不属于公版 OIDC。
 
-`ecnu-max` 默认上下文为 **512K（524,288 tokens）**，最大输出保留 **384K（393,216 tokens）**。已知旧企业目录的 1,000,000 或 262,144 上限会在启动时自动同步；用户自定义数值保留。标准模式默认由 DSH 在约 80% 上下文压力时自动压缩，继续旧会话也按新上限处理，无需清空历史。
+`ecnu-max` 默认上下文为 **512K（524,288 tokens）**，最大输出保留 **384K（393,216 tokens）**。学校维护的上下文和输出限制以当前发行配置为准；个人模型不受影响。标准模式默认由 DSH 在约 80% 上下文压力时自动压缩，继续旧会话也按新上限处理，无需清空历史。
 
-以下步骤在完整桌面包中操作：生效文件为 `<客户端目录>/config/eduwork.jsonc`，示例目录为 `<客户端目录>/config/examples/`。源码阅读者可查看本仓 [ecnu.jsonc](ecnu.jsonc)、[cernet.jsonc](cernet.jsonc) 和[默认配置](../desktop/eduwork.jsonc)；通用 [organization.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/organization.jsonc) 与 [updates.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/updates.jsonc) 由公版提供，装配时合入安装包的 examples。
+以下步骤面向发行维护者，普通学校用户直接使用学校配置好的发行包，无需修改文件。ECNU Electron 生效文件为 `<客户端目录>/config/eduwork.<产品版本>.jsonc`，示例目录为 `<客户端目录>/config/examples/`。公版仍使用 `config/eduwork.jsonc` 并保留其内容，赛尔等公版部署不启用学校配置接管。源码阅读者可查看本仓 [ecnu.jsonc](ecnu.jsonc)、[cernet.jsonc](cernet.jsonc) 和[默认配置](../desktop/eduwork.jsonc)；通用 [organization.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/organization.jsonc) 与 [updates.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/updates.jsonc) 由公版提供，装配时合入安装包的 examples。
 
 1. 在客户端的 `config/examples/` 中选择 `ecnu.jsonc`（华师现有服务）、`cernet.jsonc`（赛尔式部署模板，域名为占位符）或 `organization.jsonc`（第三方学校/企业完整协议示例）。
-2. 将示例内容复制到客户端的 `config/eduwork.jsonc`，由管理员填写真实 Client ID 等部署参数；占位符不能直接登录。实际配置只在下载 GitHub CI 安装包后加入，不提交仓库、不注入 CI。所有示例都是可解析的 JSONC，支持中文注释和尾逗号。
-3. 如需更换界面 Logo，将文件放在 `config/assets/`，在 `product` 中填写 `"logoFile": "assets/logo.png"`。路径相对于配置文件，不依赖源码目录；支持 PNG/WebP/SVG，最大 256 KiB。
+2. 在仓库之外准备完整私有配置，由管理员填写真实 Client ID 等部署参数；占位符不能直接登录。下载 GitHub CI 安装包后，用锁定公版的 `scripts/configure-desktop-archive.ps1` 加入实际配置；脚本同时填写兼容的 `config/eduwork.jsonc` 和本版本配置，更新清单与摘要，并核验程序字节与 CI 一致。实际配置不提交仓库、不注入 CI。所有示例都是可解析的 JSONC，支持中文注释和尾逗号。
+3. 如需更换界面 Logo，需另行装配并校验品牌资源（上述配置装配脚本不增加 Logo 文件）。将文件放在 `config/assets/`，在 `product` 中填写 `"logoFile": "assets/logo.png"`。路径相对于配置文件，不依赖源码目录；支持 PNG/WebP/SVG，最大 256 KiB。
 4. 从系统托盘选择“退出”，再启动应用。仅关闭窗口默认不会退出，因而不会重读配置。
 
-也可以从“设置 → 模型 → 企业服务”点击“打开配置文件”或“查看示例”。机构版默认配置的 `organizations` 留空，完整注释示例位于 `config/examples/`。配置文件交给操作系统的默认应用打开；尚未关联应用时，由系统询问使用哪个应用。应用不强制指定编辑器，也不修改系统文件关联。示例目录用文件管理器打开。
+ECNU 设置只展示学校信息与登录状态，不提供编辑发行配置的入口。机构 CI 默认配置的 `organizations` 留空；维护者必须在本机完成私有配置装配，并分别验证全新安装和已有用户升级。完整字段示例位于 `config/examples/`。
 
 现有部署的 `provider.id` 必须与资源服务 `bootstrap.provider.id` 一致：ECNU 和赛尔当前都为 `chatecnu`，不能为了显示名称任意改写。本地企业条目的 `id` 分别仍为 `ecnu` / `cernet`；名称在 `displayName` 中修改。已经复制过旧赛尔示例的用户仅修正 `provider.id` 后重启，不需要清除登录或其他配置。
 
@@ -29,6 +29,6 @@ Client ID 虽不是 OAuth 密钥，仍按部署信息管理，示例仅提供占
 
 界面名称和 Logo 可以通过文件修改；exe 图标、应用 ID 和签名由发行版构建确定。更新地址可参考 `updates.jsonc` 配置，实际安装能力以所用壳的更新器为准。公版不会因为配置了华师地址就安装校内专属插件。绿色发行包可解压运行，配置与本地历史位于程序目录下的 `config/` 和 `data/`；身份凭据由系统凭据保护机制保管。
 
-程序更新保留生效配置和用户的 `assets/`，只更新 `resources/`、程序和官方示例。装配器首次提供默认配置，重复执行配置安装步骤不会覆盖已有 `eduwork.jsonc`。发行方的企业模型能力修正随资源更新，在启动时生成有效企业目录；服务器发现模式的目录仍以服务器为准。跨机器导入不复制登录凭据。
+ECNU Electron 更新加入与新程序版本对应的完整学校配置；旧配置保留用于失败回退。个人设置、模型、Key 和历史保留。旧 `eduwork.jsonc` 不再作为新版学校发行的生效配置；公版仍保持原来的用户配置策略。服务器发现模式的目录仍以服务器为准，跨机器导入不复制登录凭据。
 
 图像与云端 TTS 现在使用公版 `media` 配置，不再追加学校媒体插件。两个部署示例均包含模型、尺寸和音色目录；赛尔模型 ID 为 `cernet-image` / `cernet-tts`。旧华师配置省略 `media` 时保留发行默认服务；显式 `media.providers: []` 可关闭云端媒体。本机 TTS 始终独立。

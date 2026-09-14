@@ -81,6 +81,11 @@
   "resources": [
     {
       "root": "edition",
+      "source": "edition/desktop/configuration-policy.json",
+      "target": "desktop/configuration-policy.json"
+    },
+    {
+      "root": "edition",
       "source": "edition/desktop/ecnu-model-updates.json",
       "target": "desktop/enterprise-model-updates.json"
     },

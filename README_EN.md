@@ -84,7 +84,7 @@ Conversations and Studio share generation, previews, and downloads. The skill ce
 
 ## Configuration and data
 
-University connection settings, branding, and update channels are maintained in configuration, separately from the public core. This repository supplies templates; the university maintains actual Client IDs and deployment settings. See the [institutional configuration examples](edition/desktop-examples/README_EN.md).
+The university maintains connection settings, model catalogs and capabilities, media services, branding, and update sources. This configuration updates with each client version; users do not need to edit it. Personal models, credentials, and history remain separate and are preserved. Configuration is separate from the public core. This repository supplies templates; the university maintains actual Client IDs and deployment settings. See the [institutional configuration examples](edition/desktop-examples/README_EN.md).
 
 Conversations, workspace references, and memory are managed locally. When using university or other remote models, search, or media services, content needed for a task is sent to the corresponding service. Sign-in credentials are managed by local credential storage; do not put passwords or tokens in configuration files.
 

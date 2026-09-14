@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { readFile } from 'node:fs/promises'
+import { readFile,writeFile,mkdir,mkdtemp,rm } from 'node:fs/promises'
+import {tmpdir} from 'node:os'
+import {join} from 'node:path'
 import { resolve } from 'node:path'
 import { pathToFileURL, fileURLToPath } from 'node:url'
 
@@ -60,4 +62,33 @@ test('edition catalog upgrades known 1M/256K defaults and preserves custom limit
     assert.deepEqual(updated.provider.models[0].input, ['text', 'image'])
     assert.equal(original.provider.models[0].contextWindow, capacity)
   }
+})
+
+test('publisher configuration replaces the full school profile after an upgrade while preserving the old file and personal settings',async t=>{
+ const root=await mkdtemp(join(tmpdir(),'ecnu-config-upgrade-'))
+ t.after(()=>rm(root,{recursive:true,force:true}))
+ const {desktopConfigurationPath}=await import(pathToFileURL(resolve(core,'dsh-electron/src/configuration-policy.mjs')))
+ const {loadEnterpriseProfiles,enterpriseProviderConfig}=await import(pathToFileURL(resolve(core,'packages/dsh-oidc/lib/profile.js')))
+ const {resolveEnterpriseProfiles}=await import(pathToFileURL(resolve(core,'packages/dsh-oidc/lib/provider/core.js')))
+ await mkdir(join(root,'config'));await mkdir(join(root,'data'))
+ const old=join(root,'config/eduwork.jsonc'),personal=join(root,'data/settings.json')
+ await writeFile(old,'{"schemaVersion":1,"product":{"name":"Old"},"organizations":[]}')
+ await writeFile(personal,'{"personalProvider":"untouched","theme":"blue"}')
+ const version='0.3.6-dev.20260914.3'
+ const active=desktopConfigurationPath({root,version,ownership:'publisher'})
+ const source=await readFile(new URL('../desktop-examples/ecnu.jsonc',import.meta.url),'utf8')
+ await writeFile(active,source)
+ const config=loadUserConfig(active)
+ const profiles=loadEnterpriseProfiles({profiles:config.organizations},{})
+ const routes=resolveEnterpriseProfiles(enterpriseProviderConfig(profiles))
+ const model=routes.flatMap(route=>route.models).find(model=>model.id==='ecnu-max')
+ assert.deepEqual(model.input,['text','image'])
+ assert.equal(model.contextWindow,524288)
+ assert.equal(model.maxTokens,393216)
+ assert.equal(config.media.providers[0].images.model,'ecnu-image')
+ assert.equal(config.media.providers[0].speech.model,'ecnu-tts')
+ assert.equal(await readFile(old,'utf8'),'{"schemaVersion":1,"product":{"name":"Old"},"organizations":[]}')
+ assert.equal(await readFile(personal,'utf8'),'{"personalProvider":"untouched","theme":"blue"}')
+ const policy=JSON.parse(await readFile(new URL('../desktop/configuration-policy.json',import.meta.url)))
+ assert.equal(policy.ownership,'publisher')
 })

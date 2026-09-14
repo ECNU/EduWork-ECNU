@@ -1,7 +1,8 @@
 // EduWork@ECNU 的公开发行默认配置。不含实际机构 Client ID 或个人凭据。
-// 管理员在下载 GitHub CI 发行包后，私下分发完整的 config/eduwork.jsonc。
+// 维护者下载 CI 包后，用 configure-desktop-archive.ps1 加入私有学校配置。
+// 运行时读取 config/eduwork.<产品版本>.jsonc，学校配置随发行统一更新。
 // 完整格式和字段说明见 config/examples；示例的 Client ID 占位符不能直接登录。
-// 修改后从托盘退出并重新启动。配置与 data 在更新时保留。
+// 使用者无需编辑此配置。个人设置、凭据和 data 与学校配置分开保留。
 {
   "schemaVersion": 1,
   "product": { "name": "EduWork@ECNU" },

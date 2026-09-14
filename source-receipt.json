@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.3.6-dev.20260914.2",
+  "version": "0.3.6-dev.20260914.3",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-14T13:03:30.961Z",
-  "fileSetSHA256": "d859bd7112643ff63163e04cce80e7efed415e2339edaa42c3a18e8fbedadb2c",
+  "createdAt": "2026-09-14T13:36:19.828Z",
+  "fileSetSHA256": "d8acf466cce2535134240da07de63005085505d875413dca5ee0be969c59e54d",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "3894f777293fa5a389e767a80a64f64f583bfea688aa063f405d927fe8e24b8e"
+      "sha256": "7c9608588f053ec196dab09f8545c31507d56fde390a66e5c17d6d68090fc702"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "359cf2fbc58bf12208d2d0b5a985d84aaa81cc57a7fb48cdc320a22d1c81909a"
+      "sha256": "7386c1f5a98e548639bafb34970fc91f6bcbb41ecee2ab21b56632a0d077ae38"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -69,7 +69,7 @@
     },
     {
       "path": "docs/USER_GUIDE.md",
-      "sha256": "a80fbb3d9d6dd86a9c59b92412be72bd8c0a3ca57067be3c52c9c2e960d68615"
+      "sha256": "2b7c9640ed4ccc7826f848fca0ba0fa54baeeaab986a59fab7f468d8f569d9e5"
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
@@ -81,11 +81,15 @@
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
-      "sha256": "ce76295646b25b54594ba0efa449dd6c5f471dacbf4416340d4fe4ad49309e1f"
+      "sha256": "8129c8fc04524bae2266c69dc62df5240e17fe25d4a11b2c36e75e7617871c12"
     },
     {
       "path": "edition/desktop-examples/README.md",
-      "sha256": "521f6e53d16fd74b08f66286f76ae7689f331ad339f7c6b9d431d5ace54a482c"
+      "sha256": "a7d5ed98909c940ebf0c5ed837437a8d66bd3fc0ae77c316d1bdfe7f8f80cae5"
+    },
+    {
+      "path": "edition/desktop/configuration-policy.json",
+      "sha256": "ffb853531b535ad7541cf9a3cd3e6eeb681b41ec21300d0597b653c14267dbad"
     },
     {
       "path": "edition/desktop/ecnu-model-updates.json",
@@ -93,7 +97,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "74d9e7e054e822611a80a503aca7523c554e935e55d66451589e28eea34b60fb"
+      "sha256": "2f5260e5778da7eebdcd4eecf3fa850899605d39399238fe1fb2f9ce1c2e7c50"
     },
     {
       "path": "edition/desktop/media-defaults.json",
@@ -101,7 +105,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "a1cf6c8347e0011f644bc06b051fbf7d00410d40dba1878dde21728912188619"
+      "sha256": "60ac9e3866ad444ab6e77d36d16ec2b5cb2e3776c16fbb3fc2f2cdfe5964f328"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -265,11 +269,11 @@
     },
     {
       "path": "edition/plugins/provider-vision-fallback/README_EN.md",
-      "sha256": "00c0042d95bf1942fd484dd4ec0a0c7eb9b28f0407980d1f25d6c588d789f28d"
+      "sha256": "60366286e130ead41815ce98e5e8dc0061f460f2277298e7a5b92a8d2a43ce9d"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/README.md",
-      "sha256": "e5588b5ab0ad66175535497d99ea5ee92442b664561e1b6e0e1799888c955217"
+      "sha256": "c610bb45ed1fb200e950515292ed7de3856e241975afaa87901b56b638fbc404"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/test/evidence-store.test.js",
@@ -317,7 +321,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "a77448a203f000797c9422cdaa8f8ae908c079d21ffa10c2ef9644f69c1c5f56"
+      "sha256": "3f9d946a598b94918bbd2406499e191519c21ae9d75b7e7ce81c940865cdbbf1"
     },
     {
       "path": "LICENSE",
@@ -325,11 +329,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "c035c3909c632217eb902609b6e3f16f82daf59d7a7d7afad133dd829b2e78cf"
+      "sha256": "20cb6b96867786ff6cc94ab435c5698715356ac2d8c84a7d3afcf05b4d1eb0ef"
     },
     {
       "path": "README.md",
-      "sha256": "8d53dd83259369ac6c8834efab64960f60f4842c763d5a04183859a11f35e8df"
+      "sha256": "f714c409622a9e6706cc1b207571ac143ce357f74d6a1f72107641c228ef2c32"
     }
   ],
   "artifacts": [],

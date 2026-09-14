@@ -8,7 +8,7 @@ A provider-boundary plugin adding aggregate `image` input capability to text-onl
 
 ECNU `ecnu-max` uses DeepSeek V4.1 and declares `input: [text, image]`; `ecnu-plus` also receives images directly. Native image models do not call the specialist, and native request failures are not hidden by silently switching to text evidence.
 
-Fallback applies by default only to text-only models under the configured provider. Set `"features": { "visionFallback": false }` in desktop `config/eduwork.jsonc`, exit through the tray and restart to disable it; `true` restores it. Both shells use the same configuration. The option does not install the plugin into an unextended public edition and does not affect a model's native image input.
+Fallback applies by default only to text-only models under the configured provider. The distributor can set `"features": { "visionFallback": false }` in the versioned school configuration, exit through the tray and restart to disable it; `true` restores it. The current Electron edition updates the complete school configuration with each release. The option does not install the plugin into an unextended public edition and does not affect a model's native image input.
 
 Direct DSH/Web compositions can set `config.enabled: false` or `EDUWORK_VISION_FALLBACK=false`. `config.model` (default `ecnu-plus`), service URL and `credentialRef` (default `EDUWORK_API_KEY`) select the specialist. `config.provider` limits assistance to that enterprise adapter route, not arbitrary third-party providers.
 

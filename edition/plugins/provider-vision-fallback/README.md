@@ -8,7 +8,7 @@
 
 ECNU `ecnu-max` 基于 DeepSeek V4.1，内置目录声明 `input: [text, image]`；`ecnu-plus` 同样直接收图。原生图片模型不调用辅助模型，也不会在原生调用失败后悄悄改用文字转述。
 
-辅助默认只对配置 Provider 下的纯文本模型生效。桌面 `config/eduwork.jsonc` 设置 `"features": { "visionFallback": false }` 后，从托盘退出并重启可关闭；`true` 恢复。两壳使用同一配置；公版未装配插件时，此开关不会安装能力。辅助开关不影响模型自身图片输入。
+辅助默认只对配置 Provider 下的纯文本模型生效。学校维护者在随版配置中设置 `"features": { "visionFallback": false }` 后，从托盘退出并重启可关闭；`true` 恢复。新版 Electron 的整套学校配置由发行方更新；公版未装配插件时，此开关不会安装能力。辅助开关不影响模型自身图片输入。
 
 直接装配 DSH/Web 时，可设置 `config.enabled: false` 或 `EDUWORK_VISION_FALLBACK=false`。辅助模型由 `config.model`（默认 `ecnu-plus`）、服务地址和 `credentialRef`（默认 `EDUWORK_API_KEY`）决定；`config.provider` 限定被辅助的企业适配器路由，不接管任意第三方 Provider。
 

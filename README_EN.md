@@ -1,25 +1,43 @@
-# EduWork@ECNU
+<p align="center">
+  <img src="docs/images/readme-hero-en.svg" width="100%" alt="From source materials to finished work with EduWork — brand illustration">
+</p>
 
-[![DSH 0.1.5-rc.2](https://img.shields.io/badge/DSH-0.1.5--rc.2-5367E8?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2)
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE)
-[![Desktop: Electron](https://img.shields.io/badge/desktop-Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://github.com/ecnu/EduWork/blob/main/dsh-electron/README_EN.md)
-[![Platform: Windows x64](https://img.shields.io/badge/platform-Windows%20x64-0078D4?style=flat-square)](docs/USER_GUIDE.md)
+<h1 align="center">EduWork@ECNU</h1>
 
-**A desktop AI assistant for East China Normal University students, faculty, and staff.**
+<p align="center"><strong>Bring university AI services into your everyday work.</strong><br><sub>A desktop AI workspace for East China Normal University</sub></p>
+
+<div align="center">
+
+[![DSH 0.1.5-rc.2](https://img.shields.io/badge/DSH-0.1.5--rc.2-5367E8?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2) [![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![Desktop: Electron](https://img.shields.io/badge/desktop-Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://github.com/ecnu/EduWork/blob/main/dsh-electron/README_EN.md) [![Platform: Windows x64](https://img.shields.io/badge/platform-Windows%20x64-0078D4?style=flat-square)](docs/USER_GUIDE.md)
 
 [简体中文](README.md) | **English**
 
-[Campus search](#campus-search) · [Account and quota](#account-and-quota) · [Institutional extension example](#an-example-of-institutional-extension) · [Documentation](#documentation)
+[Campus search](#campus-search) · [Account and quota](#account-and-quota) · [Institutional extensions](#an-example-of-institutional-extension) · [Documentation](#documentation)
 
-EduWork@ECNU is the East China Normal University edition of [EduWork](https://github.com/ecnu/EduWork). Sign in with a university account to connect university models and campus services, then work with your local materials for learning, research, and everyday tasks.
+</div>
 
-School users should obtain the preconfigured client through the school distribution channel. This repository documents the institution extension; GitHub templates do not include a complete, ready-to-use school configuration.
+EduWork@ECNU brings [EduWork](https://github.com/ecnu/EduWork) to East China Normal University. Sign in with a university account to use university models, find campus information, and work with your local materials for teaching, research, and everyday tasks.
 
-It retains EduWork's shared capabilities, including workspace conversations, Studio, the skill center, search, memory, and the mail assistant. University services connect through configuration and plugins. You can still add personal API keys and other models.
+It includes the full EduWork workspace, Studio, and skill center. University services connect through configuration and plugins, and you can still use personal API keys and other models.
+
+![EduWork@ECNU workspace: turn local course materials into a teaching plan, shown in the red theme](docs/images/workspace.png)
+
+<p align="center"><sub>The shared EduWork workspace, connected to university services. Blue and red themes are both available.</sub></p>
+
+> University users obtain the preconfigured client through the school distribution channel. This repository presents the institutional extension; its templates do not include complete school deployment settings.
 
 ## What you can do
 
-The examples below introduce university extensions and the shared workspace features.
+<table>
+<tr>
+<td width="50%" valign="top"><h3>Find campus information</h3><p>Search university services, departments, policies, and news, with links to the original sources.</p></td>
+<td width="50%" valign="top"><h3>See your available resources</h3><p>Check university quota, resource pools, and reset times from your account menu.</p></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><h3>Connect university models</h3><p>Sign in to configure models and use university image generation and speech services.</p></td>
+<td width="50%" valign="top"><h3>Finish the work</h3><p>Keep the full EduWork workspace, Studio, skills, memory, and mail assistant.</p></td>
+</tr>
+</table>
 
 ### Campus search
 
@@ -54,8 +72,6 @@ These integrations reuse the public edition's OIDC, model, and media adapters, w
 
 ### Work with your materials
 
-![EduWork@ECNU workspace conversation: organize local course materials into a teaching plan, using the red theme](docs/images/workspace.png)
-
 Choose a local folder as your workspace. Ask EduWork to read and organize sources, analyze data, edit files, or run scripts. Request outputs in a conversation or open Studio:
 
 - **Reports, spreadsheets, and presentations**: create DOCX, XLSX, and PPTX files.
@@ -63,14 +79,6 @@ Choose a local folder as your workspace. Ask EduWork to read and organize source
 - **Audio and video**: create narration and explanatory content, with media previews and downloadable subtitles.
 
 Conversations and Studio share generation, previews, and downloads. The skill center, local memory, mail assistant, browser, local transcription, system speech synthesis, and blue/red themes are also included.
-
-For example:
-
-> Read the research materials in this folder and make a briefing outline. Cite the sources and flag questions that need verification.
->
-> Find campus information and public literature about this research topic, and organize a reading list.
->
-> Compare these spreadsheets, create an analysis report, then make a presentation for a briefing.
 
 ![EduWork@ECNU Studio: create teaching materials for a lesson plan using the same creation tools as the public edition](docs/images/studio.png)
 
@@ -84,7 +92,7 @@ For troubleshooting, export a diagnostic ZIP in Settings. For a specific convers
 
 ## An example of institutional extension
 
-This repository also demonstrates how to build an institutional edition on EduWork.
+**Bring your institution's services into a shared AI workspace.** This repository demonstrates how to build an institutional edition on EduWork.
 
 It is also a practical example of the [Open Identity and Model Integration Initiative](https://github.com/ecnu/EduWork/blob/main/packages/dsh-oidc/docs/open-integration.en.md): university identity and models reuse the public integration contract, while institution plugins add campus search, quota, and other services. Other organizations can follow this division to bring their services into the shared workbench.
 

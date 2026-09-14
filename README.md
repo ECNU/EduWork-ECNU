@@ -1,25 +1,43 @@
-# EduWork@ECNU
+<p align="center">
+  <img src="docs/images/readme-hero.svg" width="100%" alt="从资料到成果的 EduWork 工作区品牌插画">
+</p>
 
-[![DSH 0.1.5-rc.2](https://img.shields.io/badge/DSH-0.1.5--rc.2-5367E8?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2)
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE)
-[![Desktop: Electron](https://img.shields.io/badge/desktop-Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://github.com/ecnu/EduWork/tree/main/dsh-electron)
-[![Platform: Windows x64](https://img.shields.io/badge/platform-Windows%20x64-0078D4?style=flat-square)](docs/USER_GUIDE.md)
+<h1 align="center">EduWork@ECNU</h1>
 
-**面向华东师范大学师生的桌面 AI 工作助手。**
+<p align="center"><strong>让学校的 AI 服务，走进你的日常工作。</strong><br><sub>面向华东师范大学师生的桌面 AI 工作助手</sub></p>
+
+<div align="center">
+
+[![DSH 0.1.5-rc.2](https://img.shields.io/badge/DSH-0.1.5--rc.2-5367E8?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2) [![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![Desktop: Electron](https://img.shields.io/badge/desktop-Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://github.com/ecnu/EduWork/tree/main/dsh-electron) [![Platform: Windows x64](https://img.shields.io/badge/platform-Windows%20x64-0078D4?style=flat-square)](docs/USER_GUIDE.md)
 
 **简体中文** | [English](README_EN.md)
 
 [校内搜索](#校内搜索) · [账户与配额](#账户与配额) · [机构扩展示例](#作为机构扩展的示例) · [详细文档](#详细文档)
 
-EduWork@ECNU 是 [EduWork](https://github.com/ecnu/EduWork) 的华东师范大学发行版。用学校账号登录，即可连接学校提供的模型和校园服务，围绕本机资料开展学习、研究与办公任务。
+</div>
 
-学校用户请通过学校发布渠道获取已配置的客户端；本仓库面向机构扩展的使用与开发，GitHub 模板不包含可直接使用的完整学校接入配置。
+EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范大学的教学、科研与办公场景。用学校账号登录，连接学校模型、查找校内信息，再围绕手头的资料完成任务。
 
-它保留 EduWork 的完整公共能力，包括工作区对话、Studio、技能中心、搜索、记忆和邮件助手。学校服务通过配置与插件接入，用户仍可添加自己的 API Key 和其他模型。
+它保留 EduWork 的完整工作区、Studio 和技能中心。学校服务通过配置与插件接入，用户也可以继续使用自己的 API Key 和其他模型。
+
+![EduWork@ECNU 工作区：围绕本机课程资料整理教学方案，使用红色主题](docs/images/workspace.png)
+
+<p align="center"><sub>同一个 EduWork 工作区，连接学校服务；蓝色与红色主题均可选择。</sub></p>
+
+> 学校用户通过学校发布渠道获取已配置的客户端。本仓库介绍机构扩展与开发方式，配置模板不包含完整的学校部署参数。
 
 ## 你可以用它做什么
 
-以下演示展示学校扩展与公共工作区功能。
+<table>
+<tr>
+<td width="50%" valign="top"><h3>校内信息，随问随查</h3><p>查找办事服务、机构院系、规章政策与校内新闻，在回答中保留原始来源。</p></td>
+<td width="50%" valign="top"><h3>可用资源，一眼了解</h3><p>从账户菜单查看学校模型额度、资源池和重置时间，随时刷新、查看明细。</p></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><h3>学校模型，登录接入</h3><p>完成登录与授权后配置学校模型，使用学校提供的文生图和语音服务。</p></td>
+<td width="50%" valign="top"><h3>公共能力，完整保留</h3><p>工作区、Studio、技能中心、记忆与邮件助手，继续围绕你的资料完成任务。</p></td>
+</tr>
+</table>
 
 ### 校内搜索
 
@@ -54,8 +72,6 @@ EduWork@ECNU 是 [EduWork](https://github.com/ecnu/EduWork) 的华东师范大�
 
 ### 围绕资料完成工作
 
-![EduWork@ECNU 工作区对话：围绕本机资料整理教学方案，使用红色主题](docs/images/workspace.png)
-
 选择本机文件夹作为工作区，让 EduWork 阅读和整理资料、分析数据、编辑文件或运行脚本。需要成果时，可直接在对话中提出要求，也可以打开 Studio：
 
 - **报告、数据表与演示文稿**：生成 DOCX、XLSX、PPTX 文件。
@@ -63,14 +79,6 @@ EduWork@ECNU 是 [EduWork](https://github.com/ecnu/EduWork) 的华东师范大�
 - **音频与视频**：制作配音和讲解内容，预览并下载媒体与字幕。
 
 对话与 Studio 共用生成、预览和下载能力。技能中心、本地记忆、邮件助手、浏览器、本机语音转写、系统语音合成和蓝/红配色也都保留。
-
-例如：
-
-> 阅读这个文件夹里的调研材料，整理成汇报提纲，标出来源和待核实的问题。
->
-> 查找与这个研究主题相关的校内信息和公开文献，整理一份资料清单。
->
-> 比较这些表格的数据，生成分析报告，再制作一套汇报用的演示文稿。
 
 ![EduWork@ECNU 的 Studio：围绕课程设计制作配套材料，使用与公版相同的成果创作入口](docs/images/studio.png)
 
@@ -84,7 +92,7 @@ EduWork@ECNU 是 [EduWork](https://github.com/ecnu/EduWork) 的华东师范大�
 
 ## 作为机构扩展的示例
 
-本仓库也是一个基于 EduWork 构建机构发行版的示例。
+**让公共工作台接入你所在机构的服务。** 本仓库也是一个基于 EduWork 构建机构发行版的示例。
 
 这也是[开放身份与模型接入倡议](https://github.com/ecnu/EduWork/blob/main/packages/dsh-oidc/docs/open-integration.md)的一个实践场景：学校身份与模型复用公开接入协议，校内检索、配额等服务通过机构插件补充。其他机构可以复用这套分工，将自己的服务带入公共工作台。
 

@@ -10,16 +10,18 @@ ECNU 示例中 `ecnu-max` 已按 DeepSeek V4.1 声明 `input: ["text", "image"]`
 
 `ecnu-max` 默认上下文为 **512K（524,288 tokens）**，最大输出保留 **384K（393,216 tokens）**。已知旧企业目录的 1,000,000 或 262,144 上限会在启动时自动同步；用户自定义数值保留。标准模式默认由 DSH 在约 80% 上下文压力时自动压缩，继续旧会话也按新上限处理，无需清空历史。
 
-1. 选择 `ecnu.jsonc`（华师现有服务）、`cernet.jsonc`（赛尔式部署模板，域名为占位符）或 `organization.jsonc`（第三方学校/企业完整协议示例）。
-2. 将示例内容复制到上一级 `eduwork.jsonc`，由管理员填写真实 Client ID 等部署参数；占位符不能直接登录。实际配置只在下载 GitHub CI 安装包后加入，不提交仓库、不注入 CI。所有示例都是可解析的 JSONC，支持中文注释和尾逗号。
+以下步骤在完整桌面包中操作：生效文件为 `<客户端目录>/config/eduwork.jsonc`，示例目录为 `<客户端目录>/config/examples/`。源码阅读者可查看本仓 [ecnu.jsonc](ecnu.jsonc)、[cernet.jsonc](cernet.jsonc) 和[默认配置](../desktop/eduwork.jsonc)；通用 [organization.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/organization.jsonc) 与 [updates.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/updates.jsonc) 由公版提供，装配时合入安装包的 examples。
+
+1. 在客户端的 `config/examples/` 中选择 `ecnu.jsonc`（华师现有服务）、`cernet.jsonc`（赛尔式部署模板，域名为占位符）或 `organization.jsonc`（第三方学校/企业完整协议示例）。
+2. 将示例内容复制到客户端的 `config/eduwork.jsonc`，由管理员填写真实 Client ID 等部署参数；占位符不能直接登录。实际配置只在下载 GitHub CI 安装包后加入，不提交仓库、不注入 CI。所有示例都是可解析的 JSONC，支持中文注释和尾逗号。
 3. 如需更换界面 Logo，将文件放在 `config/assets/`，在 `product` 中填写 `"logoFile": "assets/logo.png"`。路径相对于配置文件，不依赖源码目录；支持 PNG/WebP/SVG，最大 256 KiB。
 4. 从系统托盘选择“退出”，再启动应用。仅关闭窗口默认不会退出，因而不会重读配置。
 
-也可以从“设置 → 模型 → 企业服务”点击“打开配置文件”或“查看示例”。默认配置已包含被注释的完整第三方机构示例。配置文件交给操作系统的默认应用打开；尚未关联应用时，由系统询问使用哪个应用。应用不强制指定编辑器，也不修改系统文件关联。示例目录用文件管理器打开。
+也可以从“设置 → 模型 → 企业服务”点击“打开配置文件”或“查看示例”。机构版默认配置的 `organizations` 留空，完整注释示例位于 `config/examples/`。配置文件交给操作系统的默认应用打开；尚未关联应用时，由系统询问使用哪个应用。应用不强制指定编辑器，也不修改系统文件关联。示例目录用文件管理器打开。
 
 现有部署的 `provider.id` 必须与资源服务 `bootstrap.provider.id` 一致：ECNU 和赛尔当前都为 `chatecnu`，不能为了显示名称任意改写。本地企业条目的 `id` 分别仍为 `ecnu` / `cernet`；名称在 `displayName` 中修改。已经复制过旧赛尔示例的用户仅修正 `provider.id` 后重启，不需要清除登录或其他配置。
 
-`organizations` 可以是空数组，也可以填写多个不同 ID 的企业。没有企业时仍可在原生模型设置中使用个人 API Key。只需要身份登录时，同时省略企业条目的 `keyBinding` 和 `provider`；自动取 Key 和模型目录需要服务端实现相应资源协议。
+`organizations` 可以是空数组，也可以填写多个不同 `id` 的企业。托管模型的 `provider.id` 路由也必须唯一；现有 ECNU 和赛尔示例都使用 `chatecnu`，是替代部署方案，不能按原样同时启用。不要只改客户端 Provider ID；需要服务端提供不同的匹配标识，或使用分开的客户端配置。没有企业时仍可在原生模型设置中使用个人 API Key。只需要身份登录时，同时省略企业条目的 `keyBinding` 和 `provider`；自动取 Key 和模型目录需要服务端实现相应资源协议。
 
 Client ID 虽不是 OAuth 密钥，仍按部署信息管理，示例仅提供占位符。密码、API Key、client_secret 和登录令牌不写入示例或公开安装包。桌面使用 PKCE 和本机 loopback 回调；服务器管理员需允许公共桌面客户端的相应回调方式。照搬示例不代表第三方服务器已实现协议或授予了用户权限。
 

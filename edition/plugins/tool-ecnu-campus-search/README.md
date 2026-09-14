@@ -6,6 +6,8 @@ DSH 原生的华东师范大学校内综合搜索工具。插件通过 `POST /se
 
 工具名为 `ecnu_campus_search`。它只应处理与华东师范大学高度相关的站点、服务、机构、政策和新闻检索；公共背景与外部事实仍由 DSH 官方 `web_search` 补充。
 
+`oidcProfileId` 对应企业条目的 `id`。它让插件核对机构身份、凭据引用和服务地址，避免把其他机构的 Key 用于校内请求；它不是 `provider.id`。当前发行使用这个绑定模式。省略该字段的兼容模式直接读取通用凭据，仅适用于自行管理个人 Key 的受控组合，不等价于学校登录绑定。
+
 ```yaml
 - id: tool-ecnu-campus-search
   name: '@chatecnu-work/dsh-tool-ecnu-campus-search'
@@ -13,6 +15,7 @@ DSH 原生的华东师范大学校内综合搜索工具。插件通过 `POST /se
     baseURLEnv: CHATECNU_WORK_RUNTIME_API_BASE
     baseURL: https://institution.example.edu/open/api/v1
     credentialRef: EDUWORK_API_KEY
+    oidcProfileId: ecnu
     requestTimeoutMs: 65000
 ```
 

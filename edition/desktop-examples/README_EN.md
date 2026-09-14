@@ -12,18 +12,20 @@ Enterprise configuration is read only from `config/eduwork.jsonc`. Settings disp
 
 ## Apply an example
 
+These steps apply to the complete desktop archive: edit `<client>/config/eduwork.jsonc` and read examples under `<client>/config/examples/`. In source, see [ecnu.jsonc](ecnu.jsonc), [cernet.jsonc](cernet.jsonc) and the [default config](../desktop/eduwork.jsonc). The public core supplies [organization.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/organization.jsonc) and [updates.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/updates.jsonc); assembly merges them into the installed examples directory.
+
 1. Choose `ecnu.jsonc` for ECNU services, `cernet.jsonc` for a CERNET-style deployment with placeholder URLs, or `organization.jsonc` for a complete third-party protocol example.
-2. Copy its contents to `eduwork.jsonc` one directory above and fill in real deployment parameters, including Client ID. Placeholders cannot sign in. Apply private configuration after downloading the GitHub CI archive; do not commit it or inject it into CI. Examples are parseable JSONC with comments and trailing commas.
+2. Copy its contents to the client’s `config/eduwork.jsonc` and fill in real deployment parameters, including Client ID. Placeholders cannot sign in. Apply private configuration after downloading the GitHub CI archive; do not commit it or inject it into CI. Examples are parseable JSONC with comments and trailing commas.
 3. For a custom interface logo, place it under `config/assets/` and set `product.logoFile` to `assets/logo.png`. Paths are relative to the configuration file. PNG/WebP/SVG are supported up to 256 KiB.
 4. Choose Exit from the system tray, then restart. Closing a window normally does not exit or reload configuration.
 
-Settings → Models → Enterprise services also offers Open configuration file and View examples. The default file includes a complete commented third-party example. The OS chooses the editor, prompting when no association exists; the app does not force an editor or change associations. Examples open in the file manager.
+Settings → Models → Enterprise services also offers Open configuration file and View examples. The institution default has an empty `organizations` list; complete commented examples are in `config/examples/`. The OS chooses the editor, prompting when no association exists; the app does not force an editor or change associations. Examples open in the file manager.
 
 ## Identity and credentials
 
 `provider.id` must match resource bootstrap `provider.id`. Both current ECNU and CERNET services use `chatecnu`; do not change it for display purposes. Local organization IDs remain `ecnu` / `cernet`; change `displayName` for presentation. Existing copies of an older CERNET example only need their Provider ID corrected and the client restarted, without clearing login or other settings.
 
-`organizations` may be empty or contain multiple distinct IDs. Personal API Key access remains available. For identity-only OIDC, omit both `keyBinding` and `provider`; key provisioning and model catalogs require the server resource protocol.
+`organizations` may be empty or contain multiple distinct IDs. Managed-model `provider.id` routes must also be unique. The ECNU and CERNET examples both use `chatecnu` and are alternative deployments; they cannot be enabled together unchanged. Do not change only the client Provider ID: use distinct matching server IDs or separate client configurations. Personal API Key access remains available. For identity-only OIDC, omit both `keyBinding` and `provider`; key provisioning and model catalogs require the server resource protocol.
 
 Treat Client ID as deployment information even though it is not an OAuth secret. Examples contain placeholders, never passwords, API Keys, client secrets or login tokens. Desktop login uses PKCE and a local loopback callback; the server must allow the public desktop client's callback mechanism. Copying an example does not implement the server protocol or grant permissions.
 

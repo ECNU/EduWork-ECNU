@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260914.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-14T07:23:37.045Z",
-  "fileSetSHA256": "a246e0ec6caa9c2dc0d38a170aaaf211a8c82aefeb69cbe4312abf7bb8fb34ea",
+  "createdAt": "2026-09-14T09:00:50.241Z",
+  "fileSetSHA256": "07f139dd2f4dbf30e0891c24767aed21d450a5855eaf8aabfeae61298b6bf7ed",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "7989583cf1b236a2804ad788e2778701a029fb41fc7a43ebd3ca5754abdef2ca"
+      "sha256": "e6e4bc13966b28c95235d43b925797eaeeab13f5d4dc93f71a00d5ec372a7a81"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "74a3ee482d0348a6ddb05d17f25a7a72b20aaf94c378a4dff4383d171112e434"
+      "sha256": "359cf2fbc58bf12208d2d0b5a985d84aaa81cc57a7fb48cdc320a22d1c81909a"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -73,11 +73,11 @@
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
-      "sha256": "02655f836eb8d85eed9975e74f4494497d0ea858f1907bf6d8b44aa45c974862"
+      "sha256": "ce76295646b25b54594ba0efa449dd6c5f471dacbf4416340d4fe4ad49309e1f"
     },
     {
       "path": "edition/desktop-examples/README.md",
-      "sha256": "43d8d9dc553286495d6cfbd3b0f75ad32c18b289fc9b440171d46c834a3f4a94"
+      "sha256": "521f6e53d16fd74b08f66286f76ae7689f331ad339f7c6b9d431d5ace54a482c"
     },
     {
       "path": "edition/desktop/ecnu-model-updates.json",
@@ -293,11 +293,11 @@
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/README_EN.md",
-      "sha256": "d2583a886c83f41b4bc11c4b23950335ccca058ad5c500614befa40ef0a64c52"
+      "sha256": "25e3a6f6aa7ba49d3b4faa87bf5fa34883e14331a2dcb47f0ffbdefb79d509b3"
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/README.md",
-      "sha256": "6607755cef95e7e2c65039d962a6adb1195c538be29b09cd94235d56282c31e5"
+      "sha256": "0af00c3c2e8612ba268a5d32ccf28a44b753c86c67d568a38f6d4b780e1dafa0"
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/test/core.test.js",

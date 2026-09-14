@@ -20,7 +20,7 @@ git -C $CoreRoot checkout (Get-Content core.lock.json -Raw | ConvertFrom-Json).c
 
 默认调用公版 npm 装配链：DSH 和独立插件使用精确已发布版本，并校验 SHA-256/SRI；本仓只增加机构配置、服务插件和资源。缺失 npm 依赖时不回退到未发布开发包。官方桌面 Host 在当前基线没有 npm 包，按公版锁定源码构建。
 
-此命令生成本机 Web 验证产物，不是完整桌面安装包。公共脚本、缓存模式和原生资源要求见锁定公版中的 `docs/BUILD.md`。桌面沿用相同 Web 成品，使用公版 `dsh-electron/README.md` 中的装配入口，不覆盖为开发快照。两种 Windows 桌面壳共用功能实现。
+此命令生成本机 Web 验证产物，不是完整桌面安装包。公共脚本、缓存模式和原生资源要求见锁定公版中的 `docs/BUILD.md`。完整 Electron 测试包使用公版 [BUILD.md](https://github.com/ecnu/EduWork/blob/main/docs/BUILD.md#从-web-到桌面) 的机构命令，复用 CI 配方自动准备锁定资源；它只产出本地测试包。分阶段调试见公版 `dsh-electron/README.md`，不覆盖为开发快照。两种 Windows 桌面壳共用功能实现。
 
 机构示例和模型策略测试位于本仓，读取公共核心实现，不在公版测试中依赖学校文件。可在本仓执行：
 
@@ -50,13 +50,13 @@ Mac 贡献者先在公共核心完成路径、资源和签名适配，再由学�
 
 ## 发行
 
-两版使用同一产品版本，版本、升级和共同发行要求以锁定公版的 `docs/RELEASE.md` 为准。历史数据导入、Windows 下载进度与安装功能已进入共用核心；签名、GitHub 更新源接入和每次新包的升级验收仍须分别完成。
+两版使用同一产品版本，版本、升级和共同发行要求以锁定公版的 `docs/RELEASE.md` 为准。历史数据导入、Windows 下载进度、GitHub 来源适配与安装功能已进入共用核心；每个新包仍须验收实际升级，代码签名另行推进。
 
-旧 ChatECNU Work 用户先通过原更新渠道进入 Go 过渡包，再迁移到更高版本的 Electron。第二跳要求 `wails-host-v1` 契约，从过渡版实际数据目录导入，不能直接使用普通 CI Electron ZIP。该过渡在本地制作和管理，不要求 GitHub 提供临时 Go Release。
+旧 ChatECNU Work 用户先通过原更新渠道进入 Go 过渡包，再迁移到更高版本的 Electron。第二跳要求 `wails-host-v1` 契约，并从过渡版实际数据目录导入。当前 CI 的开发包和公测包均写入该契约；维护者必须验收具体 ZIP 的兼容性，不能将 Electron 直接下发给未支持该契约的 0.2 更新器。该过渡在本地制作和管理，不要求 GitHub 提供临时 Go Release。
 
 公版使用 GitHub Releases；学校发行可增加机构分发渠道。程序文件必须来自 CI，不为学校渠道重新编译。学校配置由维护者在本机加入，装配后的 ZIP 与 CI 原包哈希不同，必须重新生成文件清单、ZIP 的 SHA-256 和更新清单；不能沿用 CI 原包的大小或哈希。依赖沿用各自许可证，共享组件沿用公版第三方声明和装配记录。
 
-更新源部署与 GitHub 接入要求见锁定公版的 `docs/UPDATES.md`。OSS 是可选托管方式，其他静态 HTTPS 服务也可使用；学校仓只维护自己的渠道与发行配置，更新器和 GitHub 来源适配均归公版。当前 CI 只发布新装包，不生成客户端更新清单。配置学校登录的公版仍走公版更新，不因机构名称切换到 ECNU 包。
+更新源部署与 GitHub 接入要求见锁定公版的 `docs/UPDATES.md`。OSS 是可选托管方式，其他静态 HTTPS 服务也可使用；学校仓只维护自己的渠道与发行配置，更新器和 GitHub 来源适配均归公版。当前 CI 的开发包和公测包均含包内更新契约；公测 Release 另生成 `update-windows-amd64.json`。普通开发构建只保留 artifact，推送 GitHub 开发渠道仍需获批发布 prerelease 及配套清单。学校静态更新清单以本机配置装配后包的实际哈希和大小生成。配置学校登录的公版仍走公版更新，不因机构名称切换到 ECNU 包。
 
 ## Windows Electron Release
 

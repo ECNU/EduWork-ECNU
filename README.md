@@ -84,7 +84,11 @@ EduWork@ECNU 是 [EduWork](https://github.com/ecnu/EduWork) 的华东师范大�
 
 ## 作为机构扩展的示例
 
-本仓库也是一个基于 EduWork 构建机构发行版的示例。学校特性按配置、技能和插件分别维护：
+本仓库也是一个基于 EduWork 构建机构发行版的示例。
+
+这也是[开放身份与模型接入倡议](https://github.com/ecnu/EduWork/blob/main/packages/dsh-oidc/docs/open-integration.md)的一个实践场景：学校身份与模型复用公开接入协议，校内检索、配额等服务通过机构插件补充。其他机构可以复用这套分工，将自己的服务带入公共工作台。
+
+学校特性按配置、技能和插件分别维护：
 
 | 方式 | 本仓库中的用途 |
 | --- | --- |

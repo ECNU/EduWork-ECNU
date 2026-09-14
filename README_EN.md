@@ -84,7 +84,11 @@ For troubleshooting, export a diagnostic ZIP in Settings. For a specific convers
 
 ## An example of institutional extension
 
-This repository also demonstrates how to build an institutional edition on EduWork. University features are maintained as configuration, skills, and plugins:
+This repository also demonstrates how to build an institutional edition on EduWork.
+
+It is also a practical example of the [Open Identity and Model Integration Initiative](https://github.com/ecnu/EduWork/blob/main/packages/dsh-oidc/docs/open-integration.en.md): university identity and models reuse the public integration contract, while institution plugins add campus search, quota, and other services. Other organizations can follow this division to bring their services into the shared workbench.
+
+University features are maintained as configuration, skills, and plugins:
 
 | Mechanism | Use in this repository |
 | --- | --- |

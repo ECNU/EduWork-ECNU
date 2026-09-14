@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260914.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-14T12:36:18.734Z",
-  "fileSetSHA256": "e79614c0e8bb1d97e972bb5cc6974ae3a1cbcf1ea1b1b3fec46fcebe1c124c24",
+  "createdAt": "2026-09-14T12:46:05.735Z",
+  "fileSetSHA256": "f8578e933ee7a8023fc24b46beacd329e3ceb0e2e08b7f47a62e70d7ff21d364",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,7 +33,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "b762fca05bb12d3cb5d632ac8f9491a1ab8e47e8425945d0751fb82c9ac0e443"
+      "sha256": "16ba020fcb11be7273bcfeb01578d22d4e0ac16f9e88bed74709fd9d155d5e67"
     },
     {
       "path": "docs/BUILD.md",
@@ -317,11 +317,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "b61a5ede7c75777879c54f0f2691307d13ef29fdea63993c1e1fb7d8b34a7d7f"
+      "sha256": "e0492b41be66f84caf24398a2754ec5dd4e859ea188b5b05692954e200c0f39d"
     },
     {
       "path": "README.md",
-      "sha256": "f9a0669b02f246add1224860dfa829bd065f24690369f08f5a8a72c5e04ba184"
+      "sha256": "69a930585863ae0b4d3b3073ae01f8dbed8846b74d5802e0b97556bf7c3966b7"
     }
   ],
   "artifacts": [],

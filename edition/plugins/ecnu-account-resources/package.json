@@ -1,0 +1,48 @@
+{
+  "name": "@chatecnu-work/dsh-ecnu-account-resources",
+  "version": "0.1.0-dev.20260910.1",
+  "private": true,
+  "description": "ECNU-only account quota extension for EduWork OIDC",
+  "type": "module",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./typert": "./lib/typert.host.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/*.js",
+    "README.md",
+    "quota.openapi.yaml",
+    "LICENSE",
+    "quota-protocol.md",
+    "quota-protocol.en.md"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "test": "node --test test/*.test.mjs",
+    "check:browser": "node test/check-browser.mjs"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-api-remotes",
+        "@eduwork/dsh-oidc"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.1.5-rc.1",
+    "@eduwork/dsh-oidc": "0.2.0-dev.20260910.6",
+    "react": "^18.2.0",
+    "zod": "^4.4.3",
+    "@deepseek-ai/dsh-api-remotes": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-client-ui-renderer": "0.1.5-rc.1"
+  }
+}

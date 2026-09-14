@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "id": "eduwork-chatecnu",
+  "coreBase": "config/distributions/generic.json",
+  "brand": {
+    "product": {
+      "name": "EduWork@ECNU"
+    },
+    "visualStyle": "ecnu-liwa",
+    "manageOptionalPresets": true,
+    "upstreamWelcomeNoticeVersion": "2026-08-13.1"
+  },
+  "capabilities": {
+    "institution": true,
+    "images": true
+  },
+  "plugins": [
+    {
+      "root": "edition",
+      "source": "edition/plugins/ecnu-account-resources",
+      "id": "ecnu-account-resources",
+      "name": "@chatecnu-work/dsh-ecnu-account-resources",
+      "config": {
+        "profileIDs": [
+          "ecnu"
+        ]
+      }
+    },
+    {
+      "root": "edition",
+      "source": "edition/plugins/tool-ecnu-campus-search",
+      "id": "chatecnu-campus-search",
+      "name": "@chatecnu-work/dsh-tool-ecnu-campus-search",
+      "config": {
+        "baseURLEnv": "CHATECNU_SERVICE_BASE_URL",
+        "credentialRef": "EDUWORK_API_KEY",
+        "oidcProfileId": "ecnu",
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1"
+      }
+    },
+    {
+      "root": "edition",
+      "source": "edition/plugins/provider-vision-fallback",
+      "id": "chatecnu-vision",
+      "name": "@chatecnu-work/dsh-provider-vision-fallback",
+      "config": {
+        "enabled": true,
+        "baseURLEnv": "CHATECNU_SERVICE_BASE_URL",
+        "credentialRef": "EDUWORK_API_KEY",
+        "oidcProfileId": "ecnu",
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1"
+      }
+    },
+    {
+      "root": "edition",
+      "source": "edition/plugins/chatecnu-active-heartbeat",
+      "id": "chatecnu-active-heartbeat",
+      "name": "@chatecnu-work/dsh-chatecnu-active-heartbeat",
+      "config": {
+        "backend": "web",
+        "enabled": false,
+        "productName": "EduWork@ECNU"
+      }
+    }
+  ],
+  "skills": [
+    {
+      "root": "edition",
+      "name": "ecnu-campus-search",
+      "source": "edition/skills/ecnu-campus-search",
+      "defaultEnabled": true,
+      "metadata": {
+        "eduwork": {
+          "credentialRef": "EDUWORK_API_KEY",
+          "oidcProfileId": "ecnu",
+          "runtimeBaseURL": "https://chat.ecnu.edu.cn/open/api/v1"
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "root": "edition",
+      "source": "edition/desktop/ecnu-model-updates.json",
+      "target": "desktop/enterprise-model-updates.json"
+    },
+    {
+      "root": "edition",
+      "source": "edition/desktop/eduwork.jsonc",
+      "target": "desktop/eduwork.jsonc"
+    },
+    {
+      "root": "edition",
+      "source": "edition/desktop-examples",
+      "target": "desktop/examples"
+    },
+    {
+      "root": "edition",
+      "source": "edition/desktop/media-defaults.json",
+      "target": "desktop/media-defaults.json"
+    }
+  ],
+  "patches": []
+}

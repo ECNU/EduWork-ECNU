@@ -1,0 +1,22 @@
+{
+  "name": "@chatecnu-work/dsh-provider-vision-fallback",
+  "version": "0.1.0-dev",
+  "description": "Aggregate vision capability for selected enterprise text models",
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib/**/*.js",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.2",
+    "@deepseek-ai/dsh-attachment": "0.1.2-rc.1",
+    "@deepseek-ai/dsh-credentials": "0.1.2-rc.1",
+    "@deepseek-ai/dsh-home-paths": "0.1.2-rc.1",
+    "@eduwork/dsh-oidc": "0.1.0"
+  },
+  "license": "MIT"
+}

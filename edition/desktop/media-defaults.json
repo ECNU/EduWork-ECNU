@@ -1,0 +1,112 @@
+{
+  "providers": [
+    {
+      "id": "ecnu",
+      "title": "学校媒体服务",
+      "protocol": "openai-compatible",
+      "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+      "credentialRef": "EDUWORK_API_KEY",
+      "oidcProfileId": "ecnu",
+      "images": {
+        "enabled": true,
+        "model": "ecnu-image",
+        "nativeSizes": [
+          "512x512",
+          "768x768",
+          "720x1280",
+          "1280x720",
+          "1024x1024"
+        ],
+        "defaultSize": "512x512",
+        "responseFormat": "b64_json"
+      },
+      "speech": {
+        "enabled": true,
+        "model": "ecnu-tts",
+        "voices": [
+          {
+            "id": "xiayu",
+            "title": "夏雨",
+            "language": "zh-CN"
+          },
+          {
+            "id": "liwa",
+            "title": "丽娃",
+            "language": "zh-CN"
+          },
+          {
+            "id": "male_warm",
+            "title": "温暖男声",
+            "language": "zh-CN"
+          },
+          {
+            "id": "male_steady",
+            "title": "沉稳男声",
+            "language": "zh-CN"
+          },
+          {
+            "id": "male_news",
+            "title": "新闻男声",
+            "language": "zh-CN"
+          },
+          {
+            "id": "male_philosophy",
+            "title": "哲思男声",
+            "language": "zh-CN"
+          },
+          {
+            "id": "yunze",
+            "title": "云泽",
+            "language": "zh-CN"
+          },
+          {
+            "id": "female_sweet",
+            "title": "甜美女声",
+            "language": "zh-CN"
+          },
+          {
+            "id": "female_literary",
+            "title": "文艺女声",
+            "language": "zh-CN"
+          },
+          {
+            "id": "female_news",
+            "title": "新闻女声",
+            "language": "zh-CN"
+          },
+          {
+            "id": "sichuan",
+            "title": "四川话",
+            "language": "zh-CN"
+          },
+          {
+            "id": "tianjin",
+            "title": "天津话",
+            "language": "zh-CN"
+          },
+          {
+            "id": "shaanxi",
+            "title": "陕西话",
+            "language": "zh-CN"
+          },
+          {
+            "id": "japanese",
+            "title": "日语",
+            "language": "ja"
+          },
+          {
+            "id": "lindaiyu",
+            "title": "林黛玉",
+            "language": "zh-CN"
+          },
+          {
+            "id": "labixiaoxin",
+            "title": "蜡笔小新",
+            "language": "zh-CN"
+          }
+        ],
+        "defaultVoice": "xiayu"
+      }
+    }
+  ]
+}

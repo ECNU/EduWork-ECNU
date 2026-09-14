@@ -1,0 +1,329 @@
+{
+  "schemaVersion": 1,
+  "kind": "eduwork-public-source-snapshot",
+  "edition": "ecnu",
+  "version": "0.3.6-dev.20260914.2",
+  "sourceState": "reviewed-source-snapshot",
+  "createdAt": "2026-09-14T06:29:41.175Z",
+  "fileSetSHA256": "5af3301e68f82bff3b57571709c2ddb082208ec392973068b046a6ace9b5183c",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "d6a4cdab5a97ba3f0e301a3e3ea69588ad572544f9c435ad86ac8fe2cfa80953"
+    },
+    {
+      "path": ".github/workflows/development-windows.yml",
+      "sha256": "0fec1e8b10bb5b7da1ee62acb89f8529ab9684ef85d152068af2abf7c7dab0b3"
+    },
+    {
+      "path": ".github/workflows/release-windows.yml",
+      "sha256": "51de65989038e2117d437195f14a8103399970b772a38b8898c1611c0633c376"
+    },
+    {
+      "path": ".github/workflows/validate-local-web.yml",
+      "sha256": "ddd0f7ff224d91bd897abce32e0a7e92823ca8bbb883f5fd9fcdb01f33f42a65"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "51ca8e93ddf49309a692e244d58f404ccbfed69917b39cd4fb3a5188b0737640"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "d108d4221fa8e1bfbe888bc0ea06f818c90b4a12ec1beca711797e6d90cb7910"
+    },
+    {
+      "path": "core.lock.json",
+      "sha256": "37a8aa02c8b1b8510cf89bcb2d45d6597a7eece5331c98e9cc9ed831d6b93639"
+    },
+    {
+      "path": "docs/BUILD.md",
+      "sha256": "74a3ee482d0348a6ddb05d17f25a7a72b20aaf94c378a4dff4383d171112e434"
+    },
+    {
+      "path": "docs/images/README_EN.md",
+      "sha256": "11141788c9d5c26ac55e3666e09df5e4d5b37beefaa0c517d656ac91e566e6e3"
+    },
+    {
+      "path": "docs/images/README.md",
+      "sha256": "4745024182d2be4a3c33f29823e4c7db07e4aebd088789a6677c52db4a7f1008"
+    },
+    {
+      "path": "docs/images/studio.png",
+      "sha256": "7daad27aaf3da18fbd44a43c6d61ae29dd293321c3e8c37b555d68517ba638bd"
+    },
+    {
+      "path": "docs/images/workspace.png",
+      "sha256": "084362a06a2f7697d1bf93186f82e500be4978b3b72692daf6cb28b8a64906f4"
+    },
+    {
+      "path": "docs/releases/0.3.5.md",
+      "sha256": "9406f215b0a0e58dbde1eac4ff3703ad67ce24300f4b542e73b285e9ff66cff4"
+    },
+    {
+      "path": "docs/USER_GUIDE.md",
+      "sha256": "a80fbb3d9d6dd86a9c59b92412be72bd8c0a3ca57067be3c52c9c2e960d68615"
+    },
+    {
+      "path": "edition/desktop-examples/cernet.jsonc",
+      "sha256": "dce8d3a6a809c0a642b8083bd7e897fa8d3ae3b5e2f263dc199a64ed7111632d"
+    },
+    {
+      "path": "edition/desktop-examples/ecnu.jsonc",
+      "sha256": "5492235b35bb27d2a593e480b09d5f3c1cb164fec7ad298e504dacb19ce19115"
+    },
+    {
+      "path": "edition/desktop-examples/README_EN.md",
+      "sha256": "02655f836eb8d85eed9975e74f4494497d0ea858f1907bf6d8b44aa45c974862"
+    },
+    {
+      "path": "edition/desktop-examples/README.md",
+      "sha256": "43d8d9dc553286495d6cfbd3b0f75ad32c18b289fc9b440171d46c834a3f4a94"
+    },
+    {
+      "path": "edition/desktop/ecnu-model-updates.json",
+      "sha256": "aaf670fe8c3292e767ab25cf378ca6de081b9dc85e8064e681ae458959456014"
+    },
+    {
+      "path": "edition/desktop/eduwork.jsonc",
+      "sha256": "74d9e7e054e822611a80a503aca7523c554e935e55d66451589e28eea34b60fb"
+    },
+    {
+      "path": "edition/desktop/media-defaults.json",
+      "sha256": "9ddb1755fe98e668dcc93f7990709bf31a603524d790d7430b6a8378bad9c3a8"
+    },
+    {
+      "path": "edition/distribution.json",
+      "sha256": "a1cf6c8347e0011f644bc06b051fbf7d00410d40dba1878dde21728912188619"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
+      "sha256": "1efcf242548f6423256ddf78a7b2ffeca736dbfa4659e2975ca9d043c4b3394b"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/lib/index.js",
+      "sha256": "89906969467618e6c77bea6032cfb072732b211f809025cb0b4614c5f835655b"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/lib/scheduler.js",
+      "sha256": "07835dd0816de42a9df08cc395aa89abc27f41c179f77f8cab3a098defa2c577"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/lib/typert.host.js",
+      "sha256": "822af7c6f6f1f5a8d44831ba1bcfa7f9cb743a11cb23c6854d68646a8d3fe0de"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/lib/web-backend.js",
+      "sha256": "0e3b18206ab78c961c0105453aa034d372aa44e4d144fdd93c7d8b28e25e26e1"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/package.json",
+      "sha256": "2066072ed29a733d07f58c670ff0d48d65601f44e10cffc52508603356d09752"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/README_EN.md",
+      "sha256": "5363762e2e2b7314bc6710c49c7388250461c549628ebeed5243cc8a5c8ea3b1"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/README.md",
+      "sha256": "a588c1004b761eb4b1e5eff1c05a60c1542ca16c6f084b650e728750996abbdf"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/test/client.test.mjs",
+      "sha256": "73d233d39a43dd3dd2eda007990eb57ba12ffe9182e391ba9572f95d3a425df0"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/test/host.test.mjs",
+      "sha256": "414133807bf323a28fc6354f638cb2f9bb311f7bd71df149a6d9ef22537b2baa"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/test/scheduler.test.mjs",
+      "sha256": "390292df32f555bc6f3e73e3c1ae83044024a9e99102d442b867c48c30238cba"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs",
+      "sha256": "65c07e3e3816d867a696b65ae9843bacba7a3d26b11d57774d23b7803c87035d"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/.gitignore",
+      "sha256": "7f108c6e3d1069352d786352ba39bddaf630ee570dfbfb65bac1debc93d32b31"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/build-client.ps1",
+      "sha256": "0bf6e12c4648ed7b9a6922d0ae28374dbbc38ebb81caba021ff89edd975d8a35"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/lib/client.js",
+      "sha256": "b5feecbc56ded53b95d34a9d87dda3b4d8ecb39f52040239b91b0293f04f7767"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/lib/index.js",
+      "sha256": "eab511c47e208a015ee2bdd593129c89ddbf9526d17490d6facf105f15d147ed"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/lib/quota.js",
+      "sha256": "65281bb97834c2adea89261b26f9d71fd29fdd979da4152dd1efc03d6fb95435"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/lib/summary.js",
+      "sha256": "51e628df9cf7dd24ea6448bfaa8a6faf5fca23e0ed439a4111ff617cf3f3e2fa"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/lib/typert-schemas.js",
+      "sha256": "fa265505848137fc1536075689c78b6989c86d2ea9deefb69d35f2ba8799a705"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/lib/typert.host.js",
+      "sha256": "3c7437ec13d0f8258d3388de1a7378ef243205cada4f49b768b8032a57ecaf3b"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/lib/typert.remote-client.js",
+      "sha256": "31c34e928493098a9df4b2ffa1b694f853dad5bc1bb1408f10cd250414c89239"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/LICENSE",
+      "sha256": "1967fded4b0975d4f786e00ce73d13cdae59823f492144c29b1e6d6450590a67"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/package.json",
+      "sha256": "669af261a690a8802155e9d6d90a3ebd2b1b938e6262513e11f38eb65c3506fd"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/quota-protocol.en.md",
+      "sha256": "deabf30caae4adcd729687288e3e0aad8dddeafaafe59a9dec5cb69e2dbeea9a"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/quota-protocol.md",
+      "sha256": "f9089d159933df916ed1a4529fe8760d56c9db02b7e5c7ffde2a31c248a7d843"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/quota.openapi.yaml",
+      "sha256": "e0d4c354af2a3a5d6db44a51739198e7237731dbff752efb948bddc4740423ef"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/README_EN.md",
+      "sha256": "dc0bd11f5a05eaceb631ed24cc81e6e9e7791169fb7437650bf107c9cd366b04"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/README.md",
+      "sha256": "d4af016294a50c9c784e5c22205392da45ef30309e089356986c6eb7d8fcaa01"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/src/client.ts",
+      "sha256": "9bab26f5aeda6ca30bba72b6da1c4ec8b18a70495136107447910d353257a292"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/test/browser-fixture.js",
+      "sha256": "101c80b297db49f7754803e3458f033105532ecff4e5543c4dddb1964fe88721"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/test/check-browser.mjs",
+      "sha256": "470ce92a0c141b98132566404160a3129b22df6a4fcc9d4c00433b9f77492e07"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/test/helpers/oidc-http-fixture.mjs",
+      "sha256": "fffd26a24b9e333047cd4c483951eb8cc55f6252ae7938e6870329f4775ac820"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/test/host.test.mjs",
+      "sha256": "641ae9d6445002a19297af292266375e6798d42d582f5da939f703f947ded388"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/test/summary.test.mjs",
+      "sha256": "3df9659004ced0ab5b336e280bc71f69ad03f82c38641d594a5cde317f86a824"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/tsconfig.json",
+      "sha256": "e23399254e0bde0346a1533904f4c922645a327d72cc86a1df42bd15fe47b543"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/tsdown.config.ts",
+      "sha256": "06fa7ef870200895a616cb959913c1c8f07e35aaab6eb230b981f69d1a9a7387"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/lib/evidence-store.js",
+      "sha256": "f2e9d9ce27d59a529c342fad08f636a68e2fdab4c4ca139fdb982bda21d25221"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/lib/index.js",
+      "sha256": "055f2abc89f95293faf5b6b68622e439531aa696d173e694377d4388b013747d"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/lib/vision.js",
+      "sha256": "97c5d0f0c3e53d429b431bb51b2097ebf1a98aa90e4572d654ff4a3a562ac259"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/package.json",
+      "sha256": "8ae3c62ccae87491e8d48e0fd0dd23e33f0372bd736c3599202fe009aefde3a0"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/README_EN.md",
+      "sha256": "00c0042d95bf1942fd484dd4ec0a0c7eb9b28f0407980d1f25d6c588d789f28d"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/README.md",
+      "sha256": "e5588b5ab0ad66175535497d99ea5ee92442b664561e1b6e0e1799888c955217"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/test/evidence-store.test.js",
+      "sha256": "21242ae4d3d74b97818d74637f935f4536413a51b2a9f0c9e4eed1a444e199d2"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/test/package.test.js",
+      "sha256": "3da2df6f49e234c11a17f37fc5e67f143fe70c12ee46bbc4bcd729e5f8e786ff"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/test/routing.test.mjs",
+      "sha256": "6c191c64126de6f9e24a63032fcb3371ea3af90ec5fcdd99e130178d1ffcc6c8"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/test/vision.test.js",
+      "sha256": "49986a4374b79648e52bb76dd8d3cc107e1d7dfe2419f026ccd93da4932acdfe"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-campus-search/lib/core.js",
+      "sha256": "a17abc5aa88dd07d6abe64d9d05158e19b59b885b5f3ff622f7ea7cf67e30bd1"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-campus-search/lib/index.js",
+      "sha256": "c3e9a67350a9d769b05b6012d624017bfd2918d3524b946ecd2b2cc9e9cfe366"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-campus-search/package.json",
+      "sha256": "9cb4a2a0503a940c18cab0e8e641176defdb634514d1ac25a3326b58fe7391ad"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-campus-search/README_EN.md",
+      "sha256": "d2583a886c83f41b4bc11c4b23950335ccca058ad5c500614befa40ef0a64c52"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-campus-search/README.md",
+      "sha256": "6607755cef95e7e2c65039d962a6adb1195c538be29b09cd94235d56282c31e5"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-campus-search/test/core.test.js",
+      "sha256": "fb299ae5730c19ede8b768eba6ddef0e4126f866aa32c2e82e2d54dd88437e82"
+    },
+    {
+      "path": "edition/skills/ecnu-campus-search/SKILL.md",
+      "sha256": "7986732780410629310c9f10cb8670ff76fd84f5113f3b8b85420858b22be9c7"
+    },
+    {
+      "path": "edition/test/enterprise-config.test.mjs",
+      "sha256": "a77448a203f000797c9422cdaa8f8ae908c079d21ffa10c2ef9644f69c1c5f56"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "dc719b536b8f7a51cd0ffaf928d37146894a3996119cb07d4fb7b67e551882dc"
+    },
+    {
+      "path": "README_EN.md",
+      "sha256": "1d45c50f379cf64fd4e41faba5fd873e137aa2b6e21f34ae199dab7cc88efcfa"
+    },
+    {
+      "path": "README.md",
+      "sha256": "aa656b58cc854b245e1035a21ee0f31ff6c15cca7a514e98da2b7d9d96258202"
+    }
+  ],
+  "artifacts": [],
+  "reviewedCompatibility": []
+}

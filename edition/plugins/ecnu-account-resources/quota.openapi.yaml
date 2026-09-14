@@ -1,0 +1,81 @@
+openapi: 3.1.0
+info:
+  title: ECNU Institution Account Quota API
+  version: 1.0.0
+  description: >-
+    Existing ECNU institution wire. Not part of the public EduWork resource
+    contract or OIDC. Only an explicitly configured institution extension
+    requests this API, using the managed model key rather than identity token.
+  license: { name: MIT, identifier: MIT }
+servers:
+  - url: https://ai.example.edu/open/api/v1
+security:
+  - runtimeKey: []
+paths:
+  /quota:
+    get:
+      operationId: getResourceQuota
+      responses:
+        '200':
+          description: Authoritative windows and optional independent resource packs
+          headers:
+            Cache-Control: { schema: { type: string }, description: Must contain no-store }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Quota' }
+              example:
+                provider_id: example-ai
+                unit: credits
+                windows:
+                  - { type: weekly, limit: 10000, used: 2400, remaining: 7600, reset_at: '2026-09-14T00:00:00Z' }
+                resource_packs:
+                  - { id: 'pack-1', name: Research allowance, total_credits: 5000, used_credits: 1000, remaining_credits: 4000, expires_at: null, status: active }
+                ops_console_url: https://ai.example.edu/account
+        '401': { description: Runtime key is invalid or expired }
+        '403': { description: Quota access denied; model calls are independently authorized }
+        '404': { description: Quota unavailable; model calls remain usable }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '5XX': { $ref: '#/components/responses/Unavailable' }
+components:
+  responses:
+    RateLimited:
+      description: Temporarily limited; current client reports unavailable and allows a later manual refresh
+      headers:
+        Retry-After: { schema: { type: string }, description: Seconds or HTTP date for a future retry; never a refresh-token grant }
+    Unavailable:
+      description: Temporary resource failure; do not clear identity or the model key
+  securitySchemes:
+    runtimeKey: { type: http, scheme: bearer, description: Model runtime credential }
+  schemas:
+    Quantity: { type: [number, 'null'], minimum: 0 }
+    Quota:
+      type: object
+      required: [provider_id, windows]
+      properties:
+        provider_id: { type: string }
+        unit: { type: string, description: Display unit such as credits }
+        windows:
+          type: array
+          maxItems: 64
+          items:
+            type: object
+            properties:
+              type: { type: string }
+              limit: { $ref: '#/components/schemas/Quantity' }
+              used: { $ref: '#/components/schemas/Quantity' }
+              remaining: { $ref: '#/components/schemas/Quantity' }
+              reset_at: { type: [string, 'null'], format: date-time }
+        resource_packs:
+          type: array
+          maxItems: 256
+          items:
+            type: object
+            properties:
+              id: { type: [string, integer] }
+              name: { type: string }
+              total_credits: { $ref: '#/components/schemas/Quantity' }
+              used_credits: { $ref: '#/components/schemas/Quantity' }
+              remaining_credits: { $ref: '#/components/schemas/Quantity' }
+              expires_at: { type: [string, 'null'], format: date-time }
+              status: { type: string }
+        ops_console_url: { type: string, format: uri, description: HTTPS console link }

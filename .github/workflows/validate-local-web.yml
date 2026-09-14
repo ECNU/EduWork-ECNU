@@ -1,0 +1,65 @@
+name: Build EduWork@ECNU source
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  local-web:
+    # Private fork PRs have no cross-repository secret. A maintainer tests a
+    # reviewed change on a trusted branch; never expose secrets via pull_request_target.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository || vars.EDUWORK_CORE_PUBLIC == 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: institution
+          persist-credentials: false
+      - name: Read the pinned public core
+        id: core
+        shell: pwsh
+        run: |
+          $lock = Get-Content institution/core.lock.json -Raw | ConvertFrom-Json
+          if ($lock.repository -ne 'https://github.com/ecnu/EduWork.git' -or $lock.commit -notmatch '^[a-f0-9]{40}$') { throw 'Pin an exact ecnu/EduWork commit.' }
+          "commit=$($lock.commit)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          repository: ecnu/EduWork
+          ref: ${{ steps.core.outputs.commit }}
+          path: core
+          persist-credentials: false
+          # A deploy key reads only EduWork; keep it out of the checkout config.
+          # A narrowly scoped token remains supported for other deployments.
+          ssh-key: ${{ secrets.EDUWORK_CORE_SSH_KEY }}
+          token: ${{ secrets.EDUWORK_CORE_READ_TOKEN || github.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.6'
+          cache: false
+      - name: Verify source build and local profile coordination
+        shell: pwsh
+        run: |
+          node core/scripts/check-source-docs.mjs core
+          if ($LASTEXITCODE) { throw 'Core documentation links failed' }
+          node core/scripts/check-source-docs.mjs institution
+          if ($LASTEXITCODE) { throw 'Institution documentation links failed' }
+          node --test core/tests/eduwork-assembly-policy.test.mjs core/scripts/test/npm-runtime.test.mjs core/tests/eduwork-source-reproducibility.test.mjs core/tests/eduwork-upstream-lock.test.mjs core/tests/eduwork-profile-links.test.mjs core/tests/eduwork-web-acceptance-contract.test.mjs
+          if ($LASTEXITCODE) { throw 'Core source checks failed' }
+          $env:EDUWORK_CORE_ROOT = (Resolve-Path core).Path
+          node --test institution/edition/test/enterprise-config.test.mjs
+      - name: Build with the public core implementation
+        shell: pwsh
+        run: ./core/scripts/ci-eduwork-web.ps1 -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -BuildOnly
+      - name: Retain local Web validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eduwork-ecnu-local-web-validation
+          retention-days: 7
+          path: core/dist/ci-local-web/evidence/public
+          if-no-files-found: error

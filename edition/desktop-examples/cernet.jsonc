@@ -1,0 +1,274 @@
+// 机构配置模板。部署时由管理员在本地填写实际参数，再复制为上一级 eduwork.jsonc。
+// 实际 Client ID 只随私有配置分发，不提交 GitHub，也不注入 CI 安装包。
+// 此示例通过公版配置身份、Key、模型、图像和云端语音；不安装学校专有插件。
+// 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+  "schemaVersion": 1,
+  "product": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+    // 界面与窗口标题；可另外填写 "logoFile": "assets/logo.png"。
+    "name": "EduWork"
+  },
+  "organizations": [
+    // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+      "schemaVersion": "dsh-oidc/v1alpha1",
+      "id": "cernet",
+      "displayName": "赛尔测试环境 AI 服务",
+      "organization": "赛尔测试环境",
+      "brand": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+        "organizationName": "赛尔测试环境",
+        "mark": "E",
+        "loginTitle": "使用赛尔测试环境账号登录",
+        "loginDescription": "完成登录后连接企业模型；也可在模型设置中使用自己的 API Key。"
+      },
+      "oidc": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+        "issuer": "https://ai.example.edu",
+        "clientId": "replace-with-cernet-desktop-client-id",
+        "scopes": [
+          "openid",
+          "profile",
+          "offline_access",
+          "worker.bootstrap.read",
+          "worker.credential.provision",
+          "worker.credential.read",
+          "worker.credential.renew"
+        ]
+      },
+      "keyBinding": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+        // 现有 ChatECNU 兼容协议；新建服务建议采用 eduwork-resources-v1。
+        "type": "worker-user-center-v1",
+        "baseURL": "https://ai.example.edu/api/worker/v1",
+        "credentialRef": "EDUWORK_API_KEY"
+      },
+      "provider": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+        // 必须匹配资源服务 bootstrap.provider.id；赛尔现有服务返回 chatecnu，与品牌名称无关。
+        "id": "chatecnu",
+        "displayName": "赛尔测试环境",
+        "adapter": "openai-compatible",
+        "baseURL": "https://ai.example.edu/open/api/v1",
+        // 沿用当前已验证的模型目录。支持资源发现协议后可改 discovery 并删除 models。
+        "modelSource": "profile",
+        "reasoning": "high",
+        "defaultContextWindow": 1000000,
+        "defaultMaxTokens": 393216,
+        "compat": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+          "supportsDeveloperRole": false,
+          "thinkingFormat": "deepseek",
+          "supportsReasoningEffort": true
+        },
+        "models": [
+          // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+            "id": "cernet-max",
+            "name": "cernet-max",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 1000000,
+            "maxTokens": 393216,
+            "reasoningEfforts": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "low": "low",
+              "high": "high",
+              "max": "max"
+            },
+            "defaultReasoningEffort": "high"
+          },
+          // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+            "id": "cernet-plus",
+            "name": "cernet-plus",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 262144,
+            "maxTokens": 65536,
+            "compat": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              // plus 当前不发送 reasoning_effort，待服务端稳定后再配置。
+              "supportsReasoningEffort": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  // 文生图与 TTS 模型 ID 已由部署方确认，使用公版通用适配器。
+  "media": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+    "providers": [
+      // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+        "id": "cernet",
+        "title": "赛尔媒体服务",
+        "protocol": "openai-compatible",
+        "baseURL": "https://ai.example.edu/open/api/v1",
+        "credentialRef": "EDUWORK_API_KEY",
+        "oidcProfileId": "cernet",
+        "images": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+          "enabled": true,
+          "model": "cernet-image",
+          "nativeSizes": [
+            "512x512",
+            "768x768",
+            "720x1280",
+            "1280x720",
+            "1024x1024"
+          ],
+          "defaultSize": "512x512",
+          "responseFormat": "b64_json"
+        },
+        "speech": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+          "enabled": true,
+          "model": "cernet-tts",
+          "voices": [
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "xiayu",
+              "title": "夏雨",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "liwa",
+              "title": "丽娃",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "male_warm",
+              "title": "温暖男声",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "male_steady",
+              "title": "沉稳男声",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "male_news",
+              "title": "新闻男声",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "male_philosophy",
+              "title": "哲思男声",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "yunze",
+              "title": "云泽",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "female_sweet",
+              "title": "甜美女声",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "female_literary",
+              "title": "文艺女声",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "female_news",
+              "title": "新闻女声",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "sichuan",
+              "title": "四川话",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "tianjin",
+              "title": "天津话",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "shaanxi",
+              "title": "陕西话",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "japanese",
+              "title": "日语",
+              "language": "ja"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "lindaiyu",
+              "title": "林黛玉",
+              "language": "zh-CN"
+            },
+            // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+              "id": "labixiaoxin",
+              "title": "蜡笔小新",
+              "language": "zh-CN"
+            }
+          ],
+          "defaultVoice": "xiayu"
+        }
+      }
+    ]
+  },
+  "desktop": // 所有 URL 均为占位示例；真实赛尔部署参数由管理员通过私有配置包提供。
+
+{
+    // 从托盘“退出”才会结束进程；下次启动重新读取配置。可改 exit。
+    "closeAction": "tray"
+  }
+}

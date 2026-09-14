@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "updates": [
+    {
+      "match": {
+        "profileID": "ecnu",
+        "issuer": "https://chat.ecnu.edu.cn",
+        "providerID": "chatecnu",
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "adapter": "openai-compatible",
+        "modelID": "ecnu-max"
+      },
+      "fromInput": ["text"],
+      "toInput": ["text", "image"],
+      "fromContextWindow": 1000000,
+      "toContextWindow": 524288
+    },
+    {
+      "match": {
+        "profileID": "ecnu",
+        "issuer": "https://chat.ecnu.edu.cn",
+        "providerID": "chatecnu",
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "adapter": "openai-compatible",
+        "modelID": "ecnu-max"
+      },
+      "fromContextWindow": 262144,
+      "toContextWindow": 524288
+    }
+  ]
+}

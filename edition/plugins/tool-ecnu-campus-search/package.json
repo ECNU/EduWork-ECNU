@@ -1,0 +1,24 @@
+{
+  "name": "@chatecnu-work/dsh-tool-ecnu-campus-search",
+  "version": "0.1.0-dev",
+  "description": "Authenticated ECNU campus search tool for DeepSeek Harness",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./core": "./lib/core.js"
+  },
+  "files": [
+    "lib/**/*.js",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.2",
+    "@deepseek-ai/dsh-credentials": "0.1.2-rc.1",
+    "@deepseek-ai/dsh-tools": "0.1.2-rc.1"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,2 @@
+# Keep source receipt bytes identical on Windows and other checkout platforms.
+* -text

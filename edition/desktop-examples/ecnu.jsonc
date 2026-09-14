@@ -1,0 +1,218 @@
+// 机构配置模板。部署时由管理员在本地填写实际参数，再复制为上一级 eduwork.jsonc。
+// 实际 Client ID 只随私有配置分发，不提交 GitHub，也不注入 CI 安装包。
+// 此示例只配置通用身份、Key 和模型；配额由 ECNU 发行扩展提供，不为公版安装校内专属插件或生图能力。
+{
+  "schemaVersion": 1,
+  "product": {
+    // 界面与窗口标题；可另外填写 "logoFile": "assets/logo.png"。
+    "name": "EduWork@ECNU"
+  },
+  "organizations": [
+    {
+      "schemaVersion": "dsh-oidc/v1alpha1",
+      "id": "ecnu",
+      "displayName": "华东师范大学 AI 服务",
+      "organization": "华东师范大学",
+      "brand": {
+        "organizationName": "华东师范大学",
+        "mark": "华",
+        "loginTitle": "使用华东师范大学账号登录",
+        "loginDescription": "完成登录后连接企业模型；也可在模型设置中使用自己的 API Key。"
+      },
+      "oidc": {
+        "issuer": "https://chat.ecnu.edu.cn",
+        "clientId": "replace-with-ecnu-desktop-client-id",
+        "scopes": [
+          "openid",
+          "profile",
+          "offline_access",
+          "worker.bootstrap.read",
+          "worker.credential.provision",
+          "worker.credential.read",
+          "worker.credential.renew"
+        ]
+      },
+      "keyBinding": {
+        // 现有 ChatECNU 兼容协议；新建服务建议采用 eduwork-resources-v1。
+        "type": "worker-user-center-v1",
+        "baseURL": "https://chat.ecnu.edu.cn/api/worker/v1",
+        "credentialRef": "EDUWORK_API_KEY"
+      },
+      "provider": {
+        "id": "chatecnu",
+        "displayName": "华东师范大学",
+        "adapter": "openai-compatible",
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        // ECNU 客户端随升级同步已知旧企业模型的能力；个人模型在原生模型设置中独立管理。
+        // 支持资源发现协议后可改 discovery 并删除 models，届时以服务器目录为准。
+        "modelSource": "profile",
+        "reasoning": "high",
+        "defaultContextWindow": 524288,
+        "defaultMaxTokens": 393216,
+        "compat": {
+          "supportsDeveloperRole": false,
+          "thinkingFormat": "deepseek",
+          "supportsReasoningEffort": true
+        },
+        "models": [
+          {
+            "id": "ecnu-max",
+            "name": "ecnu-max",
+            "input": [
+              // ecnu-max 已升级 DeepSeek V4.1，图片直接送主模型。
+              "text",
+              "image"
+            ],
+            // 客户端按 512K 管理上下文，标准模式由 DSH 自动压缩历史。
+            "contextWindow": 524288,
+            "maxTokens": 393216,
+            "reasoningEfforts": {
+              "low": "low",
+              "high": "high",
+              "max": "max"
+            },
+            "defaultReasoningEffort": "high"
+          },
+          {
+            "id": "ecnu-plus",
+            "name": "ecnu-plus",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 262144,
+            "maxTokens": 65536,
+            "compat": {
+              // plus 当前不发送 reasoning_effort，待服务端稳定后再配置。
+              "supportsReasoningEffort": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  // 图像与云端语音由公版解释这些配置；不需要学校媒体插件。
+  "media": {
+    "providers": [
+      {
+        "id": "ecnu",
+        "title": "学校媒体服务",
+        "protocol": "openai-compatible",
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "credentialRef": "EDUWORK_API_KEY",
+        "oidcProfileId": "ecnu",
+        "images": {
+          "enabled": true,
+          "model": "ecnu-image",
+          "nativeSizes": [
+            "512x512",
+            "768x768",
+            "720x1280",
+            "1280x720",
+            "1024x1024"
+          ],
+          "defaultSize": "512x512",
+          "responseFormat": "b64_json"
+        },
+        "speech": {
+          "enabled": true,
+          "model": "ecnu-tts",
+          "voices": [
+            {
+              "id": "xiayu",
+              "title": "夏雨",
+              "language": "zh-CN"
+            },
+            {
+              "id": "liwa",
+              "title": "丽娃",
+              "language": "zh-CN"
+            },
+            {
+              "id": "male_warm",
+              "title": "温暖男声",
+              "language": "zh-CN"
+            },
+            {
+              "id": "male_steady",
+              "title": "沉稳男声",
+              "language": "zh-CN"
+            },
+            {
+              "id": "male_news",
+              "title": "新闻男声",
+              "language": "zh-CN"
+            },
+            {
+              "id": "male_philosophy",
+              "title": "哲思男声",
+              "language": "zh-CN"
+            },
+            {
+              "id": "yunze",
+              "title": "云泽",
+              "language": "zh-CN"
+            },
+            {
+              "id": "female_sweet",
+              "title": "甜美女声",
+              "language": "zh-CN"
+            },
+            {
+              "id": "female_literary",
+              "title": "文艺女声",
+              "language": "zh-CN"
+            },
+            {
+              "id": "female_news",
+              "title": "新闻女声",
+              "language": "zh-CN"
+            },
+            {
+              "id": "sichuan",
+              "title": "四川话",
+              "language": "zh-CN"
+            },
+            {
+              "id": "tianjin",
+              "title": "天津话",
+              "language": "zh-CN"
+            },
+            {
+              "id": "shaanxi",
+              "title": "陕西话",
+              "language": "zh-CN"
+            },
+            {
+              "id": "japanese",
+              "title": "日语",
+              "language": "ja"
+            },
+            {
+              "id": "lindaiyu",
+              "title": "林黛玉",
+              "language": "zh-CN"
+            },
+            {
+              "id": "labixiaoxin",
+              "title": "蜡笔小新",
+              "language": "zh-CN"
+            }
+          ],
+          "defaultVoice": "xiayu"
+        }
+      }
+    ]
+  },
+  "features": {
+    // 当前客户端的主会话、子代理和辅助模型请求共用总上限；超出的请求排队。
+    "maxConcurrentRequests": 3,
+    // ECNU 版保留文本模型的图片辅助。原生图片模型始终直通，不调用辅助模型。
+    // 改 false 关闭辅助；不会关闭 ecnu-max / ecnu-plus 的原生图片输入。
+    "visionFallback": true
+  },
+  "desktop": {
+    // 从托盘“退出”才会结束进程；下次启动重新读取配置。可改 exit。
+    "closeAction": "tray"
+  }
+}

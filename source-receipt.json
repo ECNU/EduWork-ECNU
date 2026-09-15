@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260914.3",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-15T05:07:43.268Z",
-  "fileSetSHA256": "fb392a852f8ae21bfaa9804a815ef1f3a921a4d031c60b2ac9e6faf7d1e9613b",
+  "createdAt": "2026-09-15T05:10:06.012Z",
+  "fileSetSHA256": "10c9223e17862adc3b8390620f8f8a21ce31d24888d1db02566dff5736355de4",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,7 +33,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "46bbb3f71efcff34ee38dc62d482bc7e42f2abd5b1a199eb558e1534973458c7"
+      "sha256": "b626f70765b3cecbda608c08e14cfda37f94277c5c6b73f39aa751e3e2732cd0"
     },
     {
       "path": "docs/BUILD.md",

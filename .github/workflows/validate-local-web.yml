@@ -8,9 +8,8 @@ permissions:
   contents: read
 jobs:
   local-web:
-    # Private fork PRs have no cross-repository secret. A maintainer tests a
-    # reviewed change on a trusted branch; never expose secrets via pull_request_target.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository || vars.EDUWORK_CORE_PUBLIC == 'true'
+    # Both repositories are public. Fork PRs build with the read-only token;
+    # do not depend on repository variables or cross-repository secrets.
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,10 +29,7 @@ jobs:
           ref: ${{ steps.core.outputs.commit }}
           path: core
           persist-credentials: false
-          # A deploy key reads only EduWork; keep it out of the checkout config.
-          # A narrowly scoped token remains supported for other deployments.
-          ssh-key: ${{ secrets.EDUWORK_CORE_SSH_KEY }}
-          token: ${{ secrets.EDUWORK_CORE_READ_TOKEN || github.token }}
+          token: ${{ github.token }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24.18.0'

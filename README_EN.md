@@ -84,7 +84,7 @@ Conversations and Studio share generation, previews, and downloads. The skill ce
 
 ## Configuration and data
 
-The university maintains connection settings, model catalogs and capabilities, media services, branding, and update sources. This configuration updates with each client version; users do not need to edit it. Personal models, credentials, and history remain separate and are preserved. Configuration is separate from the public core. This repository supplies templates; the university maintains actual Client IDs and deployment settings. See the [institutional configuration examples](edition/desktop-examples/README_EN.md).
+The university maintains connection settings, model catalogs and capabilities, media services, branding, and update sources. The client includes a base configuration. Model catalogs, feature switches, media configuration and official Skills can also update independently, taking effect on the next launch; users do not need to edit configuration. Personal models, credentials, and history remain separate and are preserved. Configuration is separate from the public core. This repository supplies templates; the university maintains actual Client IDs and deployment settings. See the [institutional configuration examples](edition/desktop-examples/README_EN.md).
 
 Conversations, workspace references, and memory are managed locally. When using university or other remote models, search, or media services, content needed for a task is sent to the corresponding service. Sign-in credentials are managed by local credential storage; do not put passwords or tokens in configuration files.
 
@@ -113,6 +113,7 @@ Other schools and businesses can follow this structure to develop their plugins 
 | Guide | Contents |
 | --- | --- |
 | [ECNU user guide](docs/USER_GUIDE.md) | University sign-in, account quota, services, and common issues. |
+| [Configuration and Skills updates](https://github.com/ecnu/EduWork/blob/main/docs/CONTENT_UPDATES_EN.md) | One update entry, with separate software versions and content revisions. |
 | [Configuration examples](edition/desktop-examples/README_EN.md) | University integration, models, media, branding, and updates. |
 | [Build guide](docs/BUILD.md) | Referencing the public core, assembling institutional editions, and contributing. |
 | [EduWork user guide](https://github.com/ecnu/EduWork/blob/main/docs/USER_GUIDE.md) | Workspaces, models, search, speech, and file operations. |

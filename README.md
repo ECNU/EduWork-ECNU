@@ -84,7 +84,7 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 ## 配置与数据
 
-学校接入参数、模型目录与能力、媒体服务、品牌和更新源由学校统一维护，随客户端版本更新，使用者无需手动编辑配置。个人模型、登录凭据与历史数据单独保留。配置与公共核心代码分离。仓库提供配置模板，实际 Client ID 与部署参数由学校维护，见[机构配置示例](edition/desktop-examples/README.md)。
+学校接入参数、模型目录与能力、媒体服务、品牌和更新源由学校统一维护，基础配置随客户端提供；模型目录、功能开关、媒体配置和官方 Skills 也可独立更新，在下次启动生效，使用者无需手动编辑配置。个人模型、登录凭据与历史数据单独保留。配置与公共核心代码分离。仓库提供配置模板，实际 Client ID 与部署参数由学校维护，见[机构配置示例](edition/desktop-examples/README.md)。
 
 会话、工作区引用与记忆在本机管理。使用学校或其他远程模型、搜索及媒体服务时，任务所需内容会发送给相应服务。登录凭据由本机凭据存储管理，不要将密码或令牌写入配置文件。
 
@@ -113,6 +113,7 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 | 文档 | 内容 |
 | --- | --- |
 | [ECNU 使用指南](docs/USER_GUIDE.md) | 学校登录、账户配额、服务配置与常见问题。 |
+| [配置与 Skills 更新](https://github.com/ecnu/EduWork/blob/main/docs/CONTENT_UPDATES.md) | 同一更新入口检查软件和内容，分别显示版本与修订号。 |
 | [配置示例](edition/desktop-examples/README.md) | 学校接入、模型、媒体、品牌与更新配置。 |
 | [构建指南](docs/BUILD.md) | 引用公共核心、装配机构发行版与协作开发。 |
 | [EduWork 使用指南](https://github.com/ecnu/EduWork/blob/main/docs/USER_GUIDE.md) | 工作区、模型、搜索、语音和文件操作。 |

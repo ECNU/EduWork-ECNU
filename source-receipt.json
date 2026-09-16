@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260915.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-15T08:09:40.275Z",
-  "fileSetSHA256": "51339a35aeb3d775d07023d0d0500923877864f82380e4d26a32c590c3d376d1",
+  "createdAt": "2026-09-16T14:05:48.037Z",
+  "fileSetSHA256": "f62edf3aa45dd3ade724ab46e6058f49ff2fe401335645487dcb1f493e7dbad8",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "e2699193fb4820c02a0ea4d497846d6190ff54612d77e3ee5ec3074abd2cee5e"
+      "sha256": "b2ef3fca21232baac02378fac896f69aabd89fffe025db6647d202e91f3544ca"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "7386c1f5a98e548639bafb34970fc91f6bcbb41ecee2ab21b56632a0d077ae38"
+      "sha256": "81753b7b22e34205725a711272f12990c5b8a81cd937193dd6ced795b8fed6c6"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -69,7 +69,7 @@
     },
     {
       "path": "docs/USER_GUIDE.md",
-      "sha256": "2b7c9640ed4ccc7826f848fca0ba0fa54baeeaab986a59fab7f468d8f569d9e5"
+      "sha256": "e21fc51be4c807d15101eabf498c27c05b4ab3811d4595eda2872f197fcea290"
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
@@ -77,15 +77,15 @@
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "5492235b35bb27d2a593e480b09d5f3c1cb164fec7ad298e504dacb19ce19115"
+      "sha256": "ecbccfdc5b06705c6f7636d7f8d3a39b3f0f5157e77acd74f19fdaaa37e62de0"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
-      "sha256": "8129c8fc04524bae2266c69dc62df5240e17fe25d4a11b2c36e75e7617871c12"
+      "sha256": "2854f35c78bfdf5927742e47a4d2286d166bca00b25c9c27b7bc8321bdcc9636"
     },
     {
       "path": "edition/desktop-examples/README.md",
-      "sha256": "a7d5ed98909c940ebf0c5ed837437a8d66bd3fc0ae77c316d1bdfe7f8f80cae5"
+      "sha256": "2c28793e5e00060509223d397e7c397c1ada3d899bf1d68bc2c50b3402d877e9"
     },
     {
       "path": "edition/desktop/configuration-policy.json",
@@ -93,7 +93,7 @@
     },
     {
       "path": "edition/desktop/ecnu-model-updates.json",
-      "sha256": "aaf670fe8c3292e767ab25cf378ca6de081b9dc85e8064e681ae458959456014"
+      "sha256": "154808fbc0430b5f7df2fc6bfa342ee4cec03a0d7af4494b340d1c5ef15393cc"
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
@@ -269,15 +269,19 @@
     },
     {
       "path": "edition/plugins/provider-vision-fallback/README_EN.md",
-      "sha256": "60366286e130ead41815ce98e5e8dc0061f460f2277298e7a5b92a8d2a43ce9d"
+      "sha256": "162ad79bb9ac2995d1e13c5d72ae4668fe19557f717d668667d564dbc27c6d17"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/README.md",
-      "sha256": "c610bb45ed1fb200e950515292ed7de3856e241975afaa87901b56b638fbc404"
+      "sha256": "eb196a7874e5a110e89f380ec696fe11db67fded0a44a859ecdfa0e068dd5898"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/test/evidence-store.test.js",
       "sha256": "21242ae4d3d74b97818d74637f935f4536413a51b2a9f0c9e4eed1a444e199d2"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/test/mounted-http.test.mjs",
+      "sha256": "3a240a1042732882b980e76a9d81371489eb71d7aa9076e41d82e7840c01683b"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/test/package.test.js",
@@ -321,7 +325,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "327edcf485111b27888ccb97cb9c5dd02cdec99d652151d7dbcaca5641826b44"
+      "sha256": "34b2135b65ea06edbbeae3de8c5c18650d6abd66bb69d0edef775dbfd3eacf25"
     },
     {
       "path": "LICENSE",
@@ -329,11 +333,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "20cb6b96867786ff6cc94ab435c5698715356ac2d8c84a7d3afcf05b4d1eb0ef"
+      "sha256": "3a46660fcae7660d89eb6937695e58278bbbd8958899e65a056515a6d0ac6d22"
     },
     {
       "path": "README.md",
-      "sha256": "f714c409622a9e6706cc1b207571ac143ce357f74d6a1f72107641c228ef2c32"
+      "sha256": "1d469315b639a5ebdf36009b36f2b2b10beff800ab33f75ba960705e56182796"
     }
   ],
   "artifacts": [],

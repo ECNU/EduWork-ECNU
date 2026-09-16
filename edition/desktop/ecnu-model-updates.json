@@ -10,8 +10,8 @@
         "adapter": "openai-compatible",
         "modelID": "ecnu-max"
       },
-      "fromInput": ["text"],
-      "toInput": ["text", "image"],
+      "fromInput": ["text", "image"],
+      "toInput": ["text"],
       "fromContextWindow": 1000000,
       "toContextWindow": 524288
     },

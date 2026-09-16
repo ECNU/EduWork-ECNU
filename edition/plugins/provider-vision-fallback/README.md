@@ -6,13 +6,13 @@
 
 ## 开关与原生图片输入
 
-ECNU `ecnu-max` 基于 DeepSeek V4.1，内置目录声明 `input: [text, image]`；`ecnu-plus` 同样直接收图。原生图片模型不调用辅助模型，也不会在原生调用失败后悄悄改用文字转述。
+ECNU 内置目录将 `ecnu-max` 声明为 `input: ["text"]`，默认由 `ecnu-plus` 读图并提供文字证据。选择 `ecnu-plus` 等原生图片模型时直接收图，不调用辅助模型，也不会在原生调用失败后悄悄改用文字转述。路由以发行配置的原生能力声明为准，不根据模型名称猜测能力。
 
 辅助默认只对配置 Provider 下的纯文本模型生效。学校维护者在随版配置中设置 `"features": { "visionFallback": false }` 后，从托盘退出并重启可关闭；`true` 恢复。新版 Electron 的整套学校配置由发行方更新；公版未装配插件时，此开关不会安装能力。辅助开关不影响模型自身图片输入。
 
 直接装配 DSH/Web 时，可设置 `config.enabled: false` 或 `EDUWORK_VISION_FALLBACK=false`。辅助模型由 `config.model`（默认 `ecnu-plus`）、服务地址和 `credentialRef`（默认 `EDUWORK_API_KEY`）决定；`config.provider` 限定被辅助的企业适配器路由，不接管任意第三方 Provider。
 
-ECNU 客户端启动时将已知旧企业目录中 `ecnu-max` 的文本输入修正为文本加图片，再交给 OIDC Provider。仅机构 ID、issuer、Provider ID、官方网关、适配器和模型全部匹配时同步；不改配置文件原文、个人模型或自定义网关，无需重新登录。两壳共用入口。公版或独立插件不携带 ECNU 目录修正规则，部署方须提供正确的原生 `input` 声明。
+ECNU 客户端启动时将已知旧企业目录中 `ecnu-max` 的原生输入修正为 `input: ["text"]`，再交给 OIDC Provider，由辅助插件补充聚合图片能力。仅机构 ID、issuer、Provider ID、官方网关、适配器和模型全部匹配时同步；不改配置文件原文、个人模型或自定义网关，无需重新登录。两壳共用入口。公版或独立插件不携带 ECNU 目录修正规则，部署方须提供正确的原生 `input` 声明。
 
 ## 处理边界
 

@@ -59,9 +59,8 @@
             "id": "ecnu-max",
             "name": "ecnu-max",
             "input": [
-              // ecnu-max 已升级 DeepSeek V4.1，图片直接送主模型。
-              "text",
-              "image"
+              // ecnu-max 使用纯文本路由；开启 visionFallback 时由辅助模型读图。
+              "text"
             ],
             // 客户端按 512K 管理上下文，标准模式由 DSH 自动压缩历史。
             "contextWindow": 524288,
@@ -208,7 +207,7 @@
     // 当前客户端的主会话、子代理和辅助模型请求共用总上限；超出的请求排队。
     "maxConcurrentRequests": 3,
     // ECNU 版保留文本模型的图片辅助。原生图片模型始终直通，不调用辅助模型。
-    // 改 false 关闭辅助；不会关闭 ecnu-max / ecnu-plus 的原生图片输入。
+    // 改 false 关闭文本模型的图片辅助；不影响 ecnu-plus 的原生图片输入。
     "visionFallback": true
   },
   "desktop": {

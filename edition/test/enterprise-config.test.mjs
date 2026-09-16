@@ -40,9 +40,11 @@ test('deployment examples keep service provider IDs separate from local profile 
   }
 })
 
-test('ECNU example declares the native image model and current context policy', () => {
+test('ECNU max is text-only with vision fallback enabled and unchanged context policy', () => {
   const model = example('ecnu').organizations[0].provider.models.find(row => row.id === 'ecnu-max')
-  assert.deepEqual(model.input, ['text', 'image'])
+  assert.deepEqual(model.input, ['text'])
+  assert.equal(example('ecnu').features.visionFallback, true)
+  assert.deepEqual(example('ecnu').organizations[0].provider.models.find(row => row.id === 'ecnu-plus').input, ['text', 'image'])
   assert.equal(model.contextWindow, 524288)
   assert.equal(model.maxTokens, 393216)
   assert.deepEqual(Object.keys(model.reasoningEfforts).sort(), ['high', 'low', 'max'])
@@ -51,15 +53,20 @@ test('ECNU example declares the native image model and current context policy', 
 test('edition catalog upgrades known 1M/256K defaults and preserves custom limits', async () => {
   const rules = JSON.parse(await readFile(new URL('../desktop/ecnu-model-updates.json', import.meta.url), 'utf8'))
   const { match } = rules.updates[0]
-  for (const capacity of [1000000, 262144, 524288, 131072]) {
+  for (const capacity of [1000000, 262144, 524288, 131072]) for (const input of [['text'], ['text', 'image']]) {
     const original = { id: match.profileID, oidc: { issuer: match.issuer }, provider: {
       id: match.providerID, adapter: match.adapter, baseURL: match.baseURL, modelSource: 'profile',
-      models: [{ id: match.modelID, input: ['text'], contextWindow: capacity, maxTokens: 393216 }],
+      models: [{ id: match.modelID, input, contextWindow: capacity, maxTokens: 393216 }],
     } }
     const [updated] = updateEnterpriseModels([original], rules)
     assert.equal(updated.provider.models[0].contextWindow, capacity === 131072 ? 131072 : 524288)
     assert.equal(updated.provider.models[0].maxTokens, 393216)
-    assert.deepEqual(updated.provider.models[0].input, ['text', 'image'])
+    assert.deepEqual(updated.provider.models[0].input, ['text'])
+    assert.deepEqual(original.provider.models[0].input, input)
+    assert.deepEqual(updateEnterpriseModels([updated], rules), [updated])
+    const unrelated = structuredClone(original)
+    unrelated.provider.id = 'personal'
+    assert.deepEqual(updateEnterpriseModels([unrelated], rules), [unrelated])
     assert.equal(original.provider.models[0].contextWindow, capacity)
   }
 })
@@ -82,7 +89,7 @@ test('publisher configuration replaces the full school profile after an upgrade 
  const profiles=loadEnterpriseProfiles({profiles:config.organizations},{})
  const routes=resolveEnterpriseProfiles(enterpriseProviderConfig(profiles))
  const model=routes.flatMap(route=>route.models).find(model=>model.id==='ecnu-max')
- assert.deepEqual(model.input,['text','image'])
+ assert.deepEqual(model.input,['text'])
  assert.equal(model.contextWindow,524288)
  assert.equal(model.maxTokens,393216)
  assert.equal(config.media.providers[0].images.model,'ecnu-image')

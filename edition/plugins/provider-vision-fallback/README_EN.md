@@ -6,13 +6,13 @@ A provider-boundary plugin adding aggregate `image` input capability to text-onl
 
 ## Configuration and native images
 
-ECNU `ecnu-max` uses DeepSeek V4.1 and declares `input: [text, image]`; `ecnu-plus` also receives images directly. Native image models do not call the specialist, and native request failures are not hidden by silently switching to text evidence.
+The ECNU catalog declares `ecnu-max` with `input: ["text"]`; by default, `ecnu-plus` observes images and supplies textual evidence. Native image models such as `ecnu-plus` receive images directly without calling the specialist. Native request failures are not hidden by silently switching to text evidence. Routing follows the configured native capability rather than guessing from model names.
 
 Fallback applies by default only to text-only models under the configured provider. The distributor can set `"features": { "visionFallback": false }` in the versioned school configuration, exit through the tray and restart to disable it; `true` restores it. The current Electron edition updates the complete school configuration with each release. The option does not install the plugin into an unextended public edition and does not affect a model's native image input.
 
 Direct DSH/Web compositions can set `config.enabled: false` or `EDUWORK_VISION_FALLBACK=false`. `config.model` (default `ecnu-plus`), service URL and `credentialRef` (default `EDUWORK_API_KEY`) select the specialist. `config.provider` limits assistance to that enterprise adapter route, not arbitrary third-party providers.
 
-On startup, ECNU corrects recognized old managed `ecnu-max` catalog entries from text to text/image before passing them to OIDC. Institution ID, issuer, Provider ID, official gateway, adapter and model must all match. The configuration file, personal models and custom gateways remain unchanged; no new login is required. Both shells share this entry. Public EduWork and the standalone plugin do not carry ECNU catalog corrections; deployments must supply correct native `input` declarations.
+On startup, ECNU corrects recognized old managed `ecnu-max` catalog entries to native `input: ["text"]` before passing them to OIDC; the fallback plugin then adds aggregate image capability. Institution ID, issuer, Provider ID, official gateway, adapter and model must all match. The configuration file, personal models and custom gateways remain unchanged; no new login is required. Both shells share this entry. Public EduWork and the standalone plugin do not carry ECNU catalog corrections; deployments must supply correct native `input` declarations.
 
 ## Processing boundaries
 

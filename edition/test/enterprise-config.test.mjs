@@ -14,6 +14,23 @@ const { loadUserConfig } = await import(pathToFileURL(resolve(core, 'dsh-host/us
 const { updateEnterpriseModels } = await import(pathToFileURL(resolve(core, 'dsh-host/enterprise-model-updates.mjs')))
 const example = name => loadUserConfig(fileURLToPath(new URL(`../desktop-examples/${name}.jsonc`, import.meta.url)))
 
+test('CI edition carries only public bootstrap metadata and pins configuration trust', async () => {
+  const path = fileURLToPath(new URL('../desktop/publisher-bootstrap.json', import.meta.url))
+  const raw = JSON.parse(await readFile(path, 'utf8'))
+  assert.deepEqual(Object.keys(raw).sort(), ['contentUpdates', 'schemaVersion', 'updates'])
+  const config = loadUserConfig(path)
+  assert.equal(config.contentUpdates.publisher, 'eduwork-ecnu')
+  assert.equal(config.contentUpdates.configuration, true)
+  assert.equal(config.contentUpdates.bundled.configuration, 0)
+  assert.equal(config.updates.defaultPolicy, undefined)
+  assert.equal(config.updates.provider, 'static')
+  assert.match(config.contentUpdates.publicKey, /^-----BEGIN PUBLIC KEY-----/)
+  const seed = loadUserConfig(fileURLToPath(new URL('../desktop/eduwork.jsonc', import.meta.url)))
+  assert.deepEqual(seed.organizations, [])
+  const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url), 'utf8'))
+  assert.ok(distribution.resources.some(row => row.source === 'edition/desktop/publisher-bootstrap.json' && row.target === 'desktop/publisher-bootstrap.json'))
+})
+
 test('ECNU media uses public providers and keeps existing IDs, voices and sizes', async () => {
   const { normalizeMediaConfig } = await import(pathToFileURL(resolve(core, 'dsh-host/media-config.mjs')))
   const defaults = JSON.parse(await readFile(new URL('../desktop/media-defaults.json', import.meta.url), 'utf8'))

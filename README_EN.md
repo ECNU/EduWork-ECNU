@@ -24,7 +24,7 @@ It includes the full EduWork workspace, Studio, and skill center. University ser
 
 <p align="center"><sub>The shared EduWork workspace, connected to university services. Blue and red themes are both available.</sub></p>
 
-> University users obtain the preconfigured client through the school distribution channel. This repository presents the institutional extension; its templates do not include complete school deployment settings.
+> University users obtain the client through the school distribution channel; it downloads school configuration on first launch. This repository presents the institutional extension; its templates do not include complete school deployment settings.
 
 ## What you can do
 
@@ -84,7 +84,7 @@ Conversations and Studio share generation, previews, and downloads. The skill ce
 
 ## Configuration and data
 
-The university maintains connection settings, model catalogs and capabilities, media services, branding, and update sources. The client includes a base configuration. Model catalogs, feature switches, media configuration and official Skills can also update independently, taking effect on the next launch; users do not need to edit configuration. Personal models, credentials, and history remain separate and are preserved. Configuration is separate from the public core. This repository supplies templates; the university maintains actual Client IDs and deployment settings. See the [institutional configuration examples](edition/desktop-examples/README_EN.md).
+The university maintains connection settings, model catalogs and capabilities, media services, branding, and update sources. The client includes update feeds and a verification key, and downloads school configuration on first launch. Model catalogs, feature switches, media configuration and official Skills can also update independently, taking effect on the next launch; users do not need to edit configuration. Personal models, credentials, and history remain separate and are preserved. Configuration is separate from the public core. This repository supplies templates; the university maintains actual Client IDs and deployment settings. See the [institutional configuration examples](edition/desktop-examples/README_EN.md).
 
 Conversations, workspace references, and memory are managed locally. When using university or other remote models, search, or media services, content needed for a task is sent to the corresponding service. Sign-in credentials are managed by local credential storage; do not put passwords or tokens in configuration files.
 

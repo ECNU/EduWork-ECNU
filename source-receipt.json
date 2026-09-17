@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260915.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-16T14:05:48.037Z",
-  "fileSetSHA256": "f62edf3aa45dd3ade724ab46e6058f49ff2fe401335645487dcb1f493e7dbad8",
+  "createdAt": "2026-09-17T05:34:14.426Z",
+  "fileSetSHA256": "fef763fc988e0b82c2f25709ff1ea5f5cfeaedba0c65d14ba862b939865be9f1",
   "files": [
     {
       "path": ".gitattributes",
@@ -21,7 +21,7 @@
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "ddd0f7ff224d91bd897abce32e0a7e92823ca8bbb883f5fd9fcdb01f33f42a65"
+      "sha256": "83ac7f7edf70825ee51fdd86f489f0ef4f9ae788135ec9e680d73b55f2548c12"
     },
     {
       "path": ".gitignore",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "b2ef3fca21232baac02378fac896f69aabd89fffe025db6647d202e91f3544ca"
+      "sha256": "329102d5088392be7c2007ab1cf242d662a4465935957e307f0578e91a702357"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "81753b7b22e34205725a711272f12990c5b8a81cd937193dd6ced795b8fed6c6"
+      "sha256": "9b8bca7720dc4330eecfee38eee7b380d0d6f639ae9f8f24dee61321ac4204d5"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -97,15 +97,19 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "2f5260e5778da7eebdcd4eecf3fa850899605d39399238fe1fb2f9ce1c2e7c50"
+      "sha256": "5358ad7684d4bb449ea1428899885b3224e5f337370eb981fc6ec907fd009eb5"
     },
     {
       "path": "edition/desktop/media-defaults.json",
       "sha256": "9ddb1755fe98e668dcc93f7990709bf31a603524d790d7430b6a8378bad9c3a8"
     },
     {
+      "path": "edition/desktop/publisher-bootstrap.json",
+      "sha256": "2af5f8f2cc1cab6076f2b5371a7a4fae4df108344fb64163b92f383b8d5f0d8a"
+    },
+    {
       "path": "edition/distribution.json",
-      "sha256": "60ac9e3866ad444ab6e77d36d16ec2b5cb2e3776c16fbb3fc2f2cdfe5964f328"
+      "sha256": "f9dc2a965c5ce5a953063f4a8db55e27a7e77a251f36b38c5e3107f0c52b031b"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -161,7 +165,7 @@
     },
     {
       "path": "edition/plugins/ecnu-account-resources/build-client.ps1",
-      "sha256": "0bf6e12c4648ed7b9a6922d0ae28374dbbc38ebb81caba021ff89edd975d8a35"
+      "sha256": "7823167ef3f29809130c47f56cd72e3ed55125a9bc604c0277903f8a1681daab"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/lib/client.js",
@@ -325,7 +329,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "34b2135b65ea06edbbeae3de8c5c18650d6abd66bb69d0edef775dbfd3eacf25"
+      "sha256": "b8f32e9316689b636e92985b0a01e717e22d995c3ccfaf57641342e9a05f0d97"
     },
     {
       "path": "LICENSE",
@@ -333,11 +337,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "3a46660fcae7660d89eb6937695e58278bbbd8958899e65a056515a6d0ac6d22"
+      "sha256": "0befeba0622d82d10bb795da3cdb570707970b9570d1f40255e33e27a03c5237"
     },
     {
       "path": "README.md",
-      "sha256": "1d469315b639a5ebdf36009b36f2b2b10beff800ab33f75ba960705e56182796"
+      "sha256": "1f974f6b7945dc7a2462361bee593f43cd4ac4b05bffb6e96fb98ff976eb60b8"
     }
   ],
   "artifacts": [],

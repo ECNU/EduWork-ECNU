@@ -56,29 +56,18 @@ Mac 贡献者先在公共核心完成路径、资源和签名适配，再由学�
 
 旧 ChatECNU Work 用户先通过原更新渠道进入 Go 过渡包，再迁移到更高版本的 Electron。第二跳要求 `wails-host-v1` 契约，并从过渡版实际数据目录导入。当前 CI 的开发包和公测包均写入该契约；维护者必须验收具体 ZIP 的兼容性，不能将 Electron 直接下发给未支持该契约的 0.2 更新器。该过渡在本地制作和管理，不要求 GitHub 提供临时 Go Release。
 
-公版使用 GitHub Releases；学校发行可增加机构分发渠道。程序文件必须来自 CI，不为学校渠道重新编译。学校配置由维护者在本机加入，装配后的 ZIP 与 CI 原包哈希不同，必须重新生成文件清单、ZIP 的 SHA-256 和更新清单；不能沿用 CI 原包的大小或哈希。依赖沿用各自许可证，共享组件沿用公版第三方声明和装配记录。
+公版使用 GitHub Releases；学校发行可增加机构分发渠道。程序文件必须来自 CI，不为学校渠道重新编译。学校配置通过签名内容源下发；程序 ZIP 保持 CI 原包不变，学校更新清单使用 CI 原包的实际大小和 SHA-256。依赖沿用各自许可证，共享组件沿用公版第三方声明和装配记录。
 
-更新源部署与 GitHub 接入要求见锁定公版的 `docs/UPDATES.md`。OSS 是可选托管方式，其他静态 HTTPS 服务也可使用；学校仓只维护自己的渠道与发行配置，更新器和 GitHub 来源适配均归公版。当前 CI 的开发包和公测包均含包内更新契约；公测和获批开发 Release 均生成 `update-windows-amd64.json`。普通开发构建只保留 artifact，推送 GitHub 开发渠道仍需获批发布 prerelease 及配套清单。学校静态更新清单以本机配置装配后包的实际哈希和大小生成。配置学校登录的公版仍走公版更新，不因机构名称切换到 ECNU 包。
+更新源部署与 GitHub 接入要求见锁定公版的 `docs/UPDATES.md`。OSS 是可选托管方式，其他静态 HTTPS 服务也可使用；学校仓只维护自己的渠道与发行配置，更新器和 GitHub 来源适配均归公版。当前 CI 的开发包和公测包均含包内更新契约；公测和获批开发 Release 均生成 `update-windows-amd64.json`。普通开发构建只保留 artifact，推送 GitHub 开发渠道仍需获批发布 prerelease 及配套清单。学校静态更新清单以 CI 原包的实际哈希和大小生成。配置学校登录的公版仍走公版更新，不因机构名称切换到 ECNU 包。
 
-## Windows Electron Release
+## Electron 开发候选与发行
 
-本地分发与验收直接下载 GitHub CI 的 Release ZIP，校验 SHA-256 后，使用锁定公版的 `scripts/configure-desktop-archive.ps1` 加入管理员提供的私有配置。`edition/desktop/configuration-policy.json` 声明由发行方管理配置，CI 在包内生成 `config/eduwork.<产品版本>.jsonc`；本机装配脚本同时填充该文件和兼容的 `config/eduwork.jsonc`，并重算清单。仓库默认配置不启用实际机构，示例中的 Client ID 是占位符；不得将实际配置提交仓库或注入 CI 安装包。不重新编译或替换公共核心、插件、资源文件，保证与 GitHub 发行的逻辑一致。
+`Build ECNU desktop release candidates` 工作流在 Windows x64 与 macOS arm64 上分别构建同版本候选，只保留经检查的 artifact，不自动发布。版本号与 `docs/releases/<version>.md` 内容须事先确认。维护者下载产物完成学校配置与登录验收后，才将原包发布到 GitHub 和 OSS；两处 ZIP 的 SHA-256 必须一致。Mac 当前限 macOS 15+ Apple Silicon，只有 ad-hoc 签名，尚未 Apple 公证或实现整包自动安装更新。不得把 Windows 更新包配置到 Mac 渠道。
 
-学校 OSS 提供的是本机完成配置装配后的发行包，新用户解压后即可使用学校账号登录。发布前必须检查实际企业配置已启用、Client ID 不是占位符，并在全新目录验证配置加载；仅验证旧用户升级不够，因为已有登录和本地数据不能代替新用户的完整配置验收。开发包默认使用开发更新渠道，公测包默认使用公测渠道，已有用户主动选择的渠道、个人模型与数据继续保留。学校管理的整套配置按新版本更新，旧配置保留供失败回退；不建议用户编辑学校配置。
+本地分发与验收直接下载 GitHub CI 的 ZIP，校验 SHA-256 后即可使用。`edition/desktop/configuration-policy.json` 声明发行方管理配置，`edition/desktop/publisher-bootstrap.json` 内置软件与内容更新源、验签公钥；不包含实际 Client ID、模型目录或个人凭据。默认配置的机构列表为空，首次启动下载签名学校配置。无需在 Windows 本机重新装配，也无需为 Mac 另做配置 PKG。完整格式见公版 [首次启动获取配置](https://github.com/ecnu/EduWork/blob/main/docs/PUBLISHER_BOOTSTRAP.md)。
 
-本机装配只能修改配置和相应校验清单，保留 CI 原包及其回执，并记录装配包与原包的关联。先上传不可变版本的 ZIP 与校验文件并核验，再更新对应渠道的 latest 清单。旧 Go 过渡渠道单独维护，不随 Electron 新用户下载入口一起切换。
+学校通过公版 `scripts/create-content-update.mjs` 在私有发行目录生成签名配置与 Skills 包。先上传不可变内容包并验证，再更新对应渠道的 `latest.json`，最后开放应用下载。首次发布前，确保每个支持的渠道均有兼容程序版本、DSH、插件能力和平台的内容清单；仅支持 Windows 的内容包不能作为 Mac 的首次配置。必须验证新用户完整登录流程、断网重启、旧用户配置迁移和失败回退，不能仅凭旧安装能启动就认定新安装可用。
 
-先确认 core.lock.json 的版本、提交及源文件哈希，再在 Actions → Release EduWork@ECNU Windows Electron 手动填写相同的 X.Y.Z。CI 只负责源码/依赖与构建、ZIP 完整性、客户端启动冒烟；完整业务验收在提交前本地完成。构建与发布代码全部复用锁定核心的 scripts/ci-eduwork-windows-release.ps1 与 scripts/publish-windows-release.mjs；本仓只提供发行配置和薄工作流。
+学校 OSS 提供与 GitHub CI 字节一致的应用 ZIP。更新清单采用该原包的 SHA-256 与大小。开发包默认使用开发渠道，公测包默认使用公测渠道，用户已经保存的选择优先。旧 Go 过渡渠道仍单独维护。
 
-发布说明先与项目负责人讨论确认，再存为本仓 `docs/releases/<版本>.md`。触发时填写 `release_notes` 文件路径并确认 `notes_approved`；CI 原样复制该文件并验证摘要，不自动撰写。没有确认的说明时不发布。GitHub 只发 Electron，Go 过渡包由维护者在本地验收后通过原 OSS 升级渠道提供。
-
-验证通过后创建 vX.Y.Z，发布 EduWork-ECNU-X.Y.Z-windows-x64-electron.zip、SHA-256 和回执。私有仓的 Release 仍需要读取权限。此操作不改变仓库可见性、OSS 或老用户升级渠道。原生运行、模拟 OIDC 与学校真实登录分别验收；macOS 与旧 Go 升级另按相应平台和更新契约验证。
-
-
-## 独立配置与 Skills 更新
-
-实现与签名工具复用锁定公版的 `docs/CONTENT_UPDATES.md` 与 `scripts/create-content-update.mjs`，本仓不复制更新器。GitHub CI 原包不含学校内容更新源、公钥或部署参数；在本机加入学校配置时，一并配置 `contentUpdates`、允许更新的组件和 `bundled` 内置修订号。Ed25519 私钥只保存在发行机器的私有目录。
-
-模型目录、功能开关与媒体配置可以独立修订，官方 Skills 需要声明客户端、DSH、平台及已安装工具依赖。每次发布保留该源管理的完整内容快照，未变组件保留原修订号，确保离线用户不会漏掉中间更新。配置与 Skills 相互依赖的改动放入同一包。品牌、更新源和程序／插件仍通过整包更新。开发、公测内容源与客户端渠道对应，发布公测内容时也更新开发渠道清单；修订号递增，不原地替换已发布文件。
-
-先用隔离客户端验证下载、重启生效、失败回退和个人数据保留，再上传签名内容包，最后更新内容清单。软件包与内容包分别记录真实大小和 SHA-256。整包包含了更新的配置／Skills 时，同步提高 `bundled` 修订号，避免缓存旧内容覆盖它们。旧 Go 用户须先完成既有迁移，新机制不改变两跳升级路线。
+Windows 的发行配置缓存位于安装目录 `data/publisher-bootstrap/`；Mac 位于 `~/Library/Application Support/eduwork-chatecnu-electron/data/publisher-bootstrap/`。签名配置与 Skills 使用同级 `content-updates/` 缓存。应用不修改 `.app`，也不覆盖旧 JSONC 文件、个人模型、登录凭据和历史数据；已有配置可离线启动。全新安装无法下载时可以重试，或导入发行工具生成的 `content-<revision>-offline.json`。Mac 的签名、公证和整包自动更新须按公版 Mac 指南另行验收。

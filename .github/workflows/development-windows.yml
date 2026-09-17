@@ -1,20 +1,45 @@
-name: Build ECNU Windows development artifact
+name: Build ECNU desktop release candidates
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Development version (X.Y.Z-dev.YYYYMMDD.N); artifact only'
+        description: 'Approved X.Y.Z-dev.YYYYMMDD.N version; artifacts only'
         required: true
         type: string
+      release_notes:
+        description: 'Approved docs/releases/<version>.md file'
+        required: true
+        type: string
+      notes_approved:
+        description: 'The project owner approved this version and release text'
+        required: true
+        default: false
+        type: boolean
+      platform:
+        description: 'Build both platforms, or diagnose one native platform'
+        required: true
+        default: both
+        type: choice
+        options: [both, windows, macos]
+      verify_publisher_bootstrap:
+        description: 'Mac acceptance: activate the published signed configuration with no account login'
+        required: true
+        default: false
+        type: boolean
 permissions:
   contents: read
 concurrency:
-  group: windows-development-${{ inputs.version }}
+  group: desktop-candidate-${{ github.sha }}-${{ inputs.platform || 'both' }}
   cancel-in-progress: false
 jobs:
   build:
-    if: github.ref == 'refs/heads/main'
-    runs-on: windows-latest
+    # Manual, read-only candidate builds may validate a maintainer-selected branch before merge.
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(inputs.platform == 'windows' && '[{"runner":"windows-latest","platform":"windows"}]' || inputs.platform == 'macos' && '[{"runner":"macos-15","platform":"macos"}]' || '[{"runner":"windows-latest","platform":"windows"},{"runner":"macos-15","platform":"macos"}]') }}
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,16 +50,15 @@ jobs:
         shell: pwsh
         run: |
           $lock = Get-Content institution/core.lock.json -Raw | ConvertFrom-Json
-          if ($lock.repository -ne 'https://github.com/ecnu/EduWork.git' -or $lock.commit -notmatch '^[a-f0-9]{40}$') { throw 'Pin an exact EduWork commit.' }
+          if ($lock.repository -ne 'https://github.com/ecnu/EduWork.git' -or $lock.commit -notmatch '^[a-f0-9]{40}$') { throw 'Pin an exact public core commit.' }
           "commit=$($lock.commit)" >> $env:GITHUB_OUTPUT
       - uses: actions/checkout@v4
         with:
-          repository: ecnu/EduWork
+          repository: ECNU/EduWork
           ref: ${{ steps.core.outputs.commit }}
           path: core
           persist-credentials: false
-          ssh-key: ${{ secrets.EDUWORK_CORE_SSH_KEY }}
-          token: ${{ secrets.EDUWORK_CORE_READ_TOKEN || github.token }}
+          token: ${{ github.token }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24.18.0'
@@ -42,24 +66,37 @@ jobs:
         with:
           go-version: '1.26.6'
           cache: false
-      - name: Build and check the same desktop recipe
+      - name: Build and validate the exact desktop archive
         shell: pwsh
         env:
-          DEVELOPMENT_VERSION: ${{ inputs.version }}
-        run: ./core/scripts/ci-eduwork-windows-release.ps1 -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:DEVELOPMENT_VERSION -Development -Output "$env:RUNNER_TEMP/ew-development"
-      - name: Retain redacted validation reports
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_NOTES: ${{ inputs.release_notes }}
+          RELEASE_NOTES_APPROVED: ${{ inputs.notes_approved }}
+          TARGET_PLATFORM: ${{ matrix.platform }}
+          VERIFY_PUBLISHER_BOOTSTRAP: ${{ inputs.verify_publisher_bootstrap }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          if ($env:RELEASE_NOTES_APPROVED -ne 'true') { throw 'Release notes approval is required.' }
+          node core/scripts/check-source-docs.mjs core
+          node core/scripts/check-source-docs.mjs institution
+          $script = "./core/scripts/ci-eduwork-$($env:TARGET_PLATFORM)-release.ps1"
+          $acceptance = @{}
+          if ($env:TARGET_PLATFORM -eq 'macos' -and $env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true') { $acceptance.VerifyPublisherBootstrap = $true }
+          & $script -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:RELEASE_VERSION -ReleaseNotesFile $env:RELEASE_NOTES -ReleaseNotesApproved -Output "$env:RUNNER_TEMP/ew-candidate" @acceptance
+      - name: Retain validation reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: windows-development-validation
-          path: ${{ runner.temp }}/ew-development/evidence-public
+          name: ${{ matrix.platform }}-validation
+          path: ${{ runner.temp }}/ew-candidate/evidence-public
           retention-days: 7
           if-no-files-found: warn
-      - name: Retain the verified development package
+      - name: Retain candidate files for acceptance before publication
         uses: actions/upload-artifact@v4
         with:
-          name: windows-development
-          path: ${{ runner.temp }}/ew-development/publish
+          name: ${{ matrix.platform }}-release
+          path: ${{ runner.temp }}/ew-candidate/publish
           compression-level: 0
           retention-days: 3
           if-no-files-found: error

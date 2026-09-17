@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "updates": {
+    "provider": "static",
+    "manifestURL": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases-bridge/development/latest-windows-amd64.json"
+  },
+  "contentUpdates": {
+    "publisher": "eduwork-ecnu",
+    "baseURL": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates",
+    "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAPgLiUb1AKe1MifCo+QV4Z+828bOFRtflDRmmsDaVbRk=\n-----END PUBLIC KEY-----\n",
+    "configuration": true,
+    "skills": true,
+    "bundled": {
+      "configuration": 0,
+      "skills": 0
+    }
+  }
+}

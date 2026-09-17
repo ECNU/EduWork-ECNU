@@ -14,7 +14,7 @@ export function normalizeWebConfig(raw = {}, environment = process.env) {
     base = new URL(raw.baseURL)
     endpoint = new URL(raw.endpoint ?? '/user/active', base)
   } catch { throw new Error('heartbeat Web backend requires an explicit HTTP(S) baseURL') }
-  if (!['http:', 'https:'].includes(base.protocol) || endpoint.origin !== base.origin || base.username || base.password || endpoint.username || endpoint.password || endpoint.hash) {
+  if (!(base.protocol === 'https:' || base.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(base.hostname)) || endpoint.origin !== base.origin || base.username || base.password || base.search || base.hash || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) {
     throw new Error('heartbeat endpoint must belong to its configured HTTP(S) origin')
   }
   const stateDirectory = raw.stateDirectory ?? (environment.DSH_HOME ? join(environment.DSH_HOME, 'state', 'chatecnu-active') : '')
@@ -23,10 +23,24 @@ export function normalizeWebConfig(raw = {}, environment = process.env) {
   const productName = raw.productName ?? 'EduWork@ECNU'
   if (!validText(productName, 100) || !productName.trim()) throw new Error('invalid heartbeat productName')
   const version = typeof raw.version === 'string' && validText(raw.version, 32) ? raw.version : ''
-  const platform = raw.platform ?? 'web'
+  const platform = raw.platform ?? (['electron', 'wails'].includes(environment.EDUWORK_DESKTOP_SHELL) ? 'desktop' : 'web')
   if (!validText(platform, 20) || !platform) throw new Error('invalid heartbeat platform')
   return { enabled: true, profileID: raw.profileID, endpoint: endpoint.toString(), stateDirectory, installationID: raw.installationID,
     productName, version, platform, channel: typeof raw.version === 'string' && raw.version.includes('-') ? 'dev' : 'stable' }
+}
+
+// Desktop metadata comes from the immutable assembly, not a renderer message or
+// an edition's hard-coded release number. Standalone Web can set its own version.
+async function runtimeConfig(config, environment) {
+  if (!['electron', 'wails'].includes(environment.EDUWORK_DESKTOP_SHELL)) return config
+  const root = environment.EDUWORK_PRODUCT_ROOT
+  if (!root || !isAbsolute(root)) return config
+  const bytes = await readFile(join(root, 'assembly.json'))
+  if (bytes.length > 1024 * 1024) throw Error('invalid product identity')
+  const identity = JSON.parse(bytes.toString('utf8'))
+  if (typeof identity.version !== 'string' || !identity.version) throw Error('missing product version')
+  return { ...config, version: validText(identity.version, 32) ? identity.version : '',
+    channel: identity.version.includes('-') ? 'dev' : 'stable' }
 }
 
 // The per-data-root UUID moves with the user's data. Never derive a device ID
@@ -87,7 +101,7 @@ async function responseValue(response) {
 
 export function createWebHeartbeatSender(accounts, raw = {}, { signal, environment = process.env, system = process } = {}) {
   const config = normalizeWebConfig(raw, environment)
-  let identifier
+  let identifier, metadata
   return async input => {
     if (!config.enabled) return { state: 'disabled' }
     if (typeof accounts?.authorizedFetch !== 'function' || typeof accounts?.status !== 'function') return { state: 'local_error' }
@@ -98,7 +112,11 @@ export function createWebHeartbeatSender(accounts, raw = {}, { signal, environme
       if (!['connected', 'authenticated'].includes(status.state)) return { state: 'login_required', httpStatus: 401 }
       if (!identifier) identifier = config.installationID ? Promise.resolve(config.installationID) : installationID(config.stateDirectory)
       let payload
-      try { payload = heartbeatPayload(config, await identifier, input, system) }
+      try {
+        metadata ??= runtimeConfig(config, environment)
+        const [currentConfig, currentID] = await Promise.all([metadata, identifier])
+        payload = heartbeatPayload(currentConfig, currentID, input, system)
+      }
       catch { return { state: 'local_error' } }
       const response = await accounts.authorizedFetch(config.profileID, config.endpoint, {
         method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),

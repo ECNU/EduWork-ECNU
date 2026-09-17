@@ -58,7 +58,10 @@
       "name": "@chatecnu-work/dsh-chatecnu-active-heartbeat",
       "config": {
         "backend": "web",
-        "enabled": false,
+        "enabled": true,
+        "profileID": "ecnu",
+        "baseURL": "https://chat.ecnu.edu.cn",
+        "endpoint": "/user/active",
         "productName": "EduWork@ECNU"
       }
     }
@@ -103,6 +106,11 @@
       "root": "edition",
       "source": "edition/desktop/media-defaults.json",
       "target": "desktop/media-defaults.json"
+    },
+    {
+      "root": "edition",
+      "source": "edition/desktop/publisher-bootstrap.json",
+      "target": "desktop/publisher-bootstrap.json"
     }
   ],
   "patches": []

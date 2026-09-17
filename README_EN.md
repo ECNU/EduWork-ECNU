@@ -68,7 +68,7 @@ These integrations reuse the public edition's OIDC, model, and media adapters, w
 | Extension | Purpose and scope |
 | --- | --- |
 | Image understanding assistance | For text-only models on the configured university route, a university vision model can analyze an image and pass textual evidence to the primary model. This assistance can be disabled. Models with native image input receive the original image directly, without an extra specialist call. |
-| Activity heartbeat | Connects client activity status to university services. Disabled by default; it requires server support and explicit distributor configuration. It sends an installation identifier, basic client information, and foreground/background status, without reading conversations or workspace file contents. |
+| Activity heartbeat | Enabled in the university distribution after university sign-in. It sends an installation identifier, basic client information, and foreground/background status to university services. Signed-out clients do not report; conversations and workspace file contents are not read. |
 
 ### Work with your materials
 
@@ -102,7 +102,7 @@ University features are maintained as configuration, skills, and plugins:
 | --- | --- |
 | Configuration | Supply defaults for university identity, models, media, branding, and update channels, using the public edition's integration capabilities. |
 | Skills | Describe how to perform tasks such as campus search, providing operational guidance to the agent. |
-| Plugins | Provide campus search, account quota, image understanding assistance for text-only models, and an optional activity heartbeat. The heartbeat is disabled by default and requires server support and explicit enablement. |
+| Plugins | Provide campus search, account quota, image understanding assistance for text-only models, and activity heartbeats. Distribution configuration enables each capability; heartbeats use only the signed-in university account. |
 
 Generic OIDC sign-in, model integration, image and TTS adapters, the workbench, Studio, previews, desktop, and update logic are maintained in [EduWork](https://github.com/ecnu/EduWork). This repository references a fixed version of the public core and adds institutional configuration and extensions.
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
-import { mkdir, mkdtemp, readFile, rename, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
@@ -121,6 +121,7 @@ test('explicit configuration and client metadata do not broaden the target or in
   const f = await fixture(t)
   assert.throws(() => normalizeWebConfig({ enabled: true, profileID: 'example' }), /baseURL/)
   assert.throws(() => normalizeWebConfig({ ...f.config, endpoint: 'https://elsewhere.example/collect' }), /configured HTTP/)
+  assert.throws(() => normalizeWebConfig({ ...f.config, baseURL: 'http://example.test' }), /configured HTTP/)
   assert.throws(() => normalizeWebConfig({ ...f.config, installationID: '../private' }), /installationID/)
   const config = normalizeWebConfig({ ...f.config, version: 'long-dev-version-'.repeat(4), installationID: 'inst_fixed' })
   const payload = heartbeatPayload(config, 'inst_fixed', active, { platform: 'linux', arch: 'arm64' })
@@ -132,4 +133,38 @@ test('explicit configuration and client metadata do not broaden the target or in
   const { writeFile } = await import('node:fs/promises')
   await writeFile(join(f.config.stateDirectory, 'installation-id'), 'corrupt-id\n')
   await assert.rejects(installationID(f.config.stateDirectory), /invalid stored/)
+})
+
+test('Windows and Mac report desktop with the installed product version and preserve installation identity', async t => {
+  const f = await fixture(t)
+  const product = join(f.root, 'product')
+  await mkdir(product)
+  const environment = { EDUWORK_PRODUCT_ROOT: product, EDUWORK_DESKTOP_SHELL: 'electron' }
+  await writeFile(join(product, 'assembly.json'), JSON.stringify({ version: '0.3.6-dev.20260917.1' }))
+  const windows = createWebHeartbeatSender(f.accounts, f.config, { environment, system: { platform: 'win32', arch: 'x64' } })
+  assert.equal((await windows(active)).state, 'ok')
+  const first = f.requests.at(-1).body.client
+  assert.equal(first.platform, 'desktop')
+  assert.equal(first.os, 'Windows')
+  assert.equal(first.version, '0.3.6-dev.20260917.1')
+  assert.equal(first.channel, 'dev')
+  await writeFile(join(product, 'assembly.json'), JSON.stringify({ version: '0.3.6' }))
+  const mac = createWebHeartbeatSender(f.accounts, f.config, { environment, system: { platform: 'darwin', arch: 'arm64' } })
+  assert.equal((await mac(active)).state, 'ok')
+  const next = f.requests.at(-1).body.client
+  assert.equal(next.platform, 'desktop')
+  assert.equal(next.os, 'macOS')
+  assert.equal(next.arch, 'arm64')
+  assert.equal(next.version, '0.3.6')
+  assert.equal(next.channel, 'stable')
+  assert.equal(next.installation_id, first.installation_id)
+})
+
+test('an absent optional organization never sends a heartbeat; account selection is bound to the configured profile', async t => {
+  const f = await fixture(t)
+  const send = createWebHeartbeatSender({ ...f.accounts, status: async id => {
+    assert.equal(id, 'example'); throw Object.assign(Error('not configured'), { code: 'oidc_profile_unknown' })
+  } }, f.config)
+  assert.deepEqual(await send(active), { state: 'rejected' })
+  assert.equal(f.requests.length, 0)
 })

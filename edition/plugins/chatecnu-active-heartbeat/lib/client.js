@@ -13,15 +13,16 @@ window.__ModuleLoader__.load({
         if (disposed) return
         if (running) { again = true; return }
         running = true
+        const reportRecovered = recovered
+        recovered = false
         try {
           const response = await fetch('/api/chatecnuActiveHeartbeat/presence', {
             method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' },
             signal: AbortSignal.timeout(10000),
             body: JSON.stringify({ type: 'client-request', rpcId: crypto.randomUUID(), method: 'chatecnuActiveHeartbeat/presence', payload: { args: {
-              request: JSON.stringify({ id, active: active(), recovered, locale: navigator.language.slice(0, 20), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
+              request: JSON.stringify({ id, active: active(), recovered: reportRecovered, locale: navigator.language.slice(0, 20), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
             } } }),
           })
-          recovered = false
           const envelope = await response.json()
           if (disposed) return
           const state = envelope.result?.ok ? JSON.parse(envelope.result.value).state : ''
@@ -32,7 +33,7 @@ window.__ModuleLoader__.load({
             notice.style.cssText = 'position:fixed;bottom:16px;left:16px;z-index:1000;max-width:300px;padding:10px 14px;border-radius:8px;background:var(--dsw-alias-bg-layer-2,#fff);box-shadow:0 2px 12px #0002;font-size:12px;'
             document.body.append(notice)
           } else if (state === 'ok' || state === 'disabled' || state === 'signed_out') { notice?.remove(); notice = undefined }
-        } catch { /* Host reconnects and network outages must not disrupt chat. */ }
+        } catch { recovered ||= reportRecovered /* Retry the recovery hint when the local Host reconnects. */ }
         finally { running = false; if (again) { again = false; void report() } }
       }
       const change = () => { void report() }

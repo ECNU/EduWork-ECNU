@@ -12,9 +12,9 @@ An institution-specific service reporting only a random installation identifier,
 - The random installation UUID survives data-folder moves and upgrades. It does not use hardware serials, hostname or browser fingerprints. Platform/architecture are actual values; OS versions are not guessed.
 - Requests use OAuth Access Tokens, never model API Keys. The account layer owns refresh and at most one retry after 401. Browser RPC exposes only presence and normalized status, not tokens, raw server responses or account identifiers.
 
-## Local Web backend
+## Electron and local Web configuration
 
-Runs directly in a single-user DSH Host without Go, `desktopBoundary` or a native account bridge. Supply trusted assembly configuration, not browser-editable settings:
+Electron and local Web share the DSH Host OAuth backend. The retained `backend: "web"` name does not mean the client platform is Web. The university distribution explicitly enables it in `edition/distribution.json`, binding the `ecnu` account to the university service. Other deployments supply trusted assembly configuration, not browser-editable settings:
 ```json
 {
   "backend": "web",
@@ -22,13 +22,13 @@ Runs directly in a single-user DSH Host without Go, `desktopBoundary` or a nativ
   "profileID": "campus",
   "baseURL": "https://campus.example.edu",
   "endpoint": "/user/active",
-  "productName": "EduWork@ECNU",
-  "version": "0.3.0-dev.1",
-  "platform": "web"
+  "productName": "EduWork@ECNU"
 }
 ```
 
-`backend: "web"` requires explicit `enabled: true`. Disabled instances neither require a destination/OIDC service nor contact remote servers. Keep it disabled until the production endpoint is available; the example domain is a placeholder.
+The plugin requires explicit `enabled: true`. Disabled instances neither require a destination/OIDC service nor contact remote servers. Replace the example domain with the actual service address.
+
+Desktop clients automatically report `platform: "desktop"` and read the installed version from the host's `EDUWORK_PRODUCT_ROOT/assembly.json`. Prereleases report `channel: "dev"`; stable versions report `stable`. No per-release plugin version setting is needed. Standalone Web deployments can set `version` and `platform: "web"` explicitly. This channel describes the installed package, not the user's update subscription.
 
 Enabled instances require a configured `profileID` and explicit `baseURL`. The default `/user/active` endpoint must share that origin. Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)` handles credentials, refresh and target-origin validation. By default, only the exact profile issuer and `keyBinding.baseURL` origins are allowed; trusted assembly may add HTTPS origins through OIDC `authorizedOrigins`. This plugin exposes no RPC to change that allowlist or retrieve tokens.
 
@@ -38,11 +38,13 @@ The installation ID defaults to `$DSH_HOME/state/chatecnu-active/installation-id
 
 The existing `POST /user/active` wire contract uses `client.installation_id`. OAuth `client_id` belongs in the OIDC profile; there are no new wire `device_id` or `client_id` fields. Other metadata is name/version/platform/channel/device/os/arch/locale/timezone. Overlong version strings are omitted. Server `next_heartbeat_in` defaults to 600 seconds, bounded to 60–3600 seconds.
 
-## Native backend
+Only HTTPS endpoints are accepted, with HTTP loopback allowed for local testing. The `client` object contains no username, OAuth `client_id`, token or file path. Optional `os_version` is omitted; the server obtains the IP address. HTTP 200 with `status: "Success"` is successful even when `recorded` or `daily_recorded` is false.
+
+## Legacy native adapter
 
 Omitting `backend` or selecting `"native"` uses the desktop implementation with dynamic `desktopBoundary` and `enterpriseAccounts` dependencies. Only the institutional bundle loads it; the trusted catalog must also explicitly set `nativeExtensions["chatecnu.active-heartbeat"] = true`. It is off by default and can also be disabled with `enabled: false`.
 
-The native adapter at `dsh-desktop/internal/chatecnuactive` requests `/user/active`. The generic native account layer manages OAuth tokens, clears invalid refresh sessions, and preserves login on network failures. The installation ID lives under native `state/chatecnu/installation-id`; version, platform and architecture come from the native host.
+This compatibility adapter requires the old Go host's `/v1/extensions/chatecnu-active-heartbeat` endpoint. Current Electron distributions use the OAuth Host backend above and neither require nor start the old Go service.
 
 ## Development
 
@@ -50,4 +52,4 @@ The native adapter at `dsh-desktop/internal/chatecnuactive` requests `/user/acti
 
 Run `node --test test/*.test.mjs`. Host/client ModuleLoader tests default to `dist/dsh-cache/runtime-npm-0.1.5-rc.2`; `EDUWORK_TEST_RUNTIME` can select another prepared rc.2 runtime. Tests cover real Cordis loading, dynamic dependencies, disposal, official ModuleLoader with simulated DOM events, multi-page presence and synthetic local HTTP wire/error/installation-ID behavior. They use no real UAT service or credentials. OIDC protocol tests own refresh and trusted-origin coverage.
 
-Native checks use `go test ./internal/chatecnuactive ./internal/enterpriseauth ./internal/nativevault`. Validate the complete configured login/heartbeat flow in the assembled distribution before release.
+Validate the complete configured login/heartbeat flow in the assembled distribution before release.

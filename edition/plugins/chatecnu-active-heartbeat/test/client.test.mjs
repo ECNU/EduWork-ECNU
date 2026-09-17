@@ -56,3 +56,29 @@ test('official 0.1.5 module loader loads the presence client and its focus lifec
   assert.equal(requests.length, count)
 })
 
+test('online recovery arriving during an in-flight presence survives into the next report', async () => {
+  const window = new EventTarget(), document = new EventTarget()
+  document.visibilityState = 'visible'; document.hasFocus = () => true
+  let client, finish
+  const requests = []
+  window.__ModuleLoader__ = { load: value => { client = value.factory() } }
+  const ok = { json: async () => ({ result: { ok: true, value: '{"state":"ok"}' } }) }
+  vm.runInNewContext(await readFile(new URL('../lib/client.js', import.meta.url), 'utf8'), {
+    window, document, crypto: { randomUUID: () => 'abc-123' }, navigator: { language: 'zh-CN' }, Intl, AbortSignal, queueMicrotask,
+    setInterval: () => 1, clearInterval: () => {}, fetch: async (_path, init) => {
+      requests.push(JSON.parse(JSON.parse(init.body).payload.args.request))
+      if (requests.length === 1) return new Promise(resolve => { finish = () => resolve(ok) })
+      return ok
+    },
+  })
+  const dispose = client.apply({ on() {} })
+  try {
+    window.dispatchEvent(new Event('online'))
+    assert.equal(requests.length, 1)
+    finish(); await new Promise(resolve => setImmediate(resolve))
+    assert.equal(requests.length, 2)
+    assert.equal(requests[0].recovered, false)
+    assert.equal(requests[1].recovered, true)
+  } finally { dispose() }
+})
+

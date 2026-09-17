@@ -14,6 +14,21 @@ const { loadUserConfig } = await import(pathToFileURL(resolve(core, 'dsh-host/us
 const { updateEnterpriseModels } = await import(pathToFileURL(resolve(core, 'dsh-host/enterprise-model-updates.mjs')))
 const example = name => loadUserConfig(fileURLToPath(new URL(`../desktop-examples/${name}.jsonc`, import.meta.url)))
 
+test('school release enables OAuth heartbeat on its profile origin without a hard-coded version or credentials', async () => {
+  const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url), 'utf8'))
+  const plugin = distribution.plugins.find(row => row.id === 'chatecnu-active-heartbeat')
+  const { config } = plugin
+  assert.equal(config.enabled, true)
+  assert.equal(config.backend, 'web')
+  const school = example('ecnu').organizations.find(profile => profile.id === config.profileID)
+  assert.ok(school)
+  assert.equal(new URL(config.baseURL).origin, new URL(school.oidc.issuer).origin)
+  assert.equal(config.endpoint, '/user/active')
+  assert.equal(config.version, undefined)
+  assert.equal(config.installationID, undefined)
+  assert.deepEqual(Object.keys(config).sort(), ['backend', 'baseURL', 'enabled', 'endpoint', 'productName', 'profileID'])
+})
+
 test('ECNU media uses public providers and keeps existing IDs, voices and sizes', async () => {
   const { normalizeMediaConfig } = await import(pathToFileURL(resolve(core, 'dsh-host/media-config.mjs')))
   const defaults = JSON.parse(await readFile(new URL('../desktop/media-defaults.json', import.meta.url), 'utf8'))

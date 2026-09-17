@@ -48,6 +48,9 @@ jobs:
           if ($LASTEXITCODE) { throw 'Core source checks failed' }
           $env:EDUWORK_CORE_ROOT = (Resolve-Path core).Path
           node --test institution/edition/test/enterprise-config.test.mjs
+          if ($LASTEXITCODE) { throw 'Institution configuration checks failed' }
+          node --test institution/edition/plugins/chatecnu-active-heartbeat/test/scheduler.test.mjs institution/edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs
+          if ($LASTEXITCODE) { throw 'Heartbeat contract checks failed' }
       - name: Build with the public core implementation
         shell: pwsh
         run: ./core/scripts/ci-eduwork-web.ps1 -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -BuildOnly

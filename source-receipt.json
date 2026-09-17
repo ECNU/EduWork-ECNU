@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-17T06:49:24.336Z",
-  "fileSetSHA256": "bd3121938bc90483c6449aed609bb9d4914829c1a5f046a514a6e0ccc91ad7ca",
+  "createdAt": "2026-09-17T07:04:06.591Z",
+  "fileSetSHA256": "1f21f17a0a56f3db4936b8962a21e4cec5681428374f3395e769b861fd955b06",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "f0a76ac52928bdb8d9bb7a473ac5f891eb4968f7e5ca1eddcc19660414b22e4a"
+      "sha256": "0e51d39f5f1cca8bfc605acac8d0892f0b8180a9c14e2bae2b2a35ea1029c95f"
     },
     {
       "path": ".github/workflows/release-windows.yml",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "eba28fa072a9e51a10b6e0d2aad492e9b70318158d39e5238266483eb7aab014"
+      "sha256": "493f9f8bd27b52029173fb9487ae11ab15a15a09100f6b38a55903bbfef5b993"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "961c7fea7b3936dd55a8a3594999304a04d9d2c472ee3cb313497dd88ad3254a"
+      "sha256": "a243cd2841065cb493bec5558e299fb53aa0362c95cc64e26897767d38f020e0"
     },
     {
       "path": "docs/images/README_EN.md",

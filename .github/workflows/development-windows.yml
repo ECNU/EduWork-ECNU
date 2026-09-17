@@ -21,6 +21,11 @@ on:
         default: both
         type: choice
         options: [both, windows, macos]
+      verify_publisher_bootstrap:
+        description: 'Mac acceptance: activate the published signed configuration with no account login'
+        required: true
+        default: false
+        type: boolean
 permissions:
   contents: read
 concurrency:
@@ -68,6 +73,7 @@ jobs:
           RELEASE_NOTES: ${{ inputs.release_notes }}
           RELEASE_NOTES_APPROVED: ${{ inputs.notes_approved }}
           TARGET_PLATFORM: ${{ matrix.platform }}
+          VERIFY_PUBLISHER_BOOTSTRAP: ${{ inputs.verify_publisher_bootstrap }}
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
@@ -75,7 +81,9 @@ jobs:
           node core/scripts/check-source-docs.mjs core
           node core/scripts/check-source-docs.mjs institution
           $script = "./core/scripts/ci-eduwork-$($env:TARGET_PLATFORM)-release.ps1"
-          & $script -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:RELEASE_VERSION -ReleaseNotesFile $env:RELEASE_NOTES -ReleaseNotesApproved -Output "$env:RUNNER_TEMP/ew-candidate"
+          $acceptance = @{}
+          if ($env:TARGET_PLATFORM -eq 'macos' -and $env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true') { $acceptance.VerifyPublisherBootstrap = $true }
+          & $script -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:RELEASE_VERSION -ReleaseNotesFile $env:RELEASE_NOTES -ReleaseNotesApproved -Output "$env:RUNNER_TEMP/ew-candidate" @acceptance
       - name: Retain validation reports
         if: always()
         uses: actions/upload-artifact@v4

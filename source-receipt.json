@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.3.6-dev.20260915.1",
+  "version": "0.3.6-dev.20260917.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-17T06:21:18.851Z",
-  "fileSetSHA256": "69fc98260c9dad262bfebe5a0c1208b2ac5009e7cdf0f18afda97899ae1a649f",
+  "createdAt": "2026-09-17T06:30:49.162Z",
+  "fileSetSHA256": "465b36ad37b2f4987ced7502780351f7fcb6f1357649f9ae60426ef305b87589",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "0fec1e8b10bb5b7da1ee62acb89f8529ab9684ef85d152068af2abf7c7dab0b3"
+      "sha256": "953146c54ecf09a37f4b8820e441f16f6cea92ffbe3c5f16adc2fa57acfe3a06"
     },
     {
       "path": ".github/workflows/release-windows.yml",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "7079d0c40f405f676eed1d654bc804d82bd29989c903331055d56f4aad39463c"
+      "sha256": "9078587944141dcbbcb33079156b2f455abe27592ba656d40506208263a28dc9"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "9b8bca7720dc4330eecfee38eee7b380d0d6f639ae9f8f24dee61321ac4204d5"
+      "sha256": "961c7fea7b3936dd55a8a3594999304a04d9d2c472ee3cb313497dd88ad3254a"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -66,6 +66,10 @@
     {
       "path": "docs/releases/0.3.5.md",
       "sha256": "9406f215b0a0e58dbde1eac4ff3703ad67ce24300f4b542e73b285e9ff66cff4"
+    },
+    {
+      "path": "docs/releases/0.3.6-dev.20260917.1.md",
+      "sha256": "443a20dbd4288d1d6eb8110572054a6de0345df9ea29881a5c55629eb7581d3a"
     },
     {
       "path": "docs/USER_GUIDE.md",

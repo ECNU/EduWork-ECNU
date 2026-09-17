@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260915.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-17T05:59:07.620Z",
-  "fileSetSHA256": "add1d98ab348f8a9dada0876e7b2ae53673fadc808616ad425f1f36799ef4083",
+  "createdAt": "2026-09-17T05:59:58.917Z",
+  "fileSetSHA256": "a1d2e7c3d5cb518b06a0c3ee5c3fef8dd79b59fb33b9e222cc9068fabb64e049",
   "files": [
     {
       "path": ".gitattributes",
@@ -105,7 +105,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "bc325e2347ba21907406e1d705f68674078f0bb049414037dc2db4c47b54fbcd"
+      "sha256": "24d9368b41f0b0bb54f7254afcf409c629d3c18649f4154381dfd5f0e6ca894a"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",

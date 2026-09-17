@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260915.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-16T14:05:48.037Z",
-  "fileSetSHA256": "f62edf3aa45dd3ade724ab46e6058f49ff2fe401335645487dcb1f493e7dbad8",
+  "createdAt": "2026-09-17T03:18:24.242Z",
+  "fileSetSHA256": "7007cc400d7f6648e3e6620b20a11957f167a8e65bd601f504b3ec486aec46eb",
   "files": [
     {
       "path": ".gitattributes",
@@ -21,7 +21,7 @@
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "ddd0f7ff224d91bd897abce32e0a7e92823ca8bbb883f5fd9fcdb01f33f42a65"
+      "sha256": "83ac7f7edf70825ee51fdd86f489f0ef4f9ae788135ec9e680d73b55f2548c12"
     },
     {
       "path": ".gitignore",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "b2ef3fca21232baac02378fac896f69aabd89fffe025db6647d202e91f3544ca"
+      "sha256": "17a9899940e746553acefd9241ce15ef042fbda9edacb88182e55eb2f8b11545"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "81753b7b22e34205725a711272f12990c5b8a81cd937193dd6ced795b8fed6c6"
+      "sha256": "9fec2527cf873a6bb6b1354d91a37c995b0c76211cbb0dc3e67865f61256c8eb"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -161,7 +161,7 @@
     },
     {
       "path": "edition/plugins/ecnu-account-resources/build-client.ps1",
-      "sha256": "0bf6e12c4648ed7b9a6922d0ae28374dbbc38ebb81caba021ff89edd975d8a35"
+      "sha256": "7823167ef3f29809130c47f56cd72e3ed55125a9bc604c0277903f8a1681daab"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/lib/client.js",

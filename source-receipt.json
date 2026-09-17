@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260915.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-17T05:59:58.917Z",
-  "fileSetSHA256": "a1d2e7c3d5cb518b06a0c3ee5c3fef8dd79b59fb33b9e222cc9068fabb64e049",
+  "createdAt": "2026-09-17T06:21:18.851Z",
+  "fileSetSHA256": "69fc98260c9dad262bfebe5a0c1208b2ac5009e7cdf0f18afda97899ae1a649f",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "b2ef3fca21232baac02378fac896f69aabd89fffe025db6647d202e91f3544ca"
+      "sha256": "7079d0c40f405f676eed1d654bc804d82bd29989c903331055d56f4aad39463c"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "2db69ecbf961c71b2130cb32590f6bd307396c0bc1bfc1ce6c527327da864e27"
+      "sha256": "9b8bca7720dc4330eecfee38eee7b380d0d6f639ae9f8f24dee61321ac4204d5"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -97,15 +97,19 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "2f5260e5778da7eebdcd4eecf3fa850899605d39399238fe1fb2f9ce1c2e7c50"
+      "sha256": "5358ad7684d4bb449ea1428899885b3224e5f337370eb981fc6ec907fd009eb5"
     },
     {
       "path": "edition/desktop/media-defaults.json",
       "sha256": "9ddb1755fe98e668dcc93f7990709bf31a603524d790d7430b6a8378bad9c3a8"
     },
     {
+      "path": "edition/desktop/publisher-bootstrap.json",
+      "sha256": "2af5f8f2cc1cab6076f2b5371a7a4fae4df108344fb64163b92f383b8d5f0d8a"
+    },
+    {
       "path": "edition/distribution.json",
-      "sha256": "24d9368b41f0b0bb54f7254afcf409c629d3c18649f4154381dfd5f0e6ca894a"
+      "sha256": "7a1ac462987580945a583b51dfba399ce0fd48202d6cf18dad38ee26174cca22"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -329,7 +333,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "cd7911660061bef3e06378ec15ebbff556078362aa349eb9831817650b92c5c0"
+      "sha256": "6875bc2e03117db99ce2e5ba104a3f788b55a05ea62adf4f9a79a2f5497d6556"
     },
     {
       "path": "LICENSE",
@@ -337,11 +341,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "c0a2cf1e12d111bab03b9479edf6b7f846e680677534596689e390c3253906bc"
+      "sha256": "39a0e70e8902fb3edec8659b264130d8b4bbe1a9d960e58c7408d5844f6805de"
     },
     {
       "path": "README.md",
-      "sha256": "c4607ad804463864c4fe89a719f842e35c80ba0b2dd62305703321c04f86013f"
+      "sha256": "67772741ab4271ffdf18ff869fe8e95973e363e5cf1db1b203f90879e943274e"
     }
   ],
   "artifacts": [],

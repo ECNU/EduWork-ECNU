@@ -15,10 +15,16 @@ on:
         required: true
         default: false
         type: boolean
+      platform:
+        description: 'Build both platforms, or diagnose one native platform'
+        required: true
+        default: both
+        type: choice
+        options: [both, windows, macos]
 permissions:
   contents: read
 concurrency:
-  group: desktop-candidate-${{ inputs.version }}
+  group: desktop-candidate-${{ github.sha }}-${{ inputs.platform || 'both' }}
   cancel-in-progress: false
 jobs:
   build:
@@ -27,11 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: windows-latest
-            platform: windows
-          - runner: macos-15
-            platform: macos
+        include: ${{ fromJSON(inputs.platform == 'windows' && '[{"runner":"windows-latest","platform":"windows"}]' || inputs.platform == 'macos' && '[{"runner":"macos-15","platform":"macos"}]' || '[{"runner":"windows-latest","platform":"windows"},{"runner":"macos-15","platform":"macos"}]') }}
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4

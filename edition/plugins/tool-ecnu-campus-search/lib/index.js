@@ -4,14 +4,15 @@ import { normalizeCampusSearchRequest, resolveCampusSearchConfig, searchCampus }
 export const name = 'tool-ecnu-campus-search'
 export const inject = ['tools', 'credentials']
 
-async function apiKey(ctx, config) {
-  const hit = config.oidcProfileId
-    ? await ctx.get?.('oidcAccounts')?.resolveBoundCredential?.(config.oidcProfileId, { credentialRef: config.credentialRef, runtimeBaseURL: config.baseURL })
-    : await ctx.credentials.resolve(config.credentialRef)
-  if (hit === undefined || typeof hit.value !== 'string' || hit.value.trim().length === 0) {
-    throw new Error('ChatECNU is not configured; sign in or add its API key in Model Services')
+async function authorization(ctx, config) {
+  if (config.oidcProfileId) {
+    const account = ctx.get?.('oidcAccounts')
+    if (!await account?.modelAuthorization?.(config.oidcProfileId, config.baseURL)) throw new Error('Sign in to the configured model service')
+    return { fetchImpl: (url, init) => account.authorizedFetch(config.oidcProfileId, url, init) }
   }
-  return hit.value
+  const hit = await ctx.credentials.resolve(config.credentialRef)
+  if (!hit?.value?.trim()) throw new Error('Configure the model service API key')
+  return { apiKey: hit.value }
 }
 
 function boundedSignal(parent, milliseconds) {
@@ -48,7 +49,7 @@ export function apply(ctx, rawConfig = {}) {
       const request = normalizeCampusSearchRequest(args)
       const result = await searchCampus({
         baseURL: config.baseURL,
-        apiKey: await apiKey(ctx, config),
+        ...await authorization(ctx, config),
         request,
         signal: boundedSignal(exec.signal, config.requestTimeoutMs),
       })

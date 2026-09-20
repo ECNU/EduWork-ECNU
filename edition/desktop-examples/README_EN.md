@@ -10,7 +10,7 @@ School editions can distribute the unmodified GitHub CI archive. First launch do
 
 Use [ecnu.jsonc](ecnu.jsonc), [cernet.jsonc](cernet.jsonc), or the generic [organization.jsonc](https://github.com/ecnu/EduWork/blob/main/config/desktop/examples/organization.jsonc). Replace placeholder Client IDs privately; real deployment parameters stay outside the source repository.
 
-Edit organization login, model and media parameters in the active file for UAT. Set the existing `contentUpdates.configuration` to `false` to freeze configuration while retaining Skills updates; also set `skills` to `false` to disable all content updates. Development/stable software channels are independent of UAT/production services. Use separate installation and data directories for sustained testing.
+Edit organization login, model and media parameters in the active file for UAT. The ECNU example also lists installed service endpoints under `plugins`; update campus search, vision assistance and heartbeat addresses there. For an explicitly allowed HTTP development origin, heartbeat requires both `allowInsecureDevelopment: true` and the exact `insecureDevelopmentOrigin`, matching the account profile. Production requires HTTPS. Set the existing `contentUpdates.configuration` to `false` to freeze configuration while retaining Skills updates; also set `skills` to `false` to disable all content updates. Development/stable software channels are independent of UAT/production services. Use separate installation and data directories for sustained testing.
 
 Static deployments can use the public core's `scripts/configure-desktop-archive.ps1` to add `config/eduwork.jsonc` without changing CI program bytes. New archives no longer generate versioned configuration files. Closing to tray does not reload configuration: fully quit and restart.
 
@@ -23,8 +23,8 @@ Static deployments can use the public core's `scripts/configure-desktop-archive.
 
 ## Protocol constraints
 
-The local organization `id` differs from the server's `provider.id`. Both current ECNU/CERNET examples use Provider `chatecnu`, matching `bootstrap.provider.id`; they cannot be enabled together unchanged. Distinct server Provider IDs or separate client configurations are required.
+Organization `id` identifies the account profile; `provider.id` names its local model route. Both examples use `chatecnu` as that route and cannot be enabled together unchanged. Assign distinct local Provider IDs when combining profiles.
 
-Without organizations, personal API-key models remain available. Identity-only login can omit `keyBinding` and `provider`; automatic model provisioning requires the resource protocol. Quota and heartbeat are ECNU extensions, not public OIDC requirements.
+Personal API-key models remain available. Model authorization uses oidc-llm discovery at `auth.discoveryUrl` and Access Tokens; migrate legacy `keyBinding` profiles and sign in again. Identity-only OIDC uses the public identity-only example. Quota and heartbeats remain ECNU extensions.
 
-Client IDs are deployment parameters and remain placeholders in examples. Never include passwords, API keys, client secrets or login tokens in configuration or public archives. Desktop uses PKCE and loopback callbacks. Enterprise credentials use the `EDUWORK_API_KEY` reference name; personal Provider credentials stay independent.
+Client IDs are deployment parameters and remain placeholders in examples. Never include passwords, API keys, client secrets or login tokens in configuration or public archives. Desktop uses PKCE and loopback callbacks. Enterprise model requests use the signed-in account’s scoped Access Token; personal Provider credentials stay independent.

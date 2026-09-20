@@ -53,8 +53,11 @@ test('text-only max uses specialist HTTP through the mounted adapter; native plu
       enterpriseTransforms: transforms,
       effect: fn => { dispose = fn() },
       credentials: { resolve: async () => { throw Error('must use the selected OIDC profile') } },
-      get: name => name === 'oidcAccounts' ? { resolveBoundCredential: async (id, options) => {
-        credentials.push({ id, ...options }); return { value: 'synthetic-test-key' }
+      get: name => name === 'oidcAccounts' ? { modelAuthorization: async (id, runtimeBaseURL) => {
+        credentials.push({ id, runtimeBaseURL }); return true
+      }, authorizedFetch: async (id, url, init) => {
+        assert.equal(id, 'ecnu'); assert.equal(init.headers.Authorization, undefined)
+        return fetch(url, { ...init, headers: { ...init.headers, Authorization: 'Bearer synthetic-test-key' } })
       } } : undefined,
       attachments: { readImage: async ref => {
         assert.equal(ref.attachmentId, 'synthetic-pixel')
@@ -76,7 +79,7 @@ test('text-only max uses specialist HTTP through the mounted adapter; native plu
     assert.equal(httpCalls[0].body.model, 'ecnu-plus')
     assert.equal(httpCalls[0].body.stream, false)
     assert.match(httpCalls[0].body.messages[0].content[1].image_url.url, /^data:image\/png;base64,/u)
-    assert.deepEqual(credentials, [{ id: 'ecnu', credentialRef: 'EDUWORK_API_KEY', runtimeBaseURL: baseURL }])
+    assert.deepEqual(credentials, [{ id: 'ecnu', runtimeBaseURL: baseURL }])
     assert.equal(forwarded[0].messages[0].content[1].type, 'text')
     assert.match(forwarded[0].messages[0].content[1].text, /untrusted_visual_evidence[\s\S]*测试图片是一个像素/u)
     assert.deepEqual(source, original, 'original image history stays unchanged')

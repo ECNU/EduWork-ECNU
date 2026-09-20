@@ -16,7 +16,7 @@
     "@deepseek-ai/dsh-attachment": "0.1.2-rc.1",
     "@deepseek-ai/dsh-credentials": "0.1.2-rc.1",
     "@deepseek-ai/dsh-home-paths": "0.1.2-rc.1",
-    "@eduwork/dsh-oidc": "0.1.0"
+    "@eduwork/dsh-oidc": "0.3.0-dev.1"
   },
   "license": "MIT"
 }

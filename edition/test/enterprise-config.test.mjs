@@ -22,7 +22,7 @@ test('school release enables OAuth heartbeat on its profile origin without a har
   assert.equal(config.backend, 'web')
   const school = example('ecnu').organizations.find(profile => profile.id === config.profileID)
   assert.ok(school)
-  assert.equal(new URL(config.baseURL).origin, new URL(school.oidc.issuer).origin)
+  assert.equal(new URL(config.baseURL).origin, new URL(school.auth.expectedIssuer).origin)
   assert.equal(config.endpoint, '/user/active')
   assert.equal(config.version, undefined)
   assert.equal(config.installationID, undefined)
@@ -69,7 +69,9 @@ test('deployment examples keep service provider IDs separate from local profile 
     const profile = example(id).organizations[0]
     assert.equal(profile.id, id)
     assert.equal(profile.provider.id, 'chatecnu')
-    assert.equal(profile.keyBinding.credentialRef, 'EDUWORK_API_KEY')
+    assert.equal(profile.keyBinding, undefined)
+    assert.equal(profile.auth.identityMode, 'oidc')
+    assert.equal(profile.provider.baseURL, undefined)
   }
 })
 
@@ -127,8 +129,8 @@ test('publisher migrates to one editable school config with one backup and prese
  const bootstrap=await publisherBootstrap({ownership:'publisher',product,distribution:'synthetic-school',version,configPath:active,dataRoot:join(root,'data')})
  const config=loadUserConfig(active)
  const profiles=loadEnterpriseProfiles({profiles:config.organizations},{})
- const routes=resolveEnterpriseProfiles(enterpriseProviderConfig(profiles))
- const model=routes.flatMap(route=>route.models).find(model=>model.id==='ecnu-max')
+ const model=config.organizations[0].provider.models.find(model=>model.id==='ecnu-max')
+ assert.equal(profiles.get('ecnu').auth.experimentalOidcLlm,true)
  assert.deepEqual(model.input,['text'])
  assert.equal(model.contextWindow,524288)
  assert.equal(model.maxTokens,393216)
@@ -140,4 +142,15 @@ test('publisher migrates to one editable school config with one backup and prese
  assert.equal(await readFile(personal,'utf8'),'{"personalProvider":"untouched","theme":"blue"}')
  const policy=JSON.parse(await readFile(new URL('../desktop/configuration-policy.json',import.meta.url)))
  assert.equal(policy.ownership,'publisher')
+})
+
+
+test('school plugin endpoints are editable in the same file and skill authorization follows its account', async () => {
+  const configured=example('ecnu').pluginConfig
+  assert.equal(configured['chatecnu-campus-search'].baseURL,configured['chatecnu-vision'].baseURL)
+  assert.equal(new URL(configured['chatecnu-active-heartbeat'].baseURL).origin,new URL(configured['chatecnu-vision'].baseURL).origin)
+  const distribution=JSON.parse(await readFile(new URL('../distribution.json',import.meta.url),'utf8'))
+  const skill=distribution.skills.find(skill=>skill.name==='ecnu-campus-search')
+  assert.equal(skill.metadata.eduwork.oidcProfileId,'ecnu')
+  assert.equal(skill.metadata.eduwork.runtimeBaseURL,undefined)
 })

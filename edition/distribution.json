@@ -75,8 +75,7 @@
       "metadata": {
         "eduwork": {
           "credentialRef": "EDUWORK_API_KEY",
-          "oidcProfileId": "ecnu",
-          "runtimeBaseURL": "https://chat.ecnu.edu.cn/open/api/v1"
+          "oidcProfileId": "ecnu"
         }
       }
     }
@@ -111,6 +110,11 @@
       "root": "edition",
       "source": "edition/desktop/publisher-bootstrap.json",
       "target": "desktop/publisher-bootstrap.json"
+    },
+    {
+      "root": "edition",
+      "source": "edition/desktop/mac-updates.json",
+      "target": "desktop/mac-updates.json"
     }
   ],
   "patches": []

@@ -31,7 +31,7 @@ Electron 和单机 Web 共用 DSH Host 的 OAuth 后端，配置名称沿用 `ba
 
 桌面平台自动上报为 `desktop`，从宿主 `EDUWORK_PRODUCT_ROOT/assembly.json` 读取当前安装版本；预发布版本对应 `channel: "dev"`，正式版本对应 `stable`。装配无需随每次发布改写插件版本字段。独立 Web 部署可显式指定 `version` 和 `platform: "web"`。此处的 `channel` 表示当前安装包，不是用户选择的更新订阅渠道。
 
-启用时必须有已配置的 `profileID` 和显式 `baseURL`。`endpoint` 默认 `/user/active`，必须与 `baseURL` 同源。OIDC 插件提供 Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)`，负责令牌、刷新及目标 origin 校验。默认只允许该 profile 的 issuer 和 keyBinding.baseURL 的精确 origin；跨服务域名由受信装配在 OIDC 配置的 `authorizedOrigins` 中显式添加 HTTPS origin。本包无修改此白名单或获取令牌的 RPC。
+启用时必须有已配置的 `profileID` 和显式 `baseURL`。`endpoint` 默认 `/user/active`，必须与 `baseURL` 同源。OIDC 插件提供 Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)`，负责令牌、刷新及目标 origin 校验。默认只允许该 profile 的 发现结果中 issuer 和资源服务的精确 origin；跨服务域名由受信装配在 OIDC 配置的 `authorizedOrigins` 中显式添加 HTTPS origin。本包无修改此白名单或获取令牌的 RPC。
 
 已登录但没有模型 Key 的身份账号也能上报。`oidc/accounts-changed` 事件只用于对应 profile 的启停；已主动退出的账号保持安静，失效账号交由 OIDC 登录流程处理。
 

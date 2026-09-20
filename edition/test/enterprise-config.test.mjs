@@ -104,7 +104,7 @@ test('edition catalog upgrades known 1M/256K defaults and preserves custom limit
   }
 })
 
-test('publisher configuration replaces the full school profile after an upgrade while preserving the old file and personal settings',async t=>{
+test('publisher migrates to one editable school config with one backup and preserves personal settings',async t=>{
  const root=await mkdtemp(join(tmpdir(),'ecnu-config-upgrade-'))
  t.after(()=>rm(root,{recursive:true,force:true}))
  const {desktopConfigurationPath}=await import(pathToFileURL(resolve(core,'dsh-electron/src/configuration-policy.mjs')))
@@ -116,8 +116,15 @@ test('publisher configuration replaces the full school profile after an upgrade 
  await writeFile(personal,'{"personalProvider":"untouched","theme":"blue"}')
  const version='0.3.6-dev.20260914.3'
  const active=desktopConfigurationPath({root,version,ownership:'publisher'})
+ assert.equal(active,old)
+ const legacy=join(root,'config/eduwork.'+version+'.jsonc')
  const source=await readFile(new URL('../desktop-examples/ecnu.jsonc',import.meta.url),'utf8')
- await writeFile(active,source)
+ await writeFile(legacy,source)
+ const product=join(root,'product')
+ await mkdir(join(product,'resources/desktop'),{recursive:true})
+ await writeFile(join(product,'resources/desktop/eduwork.jsonc'),'{"schemaVersion":1,"organizations":[]}')
+ const {publisherBootstrap}=await import(pathToFileURL(resolve(core,'dsh-host/publisher-bootstrap.mjs')))
+ const bootstrap=await publisherBootstrap({ownership:'publisher',product,distribution:'synthetic-school',version,configPath:active,dataRoot:join(root,'data')})
  const config=loadUserConfig(active)
  const profiles=loadEnterpriseProfiles({profiles:config.organizations},{})
  const routes=resolveEnterpriseProfiles(enterpriseProviderConfig(profiles))
@@ -127,7 +134,9 @@ test('publisher configuration replaces the full school profile after an upgrade 
  assert.equal(model.maxTokens,393216)
  assert.equal(config.media.providers[0].images.model,'ecnu-image')
  assert.equal(config.media.providers[0].speech.model,'ecnu-tts')
- assert.equal(await readFile(old,'utf8'),'{"schemaVersion":1,"product":{"name":"Old"},"organizations":[]}')
+ assert.equal(await readFile(bootstrap.file.backup,'utf8'),'{"schemaVersion":1,"product":{"name":"Old"},"organizations":[]}')
+ await bootstrap.file.cleanupLegacy()
+ await assert.rejects(readFile(legacy),{code:'ENOENT'})
  assert.equal(await readFile(personal,'utf8'),'{"personalProvider":"untouched","theme":"blue"}')
  const policy=JSON.parse(await readFile(new URL('../desktop/configuration-policy.json',import.meta.url)))
  assert.equal(policy.ownership,'publisher')

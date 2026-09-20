@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-17T08:31:14.437Z",
-  "fileSetSHA256": "7d9c0474805a537ee7473a438284dca9515c474f48b0a92474e4f5bd0fb2eda8",
+  "createdAt": "2026-09-20T13:41:09.028Z",
+  "fileSetSHA256": "85efbc499434a3c329b47929888996808d7b933e14dac539c7def4f80c8f2fe8",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "58b2331a2d905589b0c1479fbc9042eaa64052847996a45743ce6d6995d16f53"
+      "sha256": "6b078edadfbdd2478d9415a5b4d92f9dbeebb71efcbeac80a3af151f4b756510"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "0b92f6074d14b8f773cc2ab4d8bd8fb8e0254f7d62db6825114841c3b42d0515"
+      "sha256": "7cfb123f4ac35fa9774880f404ee9cb4003c4bfe90794df74367c56aef102ed3"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -77,7 +77,7 @@
     },
     {
       "path": "docs/USER_GUIDE.md",
-      "sha256": "05f52dc35856a96f165c406c33af277f155e6e098241b361031c1b3853a6960f"
+      "sha256": "3903238c1db4054116b862f0e10b1603cf9e5660366def323ed1cbba9d1060bc"
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
@@ -89,11 +89,11 @@
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
-      "sha256": "2854f35c78bfdf5927742e47a4d2286d166bca00b25c9c27b7bc8321bdcc9636"
+      "sha256": "f1030d733de5cbf3778b1096da7bb19f59285433e52aeaa66496fe19958c1c7c"
     },
     {
       "path": "edition/desktop-examples/README.md",
-      "sha256": "2c28793e5e00060509223d397e7c397c1ada3d899bf1d68bc2c50b3402d877e9"
+      "sha256": "4a3afbe71b8ed8b8e623f5b98b21a4d7dac990214e4dd97fca913f95e7792114"
     },
     {
       "path": "edition/desktop/configuration-policy.json",
@@ -105,7 +105,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "5358ad7684d4bb449ea1428899885b3224e5f337370eb981fc6ec907fd009eb5"
+      "sha256": "ed71484c222e07d64715a5e653254651b6060853972c1b2e2448135cfd01ee96"
     },
     {
       "path": "edition/desktop/media-defaults.json",
@@ -341,7 +341,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "6875bc2e03117db99ce2e5ba104a3f788b55a05ea62adf4f9a79a2f5497d6556"
+      "sha256": "9e02c5021eda32776ec9851c23f28420d0849d929dfabab3ff68524ebbc75701"
     },
     {
       "path": "LICENSE",

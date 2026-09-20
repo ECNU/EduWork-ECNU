@@ -1,9 +1,9 @@
 // EduWork@ECNU 的公开发行默认配置。不含实际机构 Client ID 或个人凭据。
 // CI 原包只携带 publisher-bootstrap.json 中的更新源和验签公钥。
 // 首次启动下载签名的学校配置；已有配置可离线启动，后续通过内容更新维护。
-// 生效缓存保存在用户数据目录；不向 .app 内或旧版配置文件写入。
+// 下载后写入唯一生效的 config/eduwork.jsonc；Mac 配置位于用户目录。
 // 完整格式和字段说明见 config/examples；示例的 Client ID 占位符不能直接登录。
-// 使用者无需编辑此配置。个人设置、凭据和 data 与学校配置分开保留。
+// 可直接编辑生效文件，退出并重启后生效；自动更新保留手工修改，仅保留一份回退备份。
 {
   "schemaVersion": 1,
   "product": { "name": "EduWork@ECNU" },

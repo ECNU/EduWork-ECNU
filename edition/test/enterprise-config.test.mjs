@@ -10,7 +10,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 // the implementation. Missing inputs must fail instead of skipping assertions.
 const core = process.env.EDUWORK_CORE_ROOT
 if (!core) throw new Error('Set EDUWORK_CORE_ROOT to the checkout pinned by core.lock.json')
-const { loadUserConfig } = await import(pathToFileURL(resolve(core, 'dsh-host/user-config.mjs')))
+const { loadUserConfig, parseUserConfig } = await import(pathToFileURL(resolve(core, 'dsh-host/user-config.mjs')))
 const { updateEnterpriseModels } = await import(pathToFileURL(resolve(core, 'dsh-host/enterprise-model-updates.mjs')))
 const example = name => loadUserConfig(fileURLToPath(new URL(`../desktop-examples/${name}.jsonc`, import.meta.url)))
 
@@ -33,8 +33,10 @@ test('school release enables OAuth heartbeat on its profile origin without a har
 test('CI edition carries only public bootstrap metadata and pins configuration trust', async () => {
   const path = fileURLToPath(new URL('../desktop/publisher-bootstrap.json', import.meta.url))
   const raw = JSON.parse(await readFile(path, 'utf8'))
-  assert.deepEqual(Object.keys(raw).sort(), ['contentUpdates', 'schemaVersion', 'updates'])
-  const config = loadUserConfig(path)
+  assert.deepEqual(Object.keys(raw).sort(), ['contentUpdates', 'migrateFrom', 'schemaVersion', 'updates'])
+  const { migrateFrom, ...descriptor } = raw
+  assert.deepEqual(migrateFrom, ['https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates'])
+  const config = parseUserConfig(path, JSON.stringify(descriptor))
   assert.equal(config.contentUpdates.publisher, 'eduwork-ecnu')
   assert.equal(config.contentUpdates.configuration, true)
   assert.equal(config.contentUpdates.bundled.configuration, 0)

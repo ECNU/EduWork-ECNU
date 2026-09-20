@@ -1,0 +1,16 @@
+{
+  "name": "@chatecnu-work/desktop-huashi-pet",
+  "version": "1.0.0",
+  "description": "小花狮桌面宠物（幸福花狮）· ECNU 版专属插件 / HuaShi Pet desktop mascot, ECNU-edition exclusive plugin",
+  "main": "electron/main.js",
+  "license": "MIT",
+  "author": "HuaShi Pet <xhan@admin.ecnu.edu.cn>",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win nsis x64"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  }
+}

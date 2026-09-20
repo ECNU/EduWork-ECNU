@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-20T15:52:42.910Z",
-  "fileSetSHA256": "21eef51a9513bcfd3ee6f77b7aa5cc1d091ac935194e839af68f608dfd475d9c",
+  "createdAt": "2026-09-20T15:57:15.526Z",
+  "fileSetSHA256": "1e031f4d3052931cd3ef2b10103a8ce2210eb320aad1c9569826fd93d5a3e3b3",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,11 +33,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "c377417557cf401c105bea80b8ec21c215e09477ec6b995385834b55cae9142a"
+      "sha256": "2dd7542e181871f59376e91d487171f20741ea1a8e8d775873cba34d1efe5691"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "55276159822167c272f2f39dd3ec378844d2d6d06313ddbe77cd5b5316ae6ac5"
+      "sha256": "63b569aa7d7fc805ad54d0bd7e9033726752d1b1710341658b2b3e37ee0a2589"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -124,12 +124,16 @@
       "sha256": "9ddb1755fe98e668dcc93f7990709bf31a603524d790d7430b6a8378bad9c3a8"
     },
     {
+      "path": "edition/desktop/publisher-bootstrap.darwin.json",
+      "sha256": "f80abe81b91710d749ce6713def4bb525b5b24e0c89071f753e9d8ef463bcf33"
+    },
+    {
       "path": "edition/desktop/publisher-bootstrap.json",
-      "sha256": "febde1b171c43cf772847205f982a659b1cd60b01c0b928dfc48febe5c0954d6"
+      "sha256": "db07c845cd7856240a80ec553df2d9fbca9807ec4d6eb6acb83b838f9376c13d"
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "10ff48dee2d5ffde2dd2569baa86a590b3bccd5706ac00dade7f20f4201f0789"
+      "sha256": "cfce4f247b72393fc394ac60da66cf3d7f5e4281a7776265c4f7cd2624e97d40"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -357,7 +361,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "9e52b1673fe49bd20b59507fd2aad31315c5c3cedce40354d3cb380b1edb9d62"
+      "sha256": "6c4a74801dc1482b9e5cd31116f8e40c5f7b92fa8de3356eae40f904cdb390aa"
     },
     {
       "path": "LICENSE",

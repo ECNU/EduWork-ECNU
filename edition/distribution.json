@@ -115,6 +115,11 @@
       "root": "edition",
       "source": "edition/desktop/mac-updates.json",
       "target": "desktop/mac-updates.json"
+    },
+    {
+      "root": "edition",
+      "source": "edition/desktop/publisher-bootstrap.darwin.json",
+      "target": "desktop/publisher-bootstrap.darwin.json"
     }
   ],
   "patches": []

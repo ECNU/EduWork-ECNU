@@ -45,6 +45,11 @@ test('CI edition carries only public bootstrap metadata and pins configuration t
   assert.deepEqual(seed.organizations, [])
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url), 'utf8'))
   assert.ok(distribution.resources.some(row => row.source === 'edition/desktop/publisher-bootstrap.json' && row.target === 'desktop/publisher-bootstrap.json'))
+  const mac = loadUserConfig(fileURLToPath(new URL('../desktop/publisher-bootstrap.darwin.json', import.meta.url)))
+  assert.notEqual(mac.contentUpdates.baseURL, config.contentUpdates.baseURL)
+  assert.equal(mac.contentUpdates.publicKey, config.contentUpdates.publicKey)
+  assert.equal(mac.updates.provider, 'disabled') // Sparkle owns Mac application updates.
+  assert.ok(distribution.resources.some(row => row.target === 'desktop/publisher-bootstrap.darwin.json'))
 })
 
 test('ECNU media uses public providers and keeps existing IDs, voices and sizes', async () => {

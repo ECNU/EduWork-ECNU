@@ -1,16 +1,58 @@
 {
-  "name": "@chatecnu-work/desktop-huashi-pet",
+  "name": "huashi-pet",
   "version": "1.0.0",
-  "description": "小花狮桌面宠物（幸福花狮）· ECNU 版专属插件 / HuaShi Pet desktop mascot, ECNU-edition exclusive plugin",
-  "main": "electron/main.js",
-  "license": "MIT",
-  "author": "HuaShi Pet <xhan@admin.ecnu.edu.cn>",
+  "description": "小花狮 - 华东师范大学吉祥物桌面宠物",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win nsis x64"
+    "icon": "node make-icon.js",
+    "pack": "electron-builder --dir",
+    "build": "electron-builder --win nsis"
   },
+  "author": "HuaShi Pet",
+  "license": "MIT",
   "devDependencies": {
     "electron": "^33.2.0",
     "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.ecnu.huashipet",
+    "productName": "小花狮桌面宠物",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "dependencies": {
+    "app-builder-bin": "^5.0.0-alpha.10"
   }
 }

@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-20T15:57:15.526Z",
-  "fileSetSHA256": "1e031f4d3052931cd3ef2b10103a8ce2210eb320aad1c9569826fd93d5a3e3b3",
+  "createdAt": "2026-09-20T15:57:41.146Z",
+  "fileSetSHA256": "bc27b8e3959f7e94b311e1f87f64bf696091478f5ea65fe4fec740e63f4f74e7",
   "files": [
     {
       "path": ".gitattributes",
@@ -125,7 +125,7 @@
     },
     {
       "path": "edition/desktop/publisher-bootstrap.darwin.json",
-      "sha256": "f80abe81b91710d749ce6713def4bb525b5b24e0c89071f753e9d8ef463bcf33"
+      "sha256": "4d26add2bbb9a282fe22a960e566032d920733575d8c989839b1cb33a3046845"
     },
     {
       "path": "edition/desktop/publisher-bootstrap.json",
@@ -361,7 +361,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "6c4a74801dc1482b9e5cd31116f8e40c5f7b92fa8de3356eae40f904cdb390aa"
+      "sha256": "6b8110ed90597bd47d8a976782dec32066b12603a74a1bdbadd588c75bd20af9"
     },
     {
       "path": "LICENSE",

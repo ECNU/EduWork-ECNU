@@ -48,7 +48,7 @@ test('CI edition carries only public bootstrap metadata and pins configuration t
   const mac = loadUserConfig(fileURLToPath(new URL('../desktop/publisher-bootstrap.darwin.json', import.meta.url)))
   assert.notEqual(mac.contentUpdates.baseURL, config.contentUpdates.baseURL)
   assert.equal(mac.contentUpdates.publicKey, config.contentUpdates.publicKey)
-  assert.equal(mac.updates.provider, 'disabled') // Sparkle owns Mac application updates.
+  assert.deepEqual(mac.updates, {}) // Sparkle owns Mac application updates; do not disable it.
   assert.ok(distribution.resources.some(row => row.target === 'desktop/publisher-bootstrap.darwin.json'))
 })
 

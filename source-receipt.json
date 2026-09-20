@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-20T14:43:01.101Z",
-  "fileSetSHA256": "c6f324522b31646577e9f35f8ac3686e535970eaa17eea28a713bb4b9af5109e",
+  "createdAt": "2026-09-20T14:43:55.131Z",
+  "fileSetSHA256": "a9479cd57b21f189657434a38d9c9ff6f10fc4fbcf731ed7bbb4288c5bbd8076",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "fea5b4d3f6ddc0eb69a6ff58b5bf7eef263352c08cf737488d1e77e0cd85a5c8"
+      "sha256": "289253fb924c0787e3caa2834832b3230690c201d23ee458f8779cd0d72f206d"
     },
     {
       "path": ".github/workflows/release-windows.yml",

@@ -87,9 +87,9 @@ jobs:
           node core/scripts/check-source-docs.mjs institution
           $script = "./core/scripts/ci-eduwork-$($env:TARGET_PLATFORM)-release.ps1"
           $acceptance = @{}
-          if ($env:DEVELOPMENT_ONLY -eq 'true') { $acceptance.Development = $true }
+          if ($env:DEVELOPMENT_ONLY -eq 'true') { $acceptance.Development = $true } else { $acceptance.ReleaseNotesApproved = $true }
           if ($env:TARGET_PLATFORM -eq 'macos' -and $env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true') { $acceptance.VerifyPublisherBootstrap = $true }
-          & $script -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:RELEASE_VERSION -ReleaseNotesFile $env:RELEASE_NOTES -ReleaseNotesApproved -Output "$env:RUNNER_TEMP/ew-candidate" @acceptance
+          & $script -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:RELEASE_VERSION -ReleaseNotesFile $env:RELEASE_NOTES -Output "$env:RUNNER_TEMP/ew-candidate" @acceptance
       - name: Retain validation reports
         if: always()
         uses: actions/upload-artifact@v4

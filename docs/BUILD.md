@@ -70,4 +70,4 @@ Mac 贡献者先在公共核心完成路径、资源和签名适配，再由学�
 
 学校 OSS 提供与 GitHub CI 字节一致的应用 ZIP。更新清单采用该原包的 SHA-256 与大小。开发包默认使用开发渠道，公测包默认使用公测渠道，用户已经保存的选择优先。旧 Go 过渡渠道仍单独维护。
 
-Windows 的发行配置缓存位于安装目录 `data/publisher-bootstrap/`；Mac 位于 `~/Library/Application Support/eduwork-chatecnu-electron/data/publisher-bootstrap/`。签名配置与 Skills 使用同级 `content-updates/` 缓存。应用不修改 `.app`，也不覆盖旧 JSONC 文件、个人模型、登录凭据和历史数据；已有配置可离线启动。全新安装无法下载时可以重试，或导入发行工具生成的 `content-<revision>-offline.json`。Mac 的签名、公证和整包自动更新须按公版 Mac 指南另行验收。
+Windows 生效配置为安装目录的 `config/eduwork.jsonc`；Mac 为 `~/Library/Application Support/eduwork-chatecnu-electron/config/eduwork.jsonc`。配置可以直接编辑，重启生效；签名更新保留手工修改，只保留 `data/configuration/eduwork.previous.jsonc` 一份回退备份。旧版实际生效的配置会迁入该入口，成功启动后清理未修改的旧入口。应用不修改 `.app`、个人模型、登录凭据和历史。全新安装无法下载时可以重试或导入签名离线包。参见公版[配置文件](https://github.com/ecnu/EduWork/blob/main/docs/CONFIGURATION.md)。

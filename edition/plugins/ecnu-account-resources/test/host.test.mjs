@@ -45,8 +45,7 @@ async function host(t, options = {}, profileIDs = ['desktop-test']) {
     await ctx.oidcAccounts.begin('desktop-test')
     const callback = await fetch(opened.at(-1))
     assert.equal(callback.status, 200)
-    assert.equal((await ctx.oidcAccounts.status('desktop-test')).state, 'authenticated')
-    await ctx.oidcAccounts.reconcile('desktop-test', { allowProvision: true })
+    assert.equal((await ctx.oidcAccounts.status('desktop-test')).state, 'connected')
     assert.equal((await ctx.oidcAccounts.status('desktop-test')).credentialReady, true)
   } }
 }
@@ -63,7 +62,7 @@ test('normalization preserves windows, dates and pack details; missing totals st
   assert.throws(() => normalizeQuota({ ...raw, windows: [{ remaining: -1 }] }, 'fixture-ai'))
 })
 
-test('real RC Host: no implicit public quota; explicit ECNU request uses existing managed key', async t => {
+test('real RC Host: no implicit public quota; explicit ECNU request uses the authorized access token', async t => {
   const f = await host(t)
   assert.deepEqual(await f.ctx.ecnuAccountResources.quota('third-party'), { state: 'not_configured' })
   assert.deepEqual(await f.ctx.ecnuAccountResources.quota('desktop-test'), { state: 'not_connected' })

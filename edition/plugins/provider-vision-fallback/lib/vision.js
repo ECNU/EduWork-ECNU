@@ -123,7 +123,7 @@ export async function understandImage({
   try {
     response = await fetchImpl(`${baseURL}/chat/completions`, {
       method: 'POST', signal, redirect: 'manual',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      headers: { ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}), 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model, stream: false, max_tokens: maxAnalysisTokens,
         messages: [{ role: 'user', content: [

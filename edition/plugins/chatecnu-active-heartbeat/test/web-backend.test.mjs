@@ -168,3 +168,11 @@ test('an absent optional organization never sends a heartbeat; account selection
   assert.deepEqual(await send(active), { state: 'rejected' })
   assert.equal(f.requests.length, 0)
 })
+
+
+test('HTTP development heartbeat requires an exact explicitly allowed origin', () => {
+  const config={enabled:true,profileID:'example',installationID:'inst_test',baseURL:'http://uat.example.test:8000'}
+  assert.throws(()=>normalizeWebConfig({...config,allowInsecureDevelopment:true}), /configured HTTP/)
+  assert.throws(()=>normalizeWebConfig({...config,allowInsecureDevelopment:true,insecureDevelopmentOrigin:'http://another.example.test:8000'}), /configured HTTP/)
+  assert.equal(normalizeWebConfig({...config,allowInsecureDevelopment:true,insecureDevelopmentOrigin:config.baseURL}).endpoint, config.baseURL+'/user/active')
+})

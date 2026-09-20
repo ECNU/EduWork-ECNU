@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "feeds": {
+    "stable": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases/macos/stable/appcast.xml",
+    "development": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases/macos/development/appcast.xml"
+  },
+  "publicEDKey": "pXNlGmM2sVkVAwDT/Wd3W7zVVH7YX8b6wSTtQMv30MI="
+}

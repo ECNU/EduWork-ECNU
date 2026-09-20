@@ -30,7 +30,7 @@ The plugin requires explicit `enabled: true`. Disabled instances neither require
 
 Desktop clients automatically report `platform: "desktop"` and read the installed version from the host's `EDUWORK_PRODUCT_ROOT/assembly.json`. Prereleases report `channel: "dev"`; stable versions report `stable`. No per-release plugin version setting is needed. Standalone Web deployments can set `version` and `platform: "web"` explicitly. This channel describes the installed package, not the user's update subscription.
 
-Enabled instances require a configured `profileID` and explicit `baseURL`. The default `/user/active` endpoint must share that origin. Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)` handles credentials, refresh and target-origin validation. By default, only the exact profile issuer and `keyBinding.baseURL` origins are allowed; trusted assembly may add HTTPS origins through OIDC `authorizedOrigins`. This plugin exposes no RPC to change that allowlist or retrieve tokens.
+Enabled instances require a configured `profileID` and explicit `baseURL`. The default `/user/active` endpoint must share that origin. Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)` handles credentials, refresh and target-origin validation. By default, only the exact discovered issuer and resource origins are allowed; trusted assembly may add HTTPS origins through OIDC `authorizedOrigins`. This plugin exposes no RPC to change that allowlist or retrieve tokens.
 
 Identity-only accounts can report without a model Key. `oidc/accounts-changed` starts/stops only the relevant profile. Explicitly signed-out accounts stay silent; expired login is handled by OIDC.
 

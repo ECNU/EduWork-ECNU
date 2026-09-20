@@ -6,9 +6,13 @@ on:
         description: 'Approved X.Y.Z-dev.YYYYMMDD.N version; artifacts only'
         required: true
         type: string
+      development:
+        description: 'Build an internal test artifact without release notes or publication'
+        type: boolean
+        default: true
       release_notes:
-        description: 'Approved docs/releases/<version>.md file'
-        required: true
+        description: 'Approved docs/releases/<version>.md file (release candidate only)'
+        required: false
         type: string
       notes_approved:
         description: 'The project owner approved this version and release text'
@@ -69,6 +73,7 @@ jobs:
       - name: Build and validate the exact desktop archive
         shell: pwsh
         env:
+          DEVELOPMENT_ONLY: ${{ inputs.development }}
           RELEASE_VERSION: ${{ inputs.version }}
           RELEASE_NOTES: ${{ inputs.release_notes }}
           RELEASE_NOTES_APPROVED: ${{ inputs.notes_approved }}
@@ -77,13 +82,14 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
-          if ($env:RELEASE_NOTES_APPROVED -ne 'true') { throw 'Release notes approval is required.' }
+          if ($env:DEVELOPMENT_ONLY -ne 'true' -and $env:RELEASE_NOTES_APPROVED -ne 'true') { throw 'Release notes approval is required.' }
           node core/scripts/check-source-docs.mjs core
           node core/scripts/check-source-docs.mjs institution
           $script = "./core/scripts/ci-eduwork-$($env:TARGET_PLATFORM)-release.ps1"
           $acceptance = @{}
+          if ($env:DEVELOPMENT_ONLY -eq 'true') { $acceptance.Development = $true } else { $acceptance.ReleaseNotesApproved = $true }
           if ($env:TARGET_PLATFORM -eq 'macos' -and $env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true') { $acceptance.VerifyPublisherBootstrap = $true }
-          & $script -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:RELEASE_VERSION -ReleaseNotesFile $env:RELEASE_NOTES -ReleaseNotesApproved -Output "$env:RUNNER_TEMP/ew-candidate" @acceptance
+          & $script -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:RELEASE_VERSION -ReleaseNotesFile $env:RELEASE_NOTES -Output "$env:RUNNER_TEMP/ew-candidate" @acceptance
       - name: Retain validation reports
         if: always()
         uses: actions/upload-artifact@v4

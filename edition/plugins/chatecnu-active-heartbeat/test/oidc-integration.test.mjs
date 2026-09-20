@@ -11,7 +11,7 @@ const runtime = resolve(process.env.EDUWORK_TEST_RUNTIME || resolve(repository, 
 const requireRuntime = createRequire(pathToFileURL(resolve(runtime, 'package.json')))
 const { WebOidcBackend } = await import(pathToFileURL(requireRuntime.resolve('@eduwork/dsh-oidc/oidc')))
 const { normalizeEnterpriseProfile } = await import(pathToFileURL(requireRuntime.resolve('@eduwork/dsh-oidc/profile')))
-const example = JSON.parse(await readFile(resolve(dirname(requireRuntime.resolve('@eduwork/dsh-oidc/package.json')), 'examples/enterprise-profile.example.json'), 'utf8'))
+const example = JSON.parse(await readFile(resolve(dirname(requireRuntime.resolve('@eduwork/dsh-oidc/package.json')), 'examples/identity-only.example.json'), 'utf8'))
 const { keyBinding, provider, ...identityOnly } = example
 const profile = normalizeEnterpriseProfile(identityOnly)
 

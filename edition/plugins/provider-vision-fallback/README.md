@@ -12,7 +12,7 @@ ECNU 内置目录将 `ecnu-max` 声明为 `input: ["text"]`，默认由 `ecnu-pl
 
 直接装配 DSH/Web 时，可设置 `config.enabled: false` 或 `EDUWORK_VISION_FALLBACK=false`。辅助模型由 `config.model`（默认 `ecnu-plus`）、服务地址和 `credentialRef`（默认 `EDUWORK_API_KEY`）决定；`config.provider` 限定被辅助的企业适配器路由，不接管任意第三方 Provider。
 
-ECNU 客户端启动时将已知旧企业目录中 `ecnu-max` 的原生输入修正为 `input: ["text"]`，再交给 OIDC Provider，由辅助插件补充聚合图片能力。仅机构 ID、issuer、Provider ID、官方网关、适配器和模型全部匹配时同步；不改配置文件原文、个人模型或自定义网关，无需重新登录。两壳共用入口。公版或独立插件不携带 ECNU 目录修正规则，部署方须提供正确的原生 `input` 声明。
+Electron 从唯一的 `config/eduwork.jsonc` 读取模型能力和插件设置，发行配置更新保留用户手动修改。`plugins.chatecnu-vision.baseURL` 可切换辅助服务地址；必须与所选账户发现的模型资源一致。设置 `oidcProfileId` 时由 Host 用 Access Token 发起请求，插件不读取或复制 Token；省略时才使用独立 API Key。旧 Key Binding 配置升级到 Token 协议后需要重新登录。公版或独立插件不携带学校模型目录，部署方须提供正确的原生 `input` 声明。
 
 ## 处理边界
 

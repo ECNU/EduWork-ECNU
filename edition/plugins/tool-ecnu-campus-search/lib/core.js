@@ -141,7 +141,7 @@ export async function searchCampus({ fetchImpl = fetch, baseURL, apiKey, request
       signal,
       redirect: 'manual',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },

@@ -62,7 +62,7 @@ Mac 贡献者先在公共核心完成路径、资源和签名适配，再由学�
 
 ## Electron 开发候选与发行
 
-`Build ECNU desktop release candidates` 工作流在 Windows x64 与 macOS arm64 上分别构建同版本候选，只保留经检查的 artifact，不自动发布。版本号与 `docs/releases/<version>.md` 内容须事先确认。维护者下载产物完成学校配置与登录验收后，才将原包发布到 GitHub 和 OSS；两处 ZIP 的 SHA-256 必须一致。Mac 当前限 macOS 15+ Apple Silicon，只有 ad-hoc 签名，尚未 Apple 公证或实现整包自动安装更新。不得把 Windows 更新包配置到 Mac 渠道。
+`Build ECNU desktop release candidates` 工作流在 Windows x64 与 macOS arm64 上分别构建同版本候选，只保留经检查的 artifact，不自动发布。默认 `development: true` 仅生成内部测试 artifact，不需要发布说明；准备发行候选时关闭该选项，版本号与 `docs/releases/<version>.md` 内容须事先确认。维护者下载产物完成学校配置与登录验收后，才将原包发布到 GitHub 和 OSS；两处 ZIP 的 SHA-256 必须一致。Mac 当前限 macOS 15+ Apple Silicon，只有 ad-hoc 签名，尚未 Apple 公证；新包使用公版 Sparkle 更新实现，用户确认后下载、替换和重启。`edition/desktop/mac-updates.json` 固定 Mac 双渠道和 Ed25519 公钥。私钥留在仓库外，按公版 [Mac 更新指南](https://github.com/ECNU/EduWork/blob/main/docs/MACOS_UPDATES.md) 对 CI 原包生成签名 appcast。不得把 Windows 更新包配置到 Mac 渠道。旧 Mac 客户端首次仍需手动替换到支持 Sparkle 的包。
 
 本地分发与验收直接下载 GitHub CI 的 ZIP，校验 SHA-256 后即可使用。`edition/desktop/configuration-policy.json` 声明发行方管理配置，`edition/desktop/publisher-bootstrap.json` 内置软件与内容更新源、验签公钥；不包含实际 Client ID、模型目录或个人凭据。默认配置的机构列表为空，首次启动下载签名学校配置。无需在 Windows 本机重新装配，也无需为 Mac 另做配置 PKG。完整格式见公版 [首次启动获取配置](https://github.com/ecnu/EduWork/blob/main/docs/PUBLISHER_BOOTSTRAP.md)。
 

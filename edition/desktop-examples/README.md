@@ -23,8 +23,10 @@ ECNU 与公版 Electron 都读取一份 `config/eduwork.jsonc`。Windows 位于�
 
 ## 接口约束
 
-企业条目的本地 `id` 与服务端 `provider.id` 是不同概念。现有 ECNU 和赛尔示例的 Provider 都为 `chatecnu`，必须与资源服务 `bootstrap.provider.id` 一致；两份示例不能按原样同时启用。不同服务同时接入需要不同的服务端 Provider 标识，或分别使用独立客户端配置。
+机构 `id` 标识账户配置，`provider.id` 命名本地模型路由。ECNU 和赛尔示例都使用 `chatecnu` 路由，不能按原样同时启用；合并两份配置时须为它们分配不同的本地 Provider ID。
 
-没有机构条目时仍可配置个人 API Key。只需身份登录时，可以省略企业条目的 `keyBinding` 和 `provider`；模型自动配置需要服务端实现相应资源协议。配额和心跳是 ECNU 扩展，不属于公版 OIDC 协议。
+没有机构条目时仍可配置个人 API Key。模型授权采用 `auth.discoveryUrl` 发现的 oidc-llm 协议，直接用 Access Token 调用；旧 `keyBinding` 配置需要迁移并重新登录。纯身份登录仍使用公版 identity-only 示例。配额和心跳是 ECNU 扩展。
 
-Client ID 是部署参数，示例仅提供占位符。密码、API Key、Client Secret 和登录令牌不写入配置或公开安装包。桌面使用 PKCE 和本机 loopback 回调。企业登录保存的模型凭据采用 `EDUWORK_API_KEY` 引用名，个人 Provider 的凭据仍独立。
+Client ID 是部署参数，示例仅提供占位符。密码、API Key、Client Secret 和登录令牌不写入配置或公开安装包。桌面使用 PKCE 和本机 loopback 回调。企业 Token 保存在系统凭据存储中，服务插件只委托 Host 发起授权请求。`credentialRef` 仅用于不配置 `oidcProfileId` 的独立 API Key 模式。个人 Provider 的凭据仍独立。
+
+校内搜索、读图辅助和心跳地址也在 ECNU 示例的 `plugins` 中配置。切换 UAT 时与登录、媒体地址一起修改。仅用于 HTTP 开发环境时，心跳须显式设置 `allowInsecureDevelopment: true` 及完全匹配的 `insecureDevelopmentOrigin`，账户配置也须允许该来源；生产使用 HTTPS。

@@ -1,6 +1,6 @@
 // 机构配置模板。部署时由管理员在本地填写实际参数，再复制为上一级 eduwork.jsonc。
 // 实际 Client ID 只随私有配置分发，不提交 GitHub，也不注入 CI 安装包。
-// 此示例只配置通用身份、Key 和模型；配额由 ECNU 发行扩展提供，不为公版安装校内专属插件或生图能力。
+// 此示例配置 Token 授权和模型；配额由 ECNU 发行扩展提供，不为公版安装校内专属插件或生图能力。
 {
   "schemaVersion": 1,
   "product": {
@@ -19,33 +19,20 @@
         "loginTitle": "使用华东师范大学账号登录",
         "loginDescription": "完成登录后连接企业模型；也可在模型设置中使用自己的 API Key。"
       },
-      "oidc": {
-        "issuer": "https://chat.ecnu.edu.cn",
-        "clientId": "replace-with-ecnu-desktop-client-id",
-        "scopes": [
-          "openid",
-          "profile",
-          "offline_access",
-          "worker.bootstrap.read",
-          "worker.credential.provision",
-          "worker.credential.read",
-          "worker.credential.renew"
-        ]
-      },
-      "keyBinding": {
-        // 现有 ChatECNU 兼容协议；新建服务建议采用 eduwork-resources-v1。
-        "type": "worker-user-center-v1",
-        "baseURL": "https://chat.ecnu.edu.cn/api/worker/v1",
-        "credentialRef": "EDUWORK_API_KEY"
+      "auth": {
+        "discoveryUrl": "https://chat.ecnu.edu.cn/.well-known/openid-configuration",
+        "expectedIssuer": "https://chat.ecnu.edu.cn",
+        "experimentalOidcLlm": true,
+        "clientId": "replace-with-public-client-id",
+        "identityMode": "oidc"
       },
       "provider": {
         "id": "chatecnu",
         "displayName": "华东师范大学",
         "adapter": "openai-compatible",
-        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
         // ECNU 客户端随升级同步已知旧企业模型的能力；个人模型在原生模型设置中独立管理。
-        // 支持资源发现协议后可改 discovery 并删除 models，届时以服务器目录为准。
-        "modelSource": "profile",
+        // 模型目录由服务器发现；此处的模型策略用于补充客户端能力和默认值。
+        "modelSource": "discovery",
         "reasoning": "high",
         "defaultContextWindow": 524288,
         "defaultMaxTokens": 393216,
@@ -202,6 +189,12 @@
         }
       }
     ]
+  },
+  // 校内服务与登录、媒体地址一起在这个文件配置；切 UAT 时同步修改。
+  "plugins": {
+    "chatecnu-campus-search": { "baseURL": "https://chat.ecnu.edu.cn/open/api/v1" },
+    "chatecnu-vision": { "baseURL": "https://chat.ecnu.edu.cn/open/api/v1" },
+    "chatecnu-active-heartbeat": { "baseURL": "https://chat.ecnu.edu.cn" }
   },
   "features": {
     // 当前客户端的主会话、子代理和辅助模型请求共用总上限；超出的请求排队。

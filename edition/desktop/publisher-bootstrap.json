@@ -6,7 +6,7 @@
   },
   "contentUpdates": {
     "publisher": "eduwork-ecnu",
-    "baseURL": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates",
+    "baseURL": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/token-v1",
     "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAPgLiUb1AKe1MifCo+QV4Z+828bOFRtflDRmmsDaVbRk=\n-----END PUBLIC KEY-----\n",
     "configuration": true,
     "skills": true,

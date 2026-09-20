@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-20T14:43:55.131Z",
-  "fileSetSHA256": "a9479cd57b21f189657434a38d9c9ff6f10fc4fbcf731ed7bbb4288c5bbd8076",
+  "createdAt": "2026-09-20T15:52:42.910Z",
+  "fileSetSHA256": "21eef51a9513bcfd3ee6f77b7aa5cc1d091ac935194e839af68f608dfd475d9c",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,7 +37,7 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "dd94f79182ac833cd6278dc5ac405836a871112b9a0d8b7ea69ebf7d6645a7f7"
+      "sha256": "55276159822167c272f2f39dd3ec378844d2d6d06313ddbe77cd5b5316ae6ac5"
     },
     {
       "path": "docs/images/README_EN.md",
@@ -74,6 +74,14 @@
     {
       "path": "docs/releases/0.3.6-dev.20260917.2.md",
       "sha256": "d1ab5c451b37d69253c4ad05e9ee454cd2287907541f576cc11c8f6254281a27"
+    },
+    {
+      "path": "docs/releases/0.3.6-dev.20260920.1.md",
+      "sha256": "f9b76cc916b6443f71a93fda4ca77980e0203ec3b7e73a112e116fe40a98d6f8"
+    },
+    {
+      "path": "docs/releases/0.3.6-dev.20260920.2.md",
+      "sha256": "f9b76cc916b6443f71a93fda4ca77980e0203ec3b7e73a112e116fe40a98d6f8"
     },
     {
       "path": "docs/USER_GUIDE.md",
@@ -117,7 +125,7 @@
     },
     {
       "path": "edition/desktop/publisher-bootstrap.json",
-      "sha256": "2af5f8f2cc1cab6076f2b5371a7a4fae4df108344fb64163b92f383b8d5f0d8a"
+      "sha256": "febde1b171c43cf772847205f982a659b1cd60b01c0b928dfc48febe5c0954d6"
     },
     {
       "path": "edition/distribution.json",

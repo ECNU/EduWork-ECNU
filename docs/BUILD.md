@@ -70,4 +70,6 @@ Mac 贡献者先在公共核心完成路径、资源和签名适配，再由学�
 
 学校 OSS 提供与 GitHub CI 字节一致的应用 ZIP。更新清单采用该原包的 SHA-256 与大小。开发包默认使用开发渠道，公测包默认使用公测渠道，用户已经保存的选择优先。旧 Go 过渡渠道仍单独维护。
 
+Token 授权客户端使用独立的 `content-updates/token-v1` 配置源，旧客户端继续使用原配置源。不要将新的授权配置覆盖到旧源；仅提高配置的最低客户端版本，会导致旧安装包首次启动无法获得兼容配置。各源独立签名和发布，程序包只携带对应源地址与验签公钥。
+
 Windows 生效配置为安装目录的 `config/eduwork.jsonc`；Mac 为 `~/Library/Application Support/eduwork-chatecnu-electron/config/eduwork.jsonc`。配置可以直接编辑，重启生效；签名更新保留手工修改，只保留 `data/configuration/eduwork.previous.jsonc` 一份回退备份。旧版实际生效的配置会迁入该入口，成功启动后清理未修改的旧入口。应用不修改 `.app`、个人模型、登录凭据和历史。全新安装无法下载时可以重试或导入签名离线包。参见公版[配置文件](https://github.com/ecnu/EduWork/blob/main/docs/CONFIGURATION.md)。

@@ -33,7 +33,7 @@ async function fixture(t) {
       return fetch(endpoint, { ...init, headers: { ...init.headers, authorization: 'Bearer synthetic-oidc-access' }, redirect: 'error' })
     },
   }
-  const config = { backend: 'web', enabled: true, profileID: 'example', baseURL: `http://127.0.0.1:${server.address().port}`,
+  const config = { backend: 'web', enabled: true, allowInsecureDevelopment: true, profileID: 'example', baseURL: `http://127.0.0.1:${server.address().port}`,
     stateDirectory: join(root, 'original'), productName: 'EduWork@Example', version: '0.3.0-dev.1' }
   return { root, config, accounts, calls, requests,
     respond: (status, body) => { responseStatus = status; responseBody = body },
@@ -121,7 +121,7 @@ test('explicit configuration and client metadata do not broaden the target or in
   const f = await fixture(t)
   assert.throws(() => normalizeWebConfig({ enabled: true, profileID: 'example' }), /baseURL/)
   assert.throws(() => normalizeWebConfig({ ...f.config, endpoint: 'https://elsewhere.example/collect' }), /configured HTTP/)
-  assert.throws(() => normalizeWebConfig({ ...f.config, baseURL: 'http://example.test' }), /configured HTTP/)
+  assert.throws(() => normalizeWebConfig({ ...f.config, baseURL: 'http://example.test', allowInsecureDevelopment: false }), /configured HTTP/)
   assert.throws(() => normalizeWebConfig({ ...f.config, installationID: '../private' }), /installationID/)
   const config = normalizeWebConfig({ ...f.config, version: 'long-dev-version-'.repeat(4), installationID: 'inst_fixed' })
   const payload = heartbeatPayload(config, 'inst_fixed', active, { platform: 'linux', arch: 'arm64' })
@@ -170,9 +170,11 @@ test('an absent optional organization never sends a heartbeat; account selection
 })
 
 
-test('HTTP development heartbeat requires an exact explicitly allowed origin', () => {
+test('HTTP heartbeat accepts the single boolean and ignores the obsolete origin field', () => {
   const config={enabled:true,profileID:'example',installationID:'inst_test',baseURL:'http://uat.example.test:8000'}
-  assert.throws(()=>normalizeWebConfig({...config,allowInsecureDevelopment:true}), /configured HTTP/)
-  assert.throws(()=>normalizeWebConfig({...config,allowInsecureDevelopment:true,insecureDevelopmentOrigin:'http://another.example.test:8000'}), /configured HTTP/)
+  assert.equal(normalizeWebConfig({...config,allowInsecureDevelopment:true}).endpoint, config.baseURL+'/user/active')
+  assert.equal(normalizeWebConfig({...config,allowInsecureDevelopment:true,insecureDevelopmentOrigin:'http://another.example.test:8000'}).endpoint, config.baseURL+'/user/active')
+  assert.throws(()=>normalizeWebConfig({...config,allowInsecureDevelopment:false}), /configured HTTP/)
+  assert.throws(()=>normalizeWebConfig({...config,allowInsecureDevelopment:'true'}), /boolean/)
   assert.equal(normalizeWebConfig({...config,allowInsecureDevelopment:true,insecureDevelopmentOrigin:config.baseURL}).endpoint, config.baseURL+'/user/active')
 })

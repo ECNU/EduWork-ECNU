@@ -20,13 +20,14 @@ test('school release enables OAuth heartbeat on its profile origin without a har
   const { config } = plugin
   assert.equal(config.enabled, true)
   assert.equal(config.backend, 'web')
+  assert.equal(config.allowInsecureDevelopment, false)
   const school = example('ecnu').organizations.find(profile => profile.id === config.profileID)
   assert.ok(school)
   assert.equal(new URL(config.baseURL).origin, new URL(school.auth.expectedIssuer).origin)
   assert.equal(config.endpoint, '/user/active')
   assert.equal(config.version, undefined)
   assert.equal(config.installationID, undefined)
-  assert.deepEqual(Object.keys(config).sort(), ['backend', 'baseURL', 'enabled', 'endpoint', 'productName', 'profileID'])
+  assert.deepEqual(Object.keys(config).sort(), ['allowInsecureDevelopment', 'backend', 'baseURL', 'enabled', 'endpoint', 'productName', 'profileID'])
 })
 
 
@@ -160,4 +161,23 @@ test('school plugin endpoints are editable in the same file and skill authorizat
   const skill=distribution.skills.find(skill=>skill.name==='ecnu-campus-search')
   assert.equal(skill.metadata.eduwork.oidcProfileId,'ecnu')
   assert.equal(skill.metadata.eduwork.runtimeBaseURL,undefined)
+})
+
+
+test('edition documentation reaches the same editable config without copying institution options into core', async () => {
+  const { editionConfigurationFields, documentConfiguration } = await import(pathToFileURL(resolve(core, 'dsh-host/configuration-documentation.mjs')))
+  const root = await mkdtemp(join(tmpdir(), 'ecnu-config-docs-'))
+  try {
+    await mkdir(join(root, 'resources/desktop'), { recursive: true })
+    const metadata = await readFile(new URL('../desktop/configuration-options.json', import.meta.url), 'utf8')
+    await writeFile(join(root, 'resources/desktop/configuration-options.json'), metadata)
+    const fields = await editionConfigurationFields(root)
+    assert.ok(Object.keys(fields).every(key => key.startsWith('plugins.')))
+    const active = documentConfiguration(JSON.stringify({ schemaVersion: 1, organizations: [] }), fields)
+    assert.match(active, /plugins.chatecnu-active-heartbeat.allowInsecureDevelopment/)
+    assert.match(active, /plugins.chatecnu-vision.maxAnalysisTokens/)
+    assert.match(active, /plugins.chatecnu-campus-search.requestTimeoutMs/)
+    assert.equal(documentConfiguration(active, fields), active)
+    for (const name of ['ecnu', 'cernet']) assert.equal(example(name).organizations[0].allowInsecureDevelopment, false)
+  } finally { await rm(root, { recursive: true, force: true }) }
 })

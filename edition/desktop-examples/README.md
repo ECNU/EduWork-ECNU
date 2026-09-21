@@ -29,4 +29,6 @@ ECNU 与公版 Electron 都读取一份 `config/eduwork.jsonc`。Windows 位于�
 
 Client ID 是部署参数，示例仅提供占位符。密码、API Key、Client Secret 和登录令牌不写入配置或公开安装包。桌面使用 PKCE 和本机 loopback 回调。企业 Token 保存在系统凭据存储中，服务插件只委托 Host 发起授权请求。`credentialRef` 仅用于不配置 `oidcProfileId` 的独立 API Key 模式。个人 Provider 的凭据仍独立。
 
-校内搜索、读图辅助和心跳地址也在 ECNU 示例的 `plugins` 中配置。切换 UAT 时与登录、媒体地址一起修改。仅用于 HTTP 开发环境时，心跳须显式设置 `allowInsecureDevelopment: true` 及完全匹配的 `insecureDevelopmentOrigin`，账户配置也须允许该来源；生产使用 HTTPS。
+校内搜索、读图辅助和心跳地址也在 ECNU 示例的 `plugins` 中配置。切换 UAT 时与登录、媒体地址一起修改。仅用于 HTTP 开发环境时，将企业对象里的 `allowInsecureDevelopment` 改为 `true`；HTTP 心跳也将其插件选项中的同名开关改为 `true`。默认均为 `false`，不再填写 `insecureDevelopmentOrigin`。
+
+配置文件中直接附有字段说明及全部通用选项参考。互斥或需要真实服务参数的选项保留为注释；已有配置在下次程序升级后补齐说明，用户值与注释保留。

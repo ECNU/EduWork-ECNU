@@ -58,6 +58,7 @@
       "name": "@chatecnu-work/dsh-chatecnu-active-heartbeat",
       "config": {
         "backend": "web",
+        "allowInsecureDevelopment": false,
         "enabled": true,
         "profileID": "ecnu",
         "baseURL": "https://chat.ecnu.edu.cn",
@@ -120,6 +121,11 @@
       "root": "edition",
       "source": "edition/desktop/publisher-bootstrap.darwin.json",
       "target": "desktop/publisher-bootstrap.darwin.json"
+    },
+    {
+      "root": "edition",
+      "source": "edition/desktop/configuration-options.json",
+      "target": "desktop/configuration-options.json"
     }
   ],
   "patches": []

@@ -20,9 +20,9 @@ EduWork@ECNU brings [EduWork](https://github.com/ecnu/EduWork) to East China Nor
 
 It includes the full EduWork workspace, Studio, and skill center. University services connect through configuration and plugins, and you can still use personal API keys and other models.
 
-![EduWork@ECNU workspace: turn local course materials into a teaching plan, shown in the red theme](docs/images/workspace.png)
+![EduWork@ECNU workspace: research campus information with a university model and preview a generated HTML page on the right](docs/images/workspace.png)
 
-<p align="center"><sub>The shared EduWork workspace, connected to university services. The theme defaults to red, with blue also available.</sub></p>
+<p align="center"><sub>From research to a finished page: complete the task with a university model and preview the result beside the conversation.</sub></p>
 
 > University users obtain the client through the school distribution channel; it downloads school configuration on first launch. This repository presents the institutional extension; its templates do not include complete school deployment settings.
 
@@ -63,6 +63,19 @@ After university sign-in and authorization, the client uses the login Token to d
 
 These integrations reuse the public edition's OIDC, model, and media adapters, with services and configuration supplied by the university.
 
+<details>
+<summary>See university service connection and model selection</summary>
+
+![Model settings show a connected ECNU AI service and its model catalog](docs/images/school-services.png)
+
+Check the university service's connection status and model catalog under Settings → Models. Personal model providers can also be added here.
+
+![A new EduWork@ECNU conversation with the university model ecnu-max selected](docs/images/school-model.png)
+
+Back in the conversation, select a university model at the bottom right of the composer to begin. The example uses `ecnu-max`; available models depend on university services and account permissions.
+
+</details>
+
 ### Other university extensions
 
 | Extension | Purpose and scope |
@@ -80,20 +93,16 @@ Choose a local folder as your workspace. Ask EduWork to read and organize source
 
 Conversations and Studio share generation, previews, and downloads. The skill center, local memory, mail assistant, browser, local transcription, system speech synthesis, and blue/red themes are also included.
 
-![Shared Studio capabilities: output types and a quiz generated from workspace materials, shown in the public edition](docs/images/studio.png)
+![EduWork@ECNU Studio: generate a quiz from workspace materials and view output types and an in-progress task in the sidebar](docs/images/studio.png)
 
-<p align="center"><sub>This public-edition screenshot demonstrates Studio features shared by both editions. The ECNU edition uses university branding, accounts, and model configuration.</sub></p>
+<p align="center"><sub>Start generation from Studio and follow its progress in the sidebar. Completed items appear under Recent results.</sub></p>
 
 <details>
-<summary>Explore quizzes and the skill center</summary>
+<summary>See how a generated quiz works</summary>
 
-![Check quiz answers, explanations, and source evidence, then ask AI a follow-up question, shown in the public edition](docs/images/quiz.png)
+![EduWork@ECNU quiz: check answers, explanations, and source evidence, then ask AI a follow-up question](docs/images/quiz.png)
 
 Answer a generated quiz directly, review explanations and source evidence, and use Ask AI to continue learning.
-
-![Browse built-in skills, import skills, or create your own, shown in the public edition](docs/images/skills.png)
-
-The skill center includes built-in task guidance and supports importing or creating your own skills. Both screenshots show shared features in the public edition.
 
 </details>
 

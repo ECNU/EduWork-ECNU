@@ -6,9 +6,10 @@
 
 | File | Content and source |
 | --- | --- |
-| `workspace.png` | ECNU-edition workspace in the red theme |
-| `studio.png` | Public-edition Studio in the red theme: output types and recent results shared by both editions |
-| `quiz.png` | Public-edition quiz interaction, explanations, and source evidence: shared capabilities |
-| `skills.png` | Public-edition skill center: shared capabilities |
+| `workspace.png` | ECNU workspace: research with a university model and a generated HTML page preview |
+| `studio.png` | ECNU Studio: output types and a quiz being generated |
+| `quiz.png` | ECNU quiz answers, explanations, and source evidence |
+| `school-services.png` | University service connection status and model catalog in Settings |
+| `school-model.png` | University model selection in a new conversation, with a red box highlighting `ecnu-max` |
 
-Shared-feature screenshots retain the public edition's original branding, identified in their captions. Campus search, university sign-in, and quota should use actual ECNU-edition screens. Demonstration material illustrates features; generated content is not a factual reference. Chinese and English homepages share images. Keep alternative text in sync and exclude personal or institution-private information.
+All screenshots show the actual ECNU edition in the red theme with demonstration material. Existing privacy masks and highlights are preserved; generated content is not a factual reference. Chinese and English homepages share the images; keep alternative text in sync. Model and service availability depends on configuration and account permissions.

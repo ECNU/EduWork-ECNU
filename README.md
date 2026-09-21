@@ -20,9 +20,9 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 它保留 EduWork 的完整工作区、Studio 和技能中心。学校服务通过配置与插件接入，用户也可以继续使用自己的 API Key 和其他模型。
 
-![EduWork@ECNU 工作区：围绕本机课程资料整理教学方案，使用红色主题](docs/images/workspace.png)
+![EduWork@ECNU 工作区：使用学校模型调研校园资料，并在右侧预览生成的 HTML 网页](docs/images/workspace.png)
 
-<p align="center"><sub>同一个 EduWork 工作区，连接学校服务；默认红色主题，也可切换为蓝色。</sub></p>
+<p align="center"><sub>从调研到网页成果：使用学校模型完成任务，在对话旁直接预览生成的页面。</sub></p>
 
 > 学校用户通过学校发布渠道获取客户端，首次启动自动下载学校配置。本仓库介绍机构扩展与开发方式，配置模板不包含完整的学校部署参数。
 
@@ -63,6 +63,19 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 这些接入能力复用公版的 OIDC、模型和媒体适配器，由学校提供服务与配置。
 
+<details>
+<summary>查看学校服务连接与模型选择</summary>
+
+![模型设置中的华东师范大学 AI 服务已连接，并显示学校提供的模型目录](docs/images/school-services.png)
+
+在「设置 → 模型」中查看学校服务的连接状态和模型目录，也可继续添加个人模型服务。
+
+![EduWork@ECNU 新会话已选中学校模型 ecnu-max](docs/images/school-model.png)
+
+返回对话后，在输入框右下角选择学校模型即可开始。图中选用 `ecnu-max`，实际可用模型以学校服务及账号权限为准。
+
+</details>
+
 ### 其他学校扩展
 
 | 扩展 | 用途与启用范围 |
@@ -80,20 +93,16 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 对话与 Studio 共用生成、预览和下载能力。技能中心、本地记忆、邮件助手、浏览器、本机语音转写、系统语音合成和蓝/红配色也都保留。
 
-![两版共享的 Studio：成果类型入口与基于工作区资料生成的测验（公版界面示例）](docs/images/studio.png)
+![EduWork@ECNU Studio：根据工作区资料生成测验，在右侧查看成果类型入口和进行中的任务](docs/images/studio.png)
 
-<p align="center"><sub>图中为公版界面，展示两版共享的 Studio 能力。ECNU 版使用学校标识、账号与模型配置。</sub></p>
+<p align="center"><sub>从 Studio 发起生成，在侧栏查看进行中的任务；完成后，成果保存在「最近成果」。</sub></p>
 
 <details>
-<summary>看看测验与技能中心</summary>
+<summary>看看生成的测验如何使用</summary>
 
-![测验中查看答案、解析与来源依据，并继续向 AI 提问（公版界面示例）](docs/images/quiz.png)
+![EduWork@ECNU 测验：答题后查看对错、解析与来源依据，并继续向 AI 提问](docs/images/quiz.png)
 
 生成的测验可以直接答题，查看解析与来源依据，并通过「问问 AI」继续学习。
-
-![浏览内置技能，导入或创建自己的技能（公版界面示例）](docs/images/skills.png)
-
-技能中心提供内置任务指引，也可导入或创建自己的技能。以上两张图均为两版共享功能的公版界面示例。
 
 </details>
 

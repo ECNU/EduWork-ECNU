@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-21T02:20:30.880Z",
-  "fileSetSHA256": "5147744038fd4dc319d97338b40fd4e6bd508627a1e419c61b4ceabc2f5930d8",
+  "createdAt": "2026-09-21T03:03:13.021Z",
+  "fileSetSHA256": "cbcf522adeb104d1eec64fabcde080a332890105bf8d142933741cea7967e30e",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,7 +33,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "dd0a51f52fa2a5f1cc02a0f15c0277892216c14db8d08261e5c9b2ff663ef69c"
+      "sha256": "21796619cc115adda301c312c634ef84a81dbdaf3582bbb014d9444960336749"
     },
     {
       "path": "docs/BUILD.md",
@@ -89,11 +89,11 @@
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
-      "sha256": "2c75b0853f61927b19f2daa6315193cc95d53ac16bb931d2974a67f836fcf018"
+      "sha256": "0b4bce865cbeb406b7b61428fee6bc07fe4712b96b11851480fd507fa4904879"
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "8a748ea4cfbd43803d361414e7b36310cce25b5b939322b301db53de9f0f9e62"
+      "sha256": "3190bb4de9310aa998277e830e08fba8399bd2280ed5864b2e7a0bf0168b1d0f"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
@@ -117,7 +117,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "c286e37842e87e6292bd7a62d021440324a3426b078af324942debe1d102cba1"
+      "sha256": "3d296a1fc995751c98340fcbd33f424e5d01e91a23c36d7ca52cc585ae05fae5"
     },
     {
       "path": "edition/desktop/mac-updates.json",

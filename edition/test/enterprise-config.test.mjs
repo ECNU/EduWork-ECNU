@@ -14,6 +14,59 @@ const { loadUserConfig, parseUserConfig } = await import(pathToFileURL(resolve(c
 const { updateEnterpriseModels } = await import(pathToFileURL(resolve(core, 'dsh-host/enterprise-model-updates.mjs')))
 const example = name => loadUserConfig(fileURLToPath(new URL(`../desktop-examples/${name}.jsonc`, import.meta.url)))
 
+test('all school plugin options are visible, active defaults survive restart, and UAT overrides reach the adapters', async t => {
+  const { configurationDocumentationOptions } = await import(pathToFileURL(resolve(core, 'dsh-host/configuration-documentation.mjs')))
+  const { ConfigurationFile, readConfiguration } = await import(pathToFileURL(resolve(core, 'dsh-host/configuration-file.mjs')))
+  const { normalizeWebConfig } = await import('../plugins/chatecnu-active-heartbeat/lib/web-backend.js')
+  const { resolveCampusSearchConfig } = await import('../plugins/tool-ecnu-campus-search/lib/core.js')
+  const { resolveVisionConfig } = await import('../plugins/provider-vision-fallback/lib/vision.js')
+  const root = await mkdtemp(join(tmpdir(), 'ecnu-explicit-config-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  const product = join(root, 'product'), path = join(root, 'eduwork.jsonc')
+  await mkdir(join(product, 'resources/desktop'), { recursive: true })
+  const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url)))
+  await writeFile(join(product, 'composition.json'), JSON.stringify([{ insert: distribution.plugins }]))
+  const metadata = await readFile(new URL('../desktop/configuration-options.json', import.meta.url), 'utf8')
+  await writeFile(join(product, 'resources/desktop/configuration-options.json'), metadata)
+  const fields = JSON.parse(metadata)
+  for (const row of distribution.plugins) for (const key of Object.keys(row.config)) assert.ok(fields[`plugins.${row.id}.${key}`]?.[0], `${row.id}.${key}`)
+  const sourceChecks = [
+    ['chatecnu-campus-search', '../plugins/tool-ecnu-campus-search/lib/core.js'],
+    ['chatecnu-vision', '../plugins/provider-vision-fallback/lib/vision.js'],
+    ['chatecnu-active-heartbeat', '../plugins/chatecnu-active-heartbeat/lib/web-backend.js'],
+  ]
+  for (const [id, source] of sourceChecks) {
+    const text = await readFile(new URL(source, import.meta.url), 'utf8')
+    for (const [, key] of text.matchAll(/raw\.([A-Za-z]\w*)/g)) assert.ok(fields[`plugins.${id}.${key}`]?.[0], `Missing source option: ${id}.${key}`)
+  }
+  const before = '// local test environment\n' + JSON.stringify({ schemaVersion: 1, organizations: [], plugins: {
+    'chatecnu-active-heartbeat': { baseURL: 'http://uat.example.test', allowInsecureDevelopment: true },
+    'chatecnu-campus-search': { baseURL: 'http://uat.example.test/v1', baseURLEnv: '' },
+    'chatecnu-vision': { baseURL: 'http://uat.example.test/v1', baseURLEnv: '', model: 'custom-image' },
+  } })
+  await writeFile(path, before)
+  const options = await configurationDocumentationOptions(product)
+  const file = await new ConfigurationFile(path, join(root, 'data'), options).open()
+  await file.document()
+  const active = await readConfiguration(path), config = active.value.plugins
+  assert.equal(config['chatecnu-active-heartbeat'].endpoint, '/user/active')
+  assert.equal(config['chatecnu-active-heartbeat'].enabled, true)
+  const heartbeat = normalizeWebConfig(config['chatecnu-active-heartbeat'], { DSH_HOME: root })
+  assert.equal(heartbeat.endpoint, 'http://uat.example.test/user/active')
+  assert.equal(heartbeat.profileID, 'ecnu')
+  assert.equal(resolveCampusSearchConfig(config['chatecnu-campus-search'], {}).baseURL, 'http://uat.example.test/v1')
+  const vision = resolveVisionConfig(config['chatecnu-vision'], {})
+  assert.equal(vision.baseURL, 'http://uat.example.test/v1')
+  assert.equal(vision.model, 'custom-image')
+  assert.equal(config['chatecnu-vision'].maxAnalysisTokens, 2048)
+  assert.ok(active.text.includes('// local test environment'))
+  assert.equal(await readFile(file.backup, 'utf8'), before)
+  const restart = await new ConfigurationFile(path, join(root, 'data'), options).open()
+  await restart.document()
+  assert.equal((await readConfiguration(path)).text, active.text)
+  assert.equal(await readFile(file.backup, 'utf8'), before)
+})
+
 test('school release enables OAuth heartbeat on its profile origin without a hard-coded version or credentials', async () => {
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url), 'utf8'))
   const plugin = distribution.plugins.find(row => row.id === 'chatecnu-active-heartbeat')

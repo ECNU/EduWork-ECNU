@@ -23,10 +23,11 @@
   ],
   "plugins.chatecnu-campus-search.requestTimeoutMs": [
     "搜索超时毫秒，1–120000，默认 65000。",
-    65000
+    65000,
+    true
   ],
   "plugins.chatecnu-vision.enabled": [
-    "是否启用辅助读图，默认 true；features.visionFallback 也控制此功能。",
+    "辅助读图的默认开关；features.visionFallback 若填写则优先，原生多模态不经过辅助读图。",
     true
   ],
   "plugins.chatecnu-vision.baseURL": [
@@ -47,23 +48,28 @@
   ],
   "plugins.chatecnu-vision.provider": [
     "需要此辅助能力的本地模型提供方 ID。",
-    "chatecnu"
+    "chatecnu",
+    true
   ],
   "plugins.chatecnu-vision.model": [
     "用于读图的模型 ID，须支持图片输入。",
-    "ecnu-plus"
+    "ecnu-plus",
+    true
   ],
   "plugins.chatecnu-vision.maxAnalysisTokens": [
     "一次读图分析最大输出 token 数，默认 2048。",
-    2048
+    2048,
+    true
   ],
   "plugins.chatecnu-vision.maxEvidenceChars": [
     "单份读图证据最大字符数，默认 12000。",
-    12000
+    12000,
+    true
   ],
   "plugins.chatecnu-vision.maxRequestEvidenceChars": [
     "一次请求的读图证据总字符预算，默认 64000。",
-    64000
+    64000,
+    true
   ],
   "plugins.chatecnu-vision.dshHome": [
     "可选：证据缓存所属 DSH 数据根目录；通常留空由程序自动选择。",
@@ -79,14 +85,15 @@
   ],
   "plugins.chatecnu-active-heartbeat.allowInsecureDevelopment": [
     "默认 false 仅接受 HTTPS；true 也接受 HTTP，不需要额外地址字段。",
-    false
+    false,
+    true
   ],
   "plugins.chatecnu-active-heartbeat.profileID": [
     "发送心跳所用 organizations[].id；未登录时不发送。",
     "ecnu"
   ],
   "plugins.chatecnu-active-heartbeat.baseURL": [
-    "心跳服务基地址，与账户授权服务一起调整。",
+    "心跳服务基地址；不会随 auth.discoveryUrl 自动切换，切环境时一并修改。",
     "https://models.example.org"
   ],
   "plugins.chatecnu-active-heartbeat.endpoint": [

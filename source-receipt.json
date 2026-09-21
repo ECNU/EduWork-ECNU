@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-21T01:53:27.131Z",
-  "fileSetSHA256": "14c4217948c320f9f132c2bfdf14227edbe26e284bc34bc5ad045699c4b9f338",
+  "createdAt": "2026-09-21T02:20:30.880Z",
+  "fileSetSHA256": "5147744038fd4dc319d97338b40fd4e6bd508627a1e419c61b4ceabc2f5930d8",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,7 +33,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "fa8c1668340b2095091dfcea6ca3dfa0d0e68f617ba385bd23bbd9df8c80f33c"
+      "sha256": "dd0a51f52fa2a5f1cc02a0f15c0277892216c14db8d08261e5c9b2ff663ef69c"
     },
     {
       "path": "docs/BUILD.md",
@@ -89,23 +89,23 @@
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
-      "sha256": "894159c4bbf18d405072ec5da76ca5c5baae5c93fb8e0c8c9db751d5c4a17706"
+      "sha256": "2c75b0853f61927b19f2daa6315193cc95d53ac16bb931d2974a67f836fcf018"
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "acc7b95b2206cadc168ab6e866a8aa17208fd2d0b66560a2b688e516fb9b2f67"
+      "sha256": "8a748ea4cfbd43803d361414e7b36310cce25b5b939322b301db53de9f0f9e62"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
-      "sha256": "b5c4176c64e233349a793850e0a281925bfbea0a5d9961c116ba4dee0a1bcaae"
+      "sha256": "b08a155032cf978a11e56a23a0e0a514012c3e4d8991ff61fe57db021422c0b0"
     },
     {
       "path": "edition/desktop-examples/README.md",
-      "sha256": "585d512b7d8d6acc8be64345fe3ca5d2a05fd844ef981afa1df3b40745180bd1"
+      "sha256": "c70eac77353e8ebbe21470d00af2b129ec3b0a6a18d8267d0f399f91b1c156e6"
     },
     {
       "path": "edition/desktop/configuration-options.json",
-      "sha256": "c4f446dd20fbf553dfa7a7d5920d02dbcb4691c235b834aca02e836ca6bc8070"
+      "sha256": "dd335c56560ee83d0e2cd3d626efa67eaef46c528c4c327d0e9d058486b90a76"
     },
     {
       "path": "edition/desktop/configuration-policy.json",
@@ -117,7 +117,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "471399d7e6ca33f860fec9579a6d5c93aa29d56d5e92bec3936e5299d51d2499"
+      "sha256": "c286e37842e87e6292bd7a62d021440324a3426b078af324942debe1d102cba1"
     },
     {
       "path": "edition/desktop/mac-updates.json",
@@ -137,7 +137,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "34a95bd878118568b65f473c326abeb6a960f0834211f85601e04c1a252663f7"
+      "sha256": "226555707cef402abedcaa9688417cc8a275c9a0051ec011c0549157fba9d969"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -365,7 +365,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "da0c92e9623730016ac19f3a43a90c096c4c48299783e4cc5b857fdafb3bcec8"
+      "sha256": "2c12b98ecc47a0f0a74462ccbe4656daeca1d698e879132d8dadde4bf741465d"
     },
     {
       "path": "LICENSE",

@@ -35,7 +35,8 @@
         "baseURLEnv": "CHATECNU_SERVICE_BASE_URL",
         "credentialRef": "EDUWORK_API_KEY",
         "oidcProfileId": "ecnu",
-        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1"
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "requestTimeoutMs": 65000
       }
     },
     {
@@ -48,7 +49,12 @@
         "baseURLEnv": "CHATECNU_SERVICE_BASE_URL",
         "credentialRef": "EDUWORK_API_KEY",
         "oidcProfileId": "ecnu",
-        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1"
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "provider": "chatecnu",
+        "model": "ecnu-plus",
+        "maxAnalysisTokens": 2048,
+        "maxEvidenceChars": 12000,
+        "maxRequestEvidenceChars": 64000
       }
     },
     {

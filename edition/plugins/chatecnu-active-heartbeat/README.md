@@ -14,12 +14,13 @@ ChatECNU 专属机构能力。只上报随机安装标识、客户端元数据�
 
 ## Electron 与本机 Web 配置
 
-Electron 和单机 Web 共用 DSH Host 的 OAuth 后端，配置名称沿用 `backend: "web"`，不表示客户端平台是 Web。学校发行在 `edition/distribution.json` 中显式启用，绑定 `ecnu` 账号和学校服务地址。适配其他部署时，由受信装配传入以下配置，不放到浏览器可编辑的 settings：
+Electron 和单机 Web 共用 DSH Host 的 OAuth 后端，配置名称沿用 `backend: "web"`，不表示客户端平台是 Web。学校发行默认启用并关联 `ecnu` 账号。当前桌面生效选项位于 `eduwork.jsonc` 的 `plugins["chatecnu-active-heartbeat"]`，可从设置打开配置文件修改；下面是该插件对象的示例。切换环境时同步修改 `baseURL`，心跳地址不会随登录发现地址自动切换：
 
 ```json
 {
   "backend": "web",
   "enabled": true,
+  "allowInsecureDevelopment": false,
   "profileID": "campus",
   "baseURL": "https://campus.example.edu",
   "endpoint": "/user/active",
@@ -39,7 +40,7 @@ Electron 和单机 Web 共用 DSH Host 的 OAuth 后端，配置名称沿用 `ba
 
 请求保持已有 `POST /user/active` 协议，wire 标识是 `client.installation_id`；OAuth `client_id` 在 OIDC profile 中配置，没有另造 `device_id` 或 `client_id` 请求字段。其他元数据为 name/version/platform/channel/device/os/arch/locale/timezone；超过协议长度的版本号会省略。服务端 `next_heartbeat_in` 默认 600 秒，限定在 60–3600 秒。
 
-仅接受 HTTPS 地址，本机调试可用 HTTP loopback。`client` 不包含用户名、OAuth `client_id`、令牌或文件路径。可选的 `os_version` 不上报；服务端自行获取 IP。HTTP 200 且 `status: "Success"` 即视为成功，`recorded: false` 或 `daily_recorded: false` 不会引起重试。
+默认仅接受 HTTPS；HTTP 测试环境须显式将本插件和关联机构的 `allowInsecureDevelopment` 设为 `true`，同源及账号授权校验仍然生效。`client` 不包含用户名、OAuth `client_id`、令牌或文件路径。可选的 `os_version` 不上报；服务端自行获取 IP。HTTP 200 且 `status: "Success"` 即视为成功，`recorded: false` 或 `daily_recorded: false` 不会引起重试。
 
 ## 旧版原生适配
 

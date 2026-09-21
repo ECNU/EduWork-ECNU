@@ -59,7 +59,7 @@ Quota queries use university-specific APIs, and values come from the server. Quo
 
 ### University models and media services
 
-After university sign-in and authorization, the client uses the login Token to discover and invoke authorized models, without creating or copying a separate model API key. Depending on account permissions, university image generation and speech synthesis services can also produce images, narration, and explanatory content in conversations or Studio. Personal models remain available alongside them.
+After university sign-in and authorization, the client automatically discovers available models so you can start a conversation without creating or copying a separate model API key. Depending on account permissions, university image generation and speech synthesis services can also produce images, narration, and explanatory content in conversations or Studio. Personal models remain available alongside them.
 
 These integrations reuse the public edition's OIDC, model, and media adapters, with services and configuration supplied by the university.
 
@@ -85,7 +85,9 @@ Back in the conversation, select a university model at the bottom right of the c
 
 ### Work with your materials
 
-Choose a local folder as your workspace. Ask EduWork to read and organize sources, analyze data, edit files, or run scripts. Request outputs in a conversation or open Studio:
+Choose a local folder as your workspace. Ask EduWork to read and organize sources, analyze data, edit files, or run scripts. Request outputs in a conversation or open Studio to choose an output type.
+
+For example, research Lingang Campus, create a one-page HTML introduction, and generate a quiz from the page in your workspace. Research materials, the page, and exercises stay together for further additions and revisions.
 
 - **Reports, spreadsheets, and presentations**: create DOCX, XLSX, and PPTX files.
 - **Mind maps, quizzes, and flashcards**: organize knowledge and prepare practice and revision materials.
@@ -144,7 +146,7 @@ Other schools and businesses can follow this structure to develop their plugins 
 | [Build guide](docs/BUILD.md) | Referencing the public core, assembling institutional editions, and contributing. |
 | [EduWork user guide](https://github.com/ecnu/EduWork/blob/main/docs/USER_GUIDE.md) | Workspaces, models, search, speech, and file operations. |
 | [Versioning and upgrades](https://github.com/ecnu/EduWork/blob/main/docs/RELEASE.md) · [Update sources](https://github.com/ecnu/EduWork/blob/main/docs/UPDATES.md) | Versions, update channels, and migration requirements. |
-| [macOS notes](https://github.com/ecnu/EduWork/blob/main/docs/MACOS.md) | Mac support and ways to contribute. |
+| [macOS notes](https://github.com/ecnu/EduWork/blob/main/docs/MACOS.md) · [Mac updates](https://github.com/ecnu/EduWork/blob/main/docs/MACOS_UPDATES_EN.md) | Mac support, user data locations, updates, and system authorization. |
 
 Detailed documentation defaults to Chinese.
 

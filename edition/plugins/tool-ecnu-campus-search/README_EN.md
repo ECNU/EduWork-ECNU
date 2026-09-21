@@ -2,10 +2,10 @@
 
 [简体中文](README.md)
 
-A native DSH search tool for East China Normal University. It calls the institution's platform through `POST /search`, reusing the configured API Base URL and `EDUWORK_API_KEY` reference without storing separate accounts or keys.
+A native DSH search tool for East China Normal University. It calls the institution's platform through `POST /search`. Current university distributions bind the signed-in ECNU account and delegate Access Token requests to the shared OIDC account layer, without storing separate accounts or tokens.
 
 The tool is named `ecnu_campus_search`. Use it for ECNU-related sites, services, organizations, policies and news. DSH's official `web_search` remains available for general background and external facts.
-`oidcProfileId` matches the organization entry `id`, not `provider.id`. The plugin verifies the institution, credential reference and service endpoint before using a key. Current distributions use this binding. Omitting the field selects the legacy direct-credential mode, intended only for controlled assemblies managing a personal key; it does not provide the institution binding used by school sign-in.
+`oidcProfileId` matches the organization entry `id`, not `provider.id`. The plugin uses `modelAuthorization` to verify the account and discovered model-service base, then delegates requests and token refresh to `authorizedFetch`. Current distributions use this binding; missing sign-in or an endpoint mismatch never falls back to a personal key. Only legacy mode without this field reads the API Key referenced by `credentialRef`, for controlled assemblies managing their own keys.
 
 ```yaml
 - id: tool-ecnu-campus-search
@@ -18,6 +18,6 @@ The tool is named `ecnu_campus_search`. Use it for ECNU-related sites, services,
     requestTimeoutMs: 65000
 ```
 
-Returned titles, excerpts and links are untrusted search content, not Agent instructions. Bearer keys never enter tool output, logs or errors.
+Returned titles, excerpts and links are untrusted search content, not Agent instructions. Access Tokens and API Keys never enter tool output, logs or errors.
 
-The plugin retains `CHATECNU_API_KEY` as its internal default for legacy compositions. New distribution configuration should explicitly set `EDUWORK_API_KEY`, as in the example.
+API Key compatibility mode retains `CHATECNU_API_KEY` as its internal default; the example explicitly sets `EDUWORK_API_KEY`. This credential is not read when `oidcProfileId` is configured. Current university sign-in does not require creating a model key.

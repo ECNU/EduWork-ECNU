@@ -59,7 +59,7 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 ### 学校模型与媒体服务
 
-使用学校账号完成认证和授权后，客户端使用登录 Token 获取获授权的模型目录并直接调用模型，无需另行创建或复制模型 API Key。还可按账号权限使用学校提供的文生图和语音合成服务，在对话或 Studio 中制作图片、配音及讲解内容；个人模型可以同时使用。
+使用学校账号登录并授权后，客户端自动获取可用模型，可直接开始对话，无需另行创建或复制模型 API Key。还可按账号权限使用学校提供的文生图和语音合成服务，在对话或 Studio 中制作图片、配音及讲解内容；个人模型可以同时使用。
 
 这些接入能力复用公版的 OIDC、模型和媒体适配器，由学校提供服务与配置。
 
@@ -85,7 +85,9 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 ### 围绕资料完成工作
 
-选择本机文件夹作为工作区，让 EduWork 阅读和整理资料、分析数据、编辑文件或运行脚本。需要成果时，可直接在对话中提出要求，也可以打开 Studio：
+选择本机文件夹作为工作区，让 EduWork 阅读和整理资料、分析数据、编辑文件或运行脚本。需要成果时，可直接在对话中提出要求，也可以打开 Studio，选择需要的成果类型。
+
+例如，先调研临港校区并制作一页 HTML 简介，再基于工作区中的网页生成测验。调研资料、网页与练习留在同一个工作区，可以继续补充和修改。
 
 - **报告、数据表与演示文稿**：生成 DOCX、XLSX、PPTX 文件。
 - **思维导图、测验与闪卡**：整理知识关系，制作练习和复习材料。
@@ -144,7 +146,7 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 | [构建指南](docs/BUILD.md) | 引用公共核心、装配机构发行版与协作开发。 |
 | [EduWork 使用指南](https://github.com/ecnu/EduWork/blob/main/docs/USER_GUIDE.md) | 工作区、模型、搜索、语音和文件操作。 |
 | [版本与升级](https://github.com/ecnu/EduWork/blob/main/docs/RELEASE.md) · [更新源部署](https://github.com/ecnu/EduWork/blob/main/docs/UPDATES.md) | 版本规则、更新渠道与迁移要求。 |
-| [macOS 说明](https://github.com/ecnu/EduWork/blob/main/docs/MACOS.md) | Mac 平台适配与贡献方式。 |
+| [macOS 说明](https://github.com/ecnu/EduWork/blob/main/docs/MACOS.md) · [Mac 更新](https://github.com/ecnu/EduWork/blob/main/docs/MACOS_UPDATES.md) | Mac 平台、用户数据位置、更新与系统授权。 |
 
 ## 致谢与许可
 

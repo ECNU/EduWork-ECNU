@@ -14,11 +14,12 @@ An institution-specific service reporting only a random installation identifier,
 
 ## Electron and local Web configuration
 
-Electron and local Web share the DSH Host OAuth backend. The retained `backend: "web"` name does not mean the client platform is Web. The university distribution explicitly enables it in `edition/distribution.json`, binding the `ecnu` account to the university service. Other deployments supply trusted assembly configuration, not browser-editable settings:
+Electron and local Web share the DSH Host OAuth backend. The retained `backend: "web"` name does not mean the client platform is Web. University defaults enable it for the `ecnu` account. Current desktop options live in `plugins["chatecnu-active-heartbeat"]` in the active `eduwork.jsonc`, accessible through Open configuration file in Settings. The example below is that plugin object. When switching environments, also change `baseURL`; the heartbeat address does not follow the login discovery address automatically:
 ```json
 {
   "backend": "web",
   "enabled": true,
+  "allowInsecureDevelopment": false,
   "profileID": "campus",
   "baseURL": "https://campus.example.edu",
   "endpoint": "/user/active",
@@ -38,7 +39,7 @@ The installation ID defaults to `$DSH_HOME/state/chatecnu-active/installation-id
 
 The existing `POST /user/active` wire contract uses `client.installation_id`. OAuth `client_id` belongs in the OIDC profile; there are no new wire `device_id` or `client_id` fields. Other metadata is name/version/platform/channel/device/os/arch/locale/timezone. Overlong version strings are omitted. Server `next_heartbeat_in` defaults to 600 seconds, bounded to 60–3600 seconds.
 
-Only HTTPS endpoints are accepted, with HTTP loopback allowed for local testing. The `client` object contains no username, OAuth `client_id`, token or file path. Optional `os_version` is omitted; the server obtains the IP address. HTTP 200 with `status: "Success"` is successful even when `recorded` or `daily_recorded` is false.
+Only HTTPS endpoints are accepted by default. For HTTP testing, explicitly set `allowInsecureDevelopment: true` in both this plugin and the associated organization; same-origin and account authorization checks still apply. The `client` object contains no username, OAuth `client_id`, token or file path. Optional `os_version` is omitted; the server obtains the IP address. HTTP 200 with `status: "Success"` is successful even when `recorded` or `daily_recorded` is false.
 
 ## Legacy native adapter
 

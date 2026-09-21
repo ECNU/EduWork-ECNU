@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260917.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-20T16:37:24.260Z",
-  "fileSetSHA256": "4177f8d1d66d4d1e1fa692f36ae71a012fd35fcd6ac6d670f831eb11c746d93c",
+  "createdAt": "2026-09-21T03:10:48.579Z",
+  "fileSetSHA256": "fd2ab7286423214ff3ab657c07dbea6473c1c654eec17719650f2f4422ac5123",
   "files": [
     {
       "path": ".gitattributes",
@@ -33,7 +33,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "d687110bb46d42a0f358d7812468945f7d2956e0cbb911ce66316cc0b883e75c"
+      "sha256": "0890b357d2a12f4b0c5203ae822e060b0914694399ecb31cf20ddbef0989edf2"
     },
     {
       "path": "docs/BUILD.md",
@@ -89,19 +89,23 @@
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
-      "sha256": "6cd567f65551a3b815b67ce180c9a37646fff84c46d41783de543ff10fc08eb6"
+      "sha256": "0b4bce865cbeb406b7b61428fee6bc07fe4712b96b11851480fd507fa4904879"
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "dd2109c278df1875879850d8e09500ee817e1ac2455d38556ad46205ecafc299"
+      "sha256": "3190bb4de9310aa998277e830e08fba8399bd2280ed5864b2e7a0bf0168b1d0f"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
-      "sha256": "11d4add1dd9c17a320afaf5e7229e596ea52e1158f35d20836fef8aa28658eb3"
+      "sha256": "b08a155032cf978a11e56a23a0e0a514012c3e4d8991ff61fe57db021422c0b0"
     },
     {
       "path": "edition/desktop-examples/README.md",
-      "sha256": "1be2017858a55bd1b70f236d5c268dde3e3f1d7228bcf2f35de426728cce285d"
+      "sha256": "c70eac77353e8ebbe21470d00af2b129ec3b0a6a18d8267d0f399f91b1c156e6"
+    },
+    {
+      "path": "edition/desktop/configuration-options.json",
+      "sha256": "dd335c56560ee83d0e2cd3d626efa67eaef46c528c4c327d0e9d058486b90a76"
     },
     {
       "path": "edition/desktop/configuration-policy.json",
@@ -113,7 +117,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "ed71484c222e07d64715a5e653254651b6060853972c1b2e2448135cfd01ee96"
+      "sha256": "3d296a1fc995751c98340fcbd33f424e5d01e91a23c36d7ca52cc585ae05fae5"
     },
     {
       "path": "edition/desktop/mac-updates.json",
@@ -133,7 +137,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "cfce4f247b72393fc394ac60da66cf3d7f5e4281a7776265c4f7cd2624e97d40"
+      "sha256": "226555707cef402abedcaa9688417cc8a275c9a0051ec011c0549157fba9d969"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -153,7 +157,7 @@
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/web-backend.js",
-      "sha256": "51dbc163a1b8eb129932cd676a4524aae117f1f9fa5b7f2ccadc9fad687dce86"
+      "sha256": "fa9d6a89b28a8717f30752cfc0be044a0183dd95c8a32f88fbc52c19cc447f5a"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/package.json",
@@ -185,7 +189,7 @@
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs",
-      "sha256": "22dfe2fbef8ecbdc16674581f1a6e9cba6e75ff97c447b3c666bd8b10cea825c"
+      "sha256": "5d01319ae4b12fe89e70f55847c4386663408833becc4e4d6bbc3c1650581447"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/.gitignore",
@@ -361,7 +365,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "7bc6efd6ad8430aac536f27916108ae27c7e61ed18ed79563b0dab358db984c5"
+      "sha256": "2c12b98ecc47a0f0a74462ccbe4656daeca1d698e879132d8dadde4bf741465d"
     },
     {
       "path": "LICENSE",

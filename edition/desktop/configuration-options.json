@@ -1,0 +1,123 @@
+{
+  "plugins.ecnu-account-resources.profileIDs": [
+    "提供配额展示的企业 ID 列表。",
+    [
+      "ecnu"
+    ]
+  ],
+  "plugins.chatecnu-campus-search.baseURL": [
+    "校内搜索 API 基地址；切换环境时与账户授权资源一起改。",
+    "https://models.example.org/v1"
+  ],
+  "plugins.chatecnu-campus-search.baseURLEnv": [
+    "可选环境变量名称；该变量有值时优先于 baseURL，置空关闭环境覆盖。",
+    ""
+  ],
+  "plugins.chatecnu-campus-search.credentialRef": [
+    "独立 Key 模式的凭据引用；不填写 Key 本身。",
+    "EDUWORK_API_KEY"
+  ],
+  "plugins.chatecnu-campus-search.oidcProfileId": [
+    "企业 Token 授权所用 organizations[].id；填写后优先于独立 Key。",
+    "ecnu"
+  ],
+  "plugins.chatecnu-campus-search.requestTimeoutMs": [
+    "搜索超时毫秒，1–120000，默认 65000。",
+    65000,
+    true
+  ],
+  "plugins.chatecnu-vision.enabled": [
+    "辅助读图的默认开关；features.visionFallback 若填写则优先，原生多模态不经过辅助读图。",
+    true
+  ],
+  "plugins.chatecnu-vision.baseURL": [
+    "读图模型 API 基地址；与关联账户授权资源一致。",
+    "https://models.example.org/v1"
+  ],
+  "plugins.chatecnu-vision.baseURLEnv": [
+    "可选环境变量名称；变量有值时覆盖 baseURL，置空关闭环境覆盖。",
+    ""
+  ],
+  "plugins.chatecnu-vision.credentialRef": [
+    "独立 Key 模式的凭据引用名；不填写 Key 本身。",
+    "EDUWORK_API_KEY"
+  ],
+  "plugins.chatecnu-vision.oidcProfileId": [
+    "企业 Token 授权所用 organizations[].id。",
+    "ecnu"
+  ],
+  "plugins.chatecnu-vision.provider": [
+    "需要此辅助能力的本地模型提供方 ID。",
+    "chatecnu",
+    true
+  ],
+  "plugins.chatecnu-vision.model": [
+    "用于读图的模型 ID，须支持图片输入。",
+    "ecnu-plus",
+    true
+  ],
+  "plugins.chatecnu-vision.maxAnalysisTokens": [
+    "一次读图分析最大输出 token 数，默认 2048。",
+    2048,
+    true
+  ],
+  "plugins.chatecnu-vision.maxEvidenceChars": [
+    "单份读图证据最大字符数，默认 12000。",
+    12000,
+    true
+  ],
+  "plugins.chatecnu-vision.maxRequestEvidenceChars": [
+    "一次请求的读图证据总字符预算，默认 64000。",
+    64000,
+    true
+  ],
+  "plugins.chatecnu-vision.dshHome": [
+    "可选：证据缓存所属 DSH 数据根目录；通常留空由程序自动选择。",
+    "/path/to/dsh-home"
+  ],
+  "plugins.chatecnu-active-heartbeat.backend": [
+    "当前 Electron 使用 web，通过账户服务发送；native 仅供旧桥接。",
+    "web"
+  ],
+  "plugins.chatecnu-active-heartbeat.enabled": [
+    "启用活跃心跳；web 后端默认 false，学校发行默认 true。",
+    true
+  ],
+  "plugins.chatecnu-active-heartbeat.allowInsecureDevelopment": [
+    "默认 false 仅接受 HTTPS；true 也接受 HTTP，不需要额外地址字段。",
+    false,
+    true
+  ],
+  "plugins.chatecnu-active-heartbeat.profileID": [
+    "发送心跳所用 organizations[].id；未登录时不发送。",
+    "ecnu"
+  ],
+  "plugins.chatecnu-active-heartbeat.baseURL": [
+    "心跳服务基地址；不会随 auth.discoveryUrl 自动切换，切环境时一并修改。",
+    "https://models.example.org"
+  ],
+  "plugins.chatecnu-active-heartbeat.endpoint": [
+    "心跳路径，默认 /user/active；必须与 baseURL 同源。",
+    "/user/active"
+  ],
+  "plugins.chatecnu-active-heartbeat.productName": [
+    "上报的产品名称，默认 EduWork@ECNU。",
+    "EduWork@ECNU"
+  ],
+  "plugins.chatecnu-active-heartbeat.version": [
+    "自动从安装包读取，通常不要填写；示例仅用于独立插件验证。",
+    "0.0.0"
+  ],
+  "plugins.chatecnu-active-heartbeat.platform": [
+    "自动识别 desktop/web；通常不要填写。",
+    "desktop"
+  ],
+  "plugins.chatecnu-active-heartbeat.stateDirectory": [
+    "可选绝对目录；不填使用 DSH_HOME/state/chatecnu-active。",
+    "/path/to/heartbeat-state"
+  ],
+  "plugins.chatecnu-active-heartbeat.installationID": [
+    "安装标识，默认本地生成并持久保存；不要给多台机器配置相同值。",
+    "inst-synthetic-example"
+  ]
+}

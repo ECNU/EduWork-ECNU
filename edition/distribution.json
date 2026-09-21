@@ -35,7 +35,8 @@
         "baseURLEnv": "CHATECNU_SERVICE_BASE_URL",
         "credentialRef": "EDUWORK_API_KEY",
         "oidcProfileId": "ecnu",
-        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1"
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "requestTimeoutMs": 65000
       }
     },
     {
@@ -48,7 +49,12 @@
         "baseURLEnv": "CHATECNU_SERVICE_BASE_URL",
         "credentialRef": "EDUWORK_API_KEY",
         "oidcProfileId": "ecnu",
-        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1"
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "provider": "chatecnu",
+        "model": "ecnu-plus",
+        "maxAnalysisTokens": 2048,
+        "maxEvidenceChars": 12000,
+        "maxRequestEvidenceChars": 64000
       }
     },
     {
@@ -58,6 +64,7 @@
       "name": "@chatecnu-work/dsh-chatecnu-active-heartbeat",
       "config": {
         "backend": "web",
+        "allowInsecureDevelopment": false,
         "enabled": true,
         "profileID": "ecnu",
         "baseURL": "https://chat.ecnu.edu.cn",
@@ -120,6 +127,11 @@
       "root": "edition",
       "source": "edition/desktop/publisher-bootstrap.darwin.json",
       "target": "desktop/publisher-bootstrap.darwin.json"
+    },
+    {
+      "root": "edition",
+      "source": "edition/desktop/configuration-options.json",
+      "target": "desktop/configuration-options.json"
     }
   ],
   "patches": []

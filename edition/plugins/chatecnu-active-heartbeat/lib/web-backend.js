@@ -14,8 +14,8 @@ export function normalizeWebConfig(raw = {}, environment = process.env) {
     base = new URL(raw.baseURL)
     endpoint = new URL(raw.endpoint ?? '/user/active', base)
   } catch { throw new Error('heartbeat Web backend requires an explicit HTTP(S) baseURL') }
-  const developmentOrigin = raw.allowInsecureDevelopment === true && raw.insecureDevelopmentOrigin === base.origin
-  if (!(base.protocol === 'https:' || base.protocol === 'http:' && (['localhost', '127.0.0.1', '[::1]'].includes(base.hostname) || developmentOrigin)) || endpoint.origin !== base.origin || base.username || base.password || base.search || base.hash || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) {
+  if (raw.allowInsecureDevelopment !== undefined && typeof raw.allowInsecureDevelopment !== 'boolean') throw new Error('heartbeat allowInsecureDevelopment must be boolean')
+  if (!(base.protocol === 'https:' || base.protocol === 'http:' && raw.allowInsecureDevelopment === true) || endpoint.origin !== base.origin || base.username || base.password || base.search || base.hash || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) {
     throw new Error('heartbeat endpoint must belong to its configured HTTP(S) origin')
   }
   const stateDirectory = raw.stateDirectory ?? (environment.DSH_HOME ? join(environment.DSH_HOME, 'state', 'chatecnu-active') : '')

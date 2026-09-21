@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![DSH 0.1.5-rc.2](https://img.shields.io/badge/DSH-0.1.5--rc.2-5367E8?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2) [![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![Desktop: Electron](https://img.shields.io/badge/desktop-Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://github.com/ecnu/EduWork/blob/main/dsh-electron/README_EN.md) [![Platform: Windows x64](https://img.shields.io/badge/platform-Windows%20x64-0078D4?style=flat-square)](docs/USER_GUIDE.md)
+[![DSH 0.1.5-rc.2](https://img.shields.io/badge/DSH-0.1.5--rc.2-5367E8?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2) [![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![Desktop: Electron](https://img.shields.io/badge/desktop-Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://github.com/ecnu/EduWork/blob/main/dsh-electron/README_EN.md) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-0078D4?style=flat-square)](docs/USER_GUIDE.md)
 
 [简体中文](README.md) | **English**
 
@@ -22,7 +22,7 @@ It includes the full EduWork workspace, Studio, and skill center. University ser
 
 ![EduWork@ECNU workspace: turn local course materials into a teaching plan, shown in the red theme](docs/images/workspace.png)
 
-<p align="center"><sub>The shared EduWork workspace, connected to university services. Blue and red themes are both available.</sub></p>
+<p align="center"><sub>The shared EduWork workspace, connected to university services. The theme defaults to red, with blue also available.</sub></p>
 
 > University users obtain the client through the school distribution channel; it downloads school configuration on first launch. This repository presents the institutional extension; its templates do not include complete school deployment settings.
 
@@ -34,7 +34,7 @@ It includes the full EduWork workspace, Studio, and skill center. University ser
 <td width="50%" valign="top"><h3>See your available resources</h3><p>Check university quota, resource pools, and reset times from your account menu.</p></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><h3>Connect university models</h3><p>Sign in to configure models and use university image generation and speech services.</p></td>
+<td width="50%" valign="top"><h3>Connect university models</h3><p>Sign in to discover available models without copying API keys, and use university image and speech services according to your account permissions.</p></td>
 <td width="50%" valign="top"><h3>Finish the work</h3><p>Keep the full EduWork workspace, Studio, skills, memory, and mail assistant.</p></td>
 </tr>
 </table>
@@ -59,7 +59,7 @@ Quota queries use university-specific APIs, and values come from the server. Quo
 
 ### University models and media services
 
-After university sign-in and the required authorization, the client obtains model credentials and configures university models. University image generation and speech synthesis services can also produce images, narration, and explanatory content in conversations or Studio. Personal models remain available alongside them.
+After university sign-in and authorization, the client uses the login Token to discover and invoke authorized models, without creating or copying a separate model API key. Depending on account permissions, university image generation and speech synthesis services can also produce images, narration, and explanatory content in conversations or Studio. Personal models remain available alongside them.
 
 These integrations reuse the public edition's OIDC, model, and media adapters, with services and configuration supplied by the university.
 
@@ -80,11 +80,28 @@ Choose a local folder as your workspace. Ask EduWork to read and organize source
 
 Conversations and Studio share generation, previews, and downloads. The skill center, local memory, mail assistant, browser, local transcription, system speech synthesis, and blue/red themes are also included.
 
-![EduWork@ECNU Studio: create teaching materials for a lesson plan using the same creation tools as the public edition](docs/images/studio.png)
+![Shared Studio capabilities: output types and a quiz generated from workspace materials, shown in the public edition](docs/images/studio.png)
+
+<p align="center"><sub>This public-edition screenshot demonstrates Studio features shared by both editions. The ECNU edition uses university branding, accounts, and model configuration.</sub></p>
+
+<details>
+<summary>Explore quizzes and the skill center</summary>
+
+![Check quiz answers, explanations, and source evidence, then ask AI a follow-up question, shown in the public edition](docs/images/quiz.png)
+
+Answer a generated quiz directly, review explanations and source evidence, and use Ask AI to continue learning.
+
+![Browse built-in skills, import skills, or create your own, shown in the public edition](docs/images/skills.png)
+
+The skill center includes built-in task guidance and supports importing or creating your own skills. Both screenshots show shared features in the public edition.
+
+</details>
 
 ## Configuration and data
 
-The university maintains connection settings, model catalogs and capabilities, media services, branding, and update sources. The client includes update feeds and a verification key, and downloads school configuration on first launch. Model catalogs, feature switches, media configuration and official Skills can also update independently, taking effect on the next launch; users do not need to edit configuration. Personal models, credentials, and history remain separate and are preserved. Configuration is separate from the public core. This repository supplies templates; the university maintains actual Client IDs and deployment settings. See the [institutional configuration examples](edition/desktop-examples/README_EN.md).
+The university maintains default connection settings, model and media configuration, branding, and update sources. On first launch, the client downloads and verifies university configuration. Model configuration, feature switches, media settings, and official Skills can also update independently and take effect after restart. Everyday use requires no manual entry of university settings.
+
+For adjustments, open the single active `eduwork.jsonc` from Settings; the file includes configuration comments. Configuration updates preserve manual edits and retain only one previous configuration before an automatic rewrite for rollback. Personal models, credentials, and history remain separate. Windows keeps configuration and data in the portable installation directory; macOS uses the user directory. This repository provides [institutional examples](edition/desktop-examples/README_EN.md); the university distributes actual deployment settings.
 
 Conversations, workspace references, and memory are managed locally. When using university or other remote models, search, or media services, content needed for a task is sent to the corresponding service. Sign-in credentials are managed by local credential storage; do not put passwords or tokens in configuration files.
 

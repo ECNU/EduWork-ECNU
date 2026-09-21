@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![DSH 0.1.5-rc.2](https://img.shields.io/badge/DSH-0.1.5--rc.2-5367E8?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2) [![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![Desktop: Electron](https://img.shields.io/badge/desktop-Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://github.com/ecnu/EduWork/tree/main/dsh-electron) [![Platform: Windows x64](https://img.shields.io/badge/platform-Windows%20x64-0078D4?style=flat-square)](docs/USER_GUIDE.md)
+[![DSH 0.1.5-rc.2](https://img.shields.io/badge/DSH-0.1.5--rc.2-5367E8?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2) [![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![Desktop: Electron](https://img.shields.io/badge/desktop-Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://github.com/ecnu/EduWork/tree/main/dsh-electron) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-0078D4?style=flat-square)](docs/USER_GUIDE.md)
 
 **简体中文** | [English](README_EN.md)
 
@@ -22,7 +22,7 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 ![EduWork@ECNU 工作区：围绕本机课程资料整理教学方案，使用红色主题](docs/images/workspace.png)
 
-<p align="center"><sub>同一个 EduWork 工作区，连接学校服务；蓝色与红色主题均可选择。</sub></p>
+<p align="center"><sub>同一个 EduWork 工作区，连接学校服务；默认红色主题，也可切换为蓝色。</sub></p>
 
 > 学校用户通过学校发布渠道获取客户端，首次启动自动下载学校配置。本仓库介绍机构扩展与开发方式，配置模板不包含完整的学校部署参数。
 
@@ -34,7 +34,7 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 <td width="50%" valign="top"><h3>可用资源，一眼了解</h3><p>从账户菜单查看学校模型额度、资源池和重置时间，随时刷新、查看明细。</p></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><h3>学校模型，登录接入</h3><p>完成登录与授权后配置学校模型，使用学校提供的文生图和语音服务。</p></td>
+<td width="50%" valign="top"><h3>学校模型，登录接入</h3><p>登录后自动获取可用模型，无需复制 API Key；按账号权限使用学校图像与语音服务。</p></td>
 <td width="50%" valign="top"><h3>公共能力，完整保留</h3><p>工作区、Studio、技能中心、记忆与邮件助手，继续围绕你的资料完成任务。</p></td>
 </tr>
 </table>
@@ -59,7 +59,7 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 ### 学校模型与媒体服务
 
-使用学校账号完成认证和必要授权后，客户端自动获取模型凭据、配置学校模型。还可使用学校提供的文生图和语音合成服务，在对话或 Studio 中制作图片、配音及讲解内容；个人模型可以同时使用。
+使用学校账号完成认证和授权后，客户端使用登录 Token 获取获授权的模型目录并直接调用模型，无需另行创建或复制模型 API Key。还可按账号权限使用学校提供的文生图和语音合成服务，在对话或 Studio 中制作图片、配音及讲解内容；个人模型可以同时使用。
 
 这些接入能力复用公版的 OIDC、模型和媒体适配器，由学校提供服务与配置。
 
@@ -80,11 +80,28 @@ EduWork@ECNU 将 [EduWork](https://github.com/ecnu/EduWork) 带到华东师范�
 
 对话与 Studio 共用生成、预览和下载能力。技能中心、本地记忆、邮件助手、浏览器、本机语音转写、系统语音合成和蓝/红配色也都保留。
 
-![EduWork@ECNU 的 Studio：围绕课程设计制作配套材料，使用与公版相同的成果创作入口](docs/images/studio.png)
+![两版共享的 Studio：成果类型入口与基于工作区资料生成的测验（公版界面示例）](docs/images/studio.png)
+
+<p align="center"><sub>图中为公版界面，展示两版共享的 Studio 能力。ECNU 版使用学校标识、账号与模型配置。</sub></p>
+
+<details>
+<summary>看看测验与技能中心</summary>
+
+![测验中查看答案、解析与来源依据，并继续向 AI 提问（公版界面示例）](docs/images/quiz.png)
+
+生成的测验可以直接答题，查看解析与来源依据，并通过「问问 AI」继续学习。
+
+![浏览内置技能，导入或创建自己的技能（公版界面示例）](docs/images/skills.png)
+
+技能中心提供内置任务指引，也可导入或创建自己的技能。以上两张图均为两版共享功能的公版界面示例。
+
+</details>
 
 ## 配置与数据
 
-学校接入参数、模型目录与能力、媒体服务、品牌和更新源由学校统一维护，客户端内置更新源与公钥，学校配置在首次启动时下载；模型目录、功能开关、媒体配置和官方 Skills 也可独立更新，在下次启动生效，使用者无需手动编辑配置。个人模型、登录凭据与历史数据单独保留。配置与公共核心代码分离。仓库提供配置模板，实际 Client ID 与部署参数由学校维护，见[机构配置示例](edition/desktop-examples/README.md)。
+学校统一维护默认接入参数、模型与媒体配置、品牌和更新源。客户端在首次启动时下载并验证学校配置，模型配置、功能开关、媒体配置和官方 Skills 也可独立更新，重启后生效；日常使用无需手动填写学校参数。
+
+需要调整时，从设置打开唯一生效的 `eduwork.jsonc`，文件内包含配置注释。配置更新保留手工修改，自动改写前只保留一份上一版配置用于回退；个人模型、登录凭据和历史数据单独保留。Windows 的配置和数据随绿色版目录保存，macOS 存放在用户目录。仓库提供[机构配置示例](edition/desktop-examples/README.md)，实际部署参数由学校分发。
 
 会话、工作区引用与记忆在本机管理。使用学校或其他远程模型、搜索及媒体服务时，任务所需内容会发送给相应服务。登录凭据由本机凭据存储管理，不要将密码或令牌写入配置文件。
 

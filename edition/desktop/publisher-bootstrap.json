@@ -14,5 +14,8 @@
       "configuration": 0,
       "skills": 0
     }
-  }
+  },
+  "migrateFrom": [
+    "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates"
+  ]
 }

@@ -32,7 +32,7 @@ window.__ModuleLoader__.load({
             notice.textContent = '学校登录已失效，请在左下角账号菜单重新登录。'
             notice.style.cssText = 'position:fixed;bottom:16px;left:16px;z-index:1000;max-width:300px;padding:10px 14px;border-radius:8px;background:var(--dsw-alias-bg-layer-2,#fff);box-shadow:0 2px 12px #0002;font-size:12px;'
             document.body.append(notice)
-          } else if (state === 'ok' || state === 'disabled' || state === 'signed_out') { notice?.remove(); notice = undefined }
+          } else if (['ok', 'waiting', 'retry', 'rejected', 'local_error', 'disabled', 'signed_out'].includes(state)) { notice?.remove(); notice = undefined }
         } catch { recovered ||= reportRecovered /* Retry the recovery hint when the local Host reconnects. */ }
         finally { running = false; if (again) { again = false; void report() } }
       }

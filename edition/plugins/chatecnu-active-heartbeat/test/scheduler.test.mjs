@@ -79,3 +79,14 @@ test('in-flight heartbeats serialize and a foreground change is preserved', asyn
   assert.equal(f.requests.length, 2); assert.equal(f.requests[1].state, 'background')
   finish({ state: 'ok' }); await next
 })
+
+test('reauthorization clears the old login failure even while no window is active', async () => {
+  const f = fixture(() => ({ state: 'login_required' }))
+  await f.presence()
+  await f.presence('tab-1', false)
+  assert.equal(f.scheduler.outcome, 'login_required')
+  await f.scheduler.accountChanged()
+  assert.equal(f.scheduler.outcome, 'waiting')
+  assert.equal(f.scheduler.blocked, false)
+  assert.equal(f.requests.length, 1, 'background reauthorization does not invent foreground activity')
+})

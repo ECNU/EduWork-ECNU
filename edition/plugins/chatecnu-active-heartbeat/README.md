@@ -10,7 +10,7 @@ ChatECNU 专属机构能力。只上报随机安装标识、客户端元数据�
 - 后台尽力发送一次 `background`，随后停止周期请求；未实施可选的 idle 检测。页面退出时撤销租约，插件停用时清理计时器并终止未完成请求。
 - 网络、5xx、429：15 秒起指数退避，最多 10 分钟加 20% 抖动；恢复网络可提前补发。其他 HTTP 错误、登录失效等停止重试，等待登录或插件配置重新装载。
 - 随机安装 UUID 随数据目录移动、升级保留，不使用设备硬件序列号、主机名或浏览器指纹。只采用实际平台与架构，不猜操作系统版本。
-- 请求使用 OAuth Access Token，绝不使用模型 API Key。刷新及 401 后最多一次重试归账号层负责，本包不复制刷新流程。浏览器只接触 presence 和归一化状态，不接触令牌、原始服务端响应或账号标识。
+- 请求使用 OAuth Access Token，绝不使用模型 API Key。账号层在请求前检查 Token 有效期；本包显式为可重复的心跳 POST 启用 401 后最多一次刷新重试，不复制刷新流程。浏览器只接触 presence 和归一化状态，不接触令牌、原始服务端响应或账号标识。
 
 ## Electron 与本机 Web 配置
 
@@ -34,7 +34,7 @@ Electron 和单机 Web 共用 DSH Host 的 OAuth 后端，配置名称沿用 `ba
 
 启用时必须有已配置的 `profileID` 和显式 `baseURL`。`endpoint` 默认 `/user/active`，必须与 `baseURL` 同源。OIDC 插件提供 Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)`，负责令牌、刷新及目标 origin 校验。默认只允许该 profile 的 发现结果中 issuer 和资源服务的精确 origin；跨服务域名由受信装配在 OIDC 配置的 `authorizedOrigins` 中显式添加 HTTPS origin。本包无修改此白名单或获取令牌的 RPC。
 
-已登录但没有模型 Key 的身份账号也能上报。`oidc/accounts-changed` 事件只用于对应 profile 的启停；已主动退出的账号保持安静，失效账号交由 OIDC 登录流程处理。
+已登录但没有模型 Key 的身份账号也能上报。`oidc/accounts-changed` 事件只用于对应 profile 的启停；重新授权即使仍是“已连接”，也会解除旧错误导致的暂停，并丢弃旧请求的迟到结果。浏览器在下一次本机 presence 返回等待、成功或其他非登录失败状态时撤销旧提示；重新登录后的临时网络故障不会继续显示旧的登录失效提示。已主动退出的账号保持安静，失效账号交由 OIDC 登录流程处理。
 
 安装标识默认保存在 `$DSH_HOME/state/chatecnu-active/installation-id`。也可显式设置绝对 `stateDirectory`，或提供非秘密的固定 `installationID`；不同独立安装不应共用固定值。为迁移旧版身份，可让 `stateDirectory` 指向已迁移的原生 `state/chatecnu` 目录，复用其中的 `installation-id`。文件损坏时报告本地错误，不悄悄覆盖原标识。
 

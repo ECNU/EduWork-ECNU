@@ -2,7 +2,7 @@
 
 [简体中文](README.md)
 
-`readme-hero.svg` and `readme-hero-en.svg` are the Chinese and English homepage brand illustrations. They use the shared EduWork mark and are not UI screenshots.
+`readme-hero.svg` and `readme-hero-en.svg` are retained as earlier brand illustrations. The current homepage uses the [public edition's red logo](https://github.com/ECNU/EduWork/blob/main/assets/eduwork/icon-red.svg) and displays all five ECNU application screenshots below without collapsing them.
 
 | File | Content and source |
 | --- | --- |

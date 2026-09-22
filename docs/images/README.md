@@ -2,7 +2,7 @@
 
 [English](README_EN.md)
 
-`readme-hero.svg` 和 `readme-hero-en.svg` 是中英文首页品牌插画，使用与公版一致的 EduWork 标识，并非界面截图。
+`readme-hero.svg` 和 `readme-hero-en.svg` 保留为早期品牌插画。当前首页使用[公版红色标识](https://github.com/ECNU/EduWork/blob/main/assets/eduwork/icon-red.svg)，并直接展示下列五张 ECNU 实机截图。
 
 | 文件 | 展示内容与来源 |
 | --- | --- |

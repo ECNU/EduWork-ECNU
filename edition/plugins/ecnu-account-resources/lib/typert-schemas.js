@@ -1,7 +1,8 @@
 import { z } from 'zod'
 const pkg = '@chatecnu-work/dsh-ecnu-account-resources'
 const nullableNumber = z.number().nonnegative().nullable()
-const strict = (name, schema) => ({ mode: 'strict', typeSymbol: `${pkg}#${name}`, schema })
+// Keep schema for 0.1.5 and provide the codec factory required by 0.1.7.
+const strict = (name, schema) => ({ mode: 'strict', typeSymbol: `${pkg}#${name}`, schema, create: () => schema })
 export const configurationResult = strict('Configuration', z.object({ profileIDs: z.array(z.string().max(64)).max(64) }).strict())
 export const quotaResult = strict('Quota', z.object({
   state: z.enum(['available', 'unavailable', 'not_connected', 'not_configured']),
@@ -11,6 +12,6 @@ export const quotaResult = strict('Quota', z.object({
 }).strict())
 export const descriptors = [
   ['configuration', [], configurationResult],
-  ['quota', [{ name: 'profileID', wire: 'profileID', source: 'json', codec: { mode: 'strict', schema: z.string().min(1).max(64), typeSymbol: `${pkg}#ProfileID` } }], quotaResult],
+  ['quota', [{ name: 'profileID', wire: 'profileID', source: 'json', codec: strict('ProfileID', z.string().min(1).max(64)) }], quotaResult],
 ].map(([method, parameters, result]) => ({ id: `${pkg}#ecnuAccountResources/${method}`, service: 'ecnuAccountResources', namespace: 'ecnuAccountResources', method,
   invocation: { kind: 'direct' }, parameters, result, sourceLocation: { file: 'lib/index.js', line: 1, column: 1 } }))

@@ -54,6 +54,12 @@ jobs:
       - name: Build with the public core implementation
         shell: pwsh
         run: ./core/scripts/ci-eduwork-web.ps1 -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -BuildOnly
+      - name: Validate institution RPC declarations with the built Runtime
+        shell: pwsh
+        run: |
+          $env:EDUWORK_TEST_RUNTIME = (Resolve-Path core/dist/ci-local-web/assembly/d).Path
+          node --test institution/edition/test/typert-contract.test.mjs
+          if ($LASTEXITCODE) { throw 'Institution RPC declarations failed strict validation' }
       - name: Retain local Web validation evidence
         if: always()
         uses: actions/upload-artifact@v4

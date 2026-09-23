@@ -10,7 +10,9 @@ const repository = fileURLToPath(new URL('../../../', import.meta.url))
 const runtime = resolve(process.env.EDUWORK_TEST_RUNTIME || resolve(repository, 'dist/dsh-cache/runtime-npm-0.1.5-rc.2'))
 const runtimeEntry = pathToFileURL(resolve(runtime, 'package.json')).href
 const requireRuntime = createRequire(runtimeEntry)
-assert.equal(JSON.parse(await readFile(requireRuntime.resolve('@deepseek-ai/dsh-typert-protocol/package.json'), 'utf8')).version, '0.1.5-rc.2')
+const expectedVersion = process.env.EDUWORK_TEST_DSH_VERSION || '0.1.5-rc.2'
+assert.ok(['0.1.5-rc.2', '0.1.7-alpha.2'].includes(expectedVersion))
+assert.equal(JSON.parse(await readFile(requireRuntime.resolve('@deepseek-ai/dsh-typert-protocol/package.json'), 'utf8')).version, expectedVersion)
 const resolver = registerHooks({ resolve(specifier, context, next) {
   if (specifier.startsWith('@deepseek-ai/') && (context.parentURL === import.meta.url || context.parentURL?.includes('/chatecnu-active-heartbeat/lib/'))) {
     return next(specifier, { ...context, parentURL: runtimeEntry })
@@ -23,7 +25,7 @@ test.after(() => resolver.deregister())
 const presence = (id, active) => JSON.stringify({ id, active, locale: 'zh-CN', timezone: 'Asia/Shanghai' })
 const settle = async service => { await service.scheduler.running; await new Promise(resolve => setImmediate(resolve)) }
 
-test('real 0.1.5 Host composes web heartbeat without desktop services and reacts only to its OIDC account', async () => {
+test('real Host composes web heartbeat without desktop services and reacts only to its OIDC account', async () => {
   const ctx = new Context()
   const calls = []
   let accountState = 'signed_out', previousState

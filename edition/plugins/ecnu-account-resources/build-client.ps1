@@ -20,6 +20,7 @@ try {
     New-Item -ItemType Directory -Path $target -Force | Out-Null
     foreach ($file in Get-ChildItem -LiteralPath (Join-Path $stage 'lib') -File -Filter '*.js') {
         $content = [IO.File]::ReadAllText($file.FullName) -replace '(?m)^//# sourceMappingURL=.*$', ''
+        $content = ($content -replace '(?m)^[ \t]+$', '').TrimEnd() + "`n"
         [IO.File]::WriteAllText((Join-Path $target $file.Name),$content,[Text.UTF8Encoding]::new($false))
     }
 } finally {

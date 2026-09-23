@@ -44,7 +44,7 @@ export class ChatECNUActiveHeartbeat extends TypertRemoteService {
         if (event.profileID !== config.profileID) return
         const changed = accountState !== undefined && accountState !== event.state
         accountState = event.state
-        if (changed || this.scheduler.blocked) void this.scheduler.accountChanged()
+        if (changed || event.authorizationChanged === true || this.scheduler.blocked) void this.scheduler.accountChanged()
       })
     } else ctx.on('enterprise-account/changed', () => { void this.scheduler.accountChanged() })
     ctx.effect(() => () => { clearInterval(timer); this.scheduler.dispose(); this.abort.abort() }, 'chatecnu heartbeat lifecycle')

@@ -26,8 +26,8 @@ async function fixture(t) {
   let state = 'authenticated'
   const accounts = {
     status: async profileID => ({ profileID, state, credentialReady: false, credentialRef: '' }),
-    authorizedFetch: async (profileID, endpoint, init) => {
-      calls.push({ profileID, endpoint, init })
+    authorizedFetch: async (profileID, endpoint, init, authorization) => {
+      calls.push({ profileID, endpoint, init, authorization })
       // Stand in for the public OIDC boundary. The heartbeat code must neither
       // receive this value nor implement its refresh/retry behavior.
       return fetch(endpoint, { ...init, headers: { ...init.headers, authorization: 'Bearer synthetic-oidc-access' }, redirect: 'error' })
@@ -47,6 +47,7 @@ test('real HTTP keeps the existing wire payload and delegates credentials to pub
   assert.deepEqual(result, { state: 'ok', httpStatus: 200, nextHeartbeatIn: 600 })
   assert.equal(f.calls.length, 1)
   assert.equal(f.calls[0].profileID, 'example')
+  assert.deepEqual(f.calls[0].authorization, { retryUnauthorized: true })
   assert.equal(new Headers(f.calls[0].init.headers).has('authorization'), false)
   assert.ok(f.calls[0].init.signal instanceof AbortSignal)
   const request = f.requests[0]

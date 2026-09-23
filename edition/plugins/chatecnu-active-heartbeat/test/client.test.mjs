@@ -58,6 +58,33 @@ test('official module loader loads the presence client and its focus lifecycle',
   assert.equal(requests.length, count)
 })
 
+test('reauthorization waiting clears a stale login notice before the next heartbeat succeeds', async () => {
+  const window = new EventTarget(), document = new EventTarget(), notices = new Set()
+  document.visibilityState = 'visible'; document.hasFocus = () => true
+  document.body = { append: notice => notices.add(notice) }
+  document.createElement = () => {
+    const notice = { style: {}, setAttribute() {}, remove() { notices.delete(notice) } }
+    return notice
+  }
+  let client, timer, state = 'login_required'
+  window.__ModuleLoader__ = { load: value => { client = value.factory() } }
+  vm.runInNewContext(await readFile(new URL('../lib/client.js', import.meta.url), 'utf8'), {
+    window, document, crypto: { randomUUID: () => 'abc-123' }, navigator: { language: 'zh-CN' }, Intl, AbortSignal, queueMicrotask,
+    setInterval: callback => { timer = callback; return 1 }, clearInterval() {},
+    fetch: async () => ({ json: async () => ({ result: { ok: true, value: JSON.stringify({ state }) } }) }),
+  })
+  const flush = () => new Promise(resolve => setImmediate(resolve))
+  const dispose = client.apply({ on() {} })
+  try {
+    await flush(); assert.equal(notices.size, 1)
+    for (const next of ['waiting', 'retry', 'rejected', 'local_error', 'signed_out', 'disabled', 'ok']) {
+      state = next; timer(); await flush(); assert.equal(notices.size, 0)
+      state = 'login_required'; timer(); await flush(); assert.equal(notices.size, 1)
+    }
+  } finally { dispose() }
+  assert.equal(notices.size, 0)
+})
+
 test('online recovery arriving during an in-flight presence survives into the next report', async () => {
   const window = new EventTarget(), document = new EventTarget()
   document.visibilityState = 'visible'; document.hasFocus = () => true

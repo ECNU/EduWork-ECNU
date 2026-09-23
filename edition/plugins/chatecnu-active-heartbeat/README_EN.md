@@ -10,7 +10,7 @@ An institution-specific service reporting only a random installation identifier,
 - Background transition sends one best-effort `background` report and stops periodic requests. Optional idle detection is not implemented. Page exit revokes the lease; plugin disposal cancels timers and unfinished requests.
 - Network failures, 5xx and 429 retry with exponential backoff from 15 seconds, capped at 10 minutes plus 20% jitter; network recovery can trigger an earlier retry. Other HTTP or login failures wait for login or configuration reload.
 - The random installation UUID survives data-folder moves and upgrades. It does not use hardware serials, hostname or browser fingerprints. Platform/architecture are actual values; OS versions are not guessed.
-- Requests use OAuth Access Tokens, never model API Keys. The account layer owns refresh and at most one retry after 401. Browser RPC exposes only presence and normalized status, not tokens, raw server responses or account identifiers.
+- Requests use OAuth Access Tokens, never model API Keys. The account layer checks expiry before sending; this plugin explicitly opts its repeatable heartbeat POST into at most one refresh/retry after 401 without implementing refresh itself. Browser RPC exposes only presence and normalized status, not tokens, raw server responses or account identifiers.
 
 ## Electron and local Web configuration
 
@@ -33,7 +33,7 @@ Desktop clients automatically report `platform: "desktop"` and read the installe
 
 Enabled instances require a configured `profileID` and explicit `baseURL`. The default `/user/active` endpoint must share that origin. Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)` handles credentials, refresh and target-origin validation. By default, only the exact discovered issuer and resource origins are allowed; trusted assembly may add HTTPS origins through OIDC `authorizedOrigins`. This plugin exposes no RPC to change that allowlist or retrieve tokens.
 
-Identity-only accounts can report without a model Key. `oidc/accounts-changed` starts/stops only the relevant profile. Explicitly signed-out accounts stay silent; expired login is handled by OIDC.
+Identity-only accounts can report without a model Key. `oidc/accounts-changed` starts/stops only the relevant profile. Reauthorization clears an old blocked state and discards late results even if the account remains connected. The next local presence response removes the stale notice when it reports waiting, success or another non-login-failure state; a temporary network failure after sign-in does not retain the previous login notice. Explicitly signed-out accounts stay silent; expired login is handled by OIDC.
 
 The installation ID defaults to `$DSH_HOME/state/chatecnu-active/installation-id`. An absolute `stateDirectory` or non-secret fixed `installationID` may be supplied, but independent installs must not share a fixed value. Migration may reuse the old native `state/chatecnu/installation-id`. Corrupt files produce a local error instead of silently replacing the identifier.
 

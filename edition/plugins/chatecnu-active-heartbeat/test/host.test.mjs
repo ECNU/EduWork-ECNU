@@ -77,6 +77,46 @@ test('real Host composes web heartbeat without desktop services and reacts only 
   } finally { await ctx.fiber.dispose() }
 })
 
+for (const inFlight of [false, true]) test(`same-state reauthorization resets ${inFlight ? 'in-flight' : 'blocked'} heartbeat authorization`, async () => {
+  const ctx = new Context()
+  let requests = 0, finish, status = 401
+  class Accounts extends Service {
+    constructor(ctx) { super(ctx, 'oidcAccounts') }
+    async status(profileID) { return { profileID, state: 'connected' } }
+    async authorizedFetch() {
+      requests++
+      if (inFlight && requests === 1) await new Promise(resolve => { finish = resolve })
+      return new Response(status === 200 ? '{"status":"Success"}' : '', { status })
+    }
+  }
+  try {
+    await ctx.plugin(Accounts)
+    await ctx.plugin(heartbeat.default, { backend: 'web', enabled: true, profileID: 'example', baseURL: 'https://example.test', installationID: 'inst_test' })
+    const service = ctx.chatecnuActiveHeartbeat
+    service.presence(presence('one', true))
+    await new Promise(resolve => setImmediate(resolve))
+    if (!inFlight) {
+      await settle(service)
+      assert.equal(service.scheduler.outcome, 'login_required')
+      ctx.emit('oidc/accounts-changed', { profileID: 'another-org', state: 'connected', authorizationChanged: true })
+      assert.equal(service.scheduler.blocked, true)
+    }
+    if (!inFlight) status = 200
+    ctx.emit('oidc/accounts-changed', { profileID: 'example', state: 'connected', authorizationChanged: true })
+    if (inFlight) {
+      finish(); await settle(service)
+      assert.equal(service.scheduler.outcome, 'waiting', 'late 401 from the old authorization is discarded')
+      assert.equal(service.scheduler.blocked, false)
+      status = 200
+      await service.scheduler.tick()
+    }
+    await settle(service)
+    assert.equal(service.scheduler.outcome, 'ok')
+    assert.equal(service.scheduler.blocked, false)
+    assert.equal(requests, 2)
+  } finally { finish?.(); await ctx.fiber.dispose() }
+})
+
 test('disabled Web configuration exposes harmless presence without requiring OIDC or a target', async () => {
   for (const config of [{ backend: 'web', enabled: false }, { backend: 'web' }]) {
   const ctx = new Context()

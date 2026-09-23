@@ -28,6 +28,7 @@ export class HeartbeatScheduler {
     this.revision++
     this.blocked = false
     this.failures = 0
+    this.outcome = 'waiting'
     this.next = 0
     return this.tick()
   }

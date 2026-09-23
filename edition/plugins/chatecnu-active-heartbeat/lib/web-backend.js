@@ -122,7 +122,7 @@ export function createWebHeartbeatSender(accounts, raw = {}, { signal, environme
       const response = await accounts.authorizedFetch(config.profileID, config.endpoint, {
         method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),
         signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(15000)]),
-      })
+      }, { retryUnauthorized: true })
       const httpStatus = response.status
       if (httpStatus !== 200) {
         await response.body?.cancel().catch(() => {})

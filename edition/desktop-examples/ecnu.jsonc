@@ -30,9 +30,11 @@
         // [eduwork] 最多 4 字符的简短机构标记。
         "mark": "华",
         // [eduwork] 登录标题，最多 120 字符。
-        "loginTitle": "使用华东师范大学账号登录",
+        "loginTitle": "华东师范大学统一身份认证",
+        // [eduwork] 登录按钮文字，最多 40 字符；省略时使用客户端默认文案。
+        "loginButtonLabel": "统一认证登录",
         // [eduwork] 登录说明，最多 500 字符。
-        "loginDescription": "完成登录后连接企业模型；也可在模型设置中使用自己的 API Key。"
+        "loginDescription": "使用学校账号登录，连接学校提供的模型与校内服务；也可在模型设置中使用自己的 API Key。"
       },
       // [eduwork] Token 模型网关登录。与仅身份登录的 oidc 二选一。
       "auth": {

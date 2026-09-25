@@ -16,6 +16,7 @@ ECNU 与公版 Electron 都读取一份 `config/eduwork.jsonc`。Windows 位于�
 
 ## 模型与功能默认值
 
+- 支持 `provider.chatModelIds` 的客户端使用示例中的 `ecnu-max`、`ecnu-plus` 对话白名单，与服务器授权目录取交集。embedding、rerank、生图和 TTS 不注册到对话选择器；独立服务仍使用各自的配置。此字段需先升级公共 OIDC 插件并完成客户端装配验收，再面向兼容客户端下发；旧客户端会拒绝未知字段。
 - 模型请求总并发默认 3；`features.maxConcurrentRequests` 范围为 1–64。设置中保存的个人并发偏好优先，旧 `maxParallelSubagents: 2` 兼容换算为总并发 3。
 - 示例中 `ecnu-max` 为纯文本模型，上下文 512K（524,288 tokens），最大输出 384K（393,216 tokens）。默认用 `ecnu-plus` 辅助观察图片；`features.visionFallback: false` 可关闭辅助，不影响原生读图模型。
 - 图像与云端 TTS 通过公版 `media` 配置。赛尔模型 ID 为 `cernet-image` / `cernet-tts`；可用 `media.providers: []` 关闭云端媒体。本机 TTS 独立。

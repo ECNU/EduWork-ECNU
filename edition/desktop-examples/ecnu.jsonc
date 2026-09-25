@@ -59,6 +59,9 @@
         // 模型目录由服务器发现；此处的模型策略用于补充客户端能力和默认值。
         // [eduwork] 模型目录来源，Token 模式固定 discovery。
         "modelSource": "discovery",
+        // 仅将服务器已授权的聊天模型注册到对话选择器；媒体、向量和重排服务另行配置。
+        // 此字段需要支持 chatModelIds 的客户端，不可直接下发给旧客户端。
+        "chatModelIds": ["ecnu-max", "ecnu-plus"],
         // [eduwork] 默认思考强度：off/minimal/low/medium/high/xhigh/max；默认 high。
         "reasoning": "high",
         // [eduwork] 默认上下文 token 数；模型自己的 contextWindow 优先，不填沿用发现/适配器。

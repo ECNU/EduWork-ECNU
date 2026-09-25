@@ -16,6 +16,7 @@ Static deployments can use the public core's `scripts/configure-desktop-archive.
 
 ## Model and feature defaults
 
+- Clients supporting `provider.chatModelIds` use the example's `ecnu-max` / `ecnu-plus` chat allowlist, intersected with the authorized server catalog. Embedding, reranking, image generation and TTS are excluded from the chat picker; their independent services keep their own configuration. Upgrade the public OIDC plugin and validate the client assembly before distributing this field to compatible clients. Older clients reject unknown fields.
 - Total model-request concurrency defaults to 3. `features.maxConcurrentRequests` accepts 1–64; saved personal preferences take precedence. Legacy `maxParallelSubagents: 2` maps to total concurrency 3.
 - The example declares `ecnu-max` as text-only, with a 512K context (524,288 tokens) and 384K maximum output (393,216 tokens). `ecnu-plus` provides image assistance by default; `features.visionFallback: false` disables assistance without affecting native vision models.
 - Public `media` configuration provides image generation and cloud TTS. CERNET model IDs are `cernet-image` / `cernet-tts`. `media.providers: []` disables cloud media; local TTS is separate.

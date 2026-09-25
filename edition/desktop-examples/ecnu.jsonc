@@ -56,12 +56,10 @@
         // [eduwork] 模型协议，目前固定 openai-compatible。
         "adapter": "openai-compatible",
         // ECNU 客户端随升级同步已知旧企业模型的能力；个人模型在原生模型设置中独立管理。
-        // 模型目录由服务器发现；此处的模型策略用于补充客户端能力和默认值。
+        // 模型目录由服务器发现；此处补充类型、能力和默认值，仅 llm 用于对话。
+        // 类型字段须与支持它的客户端一起升级，不直接下发给旧客户端。
         // [eduwork] 模型目录来源，Token 模式固定 discovery。
         "modelSource": "discovery",
-        // 仅将服务器已授权的聊天模型注册到对话选择器；媒体、向量和重排服务另行配置。
-        // 此字段需要支持 chatModelIds 的客户端，不可直接下发给旧客户端。
-        "chatModelIds": ["ecnu-max", "ecnu-plus"],
         // [eduwork] 默认思考强度：off/minimal/low/medium/high/xhigh/max；默认 high。
         "reasoning": "high",
         // [eduwork] 默认上下文 token 数；模型自己的 contextWindow 优先，不填沿用发现/适配器。
@@ -77,11 +75,13 @@
           // [eduwork] 是否发送 reasoning_effort 思考强度。
           "supportsReasoningEffort": true
         },
-        // [eduwork] 按服务端模型 ID 补充能力和限制；空数组完全使用发现目录。
+        // [eduwork] 按服务端授权模型 ID 补充类型、能力和限制；只注册 llm 到对话，不扩大授权目录。
         "models": [
           {
             // [eduwork] 服务端模型 ID，同一个提供方内不可重复。
             "id": "ecnu-max",
+            // [eduwork] 模型用途：llm/embedding/rerank/image/tts/unknown；仅 llm 进入对话。服务端类型优先，缺失时用此值；两边都缺失为 unknown。
+            "type": "llm",
             // [eduwork] 模型显示名称，默认取 id。
             "name": "ecnu-max",
             // [eduwork] 支持的输入：text、image；默认仅 text。
@@ -106,6 +106,8 @@
           {
             // [eduwork] 服务端模型 ID，同一个提供方内不可重复。
             "id": "ecnu-plus",
+            // [eduwork] 模型用途：llm/embedding/rerank/image/tts/unknown；仅 llm 进入对话。服务端类型优先，缺失时用此值；两边都缺失为 unknown。
+            "type": "llm",
             // [eduwork] 模型显示名称，默认取 id。
             "name": "ecnu-plus",
             // [eduwork] 支持的输入：text、image；默认仅 text。
@@ -123,6 +125,30 @@
               // [eduwork] 是否发送 reasoning_effort 思考强度。
               "supportsReasoningEffort": false
             }
+          },
+          {
+            // [eduwork] 服务端模型 ID，同一个提供方内不可重复。
+            "id": "ecnu-embedding-small",
+            // [eduwork] 模型用途：llm/embedding/rerank/image/tts/unknown；仅 llm 进入对话。服务端类型优先，缺失时用此值；两边都缺失为 unknown。
+            "type": "embedding"
+          },
+          {
+            // [eduwork] 服务端模型 ID，同一个提供方内不可重复。
+            "id": "ecnu-rerank",
+            // [eduwork] 模型用途：llm/embedding/rerank/image/tts/unknown；仅 llm 进入对话。服务端类型优先，缺失时用此值；两边都缺失为 unknown。
+            "type": "rerank"
+          },
+          {
+            // [eduwork] 服务端模型 ID，同一个提供方内不可重复。
+            "id": "ecnu-image",
+            // [eduwork] 模型用途：llm/embedding/rerank/image/tts/unknown；仅 llm 进入对话。服务端类型优先，缺失时用此值；两边都缺失为 unknown。
+            "type": "image"
+          },
+          {
+            // [eduwork] 服务端模型 ID，同一个提供方内不可重复。
+            "id": "ecnu-tts",
+            // [eduwork] 模型用途：llm/embedding/rerank/image/tts/unknown；仅 llm 进入对话。服务端类型优先，缺失时用此值；两边都缺失为 unknown。
+            "type": "tts"
           }
         ]
       }
@@ -501,7 +527,7 @@
   // [eduwork] 功能默认值；已保存的界面偏好可能优先。
   "features": {
     // 当前客户端的主会话、子代理和辅助模型请求共用总上限；超出的请求排队。
-    // [eduwork] 全客户端模型请求总并发，1–64；主会话、子代理、辅助模型共用，超出排队。设置中保存的值优先。
+    // [eduwork] 当前 Host 的模型请求总并发，1–64，默认 3；主会话、子代理、辅助模型共用，超出排队。界面中保存的值优先；不限制其他客户端或独立媒体接口。
     "maxConcurrentRequests": 3,
     // ECNU 版保留文本模型的图片辅助。原生图片模型始终直通，不调用辅助模型。
     // 改 false 关闭文本模型的图片辅助；不影响 ecnu-plus 的原生图片输入。
@@ -607,7 +633,7 @@
 //   "retryPolicy": {}
 // organizations[].provider.compat：提供方协议兼容选项；不确定时保持未配置。
 //   "compat": {}
-// organizations[].provider.models：按服务端模型 ID 补充能力和限制；空数组完全使用发现目录。
+// organizations[].provider.models：按服务端授权模型 ID 补充类型、能力和限制；只注册 llm 到对话，不扩大授权目录。
 //   "models": []
 // organizations[].provider.retryPolicy.mode：normal 常规重试，always 持续重试；关闭重试请设置 maxRetries=0。
 //   "mode": "normal"
@@ -643,6 +669,8 @@
 //   "requiresReasoningContentOnAssistantMessages": true
 // organizations[].provider.models[].id：服务端模型 ID，同一个提供方内不可重复。
 //   "id": "example-max"
+// organizations[].provider.models[].type：模型用途：llm/embedding/rerank/image/tts/unknown；仅 llm 进入对话。服务端类型优先，缺失时用此值；两边都缺失为 unknown。
+//   "type": "llm"
 // organizations[].provider.models[].name：模型显示名称，默认取 id。
 //   "name": "Example Max"
 // organizations[].provider.models[].input：支持的输入：text、image；默认仅 text。
@@ -681,14 +709,32 @@
 //   "features": {}
 // features.visionFallback：是否允许文本模型使用已安装的辅助读图插件；false 关闭，不影响原生多模态。
 //   "visionFallback": false
-// features.maxConcurrentRequests：全客户端模型请求总并发，1–64；主会话、子代理、辅助模型共用，超出排队。设置中保存的值优先。
+// features.maxConcurrentRequests：当前 Host 的模型请求总并发，1–64，默认 3；主会话、子代理、辅助模型共用，超出排队。界面中保存的值优先；不限制其他客户端或独立媒体接口。
 //   "maxConcurrentRequests": 3
-// features.maxParallelSubagents：旧版兼容项，1–32；仅在未填总并发时换算为此值+1。新配置请使用 maxConcurrentRequests。
+// features.maxActiveSubagents：DSH 0.1.7-rc.1 的子代理数量默认值，1–64，默认 2；同一主 Agent 下跨递归层级统计，主 Agent 不计入，达到上限拒绝新建。与模型请求总并发分别控制；界面中已保存的数量优先。0.1.5 不使用此项。
+//   "maxActiveSubagents": 2
+// features.maxParallelSubagents：旧版兼容项，1–32；仅在未填总并发时换算为此值+1，不控制官方子代理数量。新配置请分别使用 maxConcurrentRequests 和 maxActiveSubagents。
 //   "maxParallelSubagents": 2
 // desktop：桌面行为。
 //   "desktop": {}
 // desktop.closeAction：tray 关闭窗口后驻留托盘；exit 退出；默认 tray，无托盘时退出。
 //   "closeAction": "tray"
+// desktop.notifications：桌面通知默认值；通用设置中保存的个人偏好优先。仅客户端仍运行时生效，系统勿扰或通知权限可能阻止弹窗。
+//   "notifications": {}
+// desktop.notifications.enabled：允许后台桌面弹窗；关闭后托盘仍保留待处理事项。
+//   "enabled": true
+// desktop.notifications.attention：需求确认和授权请求通知。
+//   "attention": true
+// desktop.notifications.completed：主会话任务完成通知；子代理和单个工具结束不通知。
+//   "completed": true
+// desktop.notifications.failed：任务最终失败、受阻或输出达到上限时通知。
+//   "failed": true
+// desktop.notifications.studio：独立 Studio 成果完成通知。
+//   "studio": true
+// desktop.notifications.sound：允许系统通知声音；仍受系统勿扰控制。
+//   "sound": false
+// desktop.notifications.preview：在通知和托盘条目显示会话或成果标题；默认关闭，不显示回答正文、命令或文件内容。
+//   "preview": false
 // updates：软件更新源；空对象沿用发行包的默认渠道与平台设置。
 //   "updates": {}
 // updates.provider：github/static/disabled；static 须填 manifestURL，github 不可同时填写 manifestURL。

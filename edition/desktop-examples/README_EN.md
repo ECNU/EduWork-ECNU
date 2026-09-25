@@ -16,6 +16,7 @@ Static deployments can use the public core's `scripts/configure-desktop-archive.
 
 ## Model and feature defaults
 
+- Model purpose uses `provider.models[].type`. ECNU declares `ecnu-max` / `ecnu-plus` as `llm`, and embedding, reranking, image generation and TTS as their respective types. Only authorized LLMs register in chat; image-capable LLMs stay available. Server types take precedence; local metadata supplies missing types and unresolved types stay out of chat. Upgrade the public plugin and client assembly together with the typed deployment configuration. Older clients reject the new field; existing ID-only deployments need type metadata before upgrading. Independent media services keep their own configuration.
 - Total model-request concurrency defaults to 3. `features.maxConcurrentRequests` accepts 1–64; saved personal preferences take precedence. Legacy `maxParallelSubagents: 2` maps to total concurrency 3.
 - The example declares `ecnu-max` as text-only, with a 512K context (524,288 tokens) and 384K maximum output (393,216 tokens). `ecnu-plus` provides image assistance by default; `features.visionFallback: false` disables assistance without affecting native vision models.
 - Public `media` configuration provides image generation and cloud TTS. CERNET model IDs are `cernet-image` / `cernet-tts`. `media.providers: []` disables cloud media; local TTS is separate.

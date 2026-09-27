@@ -4,7 +4,7 @@
 
 <h1 align="center">EduWork@ECNU</h1>
 
-<p align="center"><strong>华东师大的 AI 知识工作台。</strong><br><sub>学校账号登录 · 校内服务 · Knowledge Studio</sub></p>
+<p align="center"><strong>EduWork 的华师发行版。</strong><br><sub>统一认证 · 校内插件与技能 · Knowledge Studio</sub></p>
 
 <div align="center">
 
@@ -12,13 +12,53 @@
 
 **简体中文** | [English](README_EN.md)
 
-[学校账号接入](#学校账号接入) · [Knowledge Studio](#knowledge-studio) · [校内服务](#校内服务) · [开始使用](#安装与使用) · [公版 EduWork](https://github.com/ECNU/EduWork)
+[插件与技能](#随包插件与技能) · [学校登录](#学校账号接入) · [Studio](#knowledge-studio) · [开始使用](#安装与使用) · [构建学校发行版](#构建你的学校发行版) · [公版 EduWork](https://github.com/ECNU/EduWork)
 
 </div>
 
-EduWork@ECNU 是 [EduWork](https://github.com/ECNU/EduWork) 的华东师范大学发行版。用学校账号连接模型，围绕教学、科研与办公资料展开对话，在 Knowledge Studio 中制作报告、演示文稿、测验与闪卡。
+EduWork@ECNU 是 [EduWork 教育发行版](https://github.com/ECNU/EduWork) 的华东师范大学发行版，基于同一套 DSH 运行时与公共插件，增加学校模型接入、校内服务、专属技能和发行配置。教学、科研与办公资料留在你选择的本机工作区，通过对话和 Knowledge Studio 开展工作。
 
-**公版提供开放接入与知识工作台，ECNU 版接入学校的模型和服务。** 你也可以继续使用个人 API Key 和其他模型。
+## 我们与 DSH、EduWork 的关系
+
+借用 Linux 内核与发行版的关系：DSH 提供运行时与插件体系，DeepSeek 官方客户端和 EduWork 是在其上组织的不同组合；**EduWork 面向教育，EduWork@ECNU 在此基础上接入华师服务。**
+
+```mermaid
+flowchart TD
+    DSH["DeepSeek Harness · 运行时与插件体系"] --> Official["DeepSeek 官方客户端"]
+    DSH --> EduWork["EduWork · 教育发行版"]
+    EduWork --> ECNU["EduWork@ECNU · 华师发行版"]
+    EduWork --> School["其他学校的发行版"]
+```
+
+学校版复用公版的工作台、Studio、技能与桌面能力，通过插件和配置增加学校服务。其他学校可以直接基于 [EduWork](https://github.com/ECNU/EduWork) 做自己的发行版；通用能力、插件与协议的贡献也优先进入公版。
+
+## 随包插件与技能
+
+### 继承教育发行版的公共能力
+
+| 公共插件 | 在华师版中的用途 |
+| --- | --- |
+| `@eduwork/dsh-oidc` | 学校统一认证、授权模型发现与 Token 刷新。 |
+| `@eduwork/dsh-knowledge-studio` | 从资料生成报告、思维导图、测验、闪卡、数据表、演示文稿和音视频概览。 |
+| `@eduwork/dsh-artifact-services` | 对话与 Studio 共用的 Office、语音与媒体生成和预览。 |
+| `@shlv/dsh-literature` | DBLP、arXiv 文献检索、BibTeX 与可用全文。 |
+| `@eduwork/dsh-memory` | 本地记忆与历史对话检索。 |
+| `@eduwork/dsh-mail` | 连接邮箱，读取邮件并经授权发送。 |
+
+同时继承浏览器、技能管理和工作台设置等能力。公共技能包括 Word、PPT、表格、PDF、图像、语音、视频创作，Knowledge Studio、浏览器、技能创建与产品帮助，见[公版完整插件与技能清单](https://github.com/ECNU/EduWork#随包插件)。所需模型和服务按配置启用，个人 API Key 与其他模型仍可使用。
+
+### 华师版增加的插件
+
+| 插件 | 用途 |
+| --- | --- |
+| [校内搜索](edition/plugins/tool-ecnu-campus-search/README.md) | 检索校园办事、机构、政策与新闻等资料，保留来源链接。 |
+| [账户与配额](edition/plugins/ecnu-account-resources/README.md) | 查看学校模型额度、使用进度和资源池。 |
+| [图片理解辅助](edition/plugins/provider-vision-fallback/README.md) | 为配置中的纯文本模型补充学校视觉模型提取的文字证据，可关闭。 |
+| [活跃心跳](edition/plugins/chatecnu-active-heartbeat/README.md) | 登录学校账号后上报客户端活跃状态；具体字段见下方数据与隐私说明。 |
+
+华师版另外内置 **`ecnu-campus-search` 技能**，指导如何选择校内来源、核实出处并结合公开资料。技能负责使用方法，校内搜索插件负责执行检索；日常使用无需另装插件或手填校内地址，使用条件以学校服务和账号权限为准。
+
+学校品牌、默认模型、媒体服务和更新渠道由发行配置提供。完整组合见[学校发行清单](edition/distribution.json)。
 
 ## 学校账号接入
 
@@ -28,7 +68,11 @@ EduWork@ECNU 是 [EduWork](https://github.com/ECNU/EduWork) 的华东师范大�
 
 <p align="center"><sub>登录后选择学校模型即可开始。图中使用 ecnu-max，实际可用模型以学校服务与账号权限为准。</sub></p>
 
-学校身份与模型接入复用公版的开放协议实现。登录后，客户端自动管理模型授权与 Token 刷新；个人配置的模型可以同时使用。学校模型目录和能力通过配置维护，无需为每次调整重新下载整个程序。
+学校统一认证与模型授权复用公版的 **oidc-llm 开放协议草案**。ChatECNU 提供兼容服务，客户端用登录获得的 Access Token 发现和调用获授权模型，并自动管理刷新。学校模型目录和能力通过配置维护，无需为每次调整重新下载整个程序。
+
+这是 EduWork 面向机构与多客户端互通推进的接入方向，协议不限于华师或 EduWork 客户端。目前仍是 0.1 草案与实验实现；学校配额、校内搜索和心跳分别属于机构扩展，不是协议必需项。公版同时兼容 LiteLLM 原生 OAuth，两者是不同的模型接入路线。
+
+[了解开放协议草案](https://github.com/ECNU/EduWork/blob/main/packages/dsh-oidc/docs/gateway-auth/oidc-llm-draft.md) · [已实现范围](https://github.com/ECNU/EduWork/blob/main/packages/dsh-oidc/docs/gateway-auth/experimental-oidc-llm.md)
 
 ## Knowledge Studio
 
@@ -128,7 +172,9 @@ macOS 当前未使用 Apple Developer ID 签名或公证，首次打开可能出
 
 遇到问题可在设置中导出诊断 ZIP；涉及某个对话时，可另行导出 Session log。截图使用演示资料，保留已有隐私遮挡，其中的生成内容不作为事实参考。
 
-## 作为机构扩展的示例
+<a id="作为机构扩展的示例"></a>
+
+## 构建你的学校发行版
 
 本仓库展示学校如何在开放工作台上接入自己的服务。**身份与模型协议、Knowledge Studio 和通用能力在 [EduWork 公版](https://github.com/ECNU/EduWork)维护；本仓库维护学校配置与扩展。**
 

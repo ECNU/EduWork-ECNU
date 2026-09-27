@@ -14,6 +14,22 @@ const { loadUserConfig, parseUserConfig } = await import(pathToFileURL(resolve(c
 const { updateEnterpriseModels } = await import(pathToFileURL(resolve(core, 'dsh-host/enterprise-model-updates.mjs')))
 const example = name => loadUserConfig(fileURLToPath(new URL(`../desktop-examples/${name}.jsonc`, import.meta.url)))
 
+test('campus skill and tool share school authorization without requiring a legacy personal key', async () => {
+  const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url)))
+  const tool = distribution.plugins.find(row => row.id === 'chatecnu-campus-search').config
+  const skill = distribution.skills.find(row => row.name === 'ecnu-campus-search')
+  assert.deepEqual(skill.metadata.eduwork, {
+    credentialRef: tool.credentialRef, oidcProfileId: tool.oidcProfileId,
+  })
+  const source = await readFile(new URL('../skills/ecnu-campus-search/SKILL.md', import.meta.url), 'utf8')
+  const header = /^---\r?\n([\s\S]*?)\r?\n---/.exec(source)?.[1]
+  assert.ok(header)
+  for (const [key, value] of Object.entries(skill.metadata.eduwork)) assert.ok(header.includes(`${key}: ${value}`), key)
+  assert.ok(header.includes('  eduwork:'))
+  assert.doesNotMatch(header, /CHATECNU_API_KEY/)
+  assert.equal(skill.defaultEnabled, true)
+})
+
 test('all school plugin options are visible, active defaults survive restart, and UAT overrides reach the adapters', async t => {
   const { configurationDocumentationOptions } = await import(pathToFileURL(resolve(core, 'dsh-host/configuration-documentation.mjs')))
   const { ConfigurationFile, readConfiguration } = await import(pathToFileURL(resolve(core, 'dsh-host/configuration-file.mjs')))

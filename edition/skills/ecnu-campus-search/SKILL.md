@@ -2,8 +2,9 @@
 name: ecnu-campus-search
 description: 检索华东师范大学校内服务、机构、政策、人员、设施和新闻；在华师大相关问题上与互联网搜索组合取证。
 metadata:
-  chatecnu:
-    credentialRef: CHATECNU_API_KEY
+  eduwork:
+    credentialRef: EDUWORK_API_KEY
+    oidcProfileId: ecnu
 ---
 
 # 华东师大校内搜索

@@ -30,9 +30,11 @@
         // [eduwork] 最多 4 字符的简短机构标记。
         "mark": "华",
         // [eduwork] 登录标题，最多 120 字符。
-        "loginTitle": "使用华东师范大学账号登录",
+        "loginTitle": "华东师范大学统一身份认证",
+        // [eduwork] 登录按钮文字，最多 40 字符；省略时使用客户端默认文案。
+        "loginButtonLabel": "统一认证登录",
         // [eduwork] 登录说明，最多 500 字符。
-        "loginDescription": "完成登录后连接企业模型；也可在模型设置中使用自己的 API Key。"
+        "loginDescription": "使用学校账号登录，连接学校提供的模型与校内服务；也可在模型设置中使用自己的 API Key。"
       },
       // [eduwork] Token 模型网关登录。与仅身份登录的 oidc 二选一。
       "auth": {
@@ -366,6 +368,10 @@
     // [eduwork] 用于读图的模型 ID，须支持图片输入。
     "model": "ecnu-plus",
     // [eduwork] 一次读图分析最大输出 token 数，默认 2048。
+    // [eduwork] 辅助模型并发上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。
+    "maxConcurrentRequests": 1,
+    // [eduwork] HTTP 429 最大重试次数，0–5，默认 2。
+    "maxRetries": 2,
     "maxAnalysisTokens": 2048,
     // [eduwork] 单份读图证据最大字符数，默认 12000。
     "maxEvidenceChars": 12000,
@@ -1035,6 +1041,10 @@
 //   "provider": "chatecnu"
 // plugins.chatecnu-vision.model：用于读图的模型 ID，须支持图片输入。
 //   "model": "ecnu-plus"
+// plugins.chatecnu-vision.maxConcurrentRequests：辅助模型并发上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。
+//   "maxConcurrentRequests": 1
+// plugins.chatecnu-vision.maxRetries：HTTP 429 最大重试次数，0–5，默认 2。
+//   "maxRetries": 2
 // plugins.chatecnu-vision.maxAnalysisTokens：一次读图分析最大输出 token 数，默认 2048。
 //   "maxAnalysisTokens": 2048
 // plugins.chatecnu-vision.maxEvidenceChars：单份读图证据最大字符数，默认 12000。

@@ -7,6 +7,7 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { createServer } from 'node:http'
 import { once } from 'node:events'
+import { setTimeout as delay } from 'node:timers/promises'
 
 // Use an assembled, published Runtime for the real provider transform boundary.
 // Only the credential store, attachment store and remote model service are fakes.
@@ -24,10 +25,18 @@ test('text-only max uses specialist HTTP through the mounted adapter; native plu
   delete process.env.EDUWORK_VISION_FALLBACK
   let context, dispose
   const httpCalls = []
+  let active = 0, peak = 0, throttleNext = false
   const server = createServer(async (request, response) => {
     let body = ''
     for await (const chunk of request) body += chunk
     httpCalls.push({ path: request.url, authorization: request.headers.authorization, body: JSON.parse(body) })
+    active++; peak = Math.max(peak, active)
+    await delay(10)
+    active--
+    if (throttleNext) {
+      throttleNext = false
+      response.writeHead(429, { 'retry-after': '0' }); response.end('synthetic throttling'); return
+    }
     response.writeHead(200, { 'content-type': 'application/json' })
     response.end(JSON.stringify({ choices: [{ message: { content: '测试图片是一个像素。' } }] }))
   })
@@ -60,7 +69,7 @@ test('text-only max uses specialist HTTP through the mounted adapter; native plu
         return fetch(url, { ...init, headers: { ...init.headers, Authorization: 'Bearer synthetic-test-key' } })
       } } : undefined,
       attachments: { readImage: async ref => {
-        assert.equal(ref.attachmentId, 'synthetic-pixel')
+        assert.match(ref.attachmentId, /^synthetic-/)
         return { data: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nO8AAAAASUVORK5CYII=', 'base64') }
       } },
     }
@@ -89,6 +98,16 @@ test('text-only max uses specialist HTTP through the mounted adapter; native plu
     for await (const _event of adapter.stream(native)) { /* native route bypasses the specialist */ }
     assert.equal(httpCalls.length, 1)
     assert.deepEqual(forwarded.at(-1), native)
+    const batch = prefix => ({ ...source, messages: [{ role: 'user', content: Array.from({ length: 4 }, (_, index) => ({
+      type: 'image', attachment: { attachmentId: `synthetic-${prefix}-${index}`, name: 'page.png', mediaType: 'image/png' },
+    })) }] })
+    const consume = async request => { for await (const _event of adapter.stream(request)) { /* mounted HTTP */ } }
+    throttleNext = true
+    await Promise.all([consume(batch('session-a')), consume(batch('session-b'))])
+    assert.equal(httpCalls.length, 10, 'eight new images plus one bounded retry and the original request')
+    assert.equal(peak, 1, 'multiple images and conversations share one specialist queue')
+    await consume(batch('session-a'))
+    assert.equal(httpCalls.length, 10, 'recovered results are cached')
     dispose(); dispose = undefined
     apply(pluginContext, { enabled: false, dshHome: home })
     assert.deepEqual((await adapter.resolveModel('chatecnu', 'ecnu-max')).inputModalities, ['text'])

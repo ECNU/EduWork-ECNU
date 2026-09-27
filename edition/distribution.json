@@ -52,6 +52,8 @@
         "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
         "provider": "chatecnu",
         "model": "ecnu-plus",
+        "maxConcurrentRequests": 1,
+        "maxRetries": 2,
         "maxAnalysisTokens": 2048,
         "maxEvidenceChars": 12000,
         "maxRequestEvidenceChars": 64000

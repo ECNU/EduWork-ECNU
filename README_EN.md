@@ -4,7 +4,7 @@
 
 <h1 align="center">EduWork@ECNU</h1>
 
-<p align="center"><strong>An AI knowledge workbench for ECNU.</strong><br><sub>University sign-in · Campus services · Knowledge Studio</sub></p>
+<p align="center"><strong>The ECNU edition of EduWork.</strong><br><sub>University SSO · Campus plugins and skills · Knowledge Studio</sub></p>
 
 <div align="center">
 
@@ -12,13 +12,53 @@
 
 [简体中文](README.md) | **English**
 
-[University sign-in](#university-sign-in) · [Knowledge Studio](#knowledge-studio) · [Campus services](#campus-services) · [Get started](#installation-and-use) · [Public EduWork](https://github.com/ECNU/EduWork)
+[Plugins and skills](#bundled-plugins-and-skills) · [University sign-in](#university-sign-in) · [Studio](#knowledge-studio) · [Get started](#installation-and-use) · [Build an institution edition](#build-your-institution-edition) · [Public EduWork](https://github.com/ECNU/EduWork)
 
 </div>
 
-EduWork@ECNU is the East China Normal University edition of [EduWork](https://github.com/ECNU/EduWork). Sign in with a university account, explore teaching, research, and office materials in conversation, and create reports, presentations, quizzes, and flashcards in Knowledge Studio.
+EduWork@ECNU is the East China Normal University edition of the [EduWork education distribution](https://github.com/ECNU/EduWork). It uses the same DSH runtime and public plugins, adding university model access, campus services, institution-specific skills, and distribution configuration. Work with teaching, research, and administrative materials in your chosen local workspace through conversations and Knowledge Studio.
 
-**The public edition provides open integration and the knowledge workbench; the ECNU edition connects university models and services.** You can still use personal API keys and other models.
+## How DSH, EduWork, and ECNU relate
+
+Using the Linux kernel and distribution analogy, DSH supplies the runtime and plugin architecture; DeepSeek's official client and EduWork assemble different combinations on top. **EduWork serves education, and EduWork@ECNU extends it with ECNU services.**
+
+```mermaid
+flowchart TD
+    DSH["DeepSeek Harness · Runtime and plugin architecture"] --> Official["DeepSeek official client"]
+    DSH --> EduWork["EduWork · Education distribution"]
+    EduWork --> ECNU["EduWork@ECNU · ECNU edition"]
+    EduWork --> School["Other institution editions"]
+```
+
+The institution edition reuses the public workbench, Studio, skills, and desktop capabilities, adding university services through plugins and configuration. Other institutions can build their own editions directly on [EduWork](https://github.com/ECNU/EduWork). Shared capabilities, plugins, and protocol contributions belong in the public project.
+
+## Bundled plugins and skills
+
+### Public capabilities inherited from EduWork
+
+| Public plugin | Use in the ECNU edition |
+| --- | --- |
+| `@eduwork/dsh-oidc` | University SSO, authorized model discovery, and Token refresh. |
+| `@eduwork/dsh-knowledge-studio` | Reports, mind maps, quizzes, flashcards, spreadsheets, presentations, and audio/video overviews from source materials. |
+| `@eduwork/dsh-artifact-services` | Office, speech, and media generation and previews shared by conversations and Studio. |
+| `@shlv/dsh-literature` | DBLP and arXiv literature search, BibTeX, and available full text. |
+| `@eduwork/dsh-memory` | Local memory and conversation retrieval. |
+| `@eduwork/dsh-mail` | Connect a mailbox, read messages, and send with authorization. |
+
+Browser, skill management, and workbench settings are inherited too. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
+
+### Plugins added by the ECNU edition
+
+| Plugin | Purpose |
+| --- | --- |
+| [Campus search](edition/plugins/tool-ecnu-campus-search/README_EN.md) | Find campus services, departments, policies, and news, retaining source links. |
+| [Account and quota](edition/plugins/ecnu-account-resources/README_EN.md) | View university model allowances, usage, and resource pools. |
+| [Image understanding assistance](edition/plugins/provider-vision-fallback/README_EN.md) | Supply configured text-only models with textual evidence from a university vision model; can be disabled. |
+| [Activity heartbeat](edition/plugins/chatecnu-active-heartbeat/README_EN.md) | Report client activity after university sign-in; see Data and privacy below for the disclosed fields. |
+
+ECNU also bundles the **`ecnu-campus-search` skill**, which guides campus source selection, source verification, and use of public material. The skill describes the workflow; the campus search plugin executes it. Daily use does not require a separate installation or manual campus endpoint configuration. Availability depends on university services and account permissions.
+
+Distribution configuration supplies university branding, default models, media services, and update channels. See the [ECNU distribution manifest](edition/distribution.json) for the complete combination.
 
 ## University sign-in
 
@@ -28,7 +68,11 @@ On first launch, the client automatically downloads and verifies university conf
 
 <p align="center"><sub>Sign in and choose a university model to begin. This example uses ecnu-max; availability depends on university services and account permissions.</sub></p>
 
-University identity and model access reuse the public edition's open protocol implementation. The client manages model authorization and Token refresh after sign-in; personally configured models can coexist. The university model catalog and capabilities are maintained through configuration, without requiring a full application download for each adjustment.
+University SSO and model authorization reuse the public **oidc-llm open protocol draft**. ChatECNU provides a compatible service; the client uses the Access Token obtained at sign-in to discover and invoke authorized models, managing refresh automatically. Model catalogs and capabilities are maintained through configuration without requiring a full application download for every change.
+
+This is EduWork's direction for institutional access and interoperability across clients, rather than a protocol limited to ECNU or the EduWork client. It remains a 0.1 draft with an experimental implementation. University quotas, campus search, and heartbeats are separate institutional extensions, not protocol requirements. The public edition also supports native LiteLLM OAuth as a separate model-access route.
+
+[Open protocol draft](https://github.com/ECNU/EduWork/blob/main/packages/dsh-oidc/docs/gateway-auth/oidc-llm-draft.en.md) · [Implemented scope](https://github.com/ECNU/EduWork/blob/main/packages/dsh-oidc/docs/gateway-auth/experimental-oidc-llm.en.md)
 
 ## Knowledge Studio
 
@@ -128,7 +172,9 @@ Conversations, workspace references, and memory are managed locally. When using 
 
 For troubleshooting, export a diagnostic ZIP in Settings, and a separate Session log for a specific conversation. Screenshots use demonstration material and retain existing privacy masks; generated content in them is not a factual reference.
 
-## An example of institutional extension
+<a id="an-example-of-institutional-extension"></a>
+
+## Build your institution edition
 
 This repository shows how a university connects its services to an open workbench. **Identity and model protocols, Knowledge Studio, and shared capabilities are maintained in [public EduWork](https://github.com/ECNU/EduWork); this repository maintains university configuration and extensions.**
 

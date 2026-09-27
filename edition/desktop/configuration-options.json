@@ -56,6 +56,16 @@
     "ecnu-plus",
     true
   ],
+  "plugins.chatecnu-vision.maxConcurrentRequests": [
+    "辅助模型的并发请求上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。",
+    1,
+    true
+  ],
+  "plugins.chatecnu-vision.maxRetries": [
+    "辅助模型遇到 HTTP 429 的最大重试次数，0–5，默认 2；不重试其他错误。",
+    2,
+    true
+  ],
   "plugins.chatecnu-vision.maxAnalysisTokens": [
     "一次读图分析最大输出 token 数，默认 2048。",
     2048,

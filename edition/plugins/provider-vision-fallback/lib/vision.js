@@ -1,3 +1,5 @@
+import { setTimeout as delay } from 'node:timers/promises'
+
 export const DEFAULT_BASE_URL = 'https://institution.example.edu/open/api/v1'
 export const DEFAULT_CREDENTIAL_REF = 'EDUWORK_API_KEY'
 export const DEFAULT_MODEL = 'ecnu-plus'
@@ -13,6 +15,12 @@ const MAX_VISION_RESPONSE_BYTES = 2 * 1024 * 1024
 function positiveInteger(value, fallback, label) {
   const resolved = value ?? fallback
   if (!Number.isSafeInteger(resolved) || resolved <= 0) throw new Error(`${label} must be a positive integer`)
+  return resolved
+}
+
+function boundedInteger(value, fallback, min, max, label) {
+  const resolved = value ?? fallback
+  if (!Number.isSafeInteger(resolved) || resolved < min || resolved > max) throw new Error(`${label} must be an integer from ${min} to ${max}`)
   return resolved
 }
 
@@ -50,6 +58,8 @@ export function resolveVisionConfig(raw = {}, environment = process.env) {
     model,
     provider,
     dshHome,
+    maxConcurrentRequests: boundedInteger(raw.maxConcurrentRequests, 1, 1, 64, 'maxConcurrentRequests'),
+    maxRetries: boundedInteger(raw.maxRetries, 2, 0, 5, 'maxRetries'),
     maxAnalysisTokens: positiveInteger(raw.maxAnalysisTokens, DEFAULT_MAX_ANALYSIS_TOKENS, 'maxAnalysisTokens'),
     maxEvidenceChars: positiveInteger(raw.maxEvidenceChars, DEFAULT_MAX_EVIDENCE_CHARS, 'maxEvidenceChars'),
     maxRequestEvidenceChars: positiveInteger(
@@ -116,29 +126,58 @@ function responseText(bytes) {
 export async function understandImage({
   fetchImpl = fetch, baseURL, apiKey, model, prompt, imageBytes, signal,
   maxAnalysisTokens = DEFAULT_MAX_ANALYSIS_TOKENS,
+  maxRetries = 2,
 }) {
   if (imageBytes.byteLength > MAX_VISION_INPUT_BYTES) throw new Error('the image exceeds the 20 MiB vision limit')
   const mime = detectVisionImage(imageBytes)
-  let response
-  try {
-    response = await fetchImpl(`${baseURL}/chat/completions`, {
-      method: 'POST', signal, redirect: 'manual',
-      headers: { ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}), 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model, stream: false, max_tokens: maxAnalysisTokens,
-        messages: [{ role: 'user', content: [
-          { type: 'text', text: prompt },
-          { type: 'image_url', image_url: { url: `data:${mime};base64,${Buffer.from(imageBytes).toString('base64')}` } },
-        ] }],
+  for (let attempt = 0; ; attempt++) {
+    signal?.throwIfAborted()
+    let response
+    try {
+      response = await fetchImpl(`${baseURL}/chat/completions`, {
+        method: 'POST', signal, redirect: 'manual',
+        headers: { ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}), 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model, stream: false, max_tokens: maxAnalysisTokens,
+          messages: [{ role: 'user', content: [
+            { type: 'text', text: prompt },
+            { type: 'image_url', image_url: { url: `data:${mime};base64,${Buffer.from(imageBytes).toString('base64')}` } },
+          ] }],
       }),
-    })
-  } catch (error) {
-    if (error?.name === 'AbortError' || error?.name === 'TimeoutError') throw error
-    throw new Error('the vision specialist service could not be reached')
+      })
+    } catch (error) {
+      signal?.throwIfAborted()
+      if (error?.name === 'AbortError' || error?.name === 'TimeoutError') throw error
+      throw new Error('the vision specialist service could not be reached')
+    }
+    if (!response.ok) {
+      // Do not retain or expose provider error bodies (they may contain secrets).
+      await response.body?.cancel()
+      if (response.status === 429) {
+        const waitMs = retryDelay(response.headers.get('retry-after'), attempt)
+        // Never retry earlier than Retry-After. Long waits are reported to the
+        // caller instead of occupying a specialist slot indefinitely.
+        if (attempt >= maxRetries || waitMs > 60_000) throw new Error(
+          '辅助读图模型暂时被限流（HTTP 429）。请稍后重试；持续出现时可降低 plugins.chatecnu-vision.maxConcurrentRequests，并检查该模型的并发或用量额度。',
+        )
+        await delay(waitMs, undefined, { signal })
+        continue
+      }
+      throw new Error(`the vision specialist service returned HTTP ${response.status}`)
+    }
+    const bytes = await readBoundedResponse(response)
+    return { analysis: responseText(bytes), mime }
   }
-  const bytes = await readBoundedResponse(response)
-  if (!response.ok) throw new Error(`the vision specialist service returned HTTP ${response.status}`)
-  return { analysis: responseText(bytes), mime }
+}
+
+export function retryDelay(value, attempt, now = Date.now()) {
+  if (value?.trim()) {
+    const seconds = Number(value)
+    if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1000
+    const date = Date.parse(value)
+    if (Number.isFinite(date)) return Math.max(0, date - now)
+  }
+  return Math.min(30_000, 1000 * 2 ** attempt) + Math.floor(Math.random() * 250)
 }
 
 export class VisionEvidenceCache {

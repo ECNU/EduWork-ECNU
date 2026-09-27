@@ -337,6 +337,10 @@
     // [eduwork] 用于读图的模型 ID，须支持图片输入。
     "model": "ecnu-plus",
     // [eduwork] 一次读图分析最大输出 token 数，默认 2048。
+    // [eduwork] 辅助模型并发上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。
+    "maxConcurrentRequests": 1,
+    // [eduwork] HTTP 429 最大重试次数，0–5，默认 2。
+    "maxRetries": 2,
     "maxAnalysisTokens": 2048,
     // [eduwork] 单份读图证据最大字符数，默认 12000。
     "maxEvidenceChars": 12000,
@@ -986,6 +990,10 @@
 //   "provider": "chatecnu"
 // plugins.chatecnu-vision.model：用于读图的模型 ID，须支持图片输入。
 //   "model": "ecnu-plus"
+// plugins.chatecnu-vision.maxConcurrentRequests：辅助模型并发上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。
+//   "maxConcurrentRequests": 1
+// plugins.chatecnu-vision.maxRetries：HTTP 429 最大重试次数，0–5，默认 2。
+//   "maxRetries": 2
 // plugins.chatecnu-vision.maxAnalysisTokens：一次读图分析最大输出 token 数，默认 2048。
 //   "maxAnalysisTokens": 2048
 // plugins.chatecnu-vision.maxEvidenceChars：单份读图证据最大字符数，默认 12000。

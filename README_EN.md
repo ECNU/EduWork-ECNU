@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#installation-and-use)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.1.7-rc.2](https://img.shields.io/badge/DSH-0.1.7--rc.2-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.7-rc.2) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#installation-and-use)
 
 [简体中文](README.md) | **English**
 
@@ -131,7 +131,7 @@ The university server manages quota; personal API key quotas remain with their r
 
 ### University models and media services
 
-Open **Settings → Models** to view university service status and the model catalog, or add personal models. University image generation and speech synthesis are enabled according to configuration and account permissions, for images, narration, and explanatory content in conversations and Studio.
+Open **Settings → Models** to view university service status and the model catalog, or add personal models. The conversation selector lists LLMs, including LLMs that accept images. Image generation, speech synthesis, embedding, and reranking models serve their respective capabilities rather than appearing as chat models. University image generation and speech synthesis are enabled according to configuration and account permissions, for images, narration, and explanatory content in conversations and Studio.
 
 ![Model settings show a connected ECNU AI service and its model catalog](docs/images/school-services.png)
 
@@ -143,24 +143,24 @@ For text-only models on the configured university route, image understanding ass
 
 Supports **Windows x64** and **macOS 15+ Apple Silicon (arm64)**. The client runs on your computer, without a separate EduWork server to deploy.
 
-1. Download the complete desktop package for your platform from the university distribution channel or [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases). On Windows, extract into a writable directory and run `EduWork-Electron.exe`, keeping the accompanying resources. On Mac, extract and move `EduWork-ECNU.app` to Applications. GitHub's Source code archives are not desktop packages.
+1. Download the complete desktop package for your platform from the university distribution channel or [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases). On Windows, extract into a writable directory and run `EduWork-Electron.exe`, keeping the accompanying resources. On Mac, extract the package and move the included `.app` application to Applications. GitHub's Source code archives are not desktop packages.
 2. On first launch, connect to the network to download university configuration. Follow the prompts to sign in and authorize access, then return to the client, check the university connection, and select a model.
 3. Choose a local folder as your workspace and add your materials. Start a conversation or open Studio to select an output type.
 
 Try: **“Create a study guide from these sources, then make a companion quiz.”**
 
-The current macOS package does not use Apple Developer ID signing or notarization, so the first launch may show a system security prompt. See [macOS notes](https://github.com/ECNU/EduWork/blob/main/docs/MACOS.md) and the [Mac update guide](https://github.com/ECNU/EduWork/blob/main/docs/MACOS_UPDATES_EN.md) for software updates, system authorization, and platform requirements. University sign-in and common issues are covered in the [user guide](docs/USER_GUIDE.md).
+The current macOS package does not use Apple Developer ID signing or notarization, so the first launch may show a system security prompt. Automatic update availability and sources depend on the release notes and configuration for the installed version. See [macOS notes](https://github.com/ECNU/EduWork/blob/main/docs/MACOS.md) and the [Mac update guide](https://github.com/ECNU/EduWork/blob/main/docs/MACOS_UPDATES_EN.md) for software updates, system authorization, and platform requirements. University sign-in and common issues are covered in the [user guide](docs/USER_GUIDE.md).
 
 ## Configuration and data
 
-The university maintains default connection settings, model and media configuration, branding, and update sources. Model configuration, feature switches, media settings, and official Skills can update independently and take effect after restart. Everyday use requires no manual entry of university settings.
+The university maintains default connection settings, model and media configuration, branding, and update sources. Model configuration, feature switches, media settings, and official Skills support independent updates. The distribution package and university policy determine which are enabled; compatible updates take effect after restart. Everyday use requires no manual entry of university settings.
 
 For adjustments, open the single active `eduwork.jsonc` from Settings; the file includes configuration comments. Configuration updates preserve manual edits and retain only one previous configuration before an automatic rewrite for rollback. Personal models, credentials, and history remain separate.
 
 | Platform | Active configuration |
 | --- | --- |
 | Windows | `config/eduwork.jsonc` under the application directory; configuration and application data stay with the portable directory. |
-| macOS | `~/Library/Application Support/eduwork-chatecnu-electron/config/eduwork.jsonc`; configuration and application data live in the user directory. |
+| macOS | A distribution-specific directory under `~/Library/Application Support/`; open the active `eduwork.jsonc` from Settings. |
 
 Workspace files remain in your chosen folder; moving the application does not move external workspaces. This repository provides [institutional configuration examples](edition/desktop-examples/README_EN.md). Actual university settings are retrieved on first launch and are not included in the source templates.
 

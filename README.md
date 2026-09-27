@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#安装与使用)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.1.7-rc.2](https://img.shields.io/badge/DSH-0.1.7--rc.2-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.7-rc.2) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#安装与使用)
 
 **简体中文** | [English](README_EN.md)
 
@@ -131,7 +131,7 @@ Knowledge Studio 是独立插件，通过宿主的侧栏插槽（slot）接入�
 
 ### 学校模型与媒体服务
 
-在 **设置 → 模型** 查看学校服务连接状态和模型目录，也可以添加个人模型。学校图像与语音合成服务按配置和账号权限启用，可用于对话和 Studio 中的图片、配音及讲解内容。
+在 **设置 → 模型** 查看学校服务连接状态和模型目录，也可以添加个人模型。对话中只选择 LLM，包括可读图的 LLM；图像生成、语音合成、向量和重排模型按各自用途调用，不作为聊天模型。学校图像与语音合成服务按配置和账号权限启用，可用于对话和 Studio 中的图片、配音及讲解内容。
 
 ![模型设置中的华东师范大学 AI 服务已连接，并显示学校提供的模型目录](docs/images/school-services.png)
 
@@ -143,24 +143,24 @@ Knowledge Studio 是独立插件，通过宿主的侧栏插槽（slot）接入�
 
 支持 **Windows x64** 和 **macOS 15+ Apple Silicon（arm64）**。客户端在自己的电脑上运行，无需额外部署 EduWork 服务端。
 
-1. 从学校发布渠道或 [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases) 获取对应平台的完整桌面包。Windows 解压到可写目录，运行 `EduWork-Electron.exe`，保留同目录的资源；Mac 解压后将 `EduWork-ECNU.app` 放入“应用程序”。GitHub 的 Source code 压缩包不是桌面包。
+1. 从学校发布渠道或 [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases) 获取对应平台的完整桌面包。Windows 解压到可写目录，运行 `EduWork-Electron.exe`，保留同目录的资源；Mac 解压后将包内的 `.app` 应用移入“应用程序”。GitHub 的 Source code 压缩包不是桌面包。
 2. 首次启动联网下载学校配置，按引导使用学校账号登录并授权。返回客户端后，确认学校服务已连接，再选择模型。
 3. 选择本机文件夹作为工作区并放入资料，直接开始对话，或打开 Studio 选择成果类型。
 
 可以先试试：**“根据这些资料生成一份学习指南，再制作配套测验。”**
 
-macOS 当前未使用 Apple Developer ID 签名或公证，首次打开可能出现系统安全提示。软件更新、系统授权与平台要求见 [macOS 说明](https://github.com/ECNU/EduWork/blob/main/docs/MACOS.md)和 [Mac 更新说明](https://github.com/ECNU/EduWork/blob/main/docs/MACOS_UPDATES.md)。学校登录与常见问题见[使用指南](docs/USER_GUIDE.md)。
+macOS 当前未使用 Apple Developer ID 签名或公证，首次打开可能出现系统安全提示。自动更新是否启用以及使用哪个更新源，以所用版本的发布说明和发行配置为准。软件更新、系统授权与平台要求见 [macOS 说明](https://github.com/ECNU/EduWork/blob/main/docs/MACOS.md)和 [Mac 更新说明](https://github.com/ECNU/EduWork/blob/main/docs/MACOS_UPDATES.md)。学校登录与常见问题见[使用指南](docs/USER_GUIDE.md)。
 
 ## 配置与数据
 
-学校统一维护默认接入参数、模型与媒体配置、品牌和更新源。模型配置、功能开关、媒体配置和官方 Skills 可独立更新，重启后生效；日常使用无需手动填写学校参数。
+学校统一维护默认接入参数、模型与媒体配置、品牌和更新源。模型配置、功能开关、媒体配置和官方 Skills 支持独立更新，具体启用项由发行包与学校发布策略决定，验证兼容性后在重启时生效；日常使用无需手动填写学校参数。
 
 需要调整时，从设置打开唯一生效的 `eduwork.jsonc`，文件内包含配置注释。配置更新保留手工修改，自动改写前只保留一份上一版配置用于回退。个人模型、登录凭据和历史数据单独保存。
 
 | 平台 | 生效配置位置 |
 | --- | --- |
 | Windows | 程序目录中的 `config/eduwork.jsonc`，配置和应用数据随绿色版目录保存。 |
-| macOS | `~/Library/Application Support/eduwork-chatecnu-electron/config/eduwork.jsonc`，配置和应用数据位于用户目录。 |
+| macOS | `~/Library/Application Support/` 下的发行版专属目录；从设置打开当前生效的 `eduwork.jsonc`。 |
 
 工作区文件仍在你选择的文件夹中；移动程序不会自动移动外部工作区。仓库提供[机构配置示例](edition/desktop-examples/README.md)，实际学校部署参数在首次启动时获取，不包含在源码模板中。
 

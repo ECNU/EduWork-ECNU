@@ -16,6 +16,10 @@ Electron reads model capabilities and plugin options from the single `config/edu
 
 ## Processing boundaries
 
+- `plugins.chatecnu-vision.maxConcurrentRequests` limits the configured specialist to 1–64 concurrent requests (default 1). Images and conversations share the plugin instance's queue. Waiting is cancellable; stopping the plugin aborts its requests.
+- `plugins.chatecnu-vision.maxRetries` allows 0–5 HTTP 429 retries (default 2). Retries honor `Retry-After` or use exponential backoff. A requested wait above 60 seconds is reported without retrying early. Analysis and retries share a 180-second timeout starting after admission; queue time is excluded.
+- This queue covers only the specialist, independently of the main model. Direct chat and other clients remain outside it. HTTP 429 may also indicate a service quota; persistent failures suggest checking concurrency and quota, and failed results are never stored as evidence.
+
 - Mounted once per institution bundle below Agent, Skill and Tool layers; decisions use only the selected model's native `inputModalities`.
 - Native multimodal models receive unchanged images; text-only models receive specialist evidence without another Agent-visible tool.
 - One context-independent observation is persisted under `DSH_HOME` per immutable attachment, specialist model and analysis-policy version, reused across retries, restarts and session forks.

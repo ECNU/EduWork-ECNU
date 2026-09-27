@@ -30,7 +30,7 @@ on:
         type: choice
         options: [both, windows, macos]
       verify_publisher_bootstrap:
-        description: 'Mac acceptance: activate the published signed configuration with no account login'
+        description: 'Publisher acceptance: activate the signed configuration with no account login'
         required: true
         default: false
         type: boolean
@@ -92,7 +92,7 @@ jobs:
           node core/scripts/check-source-docs.mjs institution
           if ($env:SOURCE_ALPHA -eq 'true') {
             if ($env:DEVELOPMENT_ONLY -ne 'true' -or $env:RELEASE_NOTES -or $env:RELEASE_NOTES_APPROVED -eq 'true') { throw 'Source Alpha builds artifacts only; publish reviewed notes separately.' }
-            ./core/scripts/ci-017-alpha-desktop.ps1 -CoreRoot ./core -EditionRoot ./institution -Version $env:RELEASE_VERSION -PublisherDescriptors ./institution/edition/desktop-alpha -Output "$env:RUNNER_TEMP/ew-candidate"
+            ./core/scripts/ci-017-alpha-desktop.ps1 -CoreRoot ./core -EditionRoot ./institution -Version $env:RELEASE_VERSION -PublisherDescriptors ./institution/edition/desktop-alpha -Output "$env:RUNNER_TEMP/ew-candidate" -VerifyPublisherBootstrap:($env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true')
             exit 0
           }
           $script = "./core/scripts/ci-eduwork-$($env:TARGET_PLATFORM)-release.ps1"

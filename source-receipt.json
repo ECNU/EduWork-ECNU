@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260921.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-21T12:52:42.805Z",
-  "fileSetSHA256": "d68ae8128583a9df03c6b1e40f589300fb43c25b6477e8438ad4ade6f71b9894",
+  "createdAt": "2026-09-28T02:53:49.187Z",
+  "fileSetSHA256": "ac6a30f7b19fcc93fcc0a92d974c3ca628fd7cabdbc7bec8d648bce43d9b68ea",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "289253fb924c0787e3caa2834832b3230690c201d23ee458f8779cd0d72f206d"
+      "sha256": "65d7f8ddcd6008fd22d3fdbca2911616c7e7ff43809ed20536cc49ad700f3a3e"
     },
     {
       "path": ".github/workflows/release-windows.yml",
@@ -21,7 +21,7 @@
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "36959889b2e0b298cfb34cdd9f94d20b1f2e35e2d4655e4c8db96bad8b222cf6"
+      "sha256": "605b3590cc96e04a9aa2650e76d3b07d4689e8ff7e9f91c6b7649b81598c304c"
     },
     {
       "path": ".gitignore",
@@ -33,7 +33,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "646d06cc3f30d591fe6df5d68a35cf49b3e2c092c18d5a6e6c924ac5583ad035"
+      "sha256": "7388639de6f0083681440c9dc70a16f77d4fa5c38d7753d9ac7f86046d0b58a3"
     },
     {
       "path": "docs/BUILD.md",
@@ -45,7 +45,7 @@
     },
     {
       "path": "docs/images/README_EN.md",
-      "sha256": "ad19fbeefcf3d24af38c9b8edcf2bcffb4683195ded6b50eda82ea9a9141d5ce"
+      "sha256": "97b1ba1fb0b95c48cfa012bbe57c66fde977f8cf20fbb2592ea15a39d8f107d1"
     },
     {
       "path": "docs/images/readme-hero-en.svg",
@@ -57,7 +57,7 @@
     },
     {
       "path": "docs/images/README.md",
-      "sha256": "8a01fa271f421b66ebd77ad2f6ec305dacf1c874624fff3bdc67bcd99a63e25c"
+      "sha256": "9f4bce4078a7d24b01e5671b2c49c2d391807a93ece465352798f824d6fd4ffe"
     },
     {
       "path": "docs/images/school-model.png",
@@ -104,28 +104,40 @@
       "sha256": "3988b639ecb3fcea7498c29b7f69112a959e2c23bb8e7c1d44a5e7132817d866"
     },
     {
+      "path": "docs/releases/0.3.6-dev.20260927.1.md",
+      "sha256": "01820a26b27633735af130561dc26288c4bb1f340e7e475bd963679ae71f009f"
+    },
+    {
       "path": "docs/USER_GUIDE.md",
       "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
     },
     {
+      "path": "edition/desktop-alpha/publisher-bootstrap.darwin.json",
+      "sha256": "eaa06570e3d640eab7ae373d02419da1513334b5e39f897ff6bb1d207cf9b77b"
+    },
+    {
+      "path": "edition/desktop-alpha/publisher-bootstrap.json",
+      "sha256": "b516ef87a08aa7fa7a54a2a8000c42d1586c8712379afb1b585b2655d2bf941b"
+    },
+    {
       "path": "edition/desktop-examples/cernet.jsonc",
-      "sha256": "0b4bce865cbeb406b7b61428fee6bc07fe4712b96b11851480fd507fa4904879"
+      "sha256": "786270901fa455703ac8f1e97b23d2da228f0d103d4edbb44afca4f70f3ef3cc"
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "3190bb4de9310aa998277e830e08fba8399bd2280ed5864b2e7a0bf0168b1d0f"
+      "sha256": "b05a256165c3c2007c028f0a3a40f2591035571f047687ff0671e49f68f3d5bf"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
-      "sha256": "b08a155032cf978a11e56a23a0e0a514012c3e4d8991ff61fe57db021422c0b0"
+      "sha256": "989a5d0945b6c2c9a4077e7371ba657addbcff51648cb1061a0480463729fd84"
     },
     {
       "path": "edition/desktop-examples/README.md",
-      "sha256": "c70eac77353e8ebbe21470d00af2b129ec3b0a6a18d8267d0f399f91b1c156e6"
+      "sha256": "c928127aca13943a97bbe9cdfa8eb2d45f66a6f85f2ebbabead168408122914a"
     },
     {
       "path": "edition/desktop/configuration-options.json",
-      "sha256": "dd335c56560ee83d0e2cd3d626efa67eaef46c528c4c327d0e9d058486b90a76"
+      "sha256": "2c2cde5d375b97dbf14b184eac31528b3484dd8cbbbffb3640a98214663bef26"
     },
     {
       "path": "edition/desktop/configuration-policy.json",
@@ -137,7 +149,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "3d296a1fc995751c98340fcbd33f424e5d01e91a23c36d7ca52cc585ae05fae5"
+      "sha256": "cdc067c5cc2450a1762e42b80bf8f73411b217fd922797883b51bfbb2f8e1394"
     },
     {
       "path": "edition/desktop/mac-updates.json",
@@ -157,27 +169,27 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "226555707cef402abedcaa9688417cc8a275c9a0051ec011c0549157fba9d969"
+      "sha256": "6582aeffd9e47e301591e382ad659c8a37addb0d44e4b12b518f0085c253541c"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
-      "sha256": "99b65dc7c8c2b615fa28ddeba8284e1fb3a00ae764a0efeef4759c8309f3e8f4"
+      "sha256": "041d48523a4920f2d7d3b30031f0541078dd06ba0458151787611d8ff1f1ca51"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/index.js",
-      "sha256": "89906969467618e6c77bea6032cfb072732b211f809025cb0b4614c5f835655b"
+      "sha256": "63ac8fcd0b4156df96b9be6d0c4acb3f019bfea7c297c9feb14ed7e3442ecc8a"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/scheduler.js",
-      "sha256": "07835dd0816de42a9df08cc395aa89abc27f41c179f77f8cab3a098defa2c577"
+      "sha256": "00291e35114bfed004649634186e692d20e61c383d8e888b8fe000846dfef50c"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/typert.host.js",
-      "sha256": "822af7c6f6f1f5a8d44831ba1bcfa7f9cb743a11cb23c6854d68646a8d3fe0de"
+      "sha256": "1aface912e78350be5e69b3ec19eae3ae261f793ce1ca650125ada0833ba7d9f"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/web-backend.js",
-      "sha256": "fa9d6a89b28a8717f30752cfc0be044a0183dd95c8a32f88fbc52c19cc447f5a"
+      "sha256": "7781be3b54fbb3679c54252f88b6866d2f23271aaf0aa3a0cd8479c62daa0a3d"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/package.json",
@@ -185,19 +197,19 @@
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/README_EN.md",
-      "sha256": "a14fb3ecbef9ab2cb1c017f5a98024a3a78b5b38c02b1af49148d9ca15e71981"
+      "sha256": "7aea9218643436ade12fa53f17e5a2de9199fd9c1851f567564a7d5c939609a6"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/README.md",
-      "sha256": "b36b18f4a66ad9e98658c583d2537650ed5a50100aa6148c6798af35d6eebb2b"
+      "sha256": "c81b87a50cc6e5cfa9ef6c6894679cf144cb29de06733feb4b1d3d7f0506144f"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/client.test.mjs",
-      "sha256": "4bc03b3d7bf5ee137dbe08bc28378393907dbac7995c14fe4ffa51a2435b8a5a"
+      "sha256": "2cbbccd5b96cfc87657f97928d6551f8f8089f412b8311ffece4c378c2245947"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/host.test.mjs",
-      "sha256": "414133807bf323a28fc6354f638cb2f9bb311f7bd71df149a6d9ef22537b2baa"
+      "sha256": "fedb3a4919095bd4a37f7fb17268a937e6d331c16c79fff4af886345adfbdecf"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/oidc-integration.test.mjs",
@@ -205,11 +217,11 @@
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/scheduler.test.mjs",
-      "sha256": "390292df32f555bc6f3e73e3c1ae83044024a9e99102d442b867c48c30238cba"
+      "sha256": "1616f05c40f4a04b71084a7745ff4e1a9be64eff27687a0f1ccccfc741cb26cb"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs",
-      "sha256": "5d01319ae4b12fe89e70f55847c4386663408833becc4e4d6bbc3c1650581447"
+      "sha256": "024a33b534ada5d88a657ffa1bd0fea2c5216289cb626bb944fae5c994259ed9"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/.gitignore",
@@ -217,11 +229,11 @@
     },
     {
       "path": "edition/plugins/ecnu-account-resources/build-client.ps1",
-      "sha256": "7823167ef3f29809130c47f56cd72e3ed55125a9bc604c0277903f8a1681daab"
+      "sha256": "fe77745b0847515c6f079d7075cf130062f6da02719dbfa1ac8d4e245413c1a0"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/lib/client.js",
-      "sha256": "b5feecbc56ded53b95d34a9d87dda3b4d8ecb39f52040239b91b0293f04f7767"
+      "sha256": "37fb96db80126888f544a7def96235a7b1ba3d8d5ad76154c77640f88a1ce3d8"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/lib/index.js",
@@ -237,7 +249,7 @@
     },
     {
       "path": "edition/plugins/ecnu-account-resources/lib/typert-schemas.js",
-      "sha256": "fa265505848137fc1536075689c78b6989c86d2ea9deefb69d35f2ba8799a705"
+      "sha256": "0170a75dcaf3cda334f8770695ae19360923745a48d83d9327268a15cd2f6001"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/lib/typert.host.js",
@@ -313,11 +325,15 @@
     },
     {
       "path": "edition/plugins/provider-vision-fallback/lib/index.js",
-      "sha256": "dd8a50e5b3154a2945ad56261c43d8c745906b14e9b3a317f38d3501d768e23a"
+      "sha256": "56cd5641c602a132cf456148b16a04fec49a9697b4671c27ea2366dcd7cfa21a"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/lib/request-queue.js",
+      "sha256": "4b9780629a34d0179cd7c3c123cc0c8bf7a30805fe6ae78420cff8e4516976ad"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/lib/vision.js",
-      "sha256": "70c54c859de3ff69f6d168aa22df3505ed9b02773fbf96f67714faede2bc75ca"
+      "sha256": "bf54ce8af64e2aa4f582b60193594d61add90ed716a128d9e809d9f9073cbea8"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/package.json",
@@ -325,11 +341,11 @@
     },
     {
       "path": "edition/plugins/provider-vision-fallback/README_EN.md",
-      "sha256": "d453b6e4d385d3bd8c860cf2e469463f142899bcd706327e555a23e7f06df107"
+      "sha256": "9b3e49ebf71fe624bdea21458c44fbb30f95b85d8a6b986054fdb78d15f537ff"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/README.md",
-      "sha256": "c878f1160ba9796c26793d249f1e0ba6b8a76c9ab8180468df6961116e726d77"
+      "sha256": "5ae4061a645a3e779cbb05cadff66242f7b86509709d1dd261b2aac99868cc09"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/test/evidence-store.test.js",
@@ -337,11 +353,15 @@
     },
     {
       "path": "edition/plugins/provider-vision-fallback/test/mounted-http.test.mjs",
-      "sha256": "d06467e9740e2988aa861e8088a8c4216e7b5cc4bff15fbac64e4361bca996cb"
+      "sha256": "f2e1954cefa2f22b4582dec366ec8b9164b65b75fbd5e544b5a895bd5fdd12ac"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/test/package.test.js",
       "sha256": "3da2df6f49e234c11a17f37fc5e67f143fe70c12ee46bbc4bcd729e5f8e786ff"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/test/request-queue.test.js",
+      "sha256": "4fd954366cc1326cda8a695e8bd736234468cf0eeec85030290d0be50c3aa438"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/test/routing.test.mjs",
@@ -381,11 +401,19 @@
     },
     {
       "path": "edition/skills/ecnu-campus-search/SKILL.md",
-      "sha256": "7986732780410629310c9f10cb8670ff76fd84f5113f3b8b85420858b22be9c7"
+      "sha256": "1b2afb72deb943744db85fde7c6b6a8d8841d31e241c7cc8d324e751c399e003"
+    },
+    {
+      "path": "edition/test/chat-model-catalog.test.mjs",
+      "sha256": "d93ef3123ec43f46df89dc79438fe5dc09795a8c51c62a478203f8de96f996c5"
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "2c12b98ecc47a0f0a74462ccbe4656daeca1d698e879132d8dadde4bf741465d"
+      "sha256": "553e06868067675aaee760c9aa887bbe2286399c14667d79f8b1d09d4d66b49a"
+    },
+    {
+      "path": "edition/test/typert-contract.test.mjs",
+      "sha256": "94dbe6830627dce39659943ac6ce96803faeb94e475411b39e5a9de1f4d88824"
     },
     {
       "path": "LICENSE",
@@ -393,11 +421,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "1d959937b9aedd93203baa4898626976994435c992f5e088c0c4362bfff612a4"
+      "sha256": "1d5efde9ae94b3985f20bf83340a99a7dc974c077a86718fb9092ade12b95e16"
     },
     {
       "path": "README.md",
-      "sha256": "8653b13e5e748bc4da0b35ef1251d0a1548634b97425f01b42cc8799c1fcbec5"
+      "sha256": "cc3b16633b4c1276e9805899882d0eeb44fb28e582f2dbe5e6e386c3d020a752"
     }
   ],
   "artifacts": [],

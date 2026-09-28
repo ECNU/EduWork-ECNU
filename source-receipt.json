@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260921.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-28T08:19:11.866Z",
-  "fileSetSHA256": "a75509831a80ce314568178df80454bb828335cabe48858954d7443acac53baf",
+  "createdAt": "2026-09-28T10:03:46.228Z",
+  "fileSetSHA256": "75a765c09d86ae3ff928ccb0075573d95d2ebab3fd3b27fdbbc0af230b5f03e4",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,11 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "65d7f8ddcd6008fd22d3fdbca2911616c7e7ff43809ed20536cc49ad700f3a3e"
+      "sha256": "7e0499701a9d714cef072d9fa484ce99017b964f0e9aa7eaaa6e6e6347f0ce1c"
+    },
+    {
+      "path": ".github/workflows/publish-desktop-candidate.yml",
+      "sha256": "21ca5853d3699f95d4ffff5581ff47b232312d6c89eea70f49a3daf6f088ac05"
     },
     {
       "path": ".github/workflows/release-windows.yml",
@@ -29,15 +33,15 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "d108d4221fa8e1bfbe888bc0ea06f818c90b4a12ec1beca711797e6d90cb7910"
+      "sha256": "105a77b786ca87cb69f08c9b322100393d73be7a211bc69259cf80eafb60f7d4"
     },
     {
       "path": "core.lock.json",
-      "sha256": "ea9b29ba8b05951efebf1f5c0c995df86bb6d4e5308d862c08c17e152c20d2ba"
+      "sha256": "6be5505e1a13603f077c7aec79bb22fe31d4a38413a1e135f953ce0decaa8b98"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "63b569aa7d7fc805ad54d0bd7e9033726752d1b1710341658b2b3e37ee0a2589"
+      "sha256": "98dfdb27ac421a7c01f71664b4185a13349c8877b9fb36b4c38be1691b823b3f"
     },
     {
       "path": "docs/images/quiz.png",
@@ -106,6 +110,10 @@
     {
       "path": "docs/releases/0.3.6-dev.20260927.1.md",
       "sha256": "01820a26b27633735af130561dc26288c4bb1f340e7e475bd963679ae71f009f"
+    },
+    {
+      "path": "docs/releases/0.3.6-dev.20260928.2.md",
+      "sha256": "4ecb2b5eebd3ce5bfaa64cbc2406f59670db378de094a7c16d637789d2fe557a"
     },
     {
       "path": "docs/USER_GUIDE.md",

@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.3.6-dev.20260921.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-28T09:58:42.261Z",
-  "fileSetSHA256": "9aa03cc3365638abb6ef1bb9f2339577d613dc4f60a4a65342aa1a7892fbd57a",
+  "createdAt": "2026-09-28T10:03:46.228Z",
+  "fileSetSHA256": "75a765c09d86ae3ff928ccb0075573d95d2ebab3fd3b27fdbbc0af230b5f03e4",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "63d7fd2dc67202dba057ade96f5429aa1761f8bf5674bc5aba1fd20a11d11bbc"
+      "sha256": "7e0499701a9d714cef072d9fa484ce99017b964f0e9aa7eaaa6e6e6347f0ce1c"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",

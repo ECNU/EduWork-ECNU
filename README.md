@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.1.7-rc.2](https://img.shields.io/badge/DSH-0.1.7--rc.2-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.7-rc.2) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#安装与使用)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.0-rc.1](https://img.shields.io/badge/DSH-0.2.0--rc.1-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.0-rc.1) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#安装与使用)
 
 **简体中文** | [English](README_EN.md)
 
@@ -41,7 +41,7 @@ flowchart TD
 | `@eduwork/dsh-oidc` | 学校统一认证、授权模型发现与 Token 刷新。 |
 | `@eduwork/dsh-knowledge-studio` | 从资料生成报告、思维导图、测验、闪卡、数据表、演示文稿和音视频概览。 |
 | `@eduwork/dsh-artifact-services` | 对话与 Studio 共用的 Office、语音与媒体生成和预览。 |
-| `@shlv/dsh-literature` | DBLP、arXiv 文献检索、BibTeX 与可用全文。 |
+| `@eduwork/dsh-literature` | DBLP、arXiv 文献检索、BibTeX 与可用全文。 |
 | `@eduwork/dsh-memory` | 本地记忆与历史对话检索。 |
 | `@eduwork/dsh-mail` | 连接邮箱，读取邮件并经授权发送。 |
 
@@ -143,7 +143,7 @@ Knowledge Studio 是独立插件，通过宿主的侧栏插槽（slot）接入�
 
 支持 **Windows x64** 和 **macOS 15+ Apple Silicon（arm64）**。客户端在自己的电脑上运行，无需额外部署 EduWork 服务端。
 
-1. 从学校发布渠道或 [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases) 获取对应平台的完整桌面包。Windows 解压到可写目录，运行 `EduWork-Electron.exe`，保留同目录的资源；Mac 解压后将包内的 `.app` 应用移入“应用程序”。GitHub 的 Source code 压缩包不是桌面包。
+1. 从学校发布渠道或 [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases) 获取对应平台的完整桌面包。Windows 推荐下载 `windows-x64-setup.zip`，解压后运行其中的安装程序；也可将完整程序 ZIP 解压到可写目录，运行 `EduWork-Electron.exe`。Mac 打开 DMG，将应用拖入“应用程序”；也可使用完整程序 ZIP。GitHub 的 Source code 压缩包不是桌面包。
 2. 首次启动联网下载学校配置，按引导使用学校账号登录并授权。返回客户端后，确认学校服务已连接，再选择模型。
 3. 选择本机文件夹作为工作区并放入资料，直接开始对话，或打开 Studio 选择成果类型。
 
@@ -153,7 +153,7 @@ macOS 当前未使用 Apple Developer ID 签名或公证，首次打开可能出
 
 ## 配置与数据
 
-学校统一维护默认接入参数、模型与媒体配置、品牌和更新源。模型配置、功能开关、媒体配置和官方 Skills 支持独立更新，具体启用项由发行包与学校发布策略决定，验证兼容性后在重启时生效；日常使用无需手动填写学校参数。
+学校统一维护默认接入参数、模型与媒体配置、品牌和更新源。0.4.0 的模型配置、功能开关与媒体配置通过签名配置独立更新，验证兼容性后在重启时生效；技能随程序包更新。日常使用无需手动填写学校参数。公版另提供可选的 Skills 独立更新机制。
 
 需要调整时，从设置打开唯一生效的 `eduwork.jsonc`，文件内包含配置注释。配置更新保留手工修改，自动改写前只保留一份上一版配置用于回退。个人模型、登录凭据和历史数据单独保存。
 

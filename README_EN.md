@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.1.7-rc.2](https://img.shields.io/badge/DSH-0.1.7--rc.2-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.7-rc.2) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#installation-and-use)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.0-rc.1](https://img.shields.io/badge/DSH-0.2.0--rc.1-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.0-rc.1) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#installation-and-use)
 
 [简体中文](README.md) | **English**
 
@@ -41,7 +41,7 @@ The institution edition reuses the public workbench, Studio, skills, and desktop
 | `@eduwork/dsh-oidc` | University SSO, authorized model discovery, and Token refresh. |
 | `@eduwork/dsh-knowledge-studio` | Reports, mind maps, quizzes, flashcards, spreadsheets, presentations, and audio/video overviews from source materials. |
 | `@eduwork/dsh-artifact-services` | Office, speech, and media generation and previews shared by conversations and Studio. |
-| `@shlv/dsh-literature` | DBLP and arXiv literature search, BibTeX, and available full text. |
+| `@eduwork/dsh-literature` | DBLP and arXiv literature search, BibTeX, and available full text. |
 | `@eduwork/dsh-memory` | Local memory and conversation retrieval. |
 | `@eduwork/dsh-mail` | Connect a mailbox, read messages, and send with authorization. |
 
@@ -143,7 +143,7 @@ For text-only models on the configured university route, image understanding ass
 
 Supports **Windows x64** and **macOS 15+ Apple Silicon (arm64)**. The client runs on your computer, without a separate EduWork server to deploy.
 
-1. Download the complete desktop package for your platform from the university distribution channel or [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases). On Windows, extract into a writable directory and run `EduWork-Electron.exe`, keeping the accompanying resources. On Mac, extract the package and move the included `.app` application to Applications. GitHub's Source code archives are not desktop packages.
+1. Download the complete desktop package for your platform from the university distribution channel or [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases). On Windows, use `windows-x64-setup.zip`, extract it, and run the installer inside. Alternatively, extract the full application ZIP into a writable directory and run `EduWork-Electron.exe`. On Mac, open the DMG and drag the application into Applications, or use the full application ZIP. GitHub's Source code archives are not desktop packages.
 2. On first launch, connect to the network to download university configuration. Follow the prompts to sign in and authorize access, then return to the client, check the university connection, and select a model.
 3. Choose a local folder as your workspace and add your materials. Start a conversation or open Studio to select an output type.
 
@@ -153,7 +153,7 @@ The current macOS package does not use Apple Developer ID signing or notarizatio
 
 ## Configuration and data
 
-The university maintains default connection settings, model and media configuration, branding, and update sources. Model configuration, feature switches, media settings, and official Skills support independent updates. The distribution package and university policy determine which are enabled; compatible updates take effect after restart. Everyday use requires no manual entry of university settings.
+The university maintains default connection settings, model and media configuration, branding, and update sources. In 0.4.0, signed model configuration, feature switches, and media settings update independently and take effect after compatibility checks and restart. Skills update with the application package. Everyday use requires no manual entry of university settings. The public core also offers optional independent Skills updates.
 
 For adjustments, open the single active `eduwork.jsonc` from Settings; the file includes configuration comments. Configuration updates preserve manual edits and retain only one previous configuration before an automatic rewrite for rollback. Personal models, credentials, and history remain separate.
 

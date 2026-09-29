@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Approved X.Y.Z-dev.YYYYMMDD.N version'
+        description: 'Approved product version; 0.4.0 for source stable'
         required: true
         type: string
       development:
@@ -11,7 +11,11 @@ on:
         type: boolean
         default: true
       source_alpha:
-        description: 'Explicit DSH rc.2 source Alpha; npm release locks unchanged'
+        description: 'Explicit DSH 0.2.0 source development build; npm locks unchanged'
+        type: boolean
+        default: false
+      source_stable:
+        description: 'Explicit EduWork 0.4.0 stable source build with DSH 0.2.0-rc.1'
         type: boolean
         default: false
       release_notes:
@@ -24,7 +28,7 @@ on:
         default: false
         type: boolean
       publish:
-        description: 'Publish source Alpha directly from CI after both platforms pass'
+        description: 'Publish directly from CI after both platforms and signed first launch pass'
         required: true
         default: false
         type: boolean
@@ -89,19 +93,28 @@ jobs:
           TARGET_PLATFORM: ${{ matrix.platform }}
           VERIFY_PUBLISHER_BOOTSTRAP: ${{ inputs.verify_publisher_bootstrap }}
           SOURCE_ALPHA: ${{ inputs.source_alpha }}
+          SOURCE_STABLE: ${{ inputs.source_stable }}
           PUBLISH_RELEASE: ${{ inputs.publish }}
           SELECTED_PLATFORMS: ${{ inputs.platform }}
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
-          if ($env:PUBLISH_RELEASE -eq 'true' -and ($env:GITHUB_REF -ne 'refs/heads/main' -or $env:SOURCE_ALPHA -ne 'true' -or $env:SELECTED_PLATFORMS -ne 'both' -or $env:RELEASE_NOTES_APPROVED -ne 'true' -or -not $env:RELEASE_NOTES)) { throw 'Publication requires main, source Alpha, both platforms and approved notes.' }
+          if ($env:SOURCE_ALPHA -eq 'true' -and $env:SOURCE_STABLE -eq 'true') { throw 'Select exactly one source channel.' }
+          $sourceBuild=$env:SOURCE_ALPHA -eq 'true' -or $env:SOURCE_STABLE -eq 'true'
+          if ($env:PUBLISH_RELEASE -eq 'true' -and ($env:GITHUB_REF -ne 'refs/heads/main' -or -not $sourceBuild -or $env:SELECTED_PLATFORMS -ne 'both' -or $env:RELEASE_NOTES_APPROVED -ne 'true' -or -not $env:RELEASE_NOTES)) { throw 'Publication requires main, an explicit source channel, both platforms and approved notes.' }
           if ($env:DEVELOPMENT_ONLY -ne 'true' -and $env:RELEASE_NOTES_APPROVED -ne 'true') { throw 'Release notes approval is required.' }
           node core/scripts/check-source-docs.mjs core
           node core/scripts/check-source-docs.mjs institution
-          if ($env:SOURCE_ALPHA -eq 'true') {
-            if ($env:DEVELOPMENT_ONLY -ne 'true') { throw 'Source Alpha requires the explicit development assembly mode.' }
-            if ($env:PUBLISH_RELEASE -ne 'true' -and ($env:RELEASE_NOTES -or $env:RELEASE_NOTES_APPROVED -eq 'true')) { throw 'Artifact-only Alpha builds do not consume release notes; select publish to release approved notes.' }
-            ./core/scripts/ci-017-alpha-desktop.ps1 -CoreRoot ./core -EditionRoot ./institution -Version $env:RELEASE_VERSION -PublisherDescriptors ./institution/edition/desktop-alpha -Output "$env:RUNNER_TEMP/ew-candidate" -VerifyPublisherBootstrap:($env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true' -or $env:PUBLISH_RELEASE -eq 'true')
+          if ($sourceBuild) {
+            if ($env:DEVELOPMENT_ONLY -ne 'true') { throw 'Source candidates require the explicit isolated assembly mode.' }
+            if ($env:PUBLISH_RELEASE -ne 'true' -and ($env:RELEASE_NOTES -or $env:RELEASE_NOTES_APPROVED -eq 'true')) { throw 'Artifact-only builds do not consume release notes; select publish to release approved notes.' }
+            ./core/scripts/ci-017-alpha-desktop.ps1 -CoreRoot ./core -EditionRoot ./institution -Version $env:RELEASE_VERSION -Stable:($env:SOURCE_STABLE -eq 'true') -PublisherDescriptors ./institution/edition/desktop-020 -Output "$env:RUNNER_TEMP/ew-candidate" -VerifyPublisherBootstrap:($env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true' -or $env:PUBLISH_RELEASE -eq 'true')
+            $env:EDUWORK_CORE_ROOT=(Resolve-Path core).Path
+            $env:EDUWORK_TEST_RUNTIME="$env:RUNNER_TEMP/ew-candidate/product/d"
+            $env:EDUWORK_TEST_DSH_VERSION='0.2.0-rc.1'
+            $env:DSH_OIDC_PACKAGE_ROOT="$env:EDUWORK_TEST_RUNTIME/node_modules/@eduwork/dsh-oidc"
+            $env:ECNU_ACCOUNT_PACKAGE_ROOT="$env:EDUWORK_TEST_RUNTIME/node_modules/@chatecnu-work/dsh-ecnu-account-resources"
+            node --import ./institution/edition/test/runtime-resolver.mjs --test institution/edition/test/*.test.mjs institution/edition/plugins/chatecnu-active-heartbeat/test/*.test.mjs institution/edition/plugins/ecnu-account-resources/test/*.test.mjs institution/edition/plugins/provider-vision-fallback/test/*.test.js institution/edition/plugins/provider-vision-fallback/test/*.test.mjs institution/edition/plugins/tool-ecnu-campus-search/test/*.test.js institution/edition/plugins/tool-ecnu-campus-search/test/*.test.mjs
             exit 0
           }
           $script = "./core/scripts/ci-eduwork-$($env:TARGET_PLATFORM)-release.ps1"

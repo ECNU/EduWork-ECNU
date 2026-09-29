@@ -109,6 +109,10 @@ test('quota wire validation failure does not break identity or managed models', 
   assert.equal((await f.ctx.oidcAccounts.status('desktop-test')).credentialReady, true)
   const call = await f.ctx.llm.resolveCallConfig({ provider: 'fixture-ai', model: 'fixture-model' })
   assert.equal(call.provider, 'fixture-ai')
+  const chunks = []
+  for await (const chunk of f.ctx.llm.stream({ ...call, messages: [] })) chunks.push(chunk)
+  assert.ok(chunks.some(chunk => chunk.type === 'text-delta'))
+  assert.ok(!chunks.some(chunk => chunk.type === 'finish' && chunk.reason?.kind === 'error'))
 })
 
 test('wire descriptors are isolated: public has no quota field or Host credential transport invocation', () => {

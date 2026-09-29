@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.3.6-dev.20260921.2",
+  "version": "0.4.0-alpha.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-28T10:03:46.228Z",
-  "fileSetSHA256": "75a765c09d86ae3ff928ccb0075573d95d2ebab3fd3b27fdbbc0af230b5f03e4",
+  "createdAt": "2026-09-29T03:03:26.565Z",
+  "fileSetSHA256": "c4e3a265dee000fab228993d80c169ef42aef82c6362b7cb481b95281de7795a",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "7e0499701a9d714cef072d9fa484ce99017b964f0e9aa7eaaa6e6e6347f0ce1c"
+      "sha256": "709ff87b3ba03027bb914c9b5a1ec604c299dc8ffdf2a15ae1bb7203dc9d8cfb"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
@@ -37,11 +37,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "6be5505e1a13603f077c7aec79bb22fe31d4a38413a1e135f953ce0decaa8b98"
+      "sha256": "46326d11bee35919fb660ea07ab10ee55f104f6786cb6b1d129ded809b6d863a"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "98dfdb27ac421a7c01f71664b4185a13349c8877b9fb36b4c38be1691b823b3f"
+      "sha256": "26acb1dfbb56ac3f6e8d0f7a9778010ccf899526934020130fab07028219db0a"
     },
     {
       "path": "docs/images/quiz.png",
@@ -116,8 +116,20 @@
       "sha256": "4ecb2b5eebd3ce5bfaa64cbc2406f59670db378de094a7c16d637789d2fe557a"
     },
     {
+      "path": "docs/releases/0.4.0-alpha.1.md",
+      "sha256": "b7654a94fb1ae6d6a3d84640abe972559f6bcc109abd80e38dfb00e1f7b3ce76"
+    },
+    {
       "path": "docs/USER_GUIDE.md",
       "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
+    },
+    {
+      "path": "edition/desktop-020/publisher-bootstrap.darwin.json",
+      "sha256": "3e0ad76d5ddc97253e846040a21acf26b7234fb719bac5625517fc0c53c7d42b"
+    },
+    {
+      "path": "edition/desktop-020/publisher-bootstrap.json",
+      "sha256": "36be73cd44231efb3b8c364c574d88c002f3c218bd19f6ed1652876572b4cbe0"
     },
     {
       "path": "edition/desktop-alpha/publisher-bootstrap.darwin.json",
@@ -126,6 +138,10 @@
     {
       "path": "edition/desktop-alpha/publisher-bootstrap.json",
       "sha256": "b516ef87a08aa7fa7a54a2a8000c42d1586c8712379afb1b585b2655d2bf941b"
+    },
+    {
+      "path": "edition/desktop-build.json",
+      "sha256": "0802a5bdbbff5dac97932cab7e29f0ba1e874c75bafc4d64d02715e9af10fc70"
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
@@ -213,11 +229,11 @@
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/client.test.mjs",
-      "sha256": "2cbbccd5b96cfc87657f97928d6551f8f8089f412b8311ffece4c378c2245947"
+      "sha256": "b89018d1d178d894f0d485bbdb18cbed8d36e52103d51952d682e55a894de4bc"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/host.test.mjs",
-      "sha256": "fedb3a4919095bd4a37f7fb17268a937e6d331c16c79fff4af886345adfbdecf"
+      "sha256": "dcd82d8f5f3a62a7a9bb95582df21dc505c4566a56ec507f29b188c3c5044c21"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/oidc-integration.test.mjs",
@@ -309,11 +325,11 @@
     },
     {
       "path": "edition/plugins/ecnu-account-resources/test/helpers/oidc-http-fixture.mjs",
-      "sha256": "ba766d80045b39bb59492e3c481508c2c1c2d38a97b9c47b6c445c1e17eb00ef"
+      "sha256": "541174abca377a3d45f57ee8fcb3ae3e06f9f88a7f7c6400e0d959e9dcfb528a"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/test/host.test.mjs",
-      "sha256": "f2847093817675c18939a801ad0dfeda1d2eb9da7b2bccbdd111da2fa6a4da1f"
+      "sha256": "a90503626d2450fafc0d5a080f98a6468ff2d76f3379c3373154eababa7d20d0"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/test/summary.test.mjs",
@@ -420,6 +436,14 @@
       "sha256": "553e06868067675aaee760c9aa887bbe2286399c14667d79f8b1d09d4d66b49a"
     },
     {
+      "path": "edition/test/runtime-resolver.mjs",
+      "sha256": "36e1ae3c94bad083c06c17282fa4c5cca5252d947b12ecf27299318b55ccd5ea"
+    },
+    {
+      "path": "edition/test/test-desktop-candidate.ps1",
+      "sha256": "275e87f394684a4b87b265ccf3c370b01cfd770995ac76d2c793610818ec0e20"
+    },
+    {
       "path": "edition/test/typert-contract.test.mjs",
       "sha256": "94dbe6830627dce39659943ac6ce96803faeb94e475411b39e5a9de1f4d88824"
     },
@@ -429,11 +453,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "1d5efde9ae94b3985f20bf83340a99a7dc974c077a86718fb9092ade12b95e16"
+      "sha256": "9c5e727684d13993b7e8fe590a66c30e20297f9bee1ca848a67631db74e6a363"
     },
     {
       "path": "README.md",
-      "sha256": "cc3b16633b4c1276e9805899882d0eeb44fb28e582f2dbe5e6e386c3d020a752"
+      "sha256": "778d240d1b7c72b1fc4a598995de45a45b7ea0f3ffa5092291bfb373554f43ea"
     }
   ],
   "artifacts": [],

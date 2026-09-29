@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "publisherDescriptors": "edition/desktop-020",
+  "verifyPublisherBootstrap": true,
+  "validationScript": "edition/test/test-desktop-candidate.ps1"
+}

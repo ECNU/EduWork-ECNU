@@ -11,7 +11,7 @@ const runtime = resolve(process.env.EDUWORK_TEST_RUNTIME || resolve(repository, 
 const runtimeEntry = pathToFileURL(resolve(runtime, 'package.json')).href
 const requireRuntime = createRequire(runtimeEntry)
 const expectedVersion = process.env.EDUWORK_TEST_DSH_VERSION || '0.1.5-rc.2'
-assert.ok(['0.1.5-rc.2', '0.1.7-alpha.2'].includes(expectedVersion))
+assert.ok(['0.1.5-rc.2', '0.1.7-alpha.2', '0.2.0-rc.1'].includes(expectedVersion))
 assert.equal(JSON.parse(await readFile(requireRuntime.resolve('@deepseek-ai/dsh-typert-protocol/package.json'), 'utf8')).version, expectedVersion)
 const resolver = registerHooks({ resolve(specifier, context, next) {
   if (specifier.startsWith('@deepseek-ai/') && (context.parentURL === import.meta.url || context.parentURL?.includes('/chatecnu-active-heartbeat/lib/'))) {

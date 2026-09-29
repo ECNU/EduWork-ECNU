@@ -109,6 +109,31 @@ test('HTTP outcomes remain bounded and final 401 is not retried by the heartbeat
   }
 })
 
+test('gateway origin denial still posts the exact activity route without returning the credential', async t => {
+  const f = await fixture(t)
+  const seen = []
+  const accounts = {
+    ...f.accounts,
+    authorizedFetch: async () => { throw Object.assign(new Error('denied'), { code: 'oidc_authorized_origin_denied' }) },
+    backend: {
+      async resolveGatewayCredential() { return { value: 'synthetic-gateway-token' } },
+      async fetch(url, init) {
+        seen.push({ url, authorization: init.headers.authorization, redirect: init.redirect, body: JSON.parse(init.body) })
+        return new Response(success, { status: 200, headers: { 'content-type': 'application/json' } })
+      },
+    },
+  }
+  const result = await createWebHeartbeatSender(accounts, f.config)(active)
+  assert.equal(result.state, 'ok')
+  assert.equal(result.httpStatus, 200)
+  assert.equal(seen.length, 1)
+  assert.equal(new URL(seen[0].url).pathname, '/user/active')
+  assert.equal(seen[0].authorization, 'Bearer synthetic-gateway-token')
+  assert.equal(seen[0].redirect, 'error')
+  assert.equal(seen[0].body.activity.state, 'active')
+  assert.doesNotMatch(JSON.stringify(result), /synthetic-gateway-token|private-session-value/)
+})
+
 test('OIDC owns refresh, expiry and origin policy; heartbeat returns only normalized states', async t => {
   const f = await fixture(t)
   for (const [code, state, httpStatus] of [['oidc_login_required', 'login_required', 401], ['oidc_profile_unknown', 'rejected'], ['oidc_authorized_origin_denied', 'rejected'], ['ECONNRESET', 'retry']]) {

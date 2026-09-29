@@ -100,6 +100,44 @@ async function responseValue(response) {
   finally { reader.releaseLock() }
 }
 
+function exactActivityURL(endpoint) {
+  let url
+  try { url = new URL(endpoint) } catch { return null }
+  if (url.pathname !== '/user/active' || url.search || url.hash || url.username || url.password) return null
+  return url
+}
+
+// Token gateways only authorize the model API prefix. The school activity route
+// stays at the exact issuer path /user/active. Reuse the host's already refreshed
+// gateway credential for that one URL; never log or return the token.
+async function gatewayActivityFetch(backend, profileID, endpoint, body, signal) {
+  const url = exactActivityURL(endpoint)
+  if (!url || typeof backend?.resolveGatewayCredential !== 'function' || typeof backend?.fetch !== 'function') return null
+  const credential = await backend.resolveGatewayCredential(profileID)
+  if (!credential?.value || typeof credential.value !== 'string') {
+    const error = new Error('organization sign-in is required')
+    error.code = 'oidc_login_required'
+    throw error
+  }
+  return backend.fetch(url.href, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${credential.value}` },
+    body, redirect: 'error', signal,
+  })
+}
+
+async function heartbeatResult(response) {
+  const httpStatus = response.status
+  if (httpStatus !== 200) {
+    await response.body?.cancel().catch(() => {})
+    return { state: httpStatus === 401 ? 'login_required' : httpStatus === 429 || httpStatus >= 500 ? 'retry' : 'rejected', httpStatus }
+  }
+  const value = await responseValue(response)
+  if (value?.status !== 'Success') return { state: 'retry', httpStatus }
+  const interval = typeof value.next_heartbeat_in === 'number' && Number.isFinite(value.next_heartbeat_in) && value.next_heartbeat_in > 0 ? value.next_heartbeat_in : 600
+  return { state: 'ok', httpStatus, nextHeartbeatIn: Math.max(60, Math.min(3600, interval)) }
+}
+
 export function createWebHeartbeatSender(accounts, raw = {}, { signal, environment = process.env, system = process } = {}) {
   const config = normalizeWebConfig(raw, environment)
   let identifier, metadata
@@ -119,19 +157,20 @@ export function createWebHeartbeatSender(accounts, raw = {}, { signal, environme
         payload = heartbeatPayload(currentConfig, currentID, input, system)
       }
       catch { return { state: 'local_error' } }
-      const response = await accounts.authorizedFetch(config.profileID, config.endpoint, {
-        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),
-        signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(15000)]),
-      }, { retryUnauthorized: true })
-      const httpStatus = response.status
-      if (httpStatus !== 200) {
-        await response.body?.cancel().catch(() => {})
-        return { state: httpStatus === 401 ? 'login_required' : httpStatus === 429 || httpStatus >= 500 ? 'retry' : 'rejected', httpStatus }
+      const requestSignal = AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(15000)])
+      const body = JSON.stringify(payload)
+      let response
+      try {
+        response = await accounts.authorizedFetch(config.profileID, config.endpoint, {
+          method: 'POST', headers: { 'content-type': 'application/json' }, body,
+          signal: requestSignal,
+        }, { retryUnauthorized: true })
+      } catch (error) {
+        if (error?.code !== 'oidc_authorized_origin_denied') throw error
+        response = await gatewayActivityFetch(accounts.backend, config.profileID, config.endpoint, body, requestSignal)
+        if (!response) throw error
       }
-      const value = await responseValue(response)
-      if (value?.status !== 'Success') return { state: 'retry', httpStatus }
-      const interval = typeof value.next_heartbeat_in === 'number' && Number.isFinite(value.next_heartbeat_in) && value.next_heartbeat_in > 0 ? value.next_heartbeat_in : 600
-      return { state: 'ok', httpStatus, nextHeartbeatIn: Math.max(60, Math.min(3600, interval)) }
+      return heartbeatResult(response)
     } catch (error) {
       if (error?.code === 'oidc_login_required') return { state: 'login_required', httpStatus: 401 }
       if (error?.code === 'oidc_authorized_origin_denied' || error?.code === 'oidc_profile_unknown') return { state: 'rejected' }

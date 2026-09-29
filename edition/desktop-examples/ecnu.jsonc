@@ -67,7 +67,7 @@
         // [eduwork] 默认上下文 token 数；模型自己的 contextWindow 优先，不填沿用发现/适配器。
         "defaultContextWindow": 524288,
         // [eduwork] 默认最大输出 token 数；应符合服务端模型限制。
-        "defaultMaxTokens": 393216,
+        "defaultMaxTokens": 262144,
         // [eduwork] 提供方协议兼容选项；不确定时保持未配置。
         "compat": {
           // [eduwork] 是否发送 developer 角色；不填时沿用模型适配器策略。
@@ -95,7 +95,8 @@
             // [eduwork] 模型上下文 token 上限，正整数。
             "contextWindow": 524288,
             // [eduwork] 模型最大输出 token 数，正整数。
-            "maxTokens": 393216,
+            // 为单次输出预留 256K（含推理预算），在 512K 总窗口中为输入保留另一半。
+            "maxTokens": 262144,
             // [eduwork] 界面强度到服务端参数的映射；可选 off/minimal/low/medium/high/xhigh/max；false 关闭，仅 off 可映射 null。
             "reasoningEfforts": {
               "low": "low",

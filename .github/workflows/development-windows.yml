@@ -3,21 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Approved product version; 0.4.0 for source stable'
+        description: 'Product SemVer, for example 0.4.0-alpha.1 or 0.4.0'
         required: true
         type: string
-      development:
-        description: 'Build an internal test artifact without release notes or publication'
-        type: boolean
-        default: true
-      source_alpha:
-        description: 'Explicit DSH 0.2.0 source development build; npm locks unchanged'
-        type: boolean
-        default: false
-      source_stable:
-        description: 'Explicit EduWork 0.4.0 stable source build with DSH 0.2.0-rc.1'
-        type: boolean
-        default: false
       release_notes:
         description: 'Approved docs/releases/<version>.md file (release candidate only)'
         required: false
@@ -38,11 +26,6 @@ on:
         default: both
         type: choice
         options: [both, windows, macos]
-      verify_publisher_bootstrap:
-        description: 'Publisher acceptance: activate the signed configuration with no account login'
-        required: true
-        default: false
-        type: boolean
 permissions:
   contents: read
 concurrency:
@@ -86,42 +69,12 @@ jobs:
       - name: Build and validate the exact desktop archive
         shell: pwsh
         env:
-          DEVELOPMENT_ONLY: ${{ inputs.development }}
           RELEASE_VERSION: ${{ inputs.version }}
           RELEASE_NOTES: ${{ inputs.release_notes }}
           RELEASE_NOTES_APPROVED: ${{ inputs.notes_approved }}
-          TARGET_PLATFORM: ${{ matrix.platform }}
-          VERIFY_PUBLISHER_BOOTSTRAP: ${{ inputs.verify_publisher_bootstrap }}
-          SOURCE_ALPHA: ${{ inputs.source_alpha }}
-          SOURCE_STABLE: ${{ inputs.source_stable }}
           PUBLISH_RELEASE: ${{ inputs.publish }}
           SELECTED_PLATFORMS: ${{ inputs.platform }}
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $PSNativeCommandUseErrorActionPreference = $true
-          if ($env:SOURCE_ALPHA -eq 'true' -and $env:SOURCE_STABLE -eq 'true') { throw 'Select exactly one source channel.' }
-          $sourceBuild=$env:SOURCE_ALPHA -eq 'true' -or $env:SOURCE_STABLE -eq 'true'
-          if ($env:PUBLISH_RELEASE -eq 'true' -and ($env:GITHUB_REF -ne 'refs/heads/main' -or -not $sourceBuild -or $env:SELECTED_PLATFORMS -ne 'both' -or $env:RELEASE_NOTES_APPROVED -ne 'true' -or -not $env:RELEASE_NOTES)) { throw 'Publication requires main, an explicit source channel, both platforms and approved notes.' }
-          if ($env:DEVELOPMENT_ONLY -ne 'true' -and $env:RELEASE_NOTES_APPROVED -ne 'true') { throw 'Release notes approval is required.' }
-          node core/scripts/check-source-docs.mjs core
-          node core/scripts/check-source-docs.mjs institution
-          if ($sourceBuild) {
-            if ($env:DEVELOPMENT_ONLY -ne 'true') { throw 'Source candidates require the explicit isolated assembly mode.' }
-            if ($env:PUBLISH_RELEASE -ne 'true' -and ($env:RELEASE_NOTES -or $env:RELEASE_NOTES_APPROVED -eq 'true')) { throw 'Artifact-only builds do not consume release notes; select publish to release approved notes.' }
-            ./core/scripts/ci-017-alpha-desktop.ps1 -CoreRoot ./core -EditionRoot ./institution -Version $env:RELEASE_VERSION -Stable:($env:SOURCE_STABLE -eq 'true') -PublisherDescriptors ./institution/edition/desktop-020 -Output "$env:RUNNER_TEMP/ew-candidate" -VerifyPublisherBootstrap:($env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true' -or $env:PUBLISH_RELEASE -eq 'true')
-            $env:EDUWORK_CORE_ROOT=(Resolve-Path core).Path
-            $env:EDUWORK_TEST_RUNTIME="$env:RUNNER_TEMP/ew-candidate/product/d"
-            $env:EDUWORK_TEST_DSH_VERSION='0.2.0-rc.1'
-            $env:DSH_OIDC_PACKAGE_ROOT="$env:EDUWORK_TEST_RUNTIME/node_modules/@eduwork/dsh-oidc"
-            $env:ECNU_ACCOUNT_PACKAGE_ROOT="$env:EDUWORK_TEST_RUNTIME/node_modules/@chatecnu-work/dsh-ecnu-account-resources"
-            node --import ./institution/edition/test/runtime-resolver.mjs --test institution/edition/test/*.test.mjs institution/edition/plugins/chatecnu-active-heartbeat/test/*.test.mjs institution/edition/plugins/ecnu-account-resources/test/*.test.mjs institution/edition/plugins/provider-vision-fallback/test/*.test.js institution/edition/plugins/provider-vision-fallback/test/*.test.mjs institution/edition/plugins/tool-ecnu-campus-search/test/*.test.js institution/edition/plugins/tool-ecnu-campus-search/test/*.test.mjs
-            exit 0
-          }
-          $script = "./core/scripts/ci-eduwork-$($env:TARGET_PLATFORM)-release.ps1"
-          $acceptance = @{}
-          if ($env:DEVELOPMENT_ONLY -eq 'true') { $acceptance.Development = $true } else { $acceptance.ReleaseNotesApproved = $true }
-          if ($env:TARGET_PLATFORM -eq 'macos' -and $env:VERIFY_PUBLISHER_BOOTSTRAP -eq 'true') { $acceptance.VerifyPublisherBootstrap = $true }
-          & $script -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -Version $env:RELEASE_VERSION -ReleaseNotesFile $env:RELEASE_NOTES -Output "$env:RUNNER_TEMP/ew-candidate" @acceptance
+        run: ./core/scripts/build-desktop-candidate.ps1 -CoreRoot ./core -EditionRoot ./institution -Version $env:RELEASE_VERSION -Output "$env:RUNNER_TEMP/ew-candidate"
       - name: Retain validation reports
         if: always()
         uses: actions/upload-artifact@v4

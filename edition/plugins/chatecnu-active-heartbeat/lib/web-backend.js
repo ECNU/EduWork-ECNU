@@ -100,32 +100,6 @@ async function responseValue(response) {
   finally { reader.releaseLock() }
 }
 
-function exactActivityURL(endpoint) {
-  let url
-  try { url = new URL(endpoint) } catch { return null }
-  if (url.pathname !== '/user/active' || url.search || url.hash || url.username || url.password) return null
-  return url
-}
-
-// Token gateways only authorize the model API prefix. The school activity route
-// stays at the exact issuer path /user/active. Reuse the host's already refreshed
-// gateway credential for that one URL; never log or return the token.
-async function gatewayActivityFetch(backend, profileID, endpoint, body, signal) {
-  const url = exactActivityURL(endpoint)
-  if (!url || typeof backend?.resolveGatewayCredential !== 'function' || typeof backend?.fetch !== 'function') return null
-  const credential = await backend.resolveGatewayCredential(profileID)
-  if (!credential?.value || typeof credential.value !== 'string') {
-    const error = new Error('organization sign-in is required')
-    error.code = 'oidc_login_required'
-    throw error
-  }
-  return backend.fetch(url.href, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', authorization: `Bearer ${credential.value}` },
-    body, redirect: 'error', signal,
-  })
-}
-
 async function heartbeatResult(response) {
   const httpStatus = response.status
   if (httpStatus !== 200) {
@@ -159,17 +133,12 @@ export function createWebHeartbeatSender(accounts, raw = {}, { signal, environme
       catch { return { state: 'local_error' } }
       const requestSignal = AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(15000)])
       const body = JSON.stringify(payload)
-      let response
-      try {
-        response = await accounts.authorizedFetch(config.profileID, config.endpoint, {
-          method: 'POST', headers: { 'content-type': 'application/json' }, body,
-          signal: requestSignal,
-        }, { retryUnauthorized: true })
-      } catch (error) {
-        if (error?.code !== 'oidc_authorized_origin_denied') throw error
-        response = await gatewayActivityFetch(accounts.backend, config.profileID, config.endpoint, body, requestSignal)
-        if (!response) throw error
-      }
+      // Host-owned one-route grant. The account layer still validates the
+      // verified issuer, refreshes once on 401 and cancels requests on logout.
+      const response = await accounts.authorizedFetch(config.profileID, config.endpoint, {
+        method: 'POST', headers: { 'content-type': 'application/json' }, body,
+        signal: requestSignal,
+      }, { retryUnauthorized: true, issuerServicePath: '/user/active' })
       return heartbeatResult(response)
     } catch (error) {
       if (error?.code === 'oidc_login_required') return { state: 'login_required', httpStatus: 401 }

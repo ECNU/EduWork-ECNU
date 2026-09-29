@@ -47,7 +47,7 @@ test('real HTTP keeps the existing wire payload and delegates credentials to pub
   assert.deepEqual(result, { state: 'ok', httpStatus: 200, nextHeartbeatIn: 600 })
   assert.equal(f.calls.length, 1)
   assert.equal(f.calls[0].profileID, 'example')
-  assert.deepEqual(f.calls[0].authorization, { retryUnauthorized: true })
+  assert.deepEqual(f.calls[0].authorization, { retryUnauthorized: true, issuerServicePath: '/user/active' })
   assert.equal(new Headers(f.calls[0].init.headers).has('authorization'), false)
   assert.ok(f.calls[0].init.signal instanceof AbortSignal)
   const request = f.requests[0]
@@ -109,29 +109,12 @@ test('HTTP outcomes remain bounded and final 401 is not retried by the heartbeat
   }
 })
 
-test('gateway origin denial still posts the exact activity route without returning the credential', async t => {
+test('heartbeat keeps the issuer grant fixed and never reads gateway credentials directly', async t => {
   const f = await fixture(t)
-  const seen = []
-  const accounts = {
-    ...f.accounts,
-    authorizedFetch: async () => { throw Object.assign(new Error('denied'), { code: 'oidc_authorized_origin_denied' }) },
-    backend: {
-      async resolveGatewayCredential() { return { value: 'synthetic-gateway-token' } },
-      async fetch(url, init) {
-        seen.push({ url, authorization: init.headers.authorization, redirect: init.redirect, body: JSON.parse(init.body) })
-        return new Response(success, { status: 200, headers: { 'content-type': 'application/json' } })
-      },
-    },
-  }
-  const result = await createWebHeartbeatSender(accounts, f.config)(active)
-  assert.equal(result.state, 'ok')
-  assert.equal(result.httpStatus, 200)
-  assert.equal(seen.length, 1)
-  assert.equal(new URL(seen[0].url).pathname, '/user/active')
-  assert.equal(seen[0].authorization, 'Bearer synthetic-gateway-token')
-  assert.equal(seen[0].redirect, 'error')
-  assert.equal(seen[0].body.activity.state, 'active')
-  assert.doesNotMatch(JSON.stringify(result), /synthetic-gateway-token|private-session-value/)
+  Object.defineProperty(f.accounts, 'backend', { get() { assert.fail('The sender must use the public account API') } })
+  const send = createWebHeartbeatSender(f.accounts, f.config)
+  assert.equal((await send(active)).state, 'ok')
+  assert.deepEqual(f.calls[0].authorization, { retryUnauthorized: true, issuerServicePath: '/user/active' })
 })
 
 test('OIDC owns refresh, expiry and origin policy; heartbeat returns only normalized states', async t => {

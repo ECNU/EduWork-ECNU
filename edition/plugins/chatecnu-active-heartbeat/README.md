@@ -10,7 +10,7 @@ ChatECNU 专属机构能力。只上报随机安装标识、客户端元数据�
 - 后台尽力发送一次 `background`，随后停止周期请求；未实施可选的 idle 检测。页面退出时撤销租约，插件停用时清理计时器并终止未完成请求。
 - 网络、5xx、429：15 秒起指数退避，最多 10 分钟加 20% 抖动；恢复网络可提前补发。其他 HTTP 错误、登录失效等停止重试，等待登录或插件配置重新装载。
 - 随机安装 UUID 随数据目录移动、升级保留，不使用设备硬件序列号、主机名或浏览器指纹。只采用实际平台与架构，不猜操作系统版本。
-- 请求使用 OAuth Access Token，绝不使用模型 API Key。账号层在请求前检查 Token 有效期；本包显式为可重复的心跳 POST 启用 401 后最多一次刷新重试，不复制刷新流程。浏览器只接触 presence 和归一化状态，不接触令牌、原始服务端响应或账号标识。
+- 请求使用 OAuth Access Token，绝不使用模型 API Key。账号层在请求前检查 Token 有效期；为可重复的心跳 POST 启用 401 后最多一次刷新重试，不自行实现刷新流程。浏览器只接触 presence 和归一化状态，不接触令牌、原始服务端响应或账号标识。
 
 ## Electron 与本机 Web 配置
 
@@ -32,7 +32,7 @@ Electron 和单机 Web 共用 DSH Host 的 OAuth 后端，配置名称沿用 `ba
 
 桌面平台自动上报为 `desktop`，从宿主 `EDUWORK_PRODUCT_ROOT/assembly.json` 读取当前安装版本；预发布版本对应 `channel: "dev"`，正式版本对应 `stable`。装配无需随每次发布改写插件版本字段。独立 Web 部署可显式指定 `version` 和 `platform: "web"`。此处的 `channel` 表示当前安装包，不是用户选择的更新订阅渠道。
 
-启用时必须有已配置的 `profileID` 和显式 `baseURL`。`endpoint` 默认 `/user/active`，必须与 `baseURL` 同源。OIDC 插件提供 Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)`，负责令牌、刷新及目标 origin 校验。默认只允许该 profile 的 发现结果中 issuer 和资源服务的精确 origin；跨服务域名由受信装配在 OIDC 配置的 `authorizedOrigins` 中显式添加 HTTPS origin。本包无修改此白名单或获取令牌的 RPC。
+启用时必须有已配置的 `profileID` 和显式 `baseURL`。`endpoint` 默认 `/user/active`，必须与 `baseURL` 同源。OIDC 插件提供 Host-only `ctx.oidcAccounts.authorizedFetch(profileID, endpoint, init)`，负责令牌、刷新及目标 origin 校验。Token 网关还会把目标限制在模型 API 基址下。本插件通过固定的 `issuerServicePath: "/user/active"` 单次请求授权，允许与该账号已验证 issuer 同源的精确 `POST /user/active`；目标校验仍由公共 OIDC 完成，不允许查询串、片段、URL 凭据或重定向。请求继续复用公共 OIDC 的刷新、401 单次重试和退出登录取消，不直接读取令牌。不会向浏览器返回令牌或提供修改目标白名单的 RPC。
 
 已登录但没有模型 Key 的身份账号也能上报。`oidc/accounts-changed` 事件只用于对应 profile 的启停；重新授权即使仍是“已连接”，也会解除旧错误导致的暂停，并丢弃旧请求的迟到结果。浏览器在下一次本机 presence 返回等待、成功或其他非登录失败状态时撤销旧提示；重新登录后的临时网络故障不会继续显示旧的登录失效提示。已主动退出的账号保持安静，失效账号交由 OIDC 登录流程处理。
 

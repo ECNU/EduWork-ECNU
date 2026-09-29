@@ -11,7 +11,7 @@ test('official module loader loads the presence client and its focus lifecycle',
   const runtime = resolve(process.env.EDUWORK_TEST_RUNTIME || resolve(repository, 'dist/dsh-cache/runtime-npm-0.1.5-rc.2'))
   const requireRuntime = createRequire(resolve(runtime, 'package.json'))
   const expectedVersion = process.env.EDUWORK_TEST_DSH_VERSION || '0.1.5-rc.2'
-  assert.ok(['0.1.5-rc.2', '0.1.7-alpha.2', '0.2.0-rc.1'].includes(expectedVersion))
+  assert.ok(['0.1.5-rc.2', '0.1.7-alpha.2', '0.2.0-rc.1', '0.2.0-rc.2'].includes(expectedVersion))
   assert.equal(JSON.parse(await readFile(requireRuntime.resolve('@deepseek-ai/dsh-client-modules/package.json'), 'utf8')).version, expectedVersion)
   const window = new EventTarget()
   const document = new EventTarget()

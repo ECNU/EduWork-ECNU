@@ -47,7 +47,7 @@ test('real HTTP keeps the existing wire payload and delegates credentials to pub
   assert.deepEqual(result, { state: 'ok', httpStatus: 200, nextHeartbeatIn: 600 })
   assert.equal(f.calls.length, 1)
   assert.equal(f.calls[0].profileID, 'example')
-  assert.deepEqual(f.calls[0].authorization, { retryUnauthorized: true })
+  assert.deepEqual(f.calls[0].authorization, { retryUnauthorized: true, issuerServicePath: '/user/active' })
   assert.equal(new Headers(f.calls[0].init.headers).has('authorization'), false)
   assert.ok(f.calls[0].init.signal instanceof AbortSignal)
   const request = f.requests[0]
@@ -107,6 +107,14 @@ test('HTTP outcomes remain bounded and final 401 is not retried by the heartbeat
     assert.deepEqual(result, { state, httpStatus: status, ...(next ? { nextHeartbeatIn: next } : {}) })
     assert.doesNotMatch(JSON.stringify(result), /private-response/)
   }
+})
+
+test('heartbeat keeps the issuer grant fixed and never reads gateway credentials directly', async t => {
+  const f = await fixture(t)
+  Object.defineProperty(f.accounts, 'backend', { get() { assert.fail('The sender must use the public account API') } })
+  const send = createWebHeartbeatSender(f.accounts, f.config)
+  assert.equal((await send(active)).state, 'ok')
+  assert.deepEqual(f.calls[0].authorization, { retryUnauthorized: true, issuerServicePath: '/user/active' })
 })
 
 test('OIDC owns refresh, expiry and origin policy; heartbeat returns only normalized states', async t => {

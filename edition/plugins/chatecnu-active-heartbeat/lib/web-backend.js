@@ -100,6 +100,18 @@ async function responseValue(response) {
   finally { reader.releaseLock() }
 }
 
+async function heartbeatResult(response) {
+  const httpStatus = response.status
+  if (httpStatus !== 200) {
+    await response.body?.cancel().catch(() => {})
+    return { state: httpStatus === 401 ? 'login_required' : httpStatus === 429 || httpStatus >= 500 ? 'retry' : 'rejected', httpStatus }
+  }
+  const value = await responseValue(response)
+  if (value?.status !== 'Success') return { state: 'retry', httpStatus }
+  const interval = typeof value.next_heartbeat_in === 'number' && Number.isFinite(value.next_heartbeat_in) && value.next_heartbeat_in > 0 ? value.next_heartbeat_in : 600
+  return { state: 'ok', httpStatus, nextHeartbeatIn: Math.max(60, Math.min(3600, interval)) }
+}
+
 export function createWebHeartbeatSender(accounts, raw = {}, { signal, environment = process.env, system = process } = {}) {
   const config = normalizeWebConfig(raw, environment)
   let identifier, metadata
@@ -119,19 +131,15 @@ export function createWebHeartbeatSender(accounts, raw = {}, { signal, environme
         payload = heartbeatPayload(currentConfig, currentID, input, system)
       }
       catch { return { state: 'local_error' } }
+      const requestSignal = AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(15000)])
+      const body = JSON.stringify(payload)
+      // Host-owned one-route grant. The account layer still validates the
+      // verified issuer, refreshes once on 401 and cancels requests on logout.
       const response = await accounts.authorizedFetch(config.profileID, config.endpoint, {
-        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),
-        signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(15000)]),
-      }, { retryUnauthorized: true })
-      const httpStatus = response.status
-      if (httpStatus !== 200) {
-        await response.body?.cancel().catch(() => {})
-        return { state: httpStatus === 401 ? 'login_required' : httpStatus === 429 || httpStatus >= 500 ? 'retry' : 'rejected', httpStatus }
-      }
-      const value = await responseValue(response)
-      if (value?.status !== 'Success') return { state: 'retry', httpStatus }
-      const interval = typeof value.next_heartbeat_in === 'number' && Number.isFinite(value.next_heartbeat_in) && value.next_heartbeat_in > 0 ? value.next_heartbeat_in : 600
-      return { state: 'ok', httpStatus, nextHeartbeatIn: Math.max(60, Math.min(3600, interval)) }
+        method: 'POST', headers: { 'content-type': 'application/json' }, body,
+        signal: requestSignal,
+      }, { retryUnauthorized: true, issuerServicePath: '/user/active' })
+      return heartbeatResult(response)
     } catch (error) {
       if (error?.code === 'oidc_login_required') return { state: 'login_required', httpStatus: 401 }
       if (error?.code === 'oidc_authorized_origin_denied' || error?.code === 'oidc_profile_unknown') return { state: 'rejected' }

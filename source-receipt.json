@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.0-alpha.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-29T03:03:26.565Z",
-  "fileSetSHA256": "c4e3a265dee000fab228993d80c169ef42aef82c6362b7cb481b95281de7795a",
+  "createdAt": "2026-09-29T06:10:06.227Z",
+  "fileSetSHA256": "81c093391e8de6ec83fef93983b5095a0727d6fad7b7939f158a68691a508a19",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,7 +37,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "46326d11bee35919fb660ea07ab10ee55f104f6786cb6b1d129ded809b6d863a"
+      "sha256": "09c77941b57be5df8b48d5e414b2cb7c7c393ce4eff7d5bcbb85977e5f7f6039"
     },
     {
       "path": "docs/BUILD.md",
@@ -120,6 +120,10 @@
       "sha256": "b7654a94fb1ae6d6a3d84640abe972559f6bcc109abd80e38dfb00e1f7b3ce76"
     },
     {
+      "path": "docs/releases/0.4.0-alpha.2.md",
+      "sha256": "5c0784ff5f9c0c0e7a4d7d4ff413f700a46012f262c42d3197e9d2b9577f5707"
+    },
+    {
       "path": "docs/USER_GUIDE.md",
       "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
     },
@@ -149,7 +153,7 @@
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "b05a256165c3c2007c028f0a3a40f2591035571f047687ff0671e49f68f3d5bf"
+      "sha256": "75ee3b67317f3eb0957b6824349ed27fc08f6303c9580510e770ac9c550ea399"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
@@ -433,7 +437,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "553e06868067675aaee760c9aa887bbe2286399c14667d79f8b1d09d4d66b49a"
+      "sha256": "deea34779fde0955832307f156b35359f959d154fd49f4f2a29a1b7c49b541ec"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",

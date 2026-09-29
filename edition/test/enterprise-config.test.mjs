@@ -152,13 +152,17 @@ test('deployment examples keep service provider IDs separate from local profile 
   }
 })
 
-test('ECNU max is text-only with vision fallback enabled and unchanged context policy', () => {
+test('ECNU max reserves 256K output in its 512K context with vision fallback enabled', () => {
   const model = example('ecnu').organizations[0].provider.models.find(row => row.id === 'ecnu-max')
   assert.deepEqual(model.input, ['text'])
   assert.equal(example('ecnu').features.visionFallback, true)
   assert.deepEqual(example('ecnu').organizations[0].provider.models.find(row => row.id === 'ecnu-plus').input, ['text', 'image'])
   assert.equal(model.contextWindow, 524288)
-  assert.equal(model.maxTokens, 393216)
+  assert.equal(model.maxTokens, 262144)
+  assert.equal(example('ecnu').organizations[0].provider.defaultMaxTokens, 262144)
+  const plus = example('ecnu').organizations[0].provider.models.find(row => row.id === 'ecnu-plus')
+  assert.equal(plus.contextWindow, 262144)
+  assert.equal(plus.maxTokens, 65536)
   assert.deepEqual(Object.keys(model.reasoningEfforts).sort(), ['high', 'low', 'max'])
 })
 
@@ -210,7 +214,7 @@ test('publisher migrates to one editable school config with one backup and prese
  assert.equal(profiles.get('ecnu').auth.experimentalOidcLlm,true)
  assert.deepEqual(model.input,['text'])
  assert.equal(model.contextWindow,524288)
- assert.equal(model.maxTokens,393216)
+ assert.equal(model.maxTokens,262144)
  assert.equal(config.media.providers[0].images.model,'ecnu-image')
  assert.equal(config.media.providers[0].speech.model,'ecnu-tts')
  assert.equal(await readFile(bootstrap.file.backup,'utf8'),'{"schemaVersion":1,"product":{"name":"Old"},"organizations":[]}')

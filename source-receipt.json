@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.0-alpha.1",
+  "version": "0.4.0-alpha.4",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-29T06:16:49.161Z",
-  "fileSetSHA256": "4510ce393b9562ca61a394032312073cac537415f29dab1ca6c118ecf74d5ac6",
+  "createdAt": "2026-09-29T15:47:51.681Z",
+  "fileSetSHA256": "5019dec4535ee75a84ed7e1ed645fda6e0080d11d90edb5add6af7f90c812e57",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,11 +37,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "f8f26d97532218665b0ecd0202b55e6eb757fd58207b9a81bbbfe343b1ce1b3d"
+      "sha256": "57edd6489b45eecf22bbaa1a2bfe4dfceaeb7ebf769eb04a6ac91d916d2ddddf"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "26acb1dfbb56ac3f6e8d0f7a9778010ccf899526934020130fab07028219db0a"
+      "sha256": "9527eb0de6c7608869a34b52ec84123d94cc24d6f4143a3954786328fd331ec6"
     },
     {
       "path": "docs/images/quiz.png",
@@ -122,6 +122,10 @@
     {
       "path": "docs/releases/0.4.0-alpha.2.md",
       "sha256": "cb314a0e44127bdee58ec4958cde8cbaf5b12268e1beb2876bdbcb74e4239eaa"
+    },
+    {
+      "path": "docs/releases/0.4.0-alpha.4.md",
+      "sha256": "57d73da87161e8dd2db4d8662c4c4763e49cbde525f2a150aa69541abbfd5ba3"
     },
     {
       "path": "docs/USER_GUIDE.md",
@@ -217,7 +221,7 @@
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/web-backend.js",
-      "sha256": "7781be3b54fbb3679c54252f88b6866d2f23271aaf0aa3a0cd8479c62daa0a3d"
+      "sha256": "cf37b59cc1205dabc639728b17655610ea7fa0aa24c482fe5fc232f1c07dc64d"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/package.json",
@@ -225,19 +229,19 @@
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/README_EN.md",
-      "sha256": "7aea9218643436ade12fa53f17e5a2de9199fd9c1851f567564a7d5c939609a6"
+      "sha256": "72591a5b4a25259ffeba5094bb8487e9db694c46e9511aa94e3cbe7e1863843b"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/README.md",
-      "sha256": "c81b87a50cc6e5cfa9ef6c6894679cf144cb29de06733feb4b1d3d7f0506144f"
+      "sha256": "30cc990c6af10cd175e0662c4a595cfca7af5847a73c785392ef5106212a146a"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/client.test.mjs",
-      "sha256": "b89018d1d178d894f0d485bbdb18cbed8d36e52103d51952d682e55a894de4bc"
+      "sha256": "6fe9b77ab92a5b50cda34daa05e73b69e328615d98eb81fb7b0bb10dfae83352"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/host.test.mjs",
-      "sha256": "dcd82d8f5f3a62a7a9bb95582df21dc505c4566a56ec507f29b188c3c5044c21"
+      "sha256": "ff8123ff21883d877c3e37debdad1bf5efb4a9f4760df2cf2599399ea3babd76"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/oidc-integration.test.mjs",
@@ -249,7 +253,7 @@
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs",
-      "sha256": "024a33b534ada5d88a657ffa1bd0fea2c5216289cb626bb944fae5c994259ed9"
+      "sha256": "685be14a7fb8fba0149e52ea640451e7ad353da79670a18107af578f0f7f71bc"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/.gitignore",
@@ -457,11 +461,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "9c5e727684d13993b7e8fe590a66c30e20297f9bee1ca848a67631db74e6a363"
+      "sha256": "32a66093b7a8acc272d878480662c6c217bf8b8fe08d8e1ba00243a124110ed3"
     },
     {
       "path": "README.md",
-      "sha256": "778d240d1b7c72b1fc4a598995de45a45b7ea0f3ffa5092291bfb373554f43ea"
+      "sha256": "b0670bc395b3471f795611552c1076763de854103971d4a722778283b2e8994d"
     }
   ],
   "artifacts": [],

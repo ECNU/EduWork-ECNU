@@ -7,7 +7,17 @@ import {
   searchCampus,
   searchWorker,
   workerSearchURL,
+  normalizeWorkerWebResult,
 } from '../lib/core.js'
+
+test('Worker MCP results project real citations and preserve text without inventing links', () => {
+  const project = data => normalizeWorkerWebResult({ dataJSON: JSON.stringify(data), truncated: false })
+  assert.deepEqual(project({ structuredContent: { sources: [{ url: 'https://example.org/a', title: 'A' }, { url: 'javascript:alert(1)' }] } }).sources, [{ url: 'https://example.org/a', title: 'A' }])
+  assert.equal(project({ content: [{ type: 'text', text: JSON.stringify({ results: [{ url: 'https://example.org/b' }] }) }] }).sources[0].url, 'https://example.org/b')
+  assert.deepEqual(project({ content: [{ type: 'text', text: 'plain https://example.org is not a structured citation' }] }).sources, [])
+  assert.equal(project('plain answer').content, 'plain answer')
+  assert.equal(normalizeWorkerWebResult({ dataJSON: '{truncated', truncated: true }).truncated, true)
+})
 
 test('campus search config shares the runtime API base and credential defaults', () => {
   const config = resolveCampusSearchConfig({

@@ -47,7 +47,8 @@
         // [eduwork] 仅 oidc-llm：服务端分配的公开客户端 ID，不是 client_secret；LiteLLM 自动注册，不填写。
         "clientId": "replace-with-public-client-id",
         // [eduwork] 仅 oidc-llm，必须显式选 oidc 或 oauth；oidc 还验证 ID Token。
-        "identityMode": "oidc"
+        "identityMode": "oidc",
+        "additionalScopes": ["search.web", "search.campus"]
       },
       // [eduwork] Token 模型网关的模型策略；API 地址从发现文档读取，不能填写 baseURL。
       "provider": {

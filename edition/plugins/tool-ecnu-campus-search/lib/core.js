@@ -52,6 +52,7 @@ export function resolveCampusSearchConfig(raw = {}, environment = process.env) {
     throw new Error('tool-ecnu-campus-search: baseURL must use HTTP or HTTPS')
   }
   const credentialRef = String(raw.credentialRef ?? DEFAULT_CREDENTIAL_REF).trim()
+  if (parsed.username || parsed.password || parsed.search || parsed.hash) throw new Error('tool-ecnu-campus-search: baseURL must not contain credentials, query or fragment')
   if (credentialRef.length === 0) throw new Error('tool-ecnu-campus-search: credentialRef must not be empty')
   if (raw.webSearch !== undefined && typeof raw.webSearch !== 'boolean') throw new Error('tool-ecnu-campus-search: webSearch must be a boolean')
   return Object.freeze({
@@ -104,6 +105,9 @@ async function readBoundedText(response, maximum = MAX_RESPONSE_BYTES, label = '
     }
     result += decoder.decode()
     return result
+  } catch (error) {
+    await reader.cancel().catch(() => {})
+    throw error
   } finally {
     reader.releaseLock()
   }
@@ -196,6 +200,31 @@ export async function searchCampus({ fetchImpl = fetch, baseURL, apiKey, request
 
 const WORKER_LABELS = Object.freeze({ campus: 'ECNU campus search', web: 'ECNU web search' })
 
+// Preserve the Worker's text while projecting structured citations into the
+// official web seam. Unknown MCP payloads remain text, not invented sources.
+export function normalizeWorkerWebResult(result) {
+  if (result.truncated) return { content: result.dataJSON, sources: [], truncated: true }
+  const data = JSON.parse(result.dataJSON)
+  const texts = Array.isArray(data?.content) ? data.content.filter(row => row?.type === 'text' && typeof row.text === 'string').map(row => row.text) : []
+  const candidates = [data?.structuredContent, data]
+  for (const text of texts) { try { candidates.push(JSON.parse(text)) } catch { /* Plain MCP text is kept as content. */ } }
+  const sources = [], seen = new Set()
+  for (const candidate of candidates) {
+    const rows = Array.isArray(candidate) ? candidate : candidate?.sources ?? candidate?.results
+    if (!Array.isArray(rows)) continue
+    for (const row of rows.slice(0, MAX_RESULTS)) {
+      const url = resultURL(row?.url)
+      if (!url || seen.has(url)) continue
+      seen.add(url)
+      sources.push({ url, ...(typeof row.title === 'string' ? { title: boundedString(row.title, 512) } : {}),
+        ...(typeof row.snippet === 'string' ? { snippet: boundedString(row.snippet, 8000) } : {}),
+        ...(typeof row.publishedAt === 'string' ? { publishedAt: boundedString(row.publishedAt, 128) } : {}) })
+    }
+  }
+  const content = typeof data === 'string' ? data : texts.length ? texts.join('\n') : typeof data?.content === 'string' ? data.content : result.dataJSON
+  return { content: content.slice(0, MAX_WORKER_DATA_CHARS), sources: sources.slice(0, MAX_RESULTS), truncated: sources.length > MAX_RESULTS || content.length > MAX_WORKER_DATA_CHARS }
+}
+
 function workerStatusError(kind, status) {
   const label = WORKER_LABELS[kind]
   if (status === 400) return new Error(`the ${label} service rejected the query (HTTP 400)`)
@@ -236,6 +265,7 @@ export async function searchWorker({ fetchImpl, baseURL, kind, request, signal }
     throw new Error(`the ${label} service returned invalid JSON`)
   }
   if (decoded === null || typeof decoded !== 'object' || !('data' in decoded)) throw new Error(`the ${label} response did not contain data`)
+  if (decoded.data?.isError === true) throw new Error(`the ${label} upstream tool failed; retry later`)
   const serialized = JSON.stringify(decoded.data ?? null)
   const truncated = serialized.length > MAX_WORKER_DATA_CHARS
   return Object.freeze({

@@ -45,7 +45,7 @@ The institution edition reuses the public workbench, Studio, skills, and desktop
 | `@eduwork/dsh-memory` | Local memory and conversation retrieval. |
 | `@eduwork/dsh-mail` | Connect a mailbox, read messages, and send with authorization. |
 
-Browser, skill management, and workbench settings are inherited too. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
+Skill management and workbench settings are inherited too. Browsing uses DSH's official Playwright MCP provider, while web search uses the university account service. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
 
 ### Plugins added by the ECNU edition
 

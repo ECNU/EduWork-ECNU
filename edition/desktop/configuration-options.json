@@ -133,5 +133,17 @@
   "plugins.chatecnu-active-heartbeat.installationID": [
     "安装标识，默认本地生成并持久保存；不要给多台机器配置相同值。",
     "inst-synthetic-example"
+  ],
+  "plugins.ecnu-browser.headless": [
+    "官方浏览器后台运行；false 显示独立窗口，重启生效。",
+    true
+  ],
+  "plugins.ecnu-browser.executablePath": [
+    "可选 Chromium 可执行文件；默认使用发行包自带的浏览器。",
+    ""
+  ],
+  "plugins.ecnu-browser.toolCallTimeoutMs": [
+    "官方浏览器单次调用超时，1000–300000 毫秒。",
+    120000
   ]
 }

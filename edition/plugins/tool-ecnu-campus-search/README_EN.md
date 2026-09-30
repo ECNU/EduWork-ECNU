@@ -2,10 +2,10 @@
 
 [简体中文](README.md)
 
-A native DSH search plugin for East China Normal University with two tools:
+A native DSH search plugin for East China Normal University that reuses the official web-search tool:
 
 - `ecnu_campus_search`: campus search. Use it only for ECNU-related sites, services, organizations, policies and news.
-- `ecnu_web_search`: web search through the school account, for public background, external reports and fact checking. Available only in school account mode; set `webSearch: false` to disable it and rely on DSH's official `web_search`.
+- Official `web_search`: this plugin registers a school search provider for public background, external reports and fact checking. `webSearch: false` disables this provider; select another provider explicitly in the composition rather than silently falling back.
 
 ## School account mode
 
@@ -16,11 +16,11 @@ Both tools call fixed Worker routes on the origin of `baseURL`:
 | Tool | Route | Required scope |
 |---|---|---|
 | `ecnu_campus_search` | `POST /api/worker/v1/search/campus` | `search.campus` |
-| `ecnu_web_search` | `POST /api/worker/v1/search/web` | `search.web` |
+| `web_search` | `POST /api/worker/v1/search/web` | `search.web` |
 
 The request body is only `{"query": "..."}`. The paths are fixed in plugin code and authorized per request through the account layer's exact `issuerServicePath`; the account layer still verifies the issuer, refreshes at most once after 401 and cancels requests after sign-out. HTTP 403 means the grant lacks the scope, so sign out and sign in to the school account again; 503 means search is not configured on the service and 502 means a temporary upstream failure. The plugin never falls back between the Worker and open platform routes.
 
-The school account grant must include `search.web` and `search.campus`. Existing sessions do not gain newly added scopes automatically; sign in once more.
+School configuration requests `auth.additionalScopes: ["search.web", "search.campus"]`. Sign in again after adding scopes; existing tokens are never expanded automatically.
 
 `oidcProfileId` matches the organization entry `id`, not `provider.id`. The plugin uses `modelAuthorization` to verify the account and discovered model-service base; missing sign-in or an endpoint mismatch never falls back to a personal key.
 
@@ -44,4 +44,4 @@ Without `oidcProfileId`, the plugin registers only `ecnu_campus_search`, reads t
 
 ## Data boundaries
 
-Returned titles, excerpts and links are untrusted search content, wrapped in tags before reaching the model and never treated as Agent instructions. Worker `data` is kept as extensible JSON and truncated with a `truncated` marker beyond 60000 characters. Errors carry only status descriptions and never echo response bodies. Access Tokens and API Keys never enter tool output, logs or errors.
+Titles, excerpts and links are untrusted search content, never Agent instructions. Campus output retains bounded Worker JSON. The web provider projects structured citations into official `web_search`, retaining MCP text without inferring citations from plain text. Content beyond 60000 characters is marked truncated. Errors do not echo service response bodies; tokens and keys never enter tool output.

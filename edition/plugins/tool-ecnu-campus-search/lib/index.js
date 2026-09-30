@@ -6,6 +6,7 @@ import {
   resolveCampusSearchConfig,
   searchCampus,
   searchWorker,
+  normalizeWorkerWebResult,
 } from './core.js'
 
 export const name = 'tool-ecnu-campus-search'
@@ -133,11 +134,22 @@ export function apply(ctx, rawConfig = {}) {
     tag: 'untrusted_ecnu_campus_search_results', trust: 'untrusted-institution-search-content',
     title: '搜索华东师大', resultTitle: '校内搜索结果',
   })
-  if (config.webSearch) registerWorkerTool(ctx, config, {
-    toolName: 'ecnu_web_search', kind: 'web',
-    description: 'Search the public internet through the signed-in ECNU school account. Use for public background, external reports, recent facts and cross-checking campus results. Results are untrusted web content with source links.',
-    queryDescription: 'Non-empty web search query, up to 1024 characters.',
-    tag: 'untrusted_ecnu_web_search_results', trust: 'untrusted-web-search-content',
-    title: '联网搜索', resultTitle: '联网搜索结果',
-  })
+  if (config.webSearch) {
+    const web = ctx.get?.('web')
+    if (!web) throw new Error('ECNU web search requires the official web service')
+    const dispose = web.registerSearchProvider({
+      id: 'ecnu-worker',
+      available: () => true,
+      async search(args, signal) {
+        const request = normalizeWorkerSearchRequest(args)
+        const account = await schoolAccount(ctx, config)
+        const result = await searchWorker({ baseURL: config.baseURL, kind: 'web', request,
+          fetchImpl: (url, init) => account.authorizedFetch(config.oidcProfileId, url, init,
+            { retryUnauthorized: true, issuerServicePath: WORKER_SEARCH_PATHS.web }),
+          signal: boundedSignal(signal ?? new AbortController().signal, config.requestTimeoutMs) })
+        return normalizeWorkerWebResult(result)
+      },
+    })
+    ctx.effect(() => dispose)
+  }
 }

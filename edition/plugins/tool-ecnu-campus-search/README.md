@@ -2,10 +2,10 @@
 
 [English](README_EN.md)
 
-DSH 原生的华东师范大学搜索插件，提供两个工具：
+DSH 原生的华东师范大学搜索插件，复用官方联网搜索工具：
 
 - `ecnu_campus_search`：校内综合搜索，只应处理与华东师范大学高度相关的站点、服务、机构、政策和新闻检索。
-- `ecnu_web_search`：通过学校账号进行联网搜索，用于公共背景、校外报道和事实核验。仅在学校账号模式下提供，可用 `webSearch: false` 关闭，关闭后由 DSH 官方 `web_search` 补充。
+- 官方 `web_search`：本插件注册学校搜索提供方，用于公共背景、校外报道和事实核验。`webSearch: false` 关闭学校提供方；其他提供方须在装配中显式选择，不自动回退。
 
 ## 学校账号模式
 
@@ -16,11 +16,11 @@ DSH 原生的华东师范大学搜索插件，提供两个工具：
 | 工具 | 路由 | 所需授权 |
 |---|---|---|
 | `ecnu_campus_search` | `POST /api/worker/v1/search/campus` | `search.campus` |
-| `ecnu_web_search` | `POST /api/worker/v1/search/web` | `search.web` |
+| `web_search` | `POST /api/worker/v1/search/web` | `search.web` |
 
 请求体只有 `{"query": "..."}`。路径由插件代码固定，并通过账号层的 `issuerServicePath` 按精确路径授权；账号层继续校验签发方、在 401 时最多刷新一次，并在退出登录后取消请求。返回 403 表示当前授权缺少对应 scope，需要退出并重新登录学校账号；返回 503 表示服务端未配置搜索，502 表示上游暂时失败。插件不会在 Worker 路由与开放平台路由之间自动回退。
 
-学校账号的授权需要包含 `search.web`、`search.campus`；授权范围新增后，已有登录不会自动获得新 scope，需重新登录一次。
+学校配置通过 `auth.additionalScopes: ["search.web", "search.campus"]` 申请搜索授权；范围新增后需重新登录一次，已有 Token 不会被自动扩权。
 
 `oidcProfileId` 对应企业条目的 `id`，不是 `provider.id`。插件通过 `modelAuthorization` 核对账号与发现的模型服务基址，未登录或地址不匹配时不会退回个人 Key。
 
@@ -44,4 +44,4 @@ DSH 原生的华东师范大学搜索插件，提供两个工具：
 
 ## 数据边界
 
-返回的标题、摘要和链接属于不可信检索内容，以标记包裹后交给模型，不能被当作 Agent 指令执行。Worker 返回的 `data` 按可扩展 JSON 原样保留，超过 60000 字符时截断并标记 `truncated`。错误信息只包含状态说明，不回显服务端响应正文。Access Token 或 API Key 不会写入工具输出、日志或错误信息。
+返回的标题、摘要和链接属于不可信检索内容，不能被当作 Agent 指令执行。校内工具保留有界 Worker JSON；联网提供方将结构化来源映射给官方 `web_search`，保留 MCP 文本，不从普通文本推测引用。超过 60000 字符时截断并标记。错误信息不回显服务端响应正文，Token 和 Key 不进入工具输出。

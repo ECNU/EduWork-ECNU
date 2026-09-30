@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.0-alpha.4",
+  "version": "0.4.0",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-29T15:47:51.681Z",
-  "fileSetSHA256": "5019dec4535ee75a84ed7e1ed645fda6e0080d11d90edb5add6af7f90c812e57",
+  "createdAt": "2026-09-30T15:14:27.329Z",
+  "fileSetSHA256": "f8f294ba5dfac0a19cb39b795c06428055129317338d1768501a5118a84b78c5",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,7 +37,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "57edd6489b45eecf22bbaa1a2bfe4dfceaeb7ebf769eb04a6ac91d916d2ddddf"
+      "sha256": "21b14d9a4e5aa258120d5d677c44092970a95a3f7c584690e6c63aca5858094c"
     },
     {
       "path": "docs/BUILD.md",
@@ -153,11 +153,11 @@
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
-      "sha256": "786270901fa455703ac8f1e97b23d2da228f0d103d4edbb44afca4f70f3ef3cc"
+      "sha256": "2f430aba73e5a8b231d8ea0dc83863706214bdf8dfcff8e1f7f7d446ba528bd2"
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "75ee3b67317f3eb0957b6824349ed27fc08f6303c9580510e770ac9c550ea399"
+      "sha256": "aa68ab6faf1e77c34845d390b35ca6e38fccefb653efe5026a895abb0732b1d6"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
@@ -169,7 +169,7 @@
     },
     {
       "path": "edition/desktop/configuration-options.json",
-      "sha256": "2c2cde5d375b97dbf14b184eac31528b3484dd8cbbbffb3640a98214663bef26"
+      "sha256": "6091aa6f7b2530a5025001f6ff53be319bf425892a7cb70deb6c90ecd44acf8a"
     },
     {
       "path": "edition/desktop/configuration-policy.json",
@@ -181,7 +181,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "cdc067c5cc2450a1762e42b80bf8f73411b217fd922797883b51bfbb2f8e1394"
+      "sha256": "e3f6d5b77dc2718668835c72c378e1e394980889b4668cd7beb8b3851cfe8031"
     },
     {
       "path": "edition/desktop/mac-updates.json",
@@ -189,7 +189,7 @@
     },
     {
       "path": "edition/desktop/media-defaults.json",
-      "sha256": "9ddb1755fe98e668dcc93f7990709bf31a603524d790d7430b6a8378bad9c3a8"
+      "sha256": "ecec34ec16a644b0f8ef9b48b9f3e112e159677432ec9b53080e538eb308ba95"
     },
     {
       "path": "edition/desktop/publisher-bootstrap.darwin.json",
@@ -201,7 +201,27 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "6582aeffd9e47e301591e382ad659c8a37addb0d44e4b12b518f0085c253541c"
+      "sha256": "cb51adb5ba336a8cab4c4eb4aa620c93933aacc81ae927ce75c6e3fe5b9bcb91"
+    },
+    {
+      "path": "edition/plugins/browser-upstream/lib/index.js",
+      "sha256": "3c528402d96f6e18d1e4b46af791943b4243e9f36dcf7527320788f67370cfc1"
+    },
+    {
+      "path": "edition/plugins/browser-upstream/package.json",
+      "sha256": "10c01c7d0b78258c9e7749ba8819ba2e6df800fd2845c00078505dbb6a65389f"
+    },
+    {
+      "path": "edition/plugins/browser-upstream/README_EN.md",
+      "sha256": "d57fd64f8998793d58605ae6ae8553cbd72c91a941fa7f076687d482ba6902a8"
+    },
+    {
+      "path": "edition/plugins/browser-upstream/README.md",
+      "sha256": "d203b05a0ee38f6c3477cb0cf28e38ed751cd5faa4cbc23ad8e66e6f679569d4"
+    },
+    {
+      "path": "edition/plugins/browser-upstream/test/permission.test.mjs",
+      "sha256": "41aec70b61dd2fedb010ef11471f6a41ab13f9c3bfb96bad1bce30f0c1908ab1"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -405,11 +425,11 @@
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/lib/core.js",
-      "sha256": "339923c08269472ce31a1a8afe8ab92fb4ebafa5ff629a6184b3470ec1a00e20"
+      "sha256": "0a1d661c78c2f97db389debc553bacda443ecc60b95c465f64f3c9b3082a9076"
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/lib/index.js",
-      "sha256": "7e7852561934f6c7a5bd5f1b8f89269e663cfec3beee6cfd9d76e2fb9249e330"
+      "sha256": "b50a8c216f932c656991cd05fae682b290950d2ca0a8766ff0e18eabe1829358"
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/package.json",
@@ -417,23 +437,27 @@
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/README_EN.md",
-      "sha256": "e5d8bfac233b353bb1c25214558678d98972667024c41f0b343f05506f712911"
+      "sha256": "7e87c72794c34dadc03f907df9f1d7c8792f96c3191fb6d5de359d5c5edf5124"
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/README.md",
-      "sha256": "2eda1342b43041eb37341909373cccee612dd32de37bbe3b40bd2f84f994fb9d"
+      "sha256": "26aae59aacb9fcb259acd6cceeaff1ae57e48031a7b97735b5bce3d1482dcb3f"
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/test/core.test.js",
-      "sha256": "fb299ae5730c19ede8b768eba6ddef0e4126f866aa32c2e82e2d54dd88437e82"
+      "sha256": "499b223cc1ef224ac3b0224784bc0755e4607e2c75ddf91586cefc7f11ce44ca"
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/test/mounted.test.mjs",
-      "sha256": "f6e8ce203ce895776c590919a497abef91c95da51e4d1b8036e3ce9d23e13769"
+      "sha256": "542334d3891ac327b05f7f77458912917d962f7718a20f59a115fcd4d20a120d"
+    },
+    {
+      "path": "edition/skills/browser/SKILL.md",
+      "sha256": "a4419516ab422b8eb26b7aa9c97cbe5381af9b9693d4d441cace3f7f002fa361"
     },
     {
       "path": "edition/skills/ecnu-campus-search/SKILL.md",
-      "sha256": "1b2afb72deb943744db85fde7c6b6a8d8841d31e241c7cc8d324e751c399e003"
+      "sha256": "9b660f36d500c4fb2c9e6f4511af2ed8b4545d610b7f516428313619b3be7638"
     },
     {
       "path": "edition/test/chat-model-catalog.test.mjs",
@@ -441,7 +465,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "deea34779fde0955832307f156b35359f959d154fd49f4f2a29a1b7c49b541ec"
+      "sha256": "f3cdb6f6feeb627704682fd17dfdbb1798e197cdb7fe1fdeb77680556c91577a"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",
@@ -449,7 +473,7 @@
     },
     {
       "path": "edition/test/test-desktop-candidate.ps1",
-      "sha256": "275e87f394684a4b87b265ccf3c370b01cfd770995ac76d2c793610818ec0e20"
+      "sha256": "abf1709449b1ddd4631079bc3508b4532b651bd97eea9520750910b0eec39d2c"
     },
     {
       "path": "edition/test/typert-contract.test.mjs",
@@ -461,11 +485,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "32a66093b7a8acc272d878480662c6c217bf8b8fe08d8e1ba00243a124110ed3"
+      "sha256": "6896bbdad02ea877b84eff72f2199ec788715b5ec0ced946a6664ac9d8577de5"
     },
     {
       "path": "README.md",
-      "sha256": "b0670bc395b3471f795611552c1076763de854103971d4a722778283b2e8994d"
+      "sha256": "200a11929c4c6d15c974651ec3a0468fd25200f8a8173447f552d044f656a778"
     }
   ],
   "artifacts": [],

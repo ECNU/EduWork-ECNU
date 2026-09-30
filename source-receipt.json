@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-30T15:14:27.329Z",
-  "fileSetSHA256": "f8f294ba5dfac0a19cb39b795c06428055129317338d1768501a5118a84b78c5",
+  "createdAt": "2026-09-30T16:11:10.783Z",
+  "fileSetSHA256": "03cbd26595692833ee917a8bbad61953479a5fb171a9c61741b539f00d5d6c1f",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,7 +37,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "21b14d9a4e5aa258120d5d677c44092970a95a3f7c584690e6c63aca5858094c"
+      "sha256": "e6ccac5154efd4f8660651fd794222582834f0636c3c537b40f191428df075cd"
     },
     {
       "path": "docs/BUILD.md",
@@ -128,6 +128,10 @@
       "sha256": "57d73da87161e8dd2db4d8662c4c4763e49cbde525f2a150aa69541abbfd5ba3"
     },
     {
+      "path": "docs/releases/0.4.1.md",
+      "sha256": "dd2aab86b2e01218122fe1918ff8a77c5490a33f4c711f86ece3db5bc9e44b59"
+    },
+    {
       "path": "docs/USER_GUIDE.md",
       "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
     },
@@ -153,11 +157,11 @@
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
-      "sha256": "2f430aba73e5a8b231d8ea0dc83863706214bdf8dfcff8e1f7f7d446ba528bd2"
+      "sha256": "f89b6dee66604f1ff8e327050397ecbe9366b95cbada0eec1c8fc4f8967f1b99"
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "aa68ab6faf1e77c34845d390b35ca6e38fccefb653efe5026a895abb0732b1d6"
+      "sha256": "334cb95a930a071a4bd967ad8fe343066db17abf558e0c99c8bff17f7a6c5ecf"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
@@ -181,7 +185,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "e3f6d5b77dc2718668835c72c378e1e394980889b4668cd7beb8b3851cfe8031"
+      "sha256": "b0d390d988887e69148e9f3a8ff162bb59efa3931b623c0753cb21b7f8119a3a"
     },
     {
       "path": "edition/desktop/mac-updates.json",
@@ -189,7 +193,7 @@
     },
     {
       "path": "edition/desktop/media-defaults.json",
-      "sha256": "ecec34ec16a644b0f8ef9b48b9f3e112e159677432ec9b53080e538eb308ba95"
+      "sha256": "8387c5484ed48d80e8efb1c468948cd846a630fbb5b2c35a6e46d84e57f8155b"
     },
     {
       "path": "edition/desktop/publisher-bootstrap.darwin.json",
@@ -465,7 +469,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "f3cdb6f6feeb627704682fd17dfdbb1798e197cdb7fe1fdeb77680556c91577a"
+      "sha256": "20e65bcec47565184013bd20daa25c83778014d5576d42c3e0cd588c5d678ecc"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",
@@ -485,11 +489,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "6896bbdad02ea877b84eff72f2199ec788715b5ec0ced946a6664ac9d8577de5"
+      "sha256": "b3947d3c3a9bcc5268443445290c65c41bd6d14522e4a2f7bb5449dd9903cf04"
     },
     {
       "path": "README.md",
-      "sha256": "200a11929c4c6d15c974651ec3a0468fd25200f8a8173447f552d044f656a778"
+      "sha256": "497bad0e777f7dd919f9c3134f436a5a4376b47b74904fa733c9f951ad1fdf32"
     }
   ],
   "artifacts": [],

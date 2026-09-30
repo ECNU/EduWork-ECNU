@@ -131,7 +131,7 @@ The university server manages quota; personal API key quotas remain with their r
 
 ### University models and media services
 
-Open **Settings → Models** to view university service status and the model catalog, or add personal models. The conversation selector lists LLMs, including LLMs that accept images. Image generation, speech synthesis, embedding, and reranking models serve their respective capabilities rather than appearing as chat models. University image generation and speech synthesis are enabled according to configuration and account permissions, for images, narration, and explanatory content in conversations and Studio.
+Open **Settings → Models** to view university service status and the model catalog, or add personal models. The conversation selector lists LLMs, including LLMs that accept images. Image generation, speech synthesis, embedding, and reranking models serve their respective capabilities rather than appearing as chat models. University image generation, editing, and speech synthesis are enabled according to configuration and account permissions, for images, narration, and explanatory content in conversations and Studio.
 
 ![Model settings show a connected ECNU AI service and its model catalog](docs/images/school-services.png)
 

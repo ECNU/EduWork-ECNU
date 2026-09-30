@@ -47,7 +47,8 @@
         // [eduwork] 仅 oidc-llm：服务端分配的公开客户端 ID，不是 client_secret；LiteLLM 自动注册，不填写。
         "clientId": "replace-with-public-client-id",
         // [eduwork] 仅 oidc-llm，必须显式选 oidc 或 oauth；oidc 还验证 ID Token。
-        "identityMode": "oidc"
+        "identityMode": "oidc",
+        "additionalScopes": ["search.web", "search.campus"]
       },
       // [eduwork] Token 模型网关的模型策略；API 地址从发现文档读取，不能填写 baseURL。
       "provider": {
@@ -192,7 +193,9 @@
           // [eduwork] 默认尺寸，必须属于 nativeSizes；省略取首项。
           "defaultSize": "512x512",
           // [eduwork] auto/b64_json/url，默认 auto。
-          "responseFormat": "b64_json"
+          "responseFormat": "b64_json",
+          // [eduwork] 提示词最大字符数，正整数，默认 4096。
+          "promptMaxChars": 1024
         },
         // [eduwork] 云端 TTS 能力；默认关闭，不影响本地语音。
         "speech": {
@@ -342,13 +345,13 @@
   "plugins": // false 仅接受 HTTPS，true 也接受 HTTP；不再填写 insecureDevelopmentOrigin。
 {
   "chatecnu-campus-search": {
-    // [eduwork] 校内搜索 API 基地址；切换环境时与账户授权资源一起改。
+    // [eduwork] 学校服务 API 基地址；学校账号模式按其同源地址调用 Worker 搜索，切换环境时与账户授权资源一起改。
     "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
     // [eduwork] 可选环境变量名称；该变量有值时优先于 baseURL，置空关闭环境覆盖。
     "baseURLEnv": "CHATECNU_SERVICE_BASE_URL",
     // [eduwork] 独立 Key 模式的凭据引用；不填写 Key 本身。
     "credentialRef": "EDUWORK_API_KEY",
-    // [eduwork] 企业 Token 授权所用 organizations[].id；填写后优先于独立 Key。
+    // [eduwork] 企业 Token 授权所用 organizations[].id；填写后使用 Worker 搜索，不读取独立 Key。
     "oidcProfileId": "ecnu",
     // [eduwork] 搜索超时毫秒，1–120000，默认 65000。
     "requestTimeoutMs": 65000
@@ -1018,13 +1021,13 @@
 //   "authorizedOrigins": []
 // plugins.ecnu-account-resources.profileIDs：提供配额展示的企业 ID 列表。
 //   "profileIDs": ["ecnu"]
-// plugins.chatecnu-campus-search.baseURL：校内搜索 API 基地址；切换环境时与账户授权资源一起改。
+// plugins.chatecnu-campus-search.baseURL：学校服务 API 基地址；学校账号模式按其同源地址调用 Worker 搜索，切换环境时与账户授权资源一起改。
 //   "baseURL": "https://models.example.org/v1"
 // plugins.chatecnu-campus-search.baseURLEnv：可选环境变量名称；该变量有值时优先于 baseURL，置空关闭环境覆盖。
 //   "baseURLEnv": ""
 // plugins.chatecnu-campus-search.credentialRef：独立 Key 模式的凭据引用；不填写 Key 本身。
 //   "credentialRef": "EDUWORK_API_KEY"
-// plugins.chatecnu-campus-search.oidcProfileId：企业 Token 授权所用 organizations[].id；填写后优先于独立 Key。
+// plugins.chatecnu-campus-search.oidcProfileId：企业 Token 授权所用 organizations[].id；填写后使用 Worker 搜索，不读取独立 Key。
 //   "oidcProfileId": "ecnu"
 // plugins.chatecnu-campus-search.requestTimeoutMs：搜索超时毫秒，1–120000，默认 65000。
 //   "requestTimeoutMs": 65000

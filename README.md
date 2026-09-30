@@ -45,13 +45,13 @@ flowchart TD
 | `@eduwork/dsh-memory` | 本地记忆与历史对话检索。 |
 | `@eduwork/dsh-mail` | 连接邮箱，读取邮件并经授权发送。 |
 
-同时继承浏览器、技能管理和工作台设置等能力。公共技能包括 Word、PPT、表格、PDF、图像、语音、视频创作，Knowledge Studio、浏览器、技能创建与产品帮助，见[公版完整插件与技能清单](https://github.com/ECNU/EduWork#随包插件)。所需模型和服务按配置启用，个人 API Key 与其他模型仍可使用。
+同时继承技能管理和工作台设置等能力，浏览器复用 DSH 官方 Playwright MCP，联网搜索由学校账户接口提供。公共技能包括 Word、PPT、表格、PDF、图像、语音、视频创作，Knowledge Studio、浏览器、技能创建与产品帮助，见[公版完整插件与技能清单](https://github.com/ECNU/EduWork#随包插件)。所需模型和服务按配置启用，个人 API Key 与其他模型仍可使用。
 
 ### 华师版增加的插件
 
 | 插件 | 用途 |
 | --- | --- |
-| [校内搜索](edition/plugins/tool-ecnu-campus-search/README.md) | 检索校园办事、机构、政策与新闻等资料，保留来源链接。 |
+| [校内搜索与联网搜索](edition/plugins/tool-ecnu-campus-search/README.md) | 用学校账号检索校园办事、机构、政策与新闻，并联网补充公开资料，保留来源链接。 |
 | [账户与配额](edition/plugins/ecnu-account-resources/README.md) | 查看学校模型额度、使用进度和资源池。 |
 | [图片理解辅助](edition/plugins/provider-vision-fallback/README.md) | 为配置中的纯文本模型补充学校视觉模型提取的文字证据，可关闭。 |
 | [活跃心跳](edition/plugins/chatecnu-active-heartbeat/README.md) | 登录学校账号后上报客户端活跃状态；具体字段见下方数据与隐私说明。 |

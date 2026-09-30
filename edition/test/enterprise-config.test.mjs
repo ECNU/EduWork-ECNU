@@ -136,6 +136,7 @@ test('ECNU media uses public providers and keeps existing IDs, voices and sizes'
   assert.equal(provider.speech.model, 'ecnu-tts')
   assert.equal(provider.speech.voices.length, 16)
   assert.deepEqual(provider.images.nativeSizes, ['512x512', '768x768', '720x1280', '1280x720', '1024x1024'])
+  assert.equal(provider.images.promptMaxChars, 1024)
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url), 'utf8'))
   assert.equal(distribution.plugins.some(p => /(?:studio-media|tool-ecnu-media)/u.test(p.source)), false)
   assert.equal(distribution.skills.some(s => s.name === 'artifact-images'), false)

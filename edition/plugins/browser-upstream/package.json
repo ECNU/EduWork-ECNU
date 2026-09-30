@@ -1,0 +1,12 @@
+{
+  "name": "@eduwork/ecnu-browser-upstream",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.4",
+    "@deepseek-ai/dsh-experimental-browser-use-playwright-mcp": ">=0.2.0-rc.2 <0.3.0-0"
+  }
+}

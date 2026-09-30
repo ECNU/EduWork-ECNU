@@ -5,6 +5,15 @@ export const DEFAULT_REQUEST_TIMEOUT_MS = 65_000
 const MAX_KEYWORD_CHARS = 512
 const MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 const MAX_RESULTS = 50
+const MAX_WORKER_QUERY_CHARS = 1024
+const MAX_WORKER_DATA_CHARS = 60_000
+
+// Worker routes live on the issuer origin, outside the model API prefix. The
+// account layer only authorizes these exact code-owned paths.
+export const WORKER_SEARCH_PATHS = Object.freeze({
+  campus: '/api/worker/v1/search/campus',
+  web: '/api/worker/v1/search/web',
+})
 
 function codePointLength(value) {
   return Array.from(value).length
@@ -43,13 +52,27 @@ export function resolveCampusSearchConfig(raw = {}, environment = process.env) {
     throw new Error('tool-ecnu-campus-search: baseURL must use HTTP or HTTPS')
   }
   const credentialRef = String(raw.credentialRef ?? DEFAULT_CREDENTIAL_REF).trim()
+  if (parsed.username || parsed.password || parsed.search || parsed.hash) throw new Error('tool-ecnu-campus-search: baseURL must not contain credentials, query or fragment')
   if (credentialRef.length === 0) throw new Error('tool-ecnu-campus-search: credentialRef must not be empty')
+  if (raw.webSearch !== undefined && typeof raw.webSearch !== 'boolean') throw new Error('tool-ecnu-campus-search: webSearch must be a boolean')
   return Object.freeze({
     baseURL,
     credentialRef,
     ...(raw.oidcProfileId ? { oidcProfileId: String(raw.oidcProfileId) } : {}),
+    webSearch: raw.webSearch ?? true,
     requestTimeoutMs: positiveInteger(raw.requestTimeoutMs, DEFAULT_REQUEST_TIMEOUT_MS, 'requestTimeoutMs', 120_000),
   })
+}
+
+export function workerSearchURL(baseURL, kind) {
+  const path = WORKER_SEARCH_PATHS[kind]
+  if (!path) throw new Error(`unknown worker search kind ${JSON.stringify(kind)}`)
+  return new URL(baseURL).origin + path
+}
+
+export function normalizeWorkerSearchRequest(args = {}) {
+  if (args === null || typeof args !== 'object' || Array.isArray(args)) throw new Error('search arguments must be an object')
+  return Object.freeze({ query: requiredText(args.query, 'query', MAX_WORKER_QUERY_CHARS) })
 }
 
 export function normalizeCampusSearchRequest(args = {}) {
@@ -64,9 +87,9 @@ export function normalizeCampusSearchRequest(args = {}) {
   })
 }
 
-async function readBoundedText(response, maximum = MAX_RESPONSE_BYTES) {
+async function readBoundedText(response, maximum = MAX_RESPONSE_BYTES, label = 'ECNU campus search') {
   const declared = Number(response.headers.get('content-length'))
-  if (Number.isFinite(declared) && declared > maximum) throw new Error('the ECNU campus search response exceeded the safety size limit')
+  if (Number.isFinite(declared) && declared > maximum) throw new Error(`the ${label} response exceeded the safety size limit`)
   if (response.body === null) return ''
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
@@ -77,11 +100,14 @@ async function readBoundedText(response, maximum = MAX_RESPONSE_BYTES) {
       const { done, value } = await reader.read()
       if (done) break
       total += value.byteLength
-      if (total > maximum) throw new Error('the ECNU campus search response exceeded the safety size limit')
+      if (total > maximum) throw new Error(`the ${label} response exceeded the safety size limit`)
       result += decoder.decode(value, { stream: true })
     }
     result += decoder.decode()
     return result
+  } catch (error) {
+    await reader.cancel().catch(() => {})
+    throw error
   } finally {
     reader.releaseLock()
   }
@@ -169,5 +195,83 @@ export async function searchCampus({ fetchImpl = fetch, baseURL, apiKey, request
     id: boundedString(decoded?.id, 256),
     query: boundedString(decoded?.query, MAX_KEYWORD_CHARS, request.keyword) || request.keyword,
     results,
+  })
+}
+
+const WORKER_LABELS = Object.freeze({ campus: 'ECNU campus search', web: 'ECNU web search' })
+
+// Preserve the Worker's text while projecting structured citations into the
+// official web seam. Unknown MCP payloads remain text, not invented sources.
+export function normalizeWorkerWebResult(result) {
+  if (result.truncated) return { content: result.dataJSON, sources: [], truncated: true }
+  const data = JSON.parse(result.dataJSON)
+  const texts = Array.isArray(data?.content) ? data.content.filter(row => row?.type === 'text' && typeof row.text === 'string').map(row => row.text) : []
+  const candidates = [data?.structuredContent, data]
+  for (const text of texts) { try { candidates.push(JSON.parse(text)) } catch { /* Plain MCP text is kept as content. */ } }
+  const sources = [], seen = new Set()
+  for (const candidate of candidates) {
+    const rows = Array.isArray(candidate) ? candidate : candidate?.sources ?? candidate?.results
+    if (!Array.isArray(rows)) continue
+    for (const row of rows.slice(0, MAX_RESULTS)) {
+      const url = resultURL(row?.url)
+      if (!url || seen.has(url)) continue
+      seen.add(url)
+      sources.push({ url, ...(typeof row.title === 'string' ? { title: boundedString(row.title, 512) } : {}),
+        ...(typeof row.snippet === 'string' ? { snippet: boundedString(row.snippet, 8000) } : {}),
+        ...(typeof row.publishedAt === 'string' ? { publishedAt: boundedString(row.publishedAt, 128) } : {}) })
+    }
+  }
+  const content = typeof data === 'string' ? data : texts.length ? texts.join('\n') : typeof data?.content === 'string' ? data.content : result.dataJSON
+  return { content: content.slice(0, MAX_WORKER_DATA_CHARS), sources: sources.slice(0, MAX_RESULTS), truncated: sources.length > MAX_RESULTS || content.length > MAX_WORKER_DATA_CHARS }
+}
+
+function workerStatusError(kind, status) {
+  const label = WORKER_LABELS[kind]
+  if (status === 400) return new Error(`the ${label} service rejected the query (HTTP 400)`)
+  if (status === 401) return new Error(`the ${label} service rejected the school sign-in (HTTP 401); sign in to the school account again`)
+  if (status === 403) return new Error(`the school account is not authorized for search.${kind} (HTTP 403); sign out and sign in to the school account again to grant it`)
+  if (status === 503) return new Error(`the ${label} service is not configured (HTTP 503)`)
+  if (status === 502) return new Error(`the ${label} upstream service failed (HTTP 502); retry later`)
+  return new Error(`the ${label} service returned HTTP ${status}`)
+}
+
+// The route fixes its own response envelope; `data` is an extensible MCP result
+// and is returned only as bounded, untrusted JSON text.
+export async function searchWorker({ fetchImpl, baseURL, kind, request, signal }) {
+  const label = WORKER_LABELS[kind]
+  let response
+  try {
+    response = await fetchImpl(workerSearchURL(baseURL, kind), {
+      method: 'POST',
+      signal,
+      redirect: 'manual',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ query: request.query }),
+    })
+  } catch (error) {
+    if (error?.code === 'oidc_login_required') throw new Error('Sign in to the school account')
+    if (error?.name === 'AbortError' || error?.name === 'TimeoutError') throw new Error(`the ${label} request timed out`)
+    throw new Error(`the ${label} service could not be reached`)
+  }
+  if (!response.ok) {
+    await response.body?.cancel().catch(() => {})
+    throw workerStatusError(kind, response.status)
+  }
+  const text = await readBoundedText(response, MAX_RESPONSE_BYTES, label)
+  let decoded
+  try {
+    decoded = JSON.parse(text)
+  } catch {
+    throw new Error(`the ${label} service returned invalid JSON`)
+  }
+  if (decoded === null || typeof decoded !== 'object' || !('data' in decoded)) throw new Error(`the ${label} response did not contain data`)
+  if (decoded.data?.isError === true) throw new Error(`the ${label} upstream tool failed; retry later`)
+  const serialized = JSON.stringify(decoded.data ?? null)
+  const truncated = serialized.length > MAX_WORKER_DATA_CHARS
+  return Object.freeze({
+    query: request.query,
+    tool: boundedString(decoded.tool, 128),
+    dataJSON: truncated ? serialized.slice(0, MAX_WORKER_DATA_CHARS) : serialized,
+    truncated,
   })
 }

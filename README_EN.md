@@ -45,13 +45,13 @@ The institution edition reuses the public workbench, Studio, skills, and desktop
 | `@eduwork/dsh-memory` | Local memory and conversation retrieval. |
 | `@eduwork/dsh-mail` | Connect a mailbox, read messages, and send with authorization. |
 
-Browser, skill management, and workbench settings are inherited too. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
+Skill management and workbench settings are inherited too. Browsing uses DSH's official Playwright MCP provider, while web search uses the university account service. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
 
 ### Plugins added by the ECNU edition
 
 | Plugin | Purpose |
 | --- | --- |
-| [Campus search](edition/plugins/tool-ecnu-campus-search/README_EN.md) | Find campus services, departments, policies, and news, retaining source links. |
+| [Campus and web search](edition/plugins/tool-ecnu-campus-search/README_EN.md) | Use the school account to find campus services, departments, policies, and news, and search the public web, retaining source links. |
 | [Account and quota](edition/plugins/ecnu-account-resources/README_EN.md) | View university model allowances, usage, and resource pools. |
 | [Image understanding assistance](edition/plugins/provider-vision-fallback/README_EN.md) | Supply configured text-only models with textual evidence from a university vision model; can be disabled. |
 | [Activity heartbeat](edition/plugins/chatecnu-active-heartbeat/README_EN.md) | Report client activity after university sign-in; see Data and privacy below for the disclosed fields. |

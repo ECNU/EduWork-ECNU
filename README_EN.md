@@ -51,7 +51,7 @@ Browser, skill management, and workbench settings are inherited too. Public skil
 
 | Plugin | Purpose |
 | --- | --- |
-| [Campus search](edition/plugins/tool-ecnu-campus-search/README_EN.md) | Find campus services, departments, policies, and news, retaining source links. |
+| [Campus and web search](edition/plugins/tool-ecnu-campus-search/README_EN.md) | Use the school account to find campus services, departments, policies, and news, and search the public web, retaining source links. |
 | [Account and quota](edition/plugins/ecnu-account-resources/README_EN.md) | View university model allowances, usage, and resource pools. |
 | [Image understanding assistance](edition/plugins/provider-vision-fallback/README_EN.md) | Supply configured text-only models with textual evidence from a university vision model; can be disabled. |
 | [Activity heartbeat](edition/plugins/chatecnu-active-heartbeat/README_EN.md) | Report client activity after university sign-in; see Data and privacy below for the disclosed fields. |

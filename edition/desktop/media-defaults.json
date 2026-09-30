@@ -18,7 +18,8 @@
           "1024x1024"
         ],
         "defaultSize": "512x512",
-        "responseFormat": "b64_json"
+        "responseFormat": "b64_json",
+        "promptMaxChars": 1024
       },
       "speech": {
         "enabled": true,

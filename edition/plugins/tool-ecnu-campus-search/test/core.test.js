@@ -2,8 +2,11 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   normalizeCampusSearchRequest,
+  normalizeWorkerSearchRequest,
   resolveCampusSearchConfig,
   searchCampus,
+  searchWorker,
+  workerSearchURL,
 } from '../lib/core.js'
 
 test('campus search config shares the runtime API base and credential defaults', () => {
@@ -14,6 +17,59 @@ test('campus search config shares the runtime API base and credential defaults',
   assert.equal(config.baseURL, 'https://runtime.example/open/api/v1')
   assert.equal(config.credentialRef, 'CHATECNU_API_KEY')
   assert.equal(config.requestTimeoutMs, 65_000)
+  assert.equal(config.webSearch, true)
+  assert.equal(resolveCampusSearchConfig({ webSearch: false }).webSearch, false)
+  assert.throws(() => resolveCampusSearchConfig({ webSearch: 'no' }), /webSearch must be a boolean/)
+})
+
+test('worker search routes stay on the configured service origin', () => {
+  assert.equal(workerSearchURL('https://school.example/open/api/v1', 'campus'), 'https://school.example/api/worker/v1/search/campus')
+  assert.equal(workerSearchURL('http://uat.example.test/v1', 'web'), 'http://uat.example.test/api/worker/v1/search/web')
+  assert.throws(() => workerSearchURL('https://school.example/v1', 'notebook'), /unknown worker search kind/)
+  assert.deepEqual(normalizeWorkerSearchRequest({ query: '  图书馆开放时间 ', page: 2 }), { query: '图书馆开放时间' })
+  assert.throws(() => normalizeWorkerSearchRequest({ query: ' ' }), /must not be empty/)
+})
+
+test('worker search sends only the query and returns bounded untrusted data', async () => {
+  let observed
+  const fetchImpl = async (url, init) => {
+    observed = { url, init }
+    return Response.json({ type: 'campus', tool: 'campus_search', data: { results: [{ title: '图书馆', url: 'https://lib.example' }] } })
+  }
+  const result = await searchWorker({ fetchImpl, baseURL: 'https://school.example/open/api/v1', kind: 'campus', request: { query: '图书馆' } })
+  assert.equal(observed.url, 'https://school.example/api/worker/v1/search/campus')
+  assert.equal(observed.init.method, 'POST')
+  assert.equal(observed.init.redirect, 'manual')
+  assert.equal(observed.init.headers.Authorization, undefined)
+  assert.equal(observed.init.headers['X-User-Id'], undefined)
+  assert.deepEqual(JSON.parse(observed.init.body), { query: '图书馆' })
+  assert.deepEqual(result, { query: '图书馆', tool: 'campus_search', dataJSON: '{"results":[{"title":"图书馆","url":"https://lib.example"}]}', truncated: false })
+  const large = await searchWorker({
+    fetchImpl: async () => Response.json({ type: 'web', tool: 'web_search', data: 'x'.repeat(70_000) }),
+    baseURL: 'https://school.example/v1', kind: 'web', request: { query: 'q' },
+  })
+  assert.equal(large.truncated, true)
+  assert.equal(large.dataJSON.length, 60_000)
+})
+
+test('worker search maps status codes without echoing response bodies', async () => {
+  const run = (status, kind = 'campus') => searchWorker({
+    fetchImpl: async () => new Response(JSON.stringify({ detail: 'token=secret' }), { status }),
+    baseURL: 'https://school.example/v1', kind, request: { query: 'q' },
+  })
+  await assert.rejects(run(403, 'web'), error => /search\.web/.test(error.message) && /sign in/.test(error.message) && !/secret/.test(error.message))
+  await assert.rejects(run(403), /search\.campus/)
+  await assert.rejects(run(400), /HTTP 400/)
+  await assert.rejects(run(503), /not configured/)
+  await assert.rejects(run(502), /upstream service failed/)
+  await assert.rejects(searchWorker({
+    fetchImpl: async () => { throw Object.assign(new Error('x'), { code: 'oidc_login_required' }) },
+    baseURL: 'https://school.example/v1', kind: 'web', request: { query: 'q' },
+  }), /Sign in/)
+  await assert.rejects(searchWorker({
+    fetchImpl: async () => Response.json({ type: 'web' }),
+    baseURL: 'https://school.example/v1', kind: 'web', request: { query: 'q' },
+  }), /did not contain data/)
 })
 
 test('campus search request applies API defaults and validates bounds', () => {

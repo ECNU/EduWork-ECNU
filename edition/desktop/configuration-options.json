@@ -6,7 +6,7 @@
     ]
   ],
   "plugins.chatecnu-campus-search.baseURL": [
-    "校内搜索 API 基地址；切换环境时与账户授权资源一起改。",
+    "学校服务 API 基地址；学校账号模式按其同源地址调用 Worker 搜索，切换环境时与账户授权资源一起改。",
     "https://models.example.org/v1"
   ],
   "plugins.chatecnu-campus-search.baseURLEnv": [
@@ -18,8 +18,12 @@
     "EDUWORK_API_KEY"
   ],
   "plugins.chatecnu-campus-search.oidcProfileId": [
-    "企业 Token 授权所用 organizations[].id；填写后优先于独立 Key。",
+    "企业 Token 授权所用 organizations[].id；填写后使用 Worker 搜索，不读取独立 Key。",
     "ecnu"
+  ],
+  "plugins.chatecnu-campus-search.webSearch": [
+    "学校账号模式下是否提供 ecnu_web_search 联网搜索，默认 true；需要账号具有 search.web 授权。",
+    true
   ],
   "plugins.chatecnu-campus-search.requestTimeoutMs": [
     "搜索超时毫秒，1–120000，默认 65000。",

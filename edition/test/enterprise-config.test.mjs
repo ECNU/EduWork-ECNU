@@ -133,6 +133,8 @@ test('ECNU media uses public providers and keeps existing IDs, voices and sizes'
   assert.equal(provider.credentialRef, 'EDUWORK_API_KEY')
   assert.equal(provider.oidcProfileId, 'ecnu')
   assert.equal(provider.images.model, 'ecnu-image')
+  assert.equal(provider.images.edit,true)
+  assert.equal(provider.images.editMaxImages,1)
   assert.equal(provider.speech.model, 'ecnu-tts')
   assert.equal(provider.speech.voices.length, 16)
   assert.deepEqual(provider.images.nativeSizes, ['512x512', '768x768', '720x1280', '1280x720', '1024x1024'])

@@ -9,6 +9,8 @@
       "oidcProfileId": "ecnu",
       "images": {
         "enabled": true,
+        "edit": true,
+        "editMaxImages": 1,
         "model": "ecnu-image",
         "nativeSizes": [
           "512x512",

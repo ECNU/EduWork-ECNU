@@ -18,7 +18,7 @@
   "updates": {},
   // [eduwork] 功能默认值；已保存的界面偏好可能优先。
   "features": {
-    // [eduwork] 全客户端模型请求总并发，1–64；主会话、子代理、辅助模型共用，超出排队。设置中保存的值优先。
+    // [eduwork] 当前 Host 的模型请求总并发，1–64，默认 3；主会话、子代理、辅助模型共用，超出排队。界面中保存的值优先；不限制其他客户端或独立媒体接口。
     "maxConcurrentRequests": 3
   },
   // [eduwork] 桌面行为。
@@ -91,11 +91,11 @@
       "provider": "chatecnu",
       // [eduwork] 用于读图的模型 ID，须支持图片输入。
       "model": "ecnu-plus",
-      // [eduwork] 一次读图分析最大输出 token 数，默认 2048。
-      // [eduwork] 辅助模型并发上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。
+      // [eduwork] 辅助模型的并发请求上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。
       "maxConcurrentRequests": 1,
-      // [eduwork] HTTP 429 最大重试次数，0–5，默认 2。
+      // [eduwork] 辅助模型遇到 HTTP 429 的最大重试次数，0–5，默认 2；不重试其他错误。
       "maxRetries": 2,
+      // [eduwork] 一次读图分析最大输出 token 数，默认 2048。
       "maxAnalysisTokens": 2048,
       // [eduwork] 单份读图证据最大字符数，默认 12000。
       "maxEvidenceChars": 12000,
@@ -265,6 +265,8 @@
 //   "primaryColor": "#9f2636"
 // organizations[].brand.loginTitle：登录标题，最多 120 字符。
 //   "loginTitle": "使用机构账号登录"
+// organizations[].brand.loginButtonLabel：登录按钮文字，最多 40 字符；省略时使用客户端默认文案。
+//   "loginButtonLabel": "统一认证登录"
 // organizations[].brand.loginDescription：登录说明，最多 500 字符。
 //   "loginDescription": "授权后使用机构提供的模型。"
 // organizations[].brand.supportURL：帮助页面，必须为 HTTPS。
@@ -279,6 +281,8 @@
 //   "clientId": "replace-with-public-client-id"
 // organizations[].auth.identityMode：仅 oidc-llm，必须显式选 oidc 或 oauth；oidc 还验证 ID Token。
 //   "identityMode": "oidc"
+// organizations[].auth.additionalScopes：仅 oidc-llm，显式申请额外服务范围；必须由服务端 discovery 支持，刷新时不得扩张。
+//   "additionalScopes": []
 // organizations[].oidc.issuer：OIDC 签发者 URL；客户端据此查找发现文档。
 //   "issuer": "https://id.example.org"
 // organizations[].oidc.clientId：服务端分配的公开客户端 ID；不填写客户端密钥。
@@ -311,7 +315,7 @@
 //   "retryPolicy": {}
 // organizations[].provider.compat：提供方协议兼容选项；不确定时保持未配置。
 //   "compat": {}
-// organizations[].provider.models：按服务端模型 ID 补充能力和限制；空数组完全使用发现目录。
+// organizations[].provider.models：按服务端授权模型 ID 补充类型、能力和限制；只注册 llm 到对话，不扩大授权目录。
 //   "models": []
 // organizations[].provider.retryPolicy.mode：normal 常规重试，always 持续重试；关闭重试请设置 maxRetries=0。
 //   "mode": "normal"
@@ -347,6 +351,8 @@
 //   "requiresReasoningContentOnAssistantMessages": true
 // organizations[].provider.models[].id：服务端模型 ID，同一个提供方内不可重复。
 //   "id": "example-max"
+// organizations[].provider.models[].type：模型用途：llm/embedding/rerank/image/tts/unknown；仅 llm 进入对话。服务端类型优先，缺失时用此值；两边都缺失为 unknown。
+//   "type": "llm"
 // organizations[].provider.models[].name：模型显示名称，默认取 id。
 //   "name": "Example Max"
 // organizations[].provider.models[].input：支持的输入：text、image；默认仅 text。
@@ -385,14 +391,32 @@
 //   "features": {}
 // features.visionFallback：是否允许文本模型使用已安装的辅助读图插件；false 关闭，不影响原生多模态。
 //   "visionFallback": false
-// features.maxConcurrentRequests：全客户端模型请求总并发，1–64；主会话、子代理、辅助模型共用，超出排队。设置中保存的值优先。
+// features.maxConcurrentRequests：当前 Host 的模型请求总并发，1–64，默认 3；主会话、子代理、辅助模型共用，超出排队。界面中保存的值优先；不限制其他客户端或独立媒体接口。
 //   "maxConcurrentRequests": 3
-// features.maxParallelSubagents：旧版兼容项，1–32；仅在未填总并发时换算为此值+1。新配置请使用 maxConcurrentRequests。
+// features.maxActiveSubagents：DSH 0.1.7-rc.2 的子代理数量默认值，1–64，默认 2；同一主 Agent 下跨递归层级统计，主 Agent 不计入，达到上限拒绝新建。与模型请求总并发分别控制；界面中已保存的数量优先。0.1.5 不使用此项。
+//   "maxActiveSubagents": 2
+// features.maxParallelSubagents：旧版兼容项，1–32；仅在未填总并发时换算为此值+1，不控制官方子代理数量。新配置请分别使用 maxConcurrentRequests 和 maxActiveSubagents。
 //   "maxParallelSubagents": 2
 // desktop：桌面行为。
 //   "desktop": {}
 // desktop.closeAction：tray 关闭窗口后驻留托盘；exit 退出；默认 tray，无托盘时退出。
 //   "closeAction": "tray"
+// desktop.notifications：桌面通知默认值；通用设置中保存的个人偏好优先。仅客户端仍运行时生效，系统勿扰或通知权限可能阻止弹窗。
+//   "notifications": {}
+// desktop.notifications.enabled：允许后台桌面弹窗；关闭后托盘仍保留待处理事项。
+//   "enabled": true
+// desktop.notifications.attention：需求确认和授权请求通知。
+//   "attention": true
+// desktop.notifications.completed：主会话任务完成通知；子代理和单个工具结束不通知。
+//   "completed": true
+// desktop.notifications.failed：任务最终失败、受阻或输出达到上限时通知。
+//   "failed": true
+// desktop.notifications.studio：独立 Studio 成果完成通知。
+//   "studio": true
+// desktop.notifications.sound：允许系统通知声音；仍受系统勿扰控制。
+//   "sound": false
+// desktop.notifications.preview：在通知和托盘条目显示会话或成果标题；默认关闭，不显示回答正文、命令或文件内容。
+//   "preview": false
 // updates：软件更新源；空对象沿用发行包的默认渠道与平台设置。
 //   "updates": {}
 // updates.provider：github/static/disabled；static 须填 manifestURL，github 不可同时填写 manifestURL。
@@ -461,6 +485,10 @@
 //   "responseFormat": "auto"
 // media.providers[].images.promptMaxChars：提示词最大字符数，正整数，默认 4096。
 //   "promptMaxChars": 4096
+// media.providers[].images.edit：是否支持标准 /images/edits 图像编辑，默认 false；不影响文生图。
+//   "edit": false
+// media.providers[].images.editMaxImages：单次编辑允许的输入图片数，1–16，默认 1；按服务端能力填写。
+//   "editMaxImages": 1
 // media.providers[].speech.enabled：是否启用云端 TTS，默认 false；启用时须填写 model 和 voices。
 //   "enabled": false
 // media.providers[].speech.model：TTS 模型 ID。
@@ -677,10 +705,10 @@
 //   "credentialRef": "EDUWORK_API_KEY"
 // plugins.chatecnu-campus-search.oidcProfileId：企业 Token 授权所用 organizations[].id；填写后使用 Worker 搜索，不读取独立 Key。
 //   "oidcProfileId": "ecnu"
-// plugins.chatecnu-campus-search.requestTimeoutMs：搜索超时毫秒，1–120000，默认 65000。
-//   "requestTimeoutMs": 65000
 // plugins.chatecnu-campus-search.webSearch：学校账号模式下是否提供 ecnu_web_search 联网搜索，默认 true；需要账号具有 search.web 授权。
 //   "webSearch": true
+// plugins.chatecnu-campus-search.requestTimeoutMs：搜索超时毫秒，1–120000，默认 65000。
+//   "requestTimeoutMs": 65000
 // plugins.chatecnu-vision.enabled：辅助读图的默认开关；features.visionFallback 若填写则优先，原生多模态不经过辅助读图。
 //   "enabled": true
 // plugins.chatecnu-vision.baseURL：读图模型 API 基地址；与关联账户授权资源一致。
@@ -695,9 +723,9 @@
 //   "provider": "chatecnu"
 // plugins.chatecnu-vision.model：用于读图的模型 ID，须支持图片输入。
 //   "model": "ecnu-plus"
-// plugins.chatecnu-vision.maxConcurrentRequests：辅助模型并发上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。
+// plugins.chatecnu-vision.maxConcurrentRequests：辅助模型的并发请求上限，1–64，默认 1；跨会话共享，不包含直接聊天或其他客户端。
 //   "maxConcurrentRequests": 1
-// plugins.chatecnu-vision.maxRetries：HTTP 429 最大重试次数，0–5，默认 2。
+// plugins.chatecnu-vision.maxRetries：辅助模型遇到 HTTP 429 的最大重试次数，0–5，默认 2；不重试其他错误。
 //   "maxRetries": 2
 // plugins.chatecnu-vision.maxAnalysisTokens：一次读图分析最大输出 token 数，默认 2048。
 //   "maxAnalysisTokens": 2048
@@ -729,4 +757,10 @@
 //   "stateDirectory": "/path/to/heartbeat-state"
 // plugins.chatecnu-active-heartbeat.installationID：安装标识，默认本地生成并持久保存；不要给多台机器配置相同值。
 //   "installationID": "inst-synthetic-example"
+// plugins.ecnu-browser.headless：官方浏览器后台运行；false 显示独立窗口，重启生效。
+//   "headless": true
+// plugins.ecnu-browser.executablePath：可选 Chromium 可执行文件；默认使用发行包自带的浏览器。
+//   "executablePath": ""
+// plugins.ecnu-browser.toolCallTimeoutMs：官方浏览器单次调用超时，1000–300000 毫秒。
+//   "toolCallTimeoutMs": 120000
 // </eduwork-configuration-reference>

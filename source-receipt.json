@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-09-30T16:28:26.451Z",
-  "fileSetSHA256": "c55142f61b40f1e5fe3a9c285dfceee2ca9ca53be6c974702792c4cce5323219",
+  "createdAt": "2026-10-01T02:30:02.084Z",
+  "fileSetSHA256": "8a7ebacab1800b0cb7c93e39eb8c5023388486aa402bf643f46f1c8c9daa5717",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,7 +37,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "574fb05060fb38028676ecf0d079c452708fd9dd66a844b1b5e54338191c0434"
+      "sha256": "16f07ff79f7ef2421594070e869b8b629455e8afa0cbdc08f29ca6ebd36581b3"
     },
     {
       "path": "docs/BUILD.md",
@@ -157,11 +157,11 @@
     },
     {
       "path": "edition/desktop-examples/cernet.jsonc",
-      "sha256": "f89b6dee66604f1ff8e327050397ecbe9366b95cbada0eec1c8fc4f8967f1b99"
+      "sha256": "f48fd6d6bca4c296feb31e2b07e2d9ed9b557b665ec30427c44f0631e99f3ef2"
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "334cb95a930a071a4bd967ad8fe343066db17abf558e0c99c8bff17f7a6c5ecf"
+      "sha256": "be037c87c282b985e5a6ff02e1897ebf259346f5d71bafd1dd3128f6c780afe0"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
@@ -173,7 +173,7 @@
     },
     {
       "path": "edition/desktop/configuration-options.json",
-      "sha256": "6091aa6f7b2530a5025001f6ff53be319bf425892a7cb70deb6c90ecd44acf8a"
+      "sha256": "daa89a8765bcd390182d4ceed94f321e22f2f827dca2ac3a5b5fe05dd4df881d"
     },
     {
       "path": "edition/desktop/configuration-policy.json",
@@ -185,7 +185,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "b0d390d988887e69148e9f3a8ff162bb59efa3931b623c0753cb21b7f8119a3a"
+      "sha256": "37e0e2a687547f10fe2cccb86523e6758806aa3ba72a29cf4e83ae94f1e99806"
     },
     {
       "path": "edition/desktop/mac-updates.json",
@@ -457,11 +457,11 @@
     },
     {
       "path": "edition/skills/browser/SKILL.md",
-      "sha256": "a4419516ab422b8eb26b7aa9c97cbe5381af9b9693d4d441cace3f7f002fa361"
+      "sha256": "e3e768703195b3f2ab40c2e96ee22dcea558c88918794fce27b979f4a71e5071"
     },
     {
       "path": "edition/skills/ecnu-campus-search/SKILL.md",
-      "sha256": "9b660f36d500c4fb2c9e6f4511af2ed8b4545d610b7f516428313619b3be7638"
+      "sha256": "0710983e6f5aacc57c3de22b8263ff20314a4ffe0fc4b7b879ca7d070d7500c0"
     },
     {
       "path": "edition/test/chat-model-catalog.test.mjs",

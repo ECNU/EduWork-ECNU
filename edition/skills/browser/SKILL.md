@@ -1,6 +1,10 @@
 ---
 name: browser
 description: 使用学校搜索接口检索互联网，通过 DSH 官方网页获取和浏览器工具阅读与操作网页。
+metadata:
+  eduwork:
+    displayName: 联网搜索与网页浏览
+    displayDescription: 使用学校提供的联网搜索查找公开资料，通过 DSH 官方浏览器阅读网页、操作网站。
 ---
 
 # 网页与浏览器

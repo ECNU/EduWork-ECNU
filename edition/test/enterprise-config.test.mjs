@@ -170,9 +170,9 @@ test('deployment examples keep service provider IDs separate from local profile 
   }
 })
 
-test('ECNU max reserves 256K output in its 512K context with vision fallback enabled', () => {
+test('ECNU max accepts native images and reserves 256K output in its 512K context', () => {
   const model = example('ecnu').organizations[0].provider.models.find(row => row.id === 'ecnu-max')
-  assert.deepEqual(model.input, ['text'])
+  assert.deepEqual(model.input, ['text', 'image'])
   assert.equal(example('ecnu').features.visionFallback, true)
   assert.deepEqual(example('ecnu').organizations[0].provider.models.find(row => row.id === 'ecnu-plus').input, ['text', 'image'])
   assert.equal(model.contextWindow, 524288)
@@ -195,7 +195,7 @@ test('edition catalog upgrades known 1M/256K defaults and preserves custom limit
     const [updated] = updateEnterpriseModels([original], rules)
     assert.equal(updated.provider.models[0].contextWindow, capacity === 131072 ? 131072 : 524288)
     assert.equal(updated.provider.models[0].maxTokens, 393216)
-    assert.deepEqual(updated.provider.models[0].input, ['text'])
+    assert.deepEqual(updated.provider.models[0].input, input)
     assert.deepEqual(original.provider.models[0].input, input)
     assert.deepEqual(updateEnterpriseModels([updated], rules), [updated])
     const unrelated = structuredClone(original)
@@ -230,7 +230,7 @@ test('publisher migrates to one editable school config with one backup and prese
  const profiles=loadEnterpriseProfiles({profiles:config.organizations},{})
  const model=config.organizations[0].provider.models.find(model=>model.id==='ecnu-max')
  assert.equal(profiles.get('ecnu').auth.experimentalOidcLlm,true)
- assert.deepEqual(model.input,['text'])
+ assert.deepEqual(model.input,['text','image'])
  assert.equal(model.contextWindow,524288)
  assert.equal(model.maxTokens,262144)
  assert.equal(config.media.providers[0].images.model,'ecnu-image')

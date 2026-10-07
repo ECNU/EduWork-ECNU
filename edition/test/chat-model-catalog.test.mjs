@@ -21,6 +21,10 @@ for (const edition of ['ecnu', 'cernet']) test(edition + ' classifies its catalo
   assert.deepEqual(routes[profile.provider.id].models.map(row => row.id), ids.slice(0, 2))
   assert.deepEqual(publicProfile(discovered).provider.models.map(row => row.id), ids.slice(0, 2))
   assert.deepEqual(models[1].input, ['text', 'image'])
+  if (edition === 'ecnu') {
+    assert.deepEqual(models[0].input, ['text', 'image'])
+    assert.deepEqual(routes[profile.provider.id].models[0].input, ['text', 'image'])
+  }
   const media = config.media.providers.find(row => row.oidcProfileId === school.id)
   assert.equal(media.images.model, edition + '-image')
   assert.equal(media.speech.model, edition + '-tts')

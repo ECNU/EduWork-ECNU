@@ -2,11 +2,14 @@
 name: artifact-images
 description: 使用统一图像工具生成或编辑插图、海报、封面等素材；按学校模型能力自行扩写提示词，默认约 1K 出图，保留编辑原图。
 metadata:
+  eduwork:
+    displayName: 图像生成与编辑
+    displayDescription: 生成或编辑插图、海报与封面；默认约 1K 出图，编辑时保留原图。
   artifact:
     capability: image-generation
 ---
 
-# 图像创作
+# 图像生成与编辑
 
 ## 工具与提供方
 

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-07T03:54:07.363Z",
-  "fileSetSHA256": "866b5f9804d10adc236b04002032d4346cbaa3dadae41f3841536e1905da3896",
+  "createdAt": "2026-10-07T03:55:34.311Z",
+  "fileSetSHA256": "bb59ccf7fbfc9af7e5e0ad9b1f084ed697c71cfd7a9948bd2aed9fe9083eefdc",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,7 +37,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "16f07ff79f7ef2421594070e869b8b629455e8afa0cbdc08f29ca6ebd36581b3"
+      "sha256": "18a92a22a15fc1f4e4280ab257db71e314a422699c29e7f0a105210bbb547816"
     },
     {
       "path": "docs/BUILD.md",
@@ -130,6 +130,10 @@
     {
       "path": "docs/releases/0.4.1.md",
       "sha256": "dd2aab86b2e01218122fe1918ff8a77c5490a33f4c711f86ece3db5bc9e44b59"
+    },
+    {
+      "path": "docs/releases/0.4.2.md",
+      "sha256": "acce4644954f121500052c9a531dcf26e8c34dc9bdcbbe1409df5aee4d8a5ec5"
     },
     {
       "path": "docs/USER_GUIDE.md",

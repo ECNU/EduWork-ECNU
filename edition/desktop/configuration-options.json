@@ -22,7 +22,7 @@
     "ecnu"
   ],
   "plugins.chatecnu-campus-search.webSearch": [
-    "学校账号模式下是否提供 ecnu_web_search 联网搜索，默认 true；需要账号具有 search.web 授权。",
+    "学校账号模式下是否为 DSH 官方 web_search 提供学校联网搜索，默认 true；需要账号具有 search.web 授权。",
     true
   ],
   "plugins.chatecnu-campus-search.requestTimeoutMs": [

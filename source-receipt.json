@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-07T03:55:34.311Z",
-  "fileSetSHA256": "bb59ccf7fbfc9af7e5e0ad9b1f084ed697c71cfd7a9948bd2aed9fe9083eefdc",
+  "createdAt": "2026-10-07T05:13:20.953Z",
+  "fileSetSHA256": "a4e492e162b02b99e41b8c12954519cc74d66e4634eded6a6991fe1eeefdd374",
   "files": [
     {
       "path": ".gitattributes",
@@ -165,7 +165,7 @@
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "16d0a20912817951062c51da19790189f8ff1ed2f562482cd02463c417d41c1e"
+      "sha256": "a6dc783590f139c3309696f9d7da0a431f562e8dbba583c1e41b3ecd04bbd26b"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
@@ -185,7 +185,7 @@
     },
     {
       "path": "edition/desktop/ecnu-model-updates.json",
-      "sha256": "154808fbc0430b5f7df2fc6bfa342ee4cec03a0d7af4494b340d1c5ef15393cc"
+      "sha256": "1915d98dff1e7663f735b770cdf29fef1872f7518c311ff29ebe008a835a4a51"
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
@@ -477,11 +477,11 @@
     },
     {
       "path": "edition/test/chat-model-catalog.test.mjs",
-      "sha256": "d93ef3123ec43f46df89dc79438fe5dc09795a8c51c62a478203f8de96f996c5"
+      "sha256": "53a04ee55b49b2e77ee629a8d544010bbc86493232724973ab5ee75cfaf063a7"
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "09db6e2cf9d3c7e929fa66404000c71345337a590fbbe5a2ffaf461d7468fa73"
+      "sha256": "7fab894beb0109aeefef567764c9930344c1c906d24ba1757bd0fdf794b02d5c"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",

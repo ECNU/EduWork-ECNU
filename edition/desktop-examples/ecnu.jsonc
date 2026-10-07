@@ -90,8 +90,9 @@
             "name": "ecnu-max",
             // [eduwork] 支持的输入：text、image；默认仅 text。
             "input": [
-              // ecnu-max 使用纯文本路由；开启 visionFallback 时由辅助模型读图。
-              "text"
+              // ecnu-max 原生支持图像输入；无需经辅助模型转述。
+              "text",
+              "image"
             ],
             // 客户端按 512K 管理上下文，标准模式由 DSH 自动压缩历史。
             // [eduwork] 模型上下文 token 上限，正整数。

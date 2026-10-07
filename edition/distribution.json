@@ -104,6 +104,13 @@
       "source": "edition/skills/browser",
       "defaultEnabled": true,
       "replace": true
+    },
+    {
+      "root": "edition",
+      "name": "artifact-images",
+      "source": "edition/skills/artifact-images",
+      "defaultEnabled": true,
+      "replace": true
     }
   ],
   "resources": [

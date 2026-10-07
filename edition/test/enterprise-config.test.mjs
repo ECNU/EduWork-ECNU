@@ -124,8 +124,9 @@ test('CI edition carries only public bootstrap metadata and pins configuration t
   assert.ok(distribution.resources.some(row => row.target === 'desktop/publisher-bootstrap.darwin.json'))
 })
 
-test('ECNU media uses public providers and keeps existing IDs, voices and sizes', async () => {
+test('ECNU image guidance uses public tools and an unmodified 1K native canvas', async () => {
   const { normalizeMediaConfig } = await import(pathToFileURL(resolve(core, 'dsh-host/media-config.mjs')))
+  const { selectImageGenerationSize, normalizeImageRequest } = await import(pathToFileURL(resolve(core, 'dsh-plugins/media-openai/lib/core.js')))
   const defaults = JSON.parse(await readFile(new URL('../desktop/media-defaults.json', import.meta.url), 'utf8'))
   assert.deepEqual(example('ecnu').media, normalizeMediaConfig(defaults))
   const [provider] = example('ecnu').media.providers
@@ -137,11 +138,25 @@ test('ECNU media uses public providers and keeps existing IDs, voices and sizes'
   assert.equal(provider.images.editMaxImages,1)
   assert.equal(provider.speech.model, 'ecnu-tts')
   assert.equal(provider.speech.voices.length, 16)
-  assert.deepEqual(provider.images.nativeSizes, ['512x512', '768x768', '720x1280', '1280x720', '1024x1024'])
-  assert.equal(provider.images.promptMaxChars, 1024)
+  assert.equal(provider.images.defaultSize, '1056x1056')
+  for (const size of ['1056x1056', '1184x896', '896x1184', '1248x832', '832x1248', '1376x768', '768x1376']) {
+    // The public adapter must send each recommended canvas unchanged, rather
+    // than generating another aspect ratio and cropping the returned image.
+    assert.equal(selectImageGenerationSize(size, provider.images.nativeSizes), size)
+  }
+  const prompt = '校园画面。'.repeat(220)
+  assert.equal(normalizeImageRequest({ prompt }, provider).prompt, prompt)
+  assert.equal(normalizeImageRequest({ prompt }, provider).size, '1056x1056')
+  assert.equal(provider.images.promptMaxChars, 16384)
+  assert.throws(() => normalizeImageRequest({ prompt: '字'.repeat(16385) }, provider), /maximum is 16384/)
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url), 'utf8'))
   assert.equal(distribution.plugins.some(p => /(?:studio-media|tool-ecnu-media)/u.test(p.source)), false)
-  assert.equal(distribution.skills.some(s => s.name === 'artifact-images'), false)
+  const imageSkills = distribution.skills.filter(s => s.name === 'artifact-images')
+  assert.deepEqual(imageSkills, [{
+    root: 'edition', name: 'artifact-images', source: 'edition/skills/artifact-images', defaultEnabled: true, replace: true,
+  }])
+  const publicDistribution = JSON.parse(await readFile(resolve(core, distribution.coreBase), 'utf8'))
+  assert.equal(publicDistribution.skills.filter(s => s.name === 'artifact-images').length, 1)
 })
 
 test('deployment examples keep service provider IDs separate from local profile IDs', () => {

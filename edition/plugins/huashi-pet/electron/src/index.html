@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'">
+<title>小花狮 · 华东师大桌面宠物</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ 花狮舞台 ============ -->
+<div id="stage">
+  <svg id="pet" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-label="小花狮">
+    <defs>
+      <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#FBEBA9"/>
+        <stop offset="1" stop-color="#F3CF76"/>
+      </linearGradient>
+      <linearGradient id="maneGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F4524C"/>
+        <stop offset="1" stop-color="#D62626"/>
+      </linearGradient>
+      <linearGradient id="shirtGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#E53935"/>
+        <stop offset="1" stop-color="#C62828"/>
+      </linearGradient>
+    </defs>
+
+    <g id="hs-holder">
+      <image id="hs-img" href="assets/hs_main.png" x="3" y="8" width="324" height="220"/>
+    </g>
+    <g id="legacy-svg" style="display:none">
+    <g id="pet-root">
+      <!-- 尾巴（S 形 + 花瓣尖） -->
+      <g id="tail">
+        <path d="M 198,246 C 232,240 246,212 230,184 C 218,164 200,162 190,176 C 184,184 188,194 198,190"
+              fill="none" stroke="url(#maneGrad)" stroke-width="12" stroke-linecap="round"/>
+        <path d="M 198,246 C 232,240 246,212 230,184 C 218,164 200,162 190,176 C 184,184 188,194 198,190"
+              fill="none" stroke="#FFF" stroke-width="16" stroke-linecap="round" opacity="0.5"/>
+        <circle cx="192" cy="182" r="11" fill="url(#maneGrad)" stroke="#FFF" stroke-width="3"/>
+      </g>
+
+      <!-- 坐姿腿 -->
+      <g id="legs">
+        <ellipse cx="124" cy="262" rx="19" ry="14" fill="url(#bodyGrad)" stroke="#FFF" stroke-width="4"/>
+        <ellipse cx="176" cy="262" rx="19" ry="14" fill="url(#bodyGrad)" stroke="#FFF" stroke-width="4"/>
+        <ellipse cx="124" cy="264" rx="11" ry="6" fill="#FFF3DC" opacity="0.9"/>
+        <ellipse cx="176" cy="264" rx="11" ry="6" fill="#FFF3DC" opacity="0.9"/>
+      </g>
+
+      <!-- 身体 + 师大红 T 恤 -->
+      <g id="body">
+        <ellipse cx="150" cy="226" rx="50" ry="50" fill="url(#bodyGrad)" stroke="#FFF" stroke-width="4.5"/>
+        <!-- 红围巾：绕颈 + 细垂带 + 小徽章 -->
+        <g id="scarf-main">
+          <path d="M 99,178 C 122,196 178,196 201,178 C 201,186 195,195 188,198 C 175,191 125,191 112,198 C 105,195 99,186 99,178 Z"
+                fill="url(#shirtGrad)" stroke="#FFF" stroke-width="3.5"/>
+          <path d="M 113,196 C 120,222 116,240 114,254 L 126,255 C 130,240 131,224 126,198 Z" fill="url(#shirtGrad)" stroke="#FFF" stroke-width="3.5"/>
+          <path d="M 111,250 L 128,253 L 127,263 L 111,260 Z" fill="#FFF" opacity="0.8"/>
+          <!-- 徽章：白圆 + 红花符号 -->
+          <g id="badge">
+            <circle cx="150" cy="213" r="17" fill="#FFFDF6" stroke="#E0475A" stroke-width="2.2"/>
+            <ellipse cx="150" cy="205" rx="3.8" ry="6.6" fill="#D1362E"/>
+            <ellipse cx="157.2" cy="209.2" rx="3.8" ry="6.6" transform="rotate(72 150 213)" fill="#D1362E"/>
+            <ellipse cx="154.6" cy="218.6" rx="3.8" ry="6.6" transform="rotate(144 150 213)" fill="#D1362E"/>
+            <ellipse cx="145.4" cy="218.6" rx="3.8" ry="6.6" transform="rotate(216 150 213)" fill="#D1362E"/>
+            <ellipse cx="142.8" cy="209.2" rx="3.8" ry="6.6" transform="rotate(288 150 213)" fill="#D1362E"/>
+            <circle cx="150" cy="213" r="2.8" fill="#F2A6B0"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- 前爪 -->
+      <g id="arms">
+        <ellipse cx="110" cy="248" rx="13" ry="14" fill="url(#bodyGrad)" stroke="#C9963B" stroke-width="3"/>
+        <ellipse cx="195" cy="222" rx="13" ry="14" transform="rotate(-18 195 222)" fill="url(#bodyGrad)" stroke="#C9963B" stroke-width="3"/>
+        <ellipse cx="110" cy="252" rx="6" ry="4" fill="#FFF3DC" opacity="0.9"/>
+        <ellipse cx="195" cy="226" rx="6" ry="4" transform="rotate(-18 195 226)" fill="#FFF3DC" opacity="0.9"/>
+      </g>
+
+      <!-- ============ 头 ============ -->
+      <g id="head">
+        <!-- 花冠鬃毛：红色大花瓣披风（官方同构） -->
+                <g id="mane">
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(-80 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(-60 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(-40 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(-20 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(0 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(20 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(40 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(60 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="59" rx="32" ry="36" transform="rotate(80 150 105)" fill="url(#maneGrad)" stroke="#FFF" stroke-width="4"/>
+          <ellipse cx="150" cy="62" rx="10" ry="12" transform="rotate(-80 150 105)" fill="#FF8F85" opacity="0.5"/>
+          <ellipse cx="150" cy="62" rx="10" ry="12" transform="rotate(-40 150 105)" fill="#FF8F85" opacity="0.5"/>
+          <ellipse cx="150" cy="62" rx="10" ry="12" transform="rotate(0 150 105)" fill="#FF8F85" opacity="0.5"/>
+          <ellipse cx="150" cy="62" rx="10" ry="12" transform="rotate(40 150 105)" fill="#FF8F85" opacity="0.5"/>
+          <ellipse cx="150" cy="62" rx="10" ry="12" transform="rotate(80 150 105)" fill="#FF8F85" opacity="0.5"/>
+        </g>
+
+        <!-- 耳朵 -->
+        <g id="ears">
+          <ellipse cx="99" cy="64" rx="13" ry="16" transform="rotate(-20 99 64)" fill="url(#bodyGrad)" stroke="#FFF" stroke-width="3.5"/>
+          <ellipse cx="100" cy="67" rx="6" ry="9" transform="rotate(-20 100 67)" fill="#FFB3AE"/>
+          <ellipse cx="201" cy="64" rx="13" ry="16" transform="rotate(20 201 64)" fill="url(#bodyGrad)" stroke="#FFF" stroke-width="3.5"/>
+          <ellipse cx="200" cy="67" rx="6" ry="9" transform="rotate(20 200 67)" fill="#FFB3AE"/>
+        </g>
+
+        <!-- 脸 -->
+        <circle cx="150" cy="112" r="62" fill="url(#bodyGrad)" stroke="#FFF" stroke-width="4.5"/>
+        <!-- 额前碎毛 -->
+        <path d="M 130,64 Q 142,52 154,62 Q 164,54 172,64" fill="none" stroke="#E8A22C" stroke-width="4.5" stroke-linecap="round"/>
+
+        <!-- ===== 眼睛组 ===== -->
+        <g id="eyes">
+          <!-- 睁眼 -->
+          <g id="eyes-open">
+            <circle cx="127" cy="108" r="5" fill="#2A201C"/>
+            <circle cx="173" cy="108" r="5" fill="#2A201C"/>
+            <circle cx="128.6" cy="106.4" r="1.5" fill="#FFF"/>
+            <circle cx="174.6" cy="106.4" r="1.5" fill="#FFF"/>
+          </g>
+          <!-- 闭眼（困/睡） -->
+          <g id="eyes-closed" style="display:none">
+            <path d="M 115,106 Q 126,114 137,106" fill="none" stroke="#2E2320" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 163,106 Q 174,114 185,106" fill="none" stroke="#2E2320" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <!-- 星星眼（开心） -->
+          <g id="eyes-star" style="display:none">
+            <path d="M 126,94 L 131,101 L 126,108 L 121,101 Z" fill="#FFD13B" stroke="#E8A500" stroke-width="1.5"/>
+            <path d="M 174,94 L 179,101 L 174,108 L 169,101 Z" fill="#FFD13B" stroke="#E8A500" stroke-width="1.5"/>
+          </g>
+          <!-- 晕眼 -->
+          <g id="eyes-dizzy" style="display:none">
+            <circle cx="125" cy="103" r="4.5" fill="#FFF" stroke="#2E2320" stroke-width="2"/>
+            <circle cx="175" cy="103" r="4.5" fill="#FFF" stroke="#2E2320" stroke-width="2"/>
+            <line x1="121" y1="101" x2="129" y2="105" stroke="#2E2320" stroke-width="1.6"/>
+            <line x1="171" y1="101" x2="179" y2="105" stroke="#2E2320" stroke-width="1.6"/>
+          </g>
+        </g>
+
+        <!-- 腮红 -->
+        <g id="cheeks">
+          <ellipse cx="108" cy="127" rx="10" ry="6" fill="#FFA36B" opacity="0.75"/>
+          <ellipse cx="192" cy="127" rx="10" ry="6" fill="#FFA36B" opacity="0.75"/>
+          <path d="M 96,124 L 80,121 M 95,129 L 78,129 M 96,134 L 80,137" stroke="#8A6A3B" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+          <path d="M 204,124 L 220,121 M 205,129 L 222,129 M 204,134 L 220,137" stroke="#8A6A3B" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+        </g>
+
+        <!-- 口鼻 -->
+        <g id="snout">
+          <path d="M 146,124 L 154,124 L 150,130 Z" fill="#2A201C"/>
+        </g>
+
+        <!-- ===== 嘴型组 ===== -->
+        <g id="mouth">
+          <!-- 微笑（官方弧线+翘角） -->
+          <g id="mouth-smile">
+            <path d="M 130,138 Q 150,152 170,138" fill="none" stroke="#2A201C" stroke-width="3.4" stroke-linecap="round"/>
+          </g>
+          <!-- 张嘴（吃/嗨/笑露齿） -->
+          <g id="mouth-open" style="display:none">
+            <path d="M 132,136 Q 150,148 168,136" fill="none" stroke="#2A201C" stroke-width="3.2" stroke-linecap="round"/>
+            <ellipse cx="150" cy="148" rx="14" ry="13" fill="#7E2E1B"/>
+            <rect x="140" y="141" width="6.5" height="7" rx="1.5" fill="#FFF"/>
+            <rect x="150" y="141" width="6.5" height="7" rx="1.5" fill="#FFF"/>
+            <rect x="160" y="141" width="6.5" height="7" rx="1.5" fill="#FFF"/>
+            <path d="M 141,158 Q 150,168 159,158 Z" fill="#FF7B8A"/>
+          </g>
+          <!-- 困 -->
+          <g id="mouth-sleepy" style="display:none">
+            <ellipse cx="150" cy="147" rx="4.5" ry="6.5" fill="#2A201C"/>
+          </g>
+          <!-- 难过 -->
+          <g id="mouth-sad" style="display:none">
+            <path d="M 132,154 Q 150,141 168,154" fill="none" stroke="#2A201C" stroke-width="3.8" stroke-linecap="round"/>
+          </g>
+          <!-- 惊讶 -->
+          <g id="mouth-surprised" style="display:none">
+            <ellipse cx="150" cy="150" rx="9" ry="12" fill="#8A3A20"/>
+          </g>
+          <!-- 咀嚼 -->
+          <g id="mouth-chew" style="display:none">
+            <ellipse cx="150" cy="150" rx="11" ry="9" fill="#8A3A20"/>
+            <path d="M 143,149 Q 150,144 157,149" fill="none" stroke="#FFB3AE" stroke-width="2"/>
+          </g>
+        </g>
+
+        <!-- 眉毛组 -->
+        <g id="brows">
+          <!-- 生气 -->
+          <g id="brows-angry" style="display:none">
+            <path d="M 110,76 L 140,87" stroke="#2E2320" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M 190,76 L 160,87" stroke="#2E2320" stroke-width="4.5" stroke-linecap="round"/>
+          </g>
+          <!-- 难过眉 -->
+          <g id="brows-sad" style="display:none">
+            <path d="M 112,90 L 142,84" stroke="#2E2320" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M 188,90 L 158,84" stroke="#2E2320" stroke-width="4.5" stroke-linecap="round"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- ============ 饰品 ============ -->
+      <g id="accessories">
+        <!-- 红色蝴蝶结（Lv.2+） -->
+        <g id="acc-scarf" style="display:none">
+          <path d="M 96,52 L 132,66 L 96,80 Z" fill="url(#shirtGrad)" stroke="#FFF" stroke-width="3"/>
+          <path d="M 204,52 L 168,66 L 204,80 Z" fill="url(#shirtGrad)" stroke="#FFF" stroke-width="3"/>
+          <circle cx="150" cy="66" r="8" fill="url(#shirtGrad)" stroke="#FFF" stroke-width="3"/>
+        </g>
+        <!-- 学士帽（Lv.3+） -->
+        <g id="acc-cap" style="display:none">
+          <path d="M 185,66 L 236,78 L 228,98 L 178,86 Z" fill="#2D2A32" stroke="#1B1920" stroke-width="2.5"/>
+          <path d="M 185,66 L 196,80 L 178,86 Z" fill="#3D3942"/>
+          <circle cx="210" cy="72" r="6" fill="#2D2A32" stroke="#1B1920" stroke-width="2"/>
+          <path d="M 224,89 Q 238,96 250,104" fill="none" stroke="#F2C14E" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="251" cy="105" r="4" fill="#F2C14E"/>
+        </g>
+        <!-- 樱花发卡（Lv.4+） -->
+        <g id="acc-blossom" style="display:none">
+          <g transform="rotate(-14 124 50)">
+            <ellipse cx="124" cy="41" rx="6" ry="10" fill="#FF9EC5"/>
+            <ellipse cx="134" cy="45" rx="6" ry="10" transform="rotate(72 124 50)" fill="#FF9EC5"/>
+            <ellipse cx="130" cy="58" rx="6" ry="10" transform="rotate(144 124 50)" fill="#FF9EC5"/>
+            <ellipse cx="118" cy="58" rx="6" ry="10" transform="rotate(216 124 50)" fill="#FF9EC5"/>
+            <ellipse cx="114" cy="45" rx="6" ry="10" transform="rotate(288 124 50)" fill="#FF9EC5"/>
+            <circle cx="124" cy="50" r="5" fill="#FFD166"/>
+          </g>
+        </g>
+        <!-- 金丝眼镜（Lv.5+ 学习时戴） -->
+        <g id="acc-glasses" style="display:none">
+          <circle cx="124" cy="104" r="21" fill="none" stroke="#C9A227" stroke-width="3"/>
+          <circle cx="176" cy="104" r="21" fill="none" stroke="#C9A227" stroke-width="3"/>
+          <path d="M 145,104 L 155,104" stroke="#C9A227" stroke-width="3"/>
+          <path d="M 103,102 L 92,96" stroke="#C9A227" stroke-width="3"/>
+          <path d="M 197,102 L 208,96" stroke="#C9A227" stroke-width="3"/>
+        </g>
+      </g>
+    </g>
+    </g>
+
+    <!-- 学习用书本（JS 控制） -->
+    <g id="book" style="display:none">
+      <g id="book-group">
+        <path d="M 112,252 C 130,244 170,244 188,252 L 188,286 C 170,278 130,278 112,286 Z" fill="#4A7DBD" stroke="#2F5C94" stroke-width="2.5"/>
+        <path d="M 150,248 L 150,283" stroke="#2F5C94" stroke-width="2.5"/>
+        <path d="M 118,258 Q 134,252 148,258 M 118,267 Q 134,261 148,267" fill="none" stroke="#BFE0FF" stroke-width="2"/>
+        <path d="M 152,258 Q 166,252 182,258 M 152,267 Q 166,261 182,267" fill="none" stroke="#BFE0FF" stroke-width="2"/>
+      </g>
+    </g>
+
+    <!-- 特效层（JS 注入） -->
+    <g id="fx"></g>
+  </svg>
+
+  <!-- HTML 特效层（emoji 粒子） -->
+  <div id="fx-html"></div>
+
+  <!-- 对话框 -->
+  <div id="bubble"><span id="bubble-text"></span></div>
+
+  <!-- 名牌 -->
+  <div id="nameplate"></div>
+</div>
+
+<!-- ============ 界面 ============ -->
+<div id="topbar">
+  <div class="stat"><span class="ico">🍚</span><div class="bar"><div id="bar-food"></div></div><b id="num-food">100</b></div>
+  <div class="stat"><span class="ico">⚡</span><div class="bar"><div id="bar-energy"></div></div><b id="num-energy">100</b></div>
+  <div class="stat"><span class="ico">😊</span><div class="bar"><div id="bar-mood"></div></div><b id="num-mood">100</b></div>
+  <div class="coin"><span>💰</span><b id="num-coins">0</b></div>
+</div>
+
+<div id="bottombar">
+  <button class="bb" data-act="feed" title="喂食">🍡<span>喂食</span></button>
+  <button class="bb" data-act="study" title="学习">📚<span>学习</span></button>
+  <button class="bb" data-act="play" title="玩耍">🎾<span>玩耍</span></button>
+  <button class="bb" data-act="work" title="打工">💼<span>打工</span></button>
+  <button class="bb" data-act="minigame" title="接樱桃">🍒<span>樱桃雨</span></button>
+  <button class="bb" data-act="sleep" title="睡觉">😴<span>睡觉</span></button>
+  <button class="bb" data-act="panel" title="状态">📊<span>状态</span></button>
+  <button class="bb" data-act="chat" title="聊天">💬<span>聊天</span></button>
+  <button class="bb" data-act="hospital" title="校医院">🏥<span>校医院</span></button>
+  <button class="bb" data-act="settings" title="设置">⚙️<span>设置</span></button>
+</div>
+
+<!-- 悬浮退出按钮（悬停时显示在窗口右上角） -->
+<button id="quit-btn" title="退出小花狮">✕</button>
+
+<!-- 喂食选择层 -->
+<div id="food-picker" class="hide">
+  <div class="picker-title">给小花狮投喂 🍽️</div>
+  <div class="picker-items" id="food-items"></div>
+  <button id="food-close">✖ 收起</button>
+</div>
+
+<!-- 打工选择层 -->
+<div id="work-picker" class="hide">
+  <div class="picker-title">小花狮去打工 💼</div>
+  <div class="picker-items" id="work-items"></div>
+  <button class="picker-cancel" data-cancel="work">✖ 取消</button>
+</div>
+
+<!-- 校医院选择层 -->
+<div id="hospital-picker" class="hide">
+  <div class="picker-title">🏥 校医院 · 挂号</div>
+  <div class="picker-items">
+    <button class="treat-item" data-treat="normal"><span class="f-emoji">💊</span><span class="f-name">普通门诊</span><span class="f-cost">20💰</span><span class="f-eff">60% 立即痊愈</span></button>
+    <button class="treat-item" data-treat="expert"><span class="f-emoji">👨‍⚕️</span><span class="f-name">专家门诊</span><span class="f-cost">50💰</span><span class="f-eff">必定痊愈 + 全属性 +10</span></button>
+    <button class="treat-item" data-treat="tea"><span class="f-emoji">☕</span><span class="f-name">多喝热水</span><span class="f-cost">免费</span><span class="f-eff">缓解：恢复 15 能量，加速好病</span></button>
+  </div>
+  <button class="picker-cancel" data-cancel="hospital">✖ 离开医院</button>
+</div>
+
+<!-- 学习选择层 -->
+<div id="study-picker" class="hide">
+  <div class="picker-title">小花狮去学习 📚</div>
+  <div class="picker-items" id="study-items"></div>
+  <button class="picker-cancel" data-cancel="study">✖ 取消</button>
+</div>
+
+<!-- 玩耍选择层 -->
+<div id="play-picker" class="hide">
+  <div class="picker-title">陪小花狮玩耍 🎾</div>
+  <div class="picker-items" id="play-items"></div>
+  <button class="picker-cancel" data-cancel="play">✖ 取消</button>
+</div>
+
+<!-- 小游戏选择层 -->
+<div id="game-picker" class="hide">
+  <div class="picker-title">小花狮小游戏 🎮</div>
+  <div class="picker-items" id="game-items"></div>
+  <button class="picker-cancel" data-cancel="game">✖ 取消</button>
+</div>
+
+<!-- 知识问答面板 -->
+<div id="quiz-panel" class="hide">
+  <div class="picker-title" id="quiz-title">🧠 师大知识问答</div>
+  <div id="quiz-q" class="quiz-q"></div>
+  <div id="quiz-opts" class="quiz-opts"></div>
+  <div id="quiz-fb" class="quiz-fb"></div>
+  <button id="quiz-next" class="picker-cancel hide">下一题 →</button>
+  <button id="quiz-close" class="picker-cancel">✖ 结束</button>
+</div>
+
+<!-- 状态面板 -->
+<div id="panel" class="hide">
+  <div class="panel-head">
+    <span id="panel-title">🐾 小花狮档案</span>
+    <button id="panel-close">✕</button>
+  </div>
+  <div class="panel-body">
+    <div class="pline">称号：<b id="pl-title">小狮崽</b> <span id="pl-lv">Lv.1</span></div>
+    <div class="pline">经验：<div class="bar slim"><div id="pl-xp"></div></div> <b id="pl-xp-num">0/100</b></div>
+    <div class="pline">金币：💰 <b id="pl-coins">0</b></div>
+    <div class="section">📈 今日</div>
+    <div class="pline">陪读 <b id="pl-feed">0</b> 次 · 学习 <b id="pl-study">0</b> 次 · 接住樱桃 <b id="pl-cherry">0</b> 颗</div>
+    <div class="section" id="pl-sec-achv">🏅 成就</div>
+    <div id="pl-achv" class="achv-list"></div>
+    <div class="section">🔓 下一级解锁</div>
+    <div id="pl-next" class="pl-next">—</div>
+    <div class="section">🎁 饰品</div>
+    <div id="pl-decor"></div>
+  </div>
+</div>
+
+<!-- 聊天面板 -->
+<div id="chat-panel" class="hide">
+  <div class="chat-head">
+    <span class="chat-title">💬 小花狮聊天室</span>
+    <span class="chat-tools">
+      <button id="chat-setting-btn" title="设置大模型">⚙️</button>
+      <button id="chat-close" title="关闭">✕</button>
+    </span>
+  </div>
+  <div id="chat-msgs">
+    <div class="msg pet">
+      <span class="avatar">🦁</span>
+      <div class="bub">吼吼！我是小花狮，找我聊天可以，但别问我会不会喵～</div>
+    </div>
+  </div>
+  <div class="chat-input-row">
+    <button id="chat-search-btn" title="🔍 强制联网搜索这个问题">🔍</button>
+    <input id="chat-input" type="text" placeholder="和小花狮说点什么…（Enter 发送）" maxlength="300">
+    <button id="chat-send-btn">发送</button>
+  </div>
+  <div id="chat-settings" class="hide">
+    <div class="cfg-title">🤖 大模型连接设置</div>
+    <label class="cfg-label">接口地址（OpenAI 兼容）</label>
+    <input id="cfg-base" class="cfg-input" placeholder="https://api.deepseek.com/v1" spellcheck="false">
+    <label class="cfg-label">API Key</label>
+    <input id="cfg-key" class="cfg-input" type="password" placeholder="sk-..." spellcheck="false">
+    <label class="cfg-label">模型名</label>
+    <input id="cfg-model" class="cfg-input" placeholder="deepseek-chat" spellcheck="false">
+    <div class="cfg-btns">
+      <button id="cfg-save">💾 保存</button>
+      <button id="cfg-test">🔌 测试连接</button>
+    </div>
+    <div id="cfg-status"></div>
+    <div class="cfg-hint">支持任意 OpenAI 兼容接口：DeepSeek、硅基流动、Moonshot、智谱、OpenAI 等。Key 仅保存在本机。</div>
+  </div>
+</div>
+
+<!-- 设置面板 -->
+<div id="settings-panel" class="hide">
+  <div class="set-head"><span>⚙️ 小花狮设置</span><button id="set-close">✕</button></div>
+  <div class="set-body">
+    <div class="set-sec">🎨 外观</div>
+    <div class="set-row"><span>透明度</span>
+      <input id="set-opacity" type="range" min="0.4" max="1" step="0.05" value="1">
+      <b id="set-opacity-num">100%</b>
+    </div>
+    <div class="set-row"><span>大小</span>
+      <div class="set-segs" id="set-scale">
+        <button data-scale="0.75">小</button>
+        <button data-scale="1" class="on">中</button>
+        <button data-scale="1.25">大</button>
+        <button data-scale="1.5">特大</button>
+      </div>
+    </div>
+    <div class="set-sec">⚙️ 行为</div>
+    <div class="set-row"><span>始终置顶</span><label class="sw"><input type="checkbox" id="set-topmost"><i></i></label></div>
+    <div class="set-row"><span>开机自启</span><label class="sw"><input type="checkbox" id="set-autostart"><i></i></label></div>
+    <div class="set-row"><span>整点报时</span><label class="sw"><input type="checkbox" id="set-hourly"><i></i></label></div>
+    <div class="set-row"><span>随机校园事件</span><label class="sw"><input type="checkbox" id="set-events"><i></i></label></div>
+    <div class="set-row"><span>悬停显示状态栏</span><label class="sw"><input type="checkbox" id="set-bars"><i></i></label></div>
+    <div class="set-sec">🤖 大模型聊天</div>
+    <label class="set-label">接口地址（OpenAI 兼容）</label>
+    <input id="set-base" class="set-input" placeholder="https://api.deepseek.com/v1" spellcheck="false">
+    <label class="set-label">API Key（仅存本机）</label>
+    <input id="set-key" class="set-input" type="password" placeholder="sk-..." spellcheck="false">
+    <label class="set-label">模型名</label>
+    <input id="set-model" class="set-input" placeholder="deepseek-chat" spellcheck="false">
+    <div class="set-row" style="margin-top:8px"><span>🔍 联网搜索增强</span><label class="sw"><input type="checkbox" id="set-search"><i></i></label></div>
+    <div class="cfg-hint">开启后，问"最新/今天/天气/新闻"等实时问题会自动联网检索再回答</div>
+    <div class="set-btns">
+      <button id="set-chat-save">💾 保存</button>
+      <button id="set-chat-test">🔌 测试连接</button>
+    </div>
+    <div id="set-chat-status"></div>
+    <div class="set-sec">🛠 其他</div>
+    <div class="set-btns">
+      <button id="set-reset-pos">📍 重置位置</button>
+      <button id="set-clear-chat">🗑 清空聊天记录</button>
+    </div>
+    <div class="set-btns">
+      <button id="set-help-btn">📖 玩法说明</button>
+    </div>
+    <div class="set-btns danger">
+      <button id="set-quit">🚪 退出小花狮</button>
+    </div>
+    <div class="set-about">小花狮 v1.0 · 华东师大桌面宠物<br>
+      开发者：BH4GKQあかつき<br>
+      反馈建议：xhan@admin.ecnu.edu.cn<br>
+      <a id="set-reset-all">恢复默认设置</a></div>
+  </div>
+</div>
+
+<!-- 成就墙 -->
+<div id="achv-panel" class="hide">
+  <div class="achv-head">
+    <span>🏅 成就墙</span>
+    <span class="achv-head-sub" id="achv-head-sub">0/300</span>
+    <button id="achv-close">✕</button>
+  </div>
+  <div id="achv-body"></div>
+</div>
+
+<!-- 玩法说明书 -->
+<div id="help-panel" class="hide">
+  <div class="help-head"><span>📖 小花狮玩法说明书</span><button id="help-close">✕</button></div>
+  <div class="help-body">
+    <div class="help-sec">🐾 互动操作</div>
+    <div class="help-line">· 左键摸头（会舒服眯眼）· 双击跳舞 · 连点 6 次会生气跺脚</div>
+    <div class="help-line">· 长按拖动给小花狮搬家 · 右键打开快捷菜单</div>
+    <div class="help-line">· 托盘 🦁 图标：显示/隐藏、喂食、成就墙、状态、退出</div>
+    <div class="help-sec">📈 成长体系</div>
+    <div class="help-line">· 喂食/学习/玩耍/打工/小游戏全部给经验，最高 999 级</div>
+    <div class="help-line">· 11 档称号：小狮崽→小花狮→花狮→幸福花狮→花狮昭昭→大师狮→荣誉狮王→传奇花狮→黄金狮皇→星耀花狮→无上神狮</div>
+    <div class="help-line">· 等级解锁：8 种食物 / 3 档学习 / 4 种玩耍 / 5 种打工 / 7 个小游戏</div>
+    <div class="help-sec">📊 状态与健康</div>
+    <div class="help-line">· 饱食每小时 -30、能量 -60、心情 -30（离线也会缓慢下降）</div>
+    <div class="help-line">· 饿太久、熬夜不睡、闷闷不乐久了会生病：右眼下挂泪、冒汗、咳</div>
+    <div class="help-line">· 治疗：校医院普通门诊 20 币 / 专家号 50 币 / 多喝热水（免费）/ 睡觉自愈</div>
+    <div class="help-sec">🎮 小游戏</div>
+    <div class="help-line">· 樱桃雨(1级) 顶绣球(2) 抢座大作战(3) 闪电速算(4) 师大知识问答(5) 套圈小铺(6) 糖果树(8)</div>
+    <div class="help-sec">💬 AI 聊天</div>
+    <div class="help-line">· 设置里填 OpenAI 兼容接口（如 DeepSeek <b>https://api.deepseek.com/v1</b> + deepseek-chat）</div>
+    <div class="help-line">· 问实时问题（天气/新闻/最新）会自动联网搜索；聊天框 🔍 按钮强制搜索</div>
+    <div class="help-sec">⚙️ 设置</div>
+    <div class="help-line">· 透明度 / 大小 / 始终置顶 / 开机自启 / 整点报时 / 随机事件 / 联网搜索开关</div>
+    <div class="help-line">· 退出：鼠标悬停时点窗口右上角 ✕，或 设置 → 退出小花狮；也可右键小花狮挑"退出"</div>
+    <div class="help-sec">💾 数据</div>
+    <div class="help-line">· 存档在 %APPDATA%\huashi-pet（重装不丢，换电脑不会跟走）</div>
+    <div class="help-sec">ℹ️ 关于</div>
+    <div class="help-line">· 开发者：<b>BH4GKQ</b></div>
+    <div class="help-line">· 建议 / 反馈 / BUG 上报：<b>xhan@admin.ecnu.edu.cn</b></div>
+  </div>
+</div>
+
+<!-- 自定义右键菜单 -->
+<div id="menu" class="hide">
+  <div class="mi" data-act="chat">💬 和小花狮聊天</div>
+  <div class="mi" data-act="feed">🍡 喂食</div>
+  <div class="mi" data-act="play">🎾 陪它玩</div>
+  <div class="mi" data-act="study">📚 学习充电</div>
+  <div class="mi" data-act="work">💼 打工赚钱</div>
+  <div class="mi" data-act="minigame">🍒 樱桃雨游戏</div>
+  <div class="mi" data-act="sleep">😴 睡觉</div>
+  <div class="mi" data-act="hospital">🏥 校医院</div>
+  <div class="mi sep"></div>
+  <div class="mi" data-act="achv">🏅 成就墙</div>
+  <div class="mi" data-act="help">📖 玩法说明</div>
+  <div class="mi" data-act="panel">📊 状态面板</div>
+  <div class="mi" data-act="settings">⚙️ 设置</div>
+  <div class="mi" data-act="toggle-top">👁️ 显示/隐藏状态栏</div>
+  <div class="mi" data-act="reset-pos">📍 重置位置</div>
+  <div class="mi sep"></div>
+  <div class="mi danger" data-act="quit">🚪 退出小花狮</div>
+</div>
+
+<!-- 打工/学习场景道具层 -->
+<div id="scene" class="hide"></div>
+
+<!-- 学习中/打工中进度 -->
+<div id="progress" class="hide"><div id="progress-bar"></div><span id="progress-label"></span></div>
+
+<!-- 成就达成弹窗 -->
+<div id="achv-popup" class="hide">
+  <div class="achv-pop-inner">
+    <span id="achv-pop-icon">🏅</span>
+    <div class="achv-pop-txt">
+      <b id="achv-pop-name">成就达成</b>
+      <span id="achv-pop-desc"></span>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="phrases.js"></script>
+<script src="pet.js"></script>
+</body>
+</html>

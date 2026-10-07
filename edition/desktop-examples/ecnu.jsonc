@@ -191,16 +191,27 @@
           "nativeSizes": [
             "512x512",
             "768x768",
-            "720x1280",
-            "1280x720",
-            "1024x1024"
+            "1056x1056",
+            "1184x896",
+            "896x1184",
+            "1248x832",
+            "832x1248",
+            "1376x768",
+            "768x1376",
+            "2048x2048",
+            "2400x1792",
+            "1792x2400",
+            "2528x1696",
+            "1696x2528",
+            "2752x1536",
+            "1536x2752"
           ],
           // [eduwork] 默认尺寸，必须属于 nativeSizes；省略取首项。
-          "defaultSize": "512x512",
+          "defaultSize": "1056x1056",
           // [eduwork] auto/b64_json/url，默认 auto。
           "responseFormat": "b64_json",
           // [eduwork] 提示词最大字符数，正整数，默认 4096。
-          "promptMaxChars": 1024
+          "promptMaxChars": 16384
         },
         // [eduwork] 云端 TTS 能力；默认关闭，不影响本地语音。
         "speech": {

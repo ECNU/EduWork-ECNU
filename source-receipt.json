@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-01T02:30:02.084Z",
-  "fileSetSHA256": "8a7ebacab1800b0cb7c93e39eb8c5023388486aa402bf643f46f1c8c9daa5717",
+  "createdAt": "2026-10-07T03:54:07.363Z",
+  "fileSetSHA256": "866b5f9804d10adc236b04002032d4346cbaa3dadae41f3841536e1905da3896",
   "files": [
     {
       "path": ".gitattributes",
@@ -161,7 +161,7 @@
     },
     {
       "path": "edition/desktop-examples/ecnu.jsonc",
-      "sha256": "be037c87c282b985e5a6ff02e1897ebf259346f5d71bafd1dd3128f6c780afe0"
+      "sha256": "16d0a20912817951062c51da19790189f8ff1ed2f562482cd02463c417d41c1e"
     },
     {
       "path": "edition/desktop-examples/README_EN.md",
@@ -193,7 +193,7 @@
     },
     {
       "path": "edition/desktop/media-defaults.json",
-      "sha256": "8387c5484ed48d80e8efb1c468948cd846a630fbb5b2c35a6e46d84e57f8155b"
+      "sha256": "18cdeb8acc6cfaf24dd325dc3e272c20c62d9d4b29e9a0e87960b73443add17c"
     },
     {
       "path": "edition/desktop/publisher-bootstrap.darwin.json",
@@ -205,7 +205,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "cb51adb5ba336a8cab4c4eb4aa620c93933aacc81ae927ce75c6e3fe5b9bcb91"
+      "sha256": "14e3c986bf227ad2654e35ea33a2f62d663bc6c73ac833917c9c945582befb29"
     },
     {
       "path": "edition/plugins/browser-upstream/lib/index.js",
@@ -456,6 +456,14 @@
       "sha256": "542334d3891ac327b05f7f77458912917d962f7718a20f59a115fcd4d20a120d"
     },
     {
+      "path": "edition/skills/artifact-images/references/image-guidance.md",
+      "sha256": "642c3c0065658c410004e695a995d6b1428a7c46d3bca6080082b0582e695e8f"
+    },
+    {
+      "path": "edition/skills/artifact-images/SKILL.md",
+      "sha256": "a7ffb12e167cf524f0deeb4c3176b9a69749690c8a20c10a2b00113856beec44"
+    },
+    {
       "path": "edition/skills/browser/SKILL.md",
       "sha256": "e3e768703195b3f2ab40c2e96ee22dcea558c88918794fce27b979f4a71e5071"
     },
@@ -469,7 +477,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "20e65bcec47565184013bd20daa25c83778014d5576d42c3e0cd588c5d678ecc"
+      "sha256": "09db6e2cf9d3c7e929fa66404000c71345337a590fbbe5a2ffaf461d7468fa73"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",
@@ -489,11 +497,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "b3947d3c3a9bcc5268443445290c65c41bd6d14522e4a2f7bb5449dd9903cf04"
+      "sha256": "38e4c5e9f18f0b2925aa348df1d9b2f37d8d06d39c5211ea087303051ce1ac08"
     },
     {
       "path": "README.md",
-      "sha256": "497bad0e777f7dd919f9c3134f436a5a4376b47b74904fa733c9f951ad1fdf32"
+      "sha256": "30b2d1e6d2faae9a2079d48c09a10c52fd07d0588283374af72230992bda1acf"
     }
   ],
   "artifacts": [],

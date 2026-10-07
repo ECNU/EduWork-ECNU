@@ -58,6 +58,8 @@ Skill management and workbench settings are inherited too. Browsing uses DSH's o
 
 ECNU also bundles the **`ecnu-campus-search` skill**, which guides campus source selection, source verification, and use of public material. The skill describes the workflow; the campus search plugin executes it. Daily use does not require a separate installation or manual campus endpoint configuration. Availability depends on university services and account permissions.
 
+The [image creation skill](edition/skills/artifact-images/SKILL.md) reuses the public image tools with guidance for the university model: roughly 1K output by default and prompt expansion by the assistant. Text-to-image requests default to Chinese people when no identity or background is specified; editing preserves the identity of reference subjects. Explicit user requirements take precedence.
+
 Distribution configuration supplies university branding, default models, media services, and update channels. See the [ECNU distribution manifest](edition/distribution.json) for the complete combination.
 
 ## University sign-in

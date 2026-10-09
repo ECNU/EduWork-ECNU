@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-07T05:13:20.953Z",
-  "fileSetSHA256": "a4e492e162b02b99e41b8c12954519cc74d66e4634eded6a6991fe1eeefdd374",
+  "createdAt": "2026-10-09T08:10:43.807Z",
+  "fileSetSHA256": "8f016e6219cea38647df858f695cbf96fe289fb84d6814e8193cb1de9c6bf9dc",
   "files": [
     {
       "path": ".gitattributes",
@@ -465,15 +465,15 @@
     },
     {
       "path": "edition/skills/artifact-images/SKILL.md",
-      "sha256": "a7ffb12e167cf524f0deeb4c3176b9a69749690c8a20c10a2b00113856beec44"
+      "sha256": "39930cc542f03a6a10547175aac557da6f5d1a2ab4ef0f40259bc62d1be59c90"
     },
     {
       "path": "edition/skills/browser/SKILL.md",
-      "sha256": "e3e768703195b3f2ab40c2e96ee22dcea558c88918794fce27b979f4a71e5071"
+      "sha256": "368f1efbe06b66461029d3fd7330a31102a55ef403d2bd8c698ed90647f6465d"
     },
     {
       "path": "edition/skills/ecnu-campus-search/SKILL.md",
-      "sha256": "0710983e6f5aacc57c3de22b8263ff20314a4ffe0fc4b7b879ca7d070d7500c0"
+      "sha256": "cad296b926e8415de3bfdaeb9850d617318161576acf39f5098e9395e5a984e6"
     },
     {
       "path": "edition/test/chat-model-catalog.test.mjs",

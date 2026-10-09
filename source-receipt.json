@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.2",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-07T05:13:20.953Z",
-  "fileSetSHA256": "a4e492e162b02b99e41b8c12954519cc74d66e4634eded6a6991fe1eeefdd374",
+  "createdAt": "2026-10-09T08:11:04.091Z",
+  "fileSetSHA256": "3344e5dec28f7d17854b79f4a7436bbab2188b840229f6a9d1e4886cb9166f54",
   "files": [
     {
       "path": ".gitattributes",
@@ -461,11 +461,11 @@
     },
     {
       "path": "edition/skills/artifact-images/references/image-guidance.md",
-      "sha256": "642c3c0065658c410004e695a995d6b1428a7c46d3bca6080082b0582e695e8f"
+      "sha256": "fea632b804262f974a38a4961d38f40ea4628f92b22c53218549890ee931b011"
     },
     {
       "path": "edition/skills/artifact-images/SKILL.md",
-      "sha256": "a7ffb12e167cf524f0deeb4c3176b9a69749690c8a20c10a2b00113856beec44"
+      "sha256": "bad9f6114414f624019c613bda504ba78905428598f92c55be9ebdc0854148b6"
     },
     {
       "path": "edition/skills/browser/SKILL.md",

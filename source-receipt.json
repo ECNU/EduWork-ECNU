@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.3",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-11T04:55:31.968Z",
-  "fileSetSHA256": "f62adcebc246547e265bf7597acb64c568dcb178c7f8a10639100d020ffbd8a4",
+  "createdAt": "2026-10-11T05:11:08.774Z",
+  "fileSetSHA256": "1936847816956b4eabc2023837f4f7c840dedd3ca23d13b28b04771062993a1a",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "12e6cd73328ee31cd6e799e8cb7aad32e2f368e189a32f28134b9017e1ae2da2"
+      "sha256": "d6983b6e4b9c3d1a4a93fe3ad7500adaa0bb69e1c772a9036311f00040c01736"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
@@ -37,7 +37,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "e50bc9d01c2eef273fd10f7e19edda4e467a4fc77e934349c74caf7c04c5dcf4"
+      "sha256": "24a8fa415dc61dba914500082032a55711636ac5298550de9caf20cc2b153417"
     },
     {
       "path": "docs/BUILD.md",
@@ -134,6 +134,10 @@
     {
       "path": "docs/releases/0.4.2.md",
       "sha256": "acce4644954f121500052c9a531dcf26e8c34dc9bdcbbe1409df5aee4d8a5ec5"
+    },
+    {
+      "path": "docs/releases/0.4.3.md",
+      "sha256": "336e0f1e2e3fd93dcecb8db0253d0e8e21e74216cfd7556c59e1597a175aed8a"
     },
     {
       "path": "docs/USER_GUIDE.md",

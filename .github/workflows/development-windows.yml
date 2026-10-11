@@ -100,7 +100,7 @@ jobs:
           node core/scripts/ci-eduwork-${{ matrix.platform }}-release.mjs "${args[@]}"
       - name: Validate institution plugins with the assembled Runtime
         shell: pwsh
-        run: ./institution/edition/test/test-desktop-candidate.ps1 -CoreRoot ./core -EditionRoot ./institution -Product "$env:RUNNER_TEMP/ew-candidate/product"
+        run: ./institution/edition/test/test-desktop-candidate.ps1 -CoreRoot (Resolve-Path ./core).Path -EditionRoot (Resolve-Path ./institution).Path -Product "$env:RUNNER_TEMP/ew-candidate/product"
       - name: Retain validation reports
         if: always()
         uses: actions/upload-artifact@v4

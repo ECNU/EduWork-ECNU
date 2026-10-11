@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-07T05:13:20.953Z",
-  "fileSetSHA256": "a4e492e162b02b99e41b8c12954519cc74d66e4634eded6a6991fe1eeefdd374",
+  "createdAt": "2026-10-11T05:11:08.774Z",
+  "fileSetSHA256": "1936847816956b4eabc2023837f4f7c840dedd3ca23d13b28b04771062993a1a",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "709ff87b3ba03027bb914c9b5a1ec604c299dc8ffdf2a15ae1bb7203dc9d8cfb"
+      "sha256": "d6983b6e4b9c3d1a4a93fe3ad7500adaa0bb69e1c772a9036311f00040c01736"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "605b3590cc96e04a9aa2650e76d3b07d4689e8ff7e9f91c6b7649b81598c304c"
+      "sha256": "40b4c8574ddaf93c11ba2bea3e5593e3bf17e4c8fe22788c472e638ba5f29c3d"
     },
     {
       "path": ".gitignore",
@@ -37,11 +37,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "18a92a22a15fc1f4e4280ab257db71e314a422699c29e7f0a105210bbb547816"
+      "sha256": "24a8fa415dc61dba914500082032a55711636ac5298550de9caf20cc2b153417"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "9527eb0de6c7608869a34b52ec84123d94cc24d6f4143a3954786328fd331ec6"
+      "sha256": "318a6ab5221cc9ee9a4d39065f83334e225d40736a81e6ca58bdb2239974fef6"
     },
     {
       "path": "docs/images/quiz.png",
@@ -134,6 +134,10 @@
     {
       "path": "docs/releases/0.4.2.md",
       "sha256": "acce4644954f121500052c9a531dcf26e8c34dc9bdcbbe1409df5aee4d8a5ec5"
+    },
+    {
+      "path": "docs/releases/0.4.3.md",
+      "sha256": "336e0f1e2e3fd93dcecb8db0253d0e8e21e74216cfd7556c59e1597a175aed8a"
     },
     {
       "path": "docs/USER_GUIDE.md",
@@ -461,19 +465,19 @@
     },
     {
       "path": "edition/skills/artifact-images/references/image-guidance.md",
-      "sha256": "642c3c0065658c410004e695a995d6b1428a7c46d3bca6080082b0582e695e8f"
+      "sha256": "fea632b804262f974a38a4961d38f40ea4628f92b22c53218549890ee931b011"
     },
     {
       "path": "edition/skills/artifact-images/SKILL.md",
-      "sha256": "a7ffb12e167cf524f0deeb4c3176b9a69749690c8a20c10a2b00113856beec44"
+      "sha256": "be5afa52b6ca71db9c583af47bcc6a4f59c2e7ff9cf4cfad16dc47c276317995"
     },
     {
       "path": "edition/skills/browser/SKILL.md",
-      "sha256": "e3e768703195b3f2ab40c2e96ee22dcea558c88918794fce27b979f4a71e5071"
+      "sha256": "368f1efbe06b66461029d3fd7330a31102a55ef403d2bd8c698ed90647f6465d"
     },
     {
       "path": "edition/skills/ecnu-campus-search/SKILL.md",
-      "sha256": "0710983e6f5aacc57c3de22b8263ff20314a4ffe0fc4b7b879ca7d070d7500c0"
+      "sha256": "cad296b926e8415de3bfdaeb9850d617318161576acf39f5098e9395e5a984e6"
     },
     {
       "path": "edition/test/chat-model-catalog.test.mjs",

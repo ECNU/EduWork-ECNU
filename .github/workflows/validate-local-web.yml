@@ -53,7 +53,7 @@ jobs:
           if ($LASTEXITCODE) { throw 'Heartbeat contract checks failed' }
       - name: Build with the public core implementation
         shell: pwsh
-        run: ./core/scripts/ci-eduwork-web.ps1 -CoreRoot ./core -EditionRoot ./institution -DistributionConfig edition/distribution.json -BuildOnly
+        run: node core/scripts/ci-eduwork-web.mjs --core-root ./core --edition-root ./institution --distribution-config edition/distribution.json --build-only
       - name: Validate institution RPC declarations with the built Runtime
         shell: pwsh
         run: |

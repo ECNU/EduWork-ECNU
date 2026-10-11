@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-09T08:10:43.807Z",
-  "fileSetSHA256": "8f016e6219cea38647df858f695cbf96fe289fb84d6814e8193cb1de9c6bf9dc",
+  "createdAt": "2026-10-11T04:55:31.968Z",
+  "fileSetSHA256": "f62adcebc246547e265bf7597acb64c568dcb178c7f8a10639100d020ffbd8a4",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "709ff87b3ba03027bb914c9b5a1ec604c299dc8ffdf2a15ae1bb7203dc9d8cfb"
+      "sha256": "12e6cd73328ee31cd6e799e8cb7aad32e2f368e189a32f28134b9017e1ae2da2"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "605b3590cc96e04a9aa2650e76d3b07d4689e8ff7e9f91c6b7649b81598c304c"
+      "sha256": "40b4c8574ddaf93c11ba2bea3e5593e3bf17e4c8fe22788c472e638ba5f29c3d"
     },
     {
       "path": ".gitignore",
@@ -37,11 +37,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "18a92a22a15fc1f4e4280ab257db71e314a422699c29e7f0a105210bbb547816"
+      "sha256": "e50bc9d01c2eef273fd10f7e19edda4e467a4fc77e934349c74caf7c04c5dcf4"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "9527eb0de6c7608869a34b52ec84123d94cc24d6f4143a3954786328fd331ec6"
+      "sha256": "318a6ab5221cc9ee9a4d39065f83334e225d40736a81e6ca58bdb2239974fef6"
     },
     {
       "path": "docs/images/quiz.png",
@@ -461,11 +461,11 @@
     },
     {
       "path": "edition/skills/artifact-images/references/image-guidance.md",
-      "sha256": "642c3c0065658c410004e695a995d6b1428a7c46d3bca6080082b0582e695e8f"
+      "sha256": "fea632b804262f974a38a4961d38f40ea4628f92b22c53218549890ee931b011"
     },
     {
       "path": "edition/skills/artifact-images/SKILL.md",
-      "sha256": "39930cc542f03a6a10547175aac557da6f5d1a2ab4ef0f40259bc62d1be59c90"
+      "sha256": "be5afa52b6ca71db9c583af47bcc6a4f59c2e7ff9cf4cfad16dc47c276317995"
     },
     {
       "path": "edition/skills/browser/SKILL.md",

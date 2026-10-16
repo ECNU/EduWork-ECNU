@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.4-dev.20261016.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-16T08:53:13.523Z",
-  "fileSetSHA256": "6bbb3afd799afeeea5bfc3f75b115947ad87c1bab9aa0e3a97a7d882459e05fe",
+  "createdAt": "2026-10-16T09:47:09.180Z",
+  "fileSetSHA256": "1f0329d996b768389611f0820b392d2730af646089f67ec30610e6d70cd8c08d",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,11 +37,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "b3638f40559e017df6fecfd7a63902d24a7fb1342ed484717d8b37fc0ecd4a45"
+      "sha256": "dd543556135bdd84c9c837a3d54d19d8133cda679237f2bc815d3d564209aed3"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "318a6ab5221cc9ee9a4d39065f83334e225d40736a81e6ca58bdb2239974fef6"
+      "sha256": "8a15a9d4b0780a8e1a2c1e8a59c6c4acea12f949152baf86ae218014c2522e78"
     },
     {
       "path": "docs/images/quiz.png",
@@ -141,7 +141,7 @@
     },
     {
       "path": "docs/releases/0.4.4-dev.20261016.1.md",
-      "sha256": "990a8bb8a90e181c2f57814c2f0110ee1a9d9599cfd107ee1f7efe3c04dd5939"
+      "sha256": "cdd13e6c417afd6d880024b4952882453f0f94a1e1c0875226fa182a5f32c3f4"
     },
     {
       "path": "docs/USER_GUIDE.md",

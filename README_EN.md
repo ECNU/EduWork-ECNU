@@ -44,7 +44,7 @@ The institution edition reuses the public workbench, Studio, skills, and desktop
 | `@eduwork/dsh-literature` | DBLP and arXiv literature search, BibTeX, and available full text. |
 | `@eduwork/dsh-memory` | Local memory and conversation retrieval. |
 | `@eduwork/dsh-mail` | Connect a mailbox, read messages, and send with authorization. |
-| [`@eduwork/dsh-desktop-pet`](https://www.npmjs.com/package/@eduwork/dsh-desktop-pet) | Optional desktop pet from the 0.4.4 development release, reflecting task and notification states. Includes red/blue Page, Dafeiyu, and Huashi; disabled by default, available in Settings → Desktop Pet. |
+| [`@eduwork/dsh-desktop-pet`](https://www.npmjs.com/package/@eduwork/dsh-desktop-pet) | Optional desktop pet from the 0.4.5 development release, reflecting task and notification states. Includes red/blue Page, Dafeiyu, and Huashi; disabled by default, available in Settings → Desktop Pet. |
 
 Skill management and workbench settings are inherited too. Browsing uses DSH's official Playwright MCP provider, while web search uses the university account service. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
 

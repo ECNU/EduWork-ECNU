@@ -44,7 +44,7 @@ flowchart TD
 | `@eduwork/dsh-literature` | DBLP、arXiv 文献检索、BibTeX 与可用全文。 |
 | `@eduwork/dsh-memory` | 本地记忆与历史对话检索。 |
 | `@eduwork/dsh-mail` | 连接邮箱，读取邮件并经授权发送。 |
-| [`@eduwork/dsh-desktop-pet`](https://www.npmjs.com/package/@eduwork/dsh-desktop-pet) | 0.4.4 开发版起内置的可选桌宠，与任务和通知状态联动；含红/蓝小页、大肥鱼和小花狮，默认关闭，可在“设置 → 桌面宠物”中开启。 |
+| [`@eduwork/dsh-desktop-pet`](https://www.npmjs.com/package/@eduwork/dsh-desktop-pet) | 0.4.5 开发版起内置的可选桌宠，与任务和通知状态联动；含红/蓝小页、大肥鱼和小花狮，默认关闭，可在“设置 → 桌面宠物”中开启。 |
 
 同时继承技能管理和工作台设置等能力，浏览器复用 DSH 官方 Playwright MCP，联网搜索由学校账户接口提供。公共技能包括 Word、PPT、表格、PDF、图像、语音、视频创作，Knowledge Studio、浏览器、技能创建与产品帮助，见[公版完整插件与技能清单](https://github.com/ECNU/EduWork#随包插件)。所需模型和服务按配置启用，个人 API Key 与其他模型仍可使用。
 

@@ -1,0 +1,70 @@
+name: Prepare OSS delta delivery
+on:
+  pull_request:
+    paths:
+      - 'edition/release/**'
+      - 'edition/test/oss-deltas.test.mjs'
+      - '.github/workflows/oss-deltas.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Already published ECNU version, or latest; never builds a new application'
+        type: string
+        default: latest
+        required: true
+permissions:
+  contents: read
+jobs:
+  deltas:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            platform: windows
+          - runner: macos-15
+            platform: macos
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: institution
+          persist-credentials: false
+      - name: Read pinned public core
+        id: core
+        shell: bash
+        run: |
+          node --input-type=module -e "import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('institution/core.lock.json'));if(x.repository.toLowerCase()!=='https://github.com/ecnu/eduwork.git'||!/^[a-f0-9]{40}$/.test(x.commit))throw Error('Invalid core lock');fs.appendFileSync(process.env.GITHUB_OUTPUT,'commit='+x.commit+'\n')"
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: ${{ steps.core.outputs.commit }}
+          path: core
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+      - name: Check OSS source selection and manifest contracts
+        shell: bash
+        run: EDUWORK_CORE_ROOT="$GITHUB_WORKSPACE/core" node --test institution/edition/test/oss-deltas.test.mjs
+      - name: Generate and verify patches from published archives
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version || 'latest' }}
+        run: |
+          node institution/edition/release/oss-deltas.mjs --core "$GITHUB_WORKSPACE/core" \
+            --version "$RELEASE_VERSION" --platform '${{ matrix.platform }}' \
+            --cache "$RUNNER_TEMP/oss-source-archives" --output "$RUNNER_TEMP/oss-deltas"
+      - name: Retain OSS-only patches and provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: oss-deltas-${{ matrix.platform }}
+          path: |
+            ${{ runner.temp }}/oss-deltas/*.json
+            ${{ runner.temp }}/oss-deltas/*.zip
+            ${{ runner.temp }}/oss-deltas/*.delta
+            ${{ runner.temp }}/oss-deltas/*.sha256
+          compression-level: 0
+          retention-days: 14
+          if-no-files-found: error

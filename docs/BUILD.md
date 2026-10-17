@@ -86,7 +86,7 @@ Source Alpha 的 GitHub 发布直接在 CI 内完成，不经维护者电脑转�
 
 学校通过公版 `scripts/create-content-update.mjs` 在私有发行目录生成签名配置与 Skills 包。先上传不可变内容包并验证，再更新对应渠道的 `latest.json`，最后开放应用下载。首次发布前，确保每个支持的渠道均有兼容程序版本、DSH、插件能力和平台的内容清单；仅支持 Windows 的内容包不能作为 Mac 的首次配置。必须验证新用户完整登录流程、断网重启、旧用户配置迁移和失败回退，不能仅凭旧安装能启动就认定新安装可用。
 
-学校 OSS 提供与 GitHub CI 字节一致的应用 ZIP。更新清单采用该原包的 SHA-256 与大小。0.4.0 公测包默认使用 stable 渠道，用户明确保存的 development 选择继续保留；旧版本默认渠道随升级迁移。旧 Go 过渡渠道仍单独维护。
+学校 OSS 提供与 GitHub CI 字节一致的应用 ZIP。更新清单采用该原包的 SHA-256 与大小。OSS 发布另按[增量更新分发](OSS_UPDATES.md)比较已发布原包，生成并验收 Windows/Sparkle 差分；正式版与开发版都可使用，保留完整包回退。GitHub 的桌面构建和 Release 不因此改变。0.4.0 公测包默认使用 stable 渠道，用户明确保存的 development 选择继续保留；旧版本默认渠道随升级迁移。旧 Go 过渡渠道仍单独维护。
 
 旧版 Token 授权客户端使用独立的平台配置源：Windows 使用 `content-updates/token-v1/windows`，macOS 使用 `content-updates/token-v1/macos`。Mac 的 `publisher-bootstrap.darwin.json` 在首次启动时优先于通用引导文件；Mac 程序升级由 Sparkle 渠道管理，不访问 Windows 程序更新清单。两个平台的配置与 Skills 修订号、兼容性和发布时间独立管理。旧客户端继续使用原配置源；不要将新的授权配置覆盖到旧源，仅提高最低客户端版本仍会使旧安装包首次启动无法获得兼容配置。程序包只携带对应源地址与验签公钥。
 

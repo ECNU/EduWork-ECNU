@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.6-dev.20261017.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-17T15:56:14.622Z",
-  "fileSetSHA256": "0d1ad9a1bbbc0674e2818aee59afdf3cd5745102b5401f0b851370b281d573b5",
+  "createdAt": "2026-10-17T17:42:00.135Z",
+  "fileSetSHA256": "c8e6ab62b72c5caee666ba2a44a6e49b1bb56dd1c1cbe383a68f85e79137348d",
   "files": [
     {
       "path": ".gitattributes",
@@ -14,6 +14,10 @@
     {
       "path": ".github/workflows/development-windows.yml",
       "sha256": "d6983b6e4b9c3d1a4a93fe3ad7500adaa0bb69e1c772a9036311f00040c01736"
+    },
+    {
+      "path": ".github/workflows/oss-deltas.yml",
+      "sha256": "c53a392fc41b82029ce59d167f5ecb072324adbd326f172029a8393958550312"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
@@ -41,7 +45,7 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "8a15a9d4b0780a8e1a2c1e8a59c6c4acea12f949152baf86ae218014c2522e78"
+      "sha256": "34e3a14ea2d16a75d910bb19e8057cd39768494d7a65961c95ac437cd25723a0"
     },
     {
       "path": "docs/images/quiz.png",
@@ -78,6 +82,10 @@
     {
       "path": "docs/images/workspace.png",
       "sha256": "294783088c45fdce11ed6125557b9291e019b39d9e1977c4de4296cb95229866"
+    },
+    {
+      "path": "docs/OSS_UPDATES.md",
+      "sha256": "7755e0c59e08a435a2ff89100a4b63f598d59cc9a458b70609d138374d53e803"
     },
     {
       "path": "docs/releases/0.3.5.md",
@@ -456,6 +464,14 @@
       "sha256": "542334d3891ac327b05f7f77458912917d962f7718a20f59a115fcd4d20a120d"
     },
     {
+      "path": "edition/release/oss-deltas.mjs",
+      "sha256": "cddd6a9e11af74c4363fa21c3217003f61b85bdf3b53bd2ac24154fd22af9347"
+    },
+    {
+      "path": "edition/release/oss-feed-inputs.mjs",
+      "sha256": "3ab148c1ce5799543d5692cc9e8fcae17251fccfa79a83c292f37e693d159481"
+    },
+    {
       "path": "edition/skills/artifact-images/references/image-guidance.md",
       "sha256": "fea632b804262f974a38a4961d38f40ea4628f92b22c53218549890ee931b011"
     },
@@ -486,6 +502,10 @@
     {
       "path": "edition/test/enterprise-config.test.mjs",
       "sha256": "bc5475fde65204aadab5971a330e9827674e13d61e7e4f8ea1c76012bf606981"
+    },
+    {
+      "path": "edition/test/oss-deltas.test.mjs",
+      "sha256": "07f95c40bbb4b2859fef13a3ad0ae0e5a6480500e5402cfb1c7aa709d22df50b"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",

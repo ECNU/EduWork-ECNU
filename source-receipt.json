@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.5-dev.20261016.1",
+  "version": "0.4.6-dev.20261017.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-16T10:52:57.974Z",
-  "fileSetSHA256": "c6ac7a6720a79f27a6343f4ae1b4150f102d18fe3092d157ba9f30c6068e0dd7",
+  "createdAt": "2026-10-17T15:56:14.622Z",
+  "fileSetSHA256": "0d1ad9a1bbbc0674e2818aee59afdf3cd5745102b5401f0b851370b281d573b5",
   "files": [
     {
       "path": ".gitattributes",
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "40b4c8574ddaf93c11ba2bea3e5593e3bf17e4c8fe22788c472e638ba5f29c3d"
+      "sha256": "9613dd91c5f1aecce9a0e682b868e0df98c78ee6ea1157846f51836e28634ca0"
     },
     {
       "path": ".gitignore",
@@ -37,7 +37,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "ae8dbb457d32ef0fc56e1f0f060a2927c3bc0beb97f2eddc2782af2101eacba7"
+      "sha256": "20f47d67e8148b644dcdb5462489c600346449e6639433f5385e49e7e8dfa63c"
     },
     {
       "path": "docs/BUILD.md",
@@ -148,6 +148,10 @@
       "sha256": "da786184f87986dba94d262c8762202a45f19100103869084f798633730c88a0"
     },
     {
+      "path": "docs/releases/0.4.6-dev.20261017.1.md",
+      "sha256": "abecdea9e8093b2e96f4e02bb0567719a2dbbac51bffdaea695aa9228578a1b7"
+    },
+    {
       "path": "docs/USER_GUIDE.md",
       "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
     },
@@ -221,27 +225,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "14e3c986bf227ad2654e35ea33a2f62d663bc6c73ac833917c9c945582befb29"
-    },
-    {
-      "path": "edition/plugins/browser-upstream/lib/index.js",
-      "sha256": "3c528402d96f6e18d1e4b46af791943b4243e9f36dcf7527320788f67370cfc1"
-    },
-    {
-      "path": "edition/plugins/browser-upstream/package.json",
-      "sha256": "10c01c7d0b78258c9e7749ba8819ba2e6df800fd2845c00078505dbb6a65389f"
-    },
-    {
-      "path": "edition/plugins/browser-upstream/README_EN.md",
-      "sha256": "d57fd64f8998793d58605ae6ae8553cbd72c91a941fa7f076687d482ba6902a8"
-    },
-    {
-      "path": "edition/plugins/browser-upstream/README.md",
-      "sha256": "d203b05a0ee38f6c3477cb0cf28e38ed751cd5faa4cbc23ad8e66e6f679569d4"
-    },
-    {
-      "path": "edition/plugins/browser-upstream/test/permission.test.mjs",
-      "sha256": "41aec70b61dd2fedb010ef11471f6a41ab13f9c3bfb96bad1bce30f0c1908ab1"
+      "sha256": "0e636e8202d71e7c59955c0953cb096db362a83ea04b18a9c65e6906dc2ab609"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -488,12 +472,20 @@
       "sha256": "cad296b926e8415de3bfdaeb9850d617318161576acf39f5098e9395e5a984e6"
     },
     {
+      "path": "edition/test/browser-composition.test.mjs",
+      "sha256": "ee927daa687ddcd1ca9bae410a46c96b8ca5a7439b96143fb6e05d9628324dfa"
+    },
+    {
+      "path": "edition/test/build-pinned-product.mjs",
+      "sha256": "f279157c920628ad4f0e3b921889fa1006d8d874196100fdad5714006b53c150"
+    },
+    {
       "path": "edition/test/chat-model-catalog.test.mjs",
       "sha256": "53a04ee55b49b2e77ee629a8d544010bbc86493232724973ab5ee75cfaf063a7"
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "7fab894beb0109aeefef567764c9930344c1c906d24ba1757bd0fdf794b02d5c"
+      "sha256": "bc5475fde65204aadab5971a330e9827674e13d61e7e4f8ea1c76012bf606981"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",
@@ -501,7 +493,7 @@
     },
     {
       "path": "edition/test/test-desktop-candidate.ps1",
-      "sha256": "abf1709449b1ddd4631079bc3508b4532b651bd97eea9520750910b0eec39d2c"
+      "sha256": "275e87f394684a4b87b265ccf3c370b01cfd770995ac76d2c793610818ec0e20"
     },
     {
       "path": "edition/test/typert-contract.test.mjs",
@@ -513,11 +505,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "fc928efe96b2c8def3df9cdea87ff53a1b21361ba429e93e1405e1a2d2dc8e0d"
+      "sha256": "8ccb1ac6174891c6b120f1e9daf0b0ec66101c7bf1006ba027871632f327e1e0"
     },
     {
       "path": "README.md",
-      "sha256": "cadb43be0d3726f5329ef6880357ffaabda8700c3a7901aff5de17f262d53728"
+      "sha256": "63ff55ad112ba516ac4facddaf0f1f84e80a697bded307fb0c02829d952c329e"
     }
   ],
   "artifacts": [],

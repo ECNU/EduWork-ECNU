@@ -73,16 +73,6 @@
         "endpoint": "/user/active",
         "productName": "EduWork@ECNU"
       }
-    },
-    {
-      "root": "edition",
-      "source": "edition/plugins/browser-upstream",
-      "id": "ecnu-browser",
-      "name": "@eduwork/ecnu-browser-upstream",
-      "config": {
-        "headless": true,
-        "toolCallTimeoutMs": 120000
-      }
     }
   ],
   "skills": [
@@ -170,6 +160,10 @@
       "disabled": true
     },
     {
+      "id": "eduwork-browser-use",
+      "disabled": true
+    },
+    {
       "id": "web",
       "config": {
         "searchProvider": "ecnu-worker"
@@ -177,6 +171,14 @@
     },
     {
       "insert": [
+        {
+          "id": "ecnu-browser",
+          "name": "@eduwork/dsh-browser-upstream",
+          "config": {
+            "headless": true,
+            "toolCallTimeoutMs": 120000
+          }
+        },
         {
           "id": "ecnu-browser-use",
           "name": "@deepseek-ai/dsh-browser-use"
@@ -186,6 +188,7 @@
   ],
   "retiredPluginIds": [
     "eduwork-browser",
-    "eduwork-search"
+    "eduwork-search",
+    "eduwork-browser-use"
   ]
 }

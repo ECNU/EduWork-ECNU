@@ -51,20 +51,22 @@ jobs:
           if ($LASTEXITCODE) { throw 'Institution configuration checks failed' }
           node --test institution/edition/plugins/chatecnu-active-heartbeat/test/scheduler.test.mjs institution/edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs
           if ($LASTEXITCODE) { throw 'Heartbeat contract checks failed' }
-      - name: Build with the public core implementation
+      - name: Build the pinned desktop product with the public core implementation
         shell: pwsh
-        run: node core/scripts/ci-eduwork-web.mjs --core-root ./core --edition-root ./institution --distribution-config edition/distribution.json --build-only
-      - name: Validate institution RPC declarations with the built Runtime
+        run: node institution/edition/test/build-pinned-product.mjs --core ./core --edition ./institution --output "$env:RUNNER_TEMP/ecnu-pinned-product"
+      - name: Validate school adapters and composition with the built Runtime
         shell: pwsh
         run: |
-          $env:EDUWORK_TEST_RUNTIME = (Resolve-Path core/dist/ci-local-web/assembly/d).Path
-          node --test institution/edition/test/typert-contract.test.mjs
-          if ($LASTEXITCODE) { throw 'Institution RPC declarations failed strict validation' }
+          & institution/edition/test/test-desktop-candidate.ps1 -CoreRoot (Resolve-Path core).Path -EditionRoot (Resolve-Path institution).Path -Product "$env:RUNNER_TEMP/ecnu-pinned-product/product"
+          if ($LASTEXITCODE) { throw 'Institution adapter and composition checks failed' }
       - name: Retain local Web validation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: eduwork-ecnu-local-web-validation
           retention-days: 7
-          path: core/dist/ci-local-web/evidence/public
+          path: |
+            ${{ runner.temp }}/ecnu-pinned-product/evidence
+            ${{ runner.temp }}/ecnu-pinned-product/source-audit
+            ${{ runner.temp }}/ecnu-pinned-product/source-report
           if-no-files-found: error

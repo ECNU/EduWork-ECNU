@@ -41,11 +41,12 @@ test('all school plugin options are visible, active defaults survive restart, an
   const product = join(root, 'product'), path = join(root, 'eduwork.jsonc')
   await mkdir(join(product, 'resources/desktop'), { recursive: true })
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url)))
-  await writeFile(join(product, 'composition.json'), JSON.stringify([{ insert: distribution.plugins }]))
+  const plugins = [...distribution.plugins, ...distribution.patches.flatMap(row => row.insert ?? [])]
+  await writeFile(join(product, 'composition.json'), JSON.stringify([{ insert: plugins }]))
   const metadata = await readFile(new URL('../desktop/configuration-options.json', import.meta.url), 'utf8')
   await writeFile(join(product, 'resources/desktop/configuration-options.json'), metadata)
   const fields = JSON.parse(metadata)
-  for (const row of distribution.plugins) for (const key of Object.keys(row.config)) assert.ok(fields[`plugins.${row.id}.${key}`]?.[0], `${row.id}.${key}`)
+  for (const row of plugins) for (const key of Object.keys(row.config ?? {})) assert.ok(fields[`plugins.${row.id}.${key}`]?.[0], `${row.id}.${key}`)
   const sourceChecks = [
     ['chatecnu-campus-search', '../plugins/tool-ecnu-campus-search/lib/core.js'],
     ['chatecnu-vision', '../plugins/provider-vision-fallback/lib/vision.js'],
@@ -75,6 +76,8 @@ test('all school plugin options are visible, active defaults survive restart, an
   assert.equal(vision.baseURL, 'http://uat.example.test/v1')
   assert.equal(vision.model, 'custom-image')
   assert.equal(config['chatecnu-vision'].maxAnalysisTokens, 2048)
+  assert.equal(config['ecnu-browser'].headless, true)
+  assert.equal(config['ecnu-browser'].toolCallTimeoutMs, 120000)
   assert.ok(active.text.includes('// local test environment'))
   assert.equal(await readFile(file.backup, 'utf8'), before)
   const restart = await new ConfigurationFile(path, join(root, 'data'), options).open()

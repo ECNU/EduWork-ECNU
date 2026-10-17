@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.6-dev.20261017.1",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-17T15:53:57.694Z",
-  "fileSetSHA256": "1f2b77ec41bbbe269bd48a457b88dc67e5d66db7d41d1b0fd985880cb605168b",
+  "createdAt": "2026-10-17T15:56:14.622Z",
+  "fileSetSHA256": "0d1ad9a1bbbc0674e2818aee59afdf3cd5745102b5401f0b851370b281d573b5",
   "files": [
     {
       "path": ".gitattributes",
@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "d92f1f48dc922061dc77a2749b6714352f82eff57f95edde335cc6b79e6aee3e"
+      "sha256": "9613dd91c5f1aecce9a0e682b868e0df98c78ee6ea1157846f51836e28634ca0"
     },
     {
       "path": ".gitignore",
@@ -477,7 +477,7 @@
     },
     {
       "path": "edition/test/build-pinned-product.mjs",
-      "sha256": "a4dfe65c1c5a6dca41f31f4684271ce8b4597f24fb79e7637bd5769c90c19be1"
+      "sha256": "f279157c920628ad4f0e3b921889fa1006d8d874196100fdad5714006b53c150"
     },
     {
       "path": "edition/test/chat-model-catalog.test.mjs",

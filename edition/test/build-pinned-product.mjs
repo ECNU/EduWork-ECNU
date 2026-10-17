@@ -17,7 +17,7 @@ function include(name) {
   const stage = catalog.find(row => row.name === name)
   if (!stage) throw Error('Missing public build stage: ' + name)
   selected.add(name)
-  for (const dependency of stage.requires) include(dependency)
+  for (const dependency of [...stage.requires, ...stage.dependsOn]) include(dependency)
 }
 include('product')
 const workspace = new Workspace({ root: output, parameters: { core, edition, version: receipt.version }, stages: catalog.filter(row => selected.has(row.name)), platform: process.platform + '-' + process.arch })

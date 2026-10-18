@@ -1,0 +1,77 @@
+name: Prepare ECNU OSS delta artifacts
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Already published ECNU version (for example 0.4.6)'
+        required: true
+        type: string
+      platform:
+        description: 'Prepare patches on the matching native runner'
+        required: true
+        default: both
+        type: choice
+        options: [both, windows, macos]
+permissions:
+  contents: read
+concurrency:
+  group: oss-deltas-${{ inputs.version }}-${{ inputs.platform }}
+  cancel-in-progress: false
+jobs:
+  prepare:
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(inputs.platform == 'windows' && '[{"runner":"windows-latest","platform":"windows"}]' || inputs.platform == 'macos' && '[{"runner":"macos-15","platform":"macos"}]' || '[{"runner":"windows-latest","platform":"windows"},{"runner":"macos-15","platform":"macos"}]') }}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: institution
+          persist-credentials: false
+      - name: Read the pinned public core
+        id: core
+        shell: pwsh
+        run: |
+          $lock = Get-Content institution/core.lock.json -Raw | ConvertFrom-Json
+          if ($lock.repository -ne 'https://github.com/ecnu/EduWork.git' -or $lock.commit -notmatch '^[a-f0-9]{40}$') { throw 'Pin an exact public core commit.' }
+          "commit=$($lock.commit)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: ${{ steps.core.outputs.commit }}
+          path: core
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+      - name: Verify delta delivery contracts
+        shell: bash
+        env:
+          EDUWORK_CORE_ROOT: ${{ github.workspace }}/core
+        run: node --test institution/edition/test/oss-deltas.test.mjs
+      - name: Prepare patches from unchanged published archives
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          node institution/edition/release/oss-deltas.mjs \
+            --core ./core --version "$RELEASE_VERSION" \
+            --platform '${{ matrix.platform }}' \
+            --cache "$RUNNER_TEMP/oss-archives" \
+            --output "$RUNNER_TEMP/oss-deltas" --limit 3
+      - name: Retain patches and their verification receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: oss-${{ matrix.platform }}-deltas
+          path: |
+            ${{ runner.temp }}/oss-deltas/plan.json
+            ${{ runner.temp }}/oss-deltas/delta-receipt.json
+            ${{ runner.temp }}/oss-deltas/*.zip
+            ${{ runner.temp }}/oss-deltas/*.delta
+            ${{ runner.temp }}/oss-deltas/*.sha256
+          compression-level: 0
+          retention-days: 3
+          if-no-files-found: error

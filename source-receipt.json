@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.6",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-18T03:33:29.665Z",
-  "fileSetSHA256": "e30f9d4c7a0d4adc2666d0c0f7fbbb9085ad53aa8f78bc431883c3fc3ff7e026",
+  "createdAt": "2026-10-18T03:29:19.101Z",
+  "fileSetSHA256": "4c71a1ceccf4dbd6b0f10482ba0a5fb36dce8a19386929c6fbff3c40603ec0a6",
   "files": [
     {
       "path": ".gitattributes",
@@ -18,10 +18,6 @@
     {
       "path": ".github/workflows/oss-deltas.yml",
       "sha256": "c53a392fc41b82029ce59d167f5ecb072324adbd326f172029a8393958550312"
-    },
-    {
-      "path": ".github/workflows/prepare-oss-deltas.yml",
-      "sha256": "df86f7d62332bd3d384020a318491fd95eac1c5b04f089068fd3b53988064a4e"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
@@ -49,7 +45,7 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "ce92169425ba170860b7e25d7c218524b36f973fcbce5addd1e0851c5de9a911"
+      "sha256": "34e3a14ea2d16a75d910bb19e8057cd39768494d7a65961c95ac437cd25723a0"
     },
     {
       "path": "docs/images/quiz.png",

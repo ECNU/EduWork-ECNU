@@ -76,8 +76,6 @@ Mac 贡献者先在公共核心完成路径、资源和签名适配，再由学�
 
 ## Electron 开发候选与发行
 
-OSS 发布可运行 **Prepare ECNU OSS delta artifacts**，指定已经公开的学校版本及平台。工作流从 GitHub 下载并校验该版本和最多三个旧版本的原包，在 Windows/macOS 原生环境生成差分及回执；Mac 差分还需实际还原并比对文件树。该步骤不重新构建应用、不修改 GitHub Release，也不部署 OSS。维护者下载经过校验的差分，调用 `edition/release/oss-feed-inputs.mjs` 准备 Windows 清单或 Mac 签名输入，验收后再上传并更新获批渠道。大于完整包一半的差分不采用，始终保留完整包回退。
-
 Source Alpha 的 GitHub 发布直接在 CI 内完成，不经维护者电脑转传安装包。候选工作流选择 `main`、版本、两个平台并开启 `publish`，提供已确认的说明文件并确认 `notes_approved` 后，构建成功会自动调用云端发布任务。默认不开启发布。
 
 已有成功构建可以单独运行 `Publish ECNU desktop candidate`，填写原 `source_run_id`、版本和 `docs/releases/<版本>.md`。先以 `publish=false` 验证，再以 `publish=true` 发布；上传失败也复用同一构建重试，不重新打包。发布脚本来自 `core.lock.json` 锁定的公版核心，检查两个平台回执和哈希后才将草稿公开。Source Alpha 发布为非 Latest 的 prerelease；0.4.0 stable 发布为正式 Release 并标记 Latest。预发布同样生成 Windows 更新清单并保留 macOS 更新能力；发布 GitHub Release 不会自动部署 OSS 或修改配置源。只有远端附件和标签核对完成，才算发布完成。

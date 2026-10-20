@@ -73,6 +73,13 @@
         "endpoint": "/user/active",
         "productName": "EduWork@ECNU"
       }
+    },
+    {
+      "root": "edition",
+      "source": "edition/plugins/ecnu-calendar",
+      "id": "ecnu-calendar",
+      "name": "@chatecnu-work/dsh-ecnu-calendar",
+      "config": {}
     }
   ],
   "skills": [
@@ -101,6 +108,23 @@
       "source": "edition/skills/artifact-images",
       "defaultEnabled": true,
       "replace": true
+    },
+    {
+      "name": "calendar-management",
+      "sourcePackage": "@eduwork/dsh-calendar",
+      "sourcePath": "skills/calendar-management",
+      "defaultEnabled": true,
+      "replace": true,
+      "references": [
+        {
+          "title": "ECNU 校历使用说明",
+          "path": "../../resources/calendar/guide.md"
+        },
+        {
+          "title": "2026–2027 校历数据",
+          "path": "../../resources/calendar/2026-2027.json"
+        }
+      ]
     }
   ],
   "resources": [
@@ -148,6 +172,16 @@
       "root": "edition",
       "source": "edition/desktop/configuration-options.json",
       "target": "desktop/configuration-options.json"
+    },
+    {
+      "root": "edition",
+      "source": "edition/calendar/guide.md",
+      "target": "calendar/guide.md"
+    },
+    {
+      "root": "edition",
+      "source": "edition/plugins/ecnu-calendar/data/2026-2027.json",
+      "target": "calendar/2026-2027.json"
     }
   ],
   "patches": [

@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.6",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-20T02:12:57.494Z",
-  "fileSetSHA256": "1e444031cf9daba27af7b5971db16a3193d23fcad70de790632ad4bb7c142bad",
+  "createdAt": "2026-10-18T03:29:19.101Z",
+  "fileSetSHA256": "4c71a1ceccf4dbd6b0f10482ba0a5fb36dce8a19386929c6fbff3c40603ec0a6",
   "files": [
     {
       "path": ".gitattributes",
@@ -17,7 +17,7 @@
     },
     {
       "path": ".github/workflows/oss-deltas.yml",
-      "sha256": "c4b01984816103890dfd07a9a65cb45efcafa7d9d6a549f10d39b50876e78bed"
+      "sha256": "c53a392fc41b82029ce59d167f5ecb072324adbd326f172029a8393958550312"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
@@ -41,7 +41,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "c85d87bafa973c5d5209c0214f0d3ddd8657433be9a416ed703dce22482c0738"
+      "sha256": "0c35878293d10657f249920cf6cfeb8c9aba987f54b670405ed038a00d689ee2"
     },
     {
       "path": "docs/BUILD.md",
@@ -85,7 +85,7 @@
     },
     {
       "path": "docs/OSS_UPDATES.md",
-      "sha256": "5bb6f7e08cdfe73997905c6bd5dace420ffac31e14a94a91dd6458adab4cac1f"
+      "sha256": "7755e0c59e08a435a2ff89100a4b63f598d59cc9a458b70609d138374d53e803"
     },
     {
       "path": "docs/releases/0.3.5.md",
@@ -168,10 +168,6 @@
       "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
     },
     {
-      "path": "edition/calendar/guide.md",
-      "sha256": "d597a8e45862089456d0754ffe83326602b8d0f406689a82490e0c101f4df45d"
-    },
-    {
       "path": "edition/desktop-020/publisher-bootstrap.darwin.json",
       "sha256": "3e0ad76d5ddc97253e846040a21acf26b7234fb719bac5625517fc0c53c7d42b"
     },
@@ -241,7 +237,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "d980478eed63efa377c47c3108068229d7ea5bab668c2ad9618e9875fb5d171e"
+      "sha256": "0e636e8202d71e7c59955c0953cb096db362a83ea04b18a9c65e6906dc2ab609"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -392,26 +388,6 @@
       "sha256": "06fa7ef870200895a616cb959913c1c8f07e35aaab6eb230b981f69d1a9a7387"
     },
     {
-      "path": "edition/plugins/ecnu-calendar/data/2026-2027.json",
-      "sha256": "4f1e15f6a99d2fc833e8adf5c2bc509fbbcdf170f5c292523c20e692b69b1965"
-    },
-    {
-      "path": "edition/plugins/ecnu-calendar/lib/index.js",
-      "sha256": "cead0e040b377717fbaace8f35fb7549efd063993cbb5270559771b72df277fd"
-    },
-    {
-      "path": "edition/plugins/ecnu-calendar/package.json",
-      "sha256": "ac078877ce37446c4c860935bde89719bfb68deef345b9364fb5fad059b67fce"
-    },
-    {
-      "path": "edition/plugins/ecnu-calendar/README_EN.md",
-      "sha256": "3aeefd96412df3f9fff057a3390ca9818cf8d5deadab051397eb25ce000491ad"
-    },
-    {
-      "path": "edition/plugins/ecnu-calendar/README.md",
-      "sha256": "d352dd420a75e08d1d9d29fcfd9cca621398bc910e080da06e0db10e5a7b4c58"
-    },
-    {
       "path": "edition/plugins/provider-vision-fallback/lib/evidence-store.js",
       "sha256": "f2e9d9ce27d59a529c342fad08f636a68e2fdab4c4ca139fdb982bda21d25221"
     },
@@ -493,15 +469,11 @@
     },
     {
       "path": "edition/release/oss-deltas.mjs",
-      "sha256": "ae368f2486a722891a0d9f361e298dc19ed5cc2b8567f42245f7aaa1df3ad1a4"
+      "sha256": "cddd6a9e11af74c4363fa21c3217003f61b85bdf3b53bd2ac24154fd22af9347"
     },
     {
       "path": "edition/release/oss-feed-inputs.mjs",
       "sha256": "3ab148c1ce5799543d5692cc9e8fcae17251fccfa79a83c292f37e693d159481"
-    },
-    {
-      "path": "edition/release/website-pointers.mjs",
-      "sha256": "db0dba8cdd19daa9bfb227f29b308dc7c7c433acc0334f0104a8083f45691037"
     },
     {
       "path": "edition/skills/artifact-images/references/image-guidance.md",
@@ -528,14 +500,6 @@
       "sha256": "f279157c920628ad4f0e3b921889fa1006d8d874196100fdad5714006b53c150"
     },
     {
-      "path": "edition/test/calendar-browser-registration.test.mjs",
-      "sha256": "e11e84add77686c8a4aecbd11214f6af84cdf211031c7e0646be1cb7f665fa27"
-    },
-    {
-      "path": "edition/test/calendar-pilot.test.mjs",
-      "sha256": "386b7b22fbcaae1bfd58f7bd0c90b56a7a0c4ff9d134f5cfabc447a52ed51f24"
-    },
-    {
       "path": "edition/test/chat-model-catalog.test.mjs",
       "sha256": "53a04ee55b49b2e77ee629a8d544010bbc86493232724973ab5ee75cfaf063a7"
     },
@@ -545,7 +509,7 @@
     },
     {
       "path": "edition/test/oss-deltas.test.mjs",
-      "sha256": "e865ce1f8a2d44e05f65ea359fe0c8750a59b681c7ebfca32faaed702512358e"
+      "sha256": "07f95c40bbb4b2859fef13a3ad0ae0e5a6480500e5402cfb1c7aa709d22df50b"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",
@@ -558,10 +522,6 @@
     {
       "path": "edition/test/typert-contract.test.mjs",
       "sha256": "94dbe6830627dce39659943ac6ce96803faeb94e475411b39e5a9de1f4d88824"
-    },
-    {
-      "path": "edition/test/website-pointers.test.mjs",
-      "sha256": "da3e4fac82bb49a96e8818b0d2334b2e76231f276a184c4c85d7c86afb25ec9a"
     },
     {
       "path": "LICENSE",

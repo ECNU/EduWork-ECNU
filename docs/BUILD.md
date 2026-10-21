@@ -14,6 +14,8 @@
 
 桌面构建使用 `core.lock.json` 锁定的公版，以及公版 `config/desktop-build.json` 指定的 DSH 与编译依赖锁。学校 `edition/desktop-build.json` 声明平台签名配置目录和机构验证脚本，工作流不复制公版构建实现。
 
+构建与发布使用 Node.js 24.22.1，与公版随包运行时一致。旧的 Windows 单平台 PowerShell 发布工作流已退役；请使用下面的双平台候选及独立发布流程。
+
 运行 **Build ECNU desktop release candidates**，设置与公版基线匹配的版本、`platform=both`、`publish=false`，并提供已确认的发布说明；仅开发测试时改用下文的 `development=true`。版本决定更新渠道：`X.Y.Z` 为 stable；Alpha、Beta、RC 和日期 dev 版本为预发布。两者默认开启软件更新，由用户在设置中选择是否开启及接收渠道；关闭软件更新不影响签名配置更新。学校签名配置首次启动验证始终启用。常规升级只更新核心锁与装配配置，不新增工作流模式。
 
 实际装配、桌面检查和发布继续调用公版脚本；机构工作流另用实际装配的 Runtime 验证校内插件，测试使用合成账号和本机 HTTP 服务。学校登录与媒体服务仍需真机验收。通过检查不等于已发布，发布还须确认说明并启用 `publish`；发布任务强制执行签名配置首次启动检查，产物直接在 CI 上传。

@@ -18,16 +18,33 @@ test('campus skill and tool share school authorization without requiring a legac
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url)))
   const tool = distribution.plugins.find(row => row.id === 'chatecnu-campus-search').config
   const skill = distribution.skills.find(row => row.name === 'ecnu-campus-search')
-  assert.deepEqual(skill.metadata.eduwork, {
-    credentialRef: tool.credentialRef, oidcProfileId: tool.oidcProfileId,
-  })
+  // The Skill owns both its display metadata and account binding. The core's
+  // metadata option replaces the entire header, so do not duplicate a partial
+  // binding here and accidentally discard the display name/description.
+  assert.equal(skill.metadata, undefined)
   const source = await readFile(new URL('../skills/ecnu-campus-search/SKILL.md', import.meta.url), 'utf8')
   const header = /^---\r?\n([\s\S]*?)\r?\n---/.exec(source)?.[1]
   assert.ok(header)
-  for (const [key, value] of Object.entries(skill.metadata.eduwork)) assert.ok(header.includes(`${key}: ${value}`), key)
+  for (const key of ['credentialRef', 'oidcProfileId']) assert.ok(header.includes(`${key}: ${tool[key]}`), key)
   assert.ok(header.includes('  eduwork:'))
   assert.doesNotMatch(header, /CHATECNU_API_KEY/)
   assert.equal(skill.defaultEnabled, true)
+})
+
+test('the desktop assembly preserves campus search display metadata and account binding', async t => {
+  const { copyDshBundledSkills } = await import(pathToFileURL(resolve(core, 'scripts/lib/dsh-skills.mjs')))
+  const root = await mkdtemp(join(tmpdir(), 'ecnu-campus-skill-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  const repository = fileURLToPath(new URL('../../', import.meta.url))
+  const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url)))
+  const skill = distribution.skills.find(row => row.name === 'ecnu-campus-search')
+  const skillRoot = join(root, 'skills')
+  await copyDshBundledSkills({ repository, packageRoot: join(root, 'node_modules'), skillRoot, skills: [skill] })
+  const original = await readFile(new URL('../skills/ecnu-campus-search/SKILL.md', import.meta.url))
+  const installed = await readFile(join(skillRoot, skill.name, 'SKILL.md'))
+  assert.deepEqual(installed, original)
+  const text = installed.toString('utf8')
+  for (const expected of ['displayName: 华东师大校园智搜', 'displayDescription:', 'credentialRef: EDUWORK_API_KEY', 'oidcProfileId: ecnu']) assert.ok(text.includes(expected), expected)
 })
 
 test('all school plugin options are visible, active defaults survive restart, and UAT overrides reach the adapters', async t => {
@@ -253,8 +270,11 @@ test('school plugin endpoints are editable in the same file and skill authorizat
   assert.equal(new URL(configured['chatecnu-active-heartbeat'].baseURL).origin,new URL(configured['chatecnu-vision'].baseURL).origin)
   const distribution=JSON.parse(await readFile(new URL('../distribution.json',import.meta.url),'utf8'))
   const skill=distribution.skills.find(skill=>skill.name==='ecnu-campus-search')
-  assert.equal(skill.metadata.eduwork.oidcProfileId,'ecnu')
-  assert.equal(skill.metadata.eduwork.runtimeBaseURL,undefined)
+  assert.equal(skill.metadata,undefined)
+  const source=await readFile(new URL('../skills/ecnu-campus-search/SKILL.md',import.meta.url),'utf8')
+  const header=/^---\r?\n([\s\S]*?)\r?\n---/.exec(source)?.[1]
+  assert.match(header,/oidcProfileId: ecnu/)
+  assert.doesNotMatch(header,/runtimeBaseURL:/)
 })
 
 

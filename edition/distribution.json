@@ -80,13 +80,7 @@
       "root": "edition",
       "name": "ecnu-campus-search",
       "source": "edition/skills/ecnu-campus-search",
-      "defaultEnabled": true,
-      "metadata": {
-        "eduwork": {
-          "credentialRef": "EDUWORK_API_KEY",
-          "oidcProfileId": "ecnu"
-        }
-      }
+      "defaultEnabled": true
     },
     {
       "root": "edition",

@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.7",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-21T17:45:55.941Z",
-  "fileSetSHA256": "acaa042b9cd02a6774c69fa618f5d684dee42748e5fbb76a153fc9b292cdfb23",
+  "createdAt": "2026-10-21T18:16:29.732Z",
+  "fileSetSHA256": "718deb53ef585803ea70fbb8aa3e3d20cc7358fc877bcfe81ee025c8f5b19c00",
   "files": [
     {
       "path": ".gitattributes",
@@ -237,7 +237,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "0e636e8202d71e7c59955c0953cb096db362a83ea04b18a9c65e6906dc2ab609"
+      "sha256": "dc05e3a5d6fee50ddaaafc5f4532da1f33f582a4b64cf1746f61e0b9dad3c40e"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -509,7 +509,7 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "bc5475fde65204aadab5971a330e9827674e13d61e7e4f8ea1c76012bf606981"
+      "sha256": "1777680b9fa4423f9d1905c628208099a5ecf81d71f9ec393ef7bb438c2a5d41"
     },
     {
       "path": "edition/test/oss-deltas.test.mjs",

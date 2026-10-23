@@ -32,6 +32,17 @@ test('crashed WebView lease expires and plugin disposal stops activity', async (
   assert.equal(f.requests.length, 2)
 })
 
+test('an inactive page never evicts a foreground lease; a new active page takes the oldest slot', async () => {
+  const f = fixture()
+  for (let n = 0; n < 8; n++) await f.presence(`tab-${n}`)
+  await f.presence('closed-tab', false)
+  assert.deepEqual([...f.scheduler.clients.keys()], Array.from({ length: 8 }, (_, n) => `tab-${n}`))
+  await f.presence('tab-8')
+  assert.equal(f.scheduler.clients.size, 8)
+  assert.equal(f.scheduler.clients.has('tab-0'), false)
+  assert.equal(f.scheduler.clients.has('tab-8'), true)
+})
+
 test('network failure backs off exponentially, online recovery retries once', async () => {
   let fail = true
   const f = fixture(() => ({ state: fail ? 'retry' : 'ok', nextHeartbeatIn: 600 }))

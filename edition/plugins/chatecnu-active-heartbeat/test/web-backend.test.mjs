@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
-import { mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
@@ -74,6 +74,30 @@ test('installation identifier survives host restarts and moving the data directo
   await rename(f.config.stateDirectory, moved)
   await createWebHeartbeatSender(f.accounts, { ...f.config, stateDirectory: moved })(active)
   assert.equal(new Set(f.requests.map(request => request.body.client.installation_id)).size, 1)
+})
+
+test('an empty identifier left by an interrupted write is regenerated; other invalid content is kept', async t => {
+  const f = await fixture(t)
+  const file = join(f.config.stateDirectory, 'installation-id')
+  await mkdir(f.config.stateDirectory)
+  await writeFile(file, '\n')
+  assert.equal((await createWebHeartbeatSender(f.accounts, f.config)(active)).state, 'ok')
+  const id = f.requests[0].body.client.installation_id
+  assert.match(id, /^inst_[0-9a-f-]{36}$/)
+  assert.equal((await readFile(file, 'utf8')).trim(), id)
+  assert.equal(await installationID(f.config.stateDirectory), id)
+  await writeFile(file, 'corrupt-id\n')
+  await assert.rejects(installationID(f.config.stateDirectory), /invalid stored/)
+  assert.equal(await readFile(file, 'utf8'), 'corrupt-id\n')
+})
+
+test('concurrent first starts share one complete identifier and leave no temporary files', async t => {
+  const f = await fixture(t)
+  const ids = await Promise.all(Array.from({ length: 8 }, () => installationID(f.config.stateDirectory)))
+  assert.equal(new Set(ids).size, 1)
+  assert.match(ids[0], /^inst_[0-9a-f-]{36}$/)
+  assert.deepEqual(await readdir(f.config.stateDirectory), ['installation-id'])
+  if (process.platform !== 'win32') assert.equal((await stat(join(f.config.stateDirectory, 'installation-id'))).mode & 0o777, 0o600)
 })
 
 test('disabled and signed-out states do not send or require model credentials', async t => {

@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.8",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-24T17:08:25.889Z",
-  "fileSetSHA256": "93c5746830ddcc9a2d79d77582a64cc5a5ac1e729f77847f20a3461dc4d3db03",
+  "createdAt": "2026-10-24T17:23:43.110Z",
+  "fileSetSHA256": "99f7963a45b2dbf4244c61bc0f8a574f60904818c48cdc1780569f1a1a31755a",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "654c00dec57c9937ab47aae31f1ef6f2fc875c4b05a6897355fa733b02a26534"
+      "sha256": "c49ecf17f25461df5cfa978e71b583725ab6cee9d10b0725c308ea02856a5eb2"
     },
     {
       "path": ".github/workflows/oss-deltas.yml",
@@ -21,7 +21,7 @@
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
-      "sha256": "68d5430bd038f8834244f880e7a0509cd47d601147f47390d9a94648473027e1"
+      "sha256": "ab5c3c629289992d29a73600c7ab171c51c17eb16d13694ce0cc20e00304b222"
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
@@ -41,7 +41,7 @@
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "cc57be154b650de2ac342f5ead1fc81dc110e27f5ffa73dfeedaace09dddfe32"
+      "sha256": "3c7d8c23c2c55d018958bc423a55f7e3711e2c5c264e47d32b36add669a0ec9f"
     },
     {
       "path": "docs/images/quiz.png",
@@ -164,6 +164,10 @@
       "sha256": "0fde27f6e06d14796abec776ff56612a302345b1f1b064d57239d8ac6b945b32"
     },
     {
+      "path": "docs/releases/0.4.8.md",
+      "sha256": "6ad5a960539a0d97c0b6f1507d065595406b689acefc4c64e8acb6c807474aea"
+    },
+    {
       "path": "docs/USER_GUIDE.md",
       "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
     },
@@ -221,7 +225,7 @@
     },
     {
       "path": "edition/desktop/mac-updates.json",
-      "sha256": "842a522150427321e5df20fc3ed634bdecbe9eefd69eb75ae7c65e3134cd472e"
+      "sha256": "2a64de40b17333f68e4d8451acc2815df9a114b30e9502f7301aa64b6c4c615e"
     },
     {
       "path": "edition/desktop/media-defaults.json",
@@ -512,6 +516,10 @@
       "sha256": "1777680b9fa4423f9d1905c628208099a5ecf81d71f9ec393ef7bb438c2a5d41"
     },
     {
+      "path": "edition/test/macos-architecture.test.mjs",
+      "sha256": "9aec79c1735fcfc1858140d7ac3552dc30df9062a0f5930ac174e88622b0dd8b"
+    },
+    {
       "path": "edition/test/optional-packaging.test.mjs",
       "sha256": "f1213d1aeb4f1bdebc915da5c5d6bbf62543b32f3e6c6cd479a333f7502173e0"
     },
@@ -541,11 +549,11 @@
     },
     {
       "path": "README_EN.md",
-      "sha256": "82d978fce1fa968ec4dc7db7dac83514286ed652d6a72b059ed2240b1e399e87"
+      "sha256": "c733de1239a8ef0940a95144a03ff4de8035931007ea6cd6f9caca443071afe7"
     },
     {
       "path": "README.md",
-      "sha256": "d73f5b8ab1bafb969887dfb5d31b9a99e144a9363c1113d69b94f2709965b561"
+      "sha256": "8314c8d8e4f78ddf021beff3c14907b5199f6477ae4bfa326c0a73e135145ec0"
     }
   ],
   "artifacts": [],

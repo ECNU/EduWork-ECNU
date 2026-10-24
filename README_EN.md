@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#installation-and-use)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#installation-and-use)
 
 [简体中文](README.md) | **English**
 
@@ -147,7 +147,7 @@ For text-only models on the configured university route, image understanding ass
 
 ## Installation and use
 
-Supports **Windows x64** and **macOS 15+ Apple Silicon (arm64)**. The client runs on your computer, without a separate EduWork server to deploy.
+Supports **Windows x64**, **macOS 15+ Apple Silicon (arm64)** and **Intel (x64)**. The client runs on your computer, without a separate EduWork server to deploy.
 
 1. Download the complete desktop package for your platform from the university distribution channel or [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases). On Windows, use `windows-x64-setup.zip`, extract it, and run the installer inside. Alternatively, extract the full application ZIP into a writable directory and run `EduWork-Electron.exe`. On Mac, open the DMG and drag the application into Applications, or use the full application ZIP. GitHub's Source code archives are not desktop packages.
 2. On first launch, connect to the network to download university configuration. Follow the prompts to sign in and authorize access, then return to the client, check the university connection, and select a model.

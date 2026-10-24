@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#安装与使用)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#安装与使用)
 
 **简体中文** | [English](README_EN.md)
 
@@ -147,7 +147,7 @@ Knowledge Studio 是独立插件，通过宿主的侧栏插槽（slot）接入�
 
 ## 安装与使用
 
-支持 **Windows x64** 和 **macOS 15+ Apple Silicon（arm64）**。客户端在自己的电脑上运行，无需额外部署 EduWork 服务端。
+支持 **Windows x64**、**macOS 15+ Apple Silicon（arm64）** 和 **Intel（x64）**。客户端在自己的电脑上运行，无需额外部署 EduWork 服务端。
 
 1. 从学校发布渠道或 [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases) 获取对应平台的完整桌面包。Windows 推荐下载 `windows-x64-setup.zip`，解压后运行其中的安装程序；也可将完整程序 ZIP 解压到可写目录，运行 `EduWork-Electron.exe`。Mac 打开 DMG，将应用拖入“应用程序”；也可使用完整程序 ZIP。GitHub 的 Source code 压缩包不是桌面包。
 2. 首次启动联网下载学校配置，按引导使用学校账号登录并授权。返回客户端后，确认学校服务已连接，再选择模型。

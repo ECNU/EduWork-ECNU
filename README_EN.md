@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.2](https://img.shields.io/badge/DSH-0.2.1--rc.2-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.2) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#installation-and-use)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#installation-and-use)
 
 [简体中文](README.md) | **English**
 
@@ -44,9 +44,12 @@ The institution edition reuses the public workbench, Studio, skills, and desktop
 | `@eduwork/dsh-literature` | DBLP and arXiv literature search, BibTeX, and available full text. |
 | `@eduwork/dsh-memory` | Local memory and conversation retrieval. |
 | `@eduwork/dsh-mail` | Connect a mailbox, read messages, and send with authorization. |
+| [`@eduwork/dsh-annotation`](https://www.npmjs.com/package/@eduwork/dsh-annotation) | Annotate selected reply text, edit and send multiple comments together, retaining source numbers and drafts. |
 | [`@eduwork/dsh-desktop-pet`](https://www.npmjs.com/package/@eduwork/dsh-desktop-pet) | Optional desktop pet from the 0.4.5 development release, reflecting task and notification states. Includes red/blue Page, Dafeiyu, and Huashi; disabled by default, available in Settings → Desktop Pet. |
 
 Skill management and workbench settings are inherited too. Browsing uses DSH's official Playwright MCP provider, while web search uses the university account service. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
+
+Remote access is not preinstalled in this edition. Users with their own relay can install [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access) through plugin management. Restart, then enter the relay URL and access Key in Settings → Remote Access to enable access and pair devices. Installation does not automatically connect to a university relay. See the [relay deployment guide](https://github.com/ECNU/EduWork/blob/main/packages/dsh-remote-access/docs/DEPLOYMENT_EN.md).
 
 ### Plugins added by the ECNU edition
 

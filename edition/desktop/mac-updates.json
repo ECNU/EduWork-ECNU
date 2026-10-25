@@ -4,5 +4,11 @@
     "stable": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases/macos/stable/appcast.xml",
     "development": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases/macos/development/appcast.xml"
   },
-  "publicEDKey": "pXNlGmM2sVkVAwDT/Wd3W7zVVH7YX8b6wSTtQMv30MI="
+  "publicEDKey": "pXNlGmM2sVkVAwDT/Wd3W7zVVH7YX8b6wSTtQMv30MI=",
+  "feedsByArch": {
+    "x64": {
+      "stable": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases/macos/x64/stable/appcast.xml",
+      "development": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases/macos/x64/development/appcast.xml"
+    }
+  }
 }

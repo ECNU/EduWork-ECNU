@@ -2,6 +2,9 @@
   "schemaVersion": 1,
   "id": "eduwork-chatecnu",
   "coreBase": "config/distributions/generic.json",
+  "excludedOptionalBundles": [
+    "@eduwork/dsh-remote-access"
+  ],
   "brand": {
     "product": {
       "name": "EduWork@ECNU"

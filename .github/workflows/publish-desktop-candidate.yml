@@ -77,6 +77,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          RELEASE_PLATFORMS: '["windows","macos","macos-x64"]'
+          REQUIRE_MACOS15: 'true'
           RELEASE_VERSION: ${{ inputs.version }}
           RELEASE_NOTES: ${{ inputs.release_notes }}
           RELEASE_NOTES_APPROVED: ${{ inputs.notes_approved }}

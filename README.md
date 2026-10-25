@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.2](https://img.shields.io/badge/DSH-0.2.1--rc.2-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.2) [![Platform: Windows x64 / macOS arm64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64-9f2636?style=flat-square)](#安装与使用)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#安装与使用)
 
 **简体中文** | [English](README_EN.md)
 
@@ -44,9 +44,12 @@ flowchart TD
 | `@eduwork/dsh-literature` | DBLP、arXiv 文献检索、BibTeX 与可用全文。 |
 | `@eduwork/dsh-memory` | 本地记忆与历史对话检索。 |
 | `@eduwork/dsh-mail` | 连接邮箱，读取邮件并经授权发送。 |
+| [`@eduwork/dsh-annotation`](https://www.npmjs.com/package/@eduwork/dsh-annotation) | 选中回复文字添加批注，编辑多条批注后一起发送，保留来源编号与草稿。 |
 | [`@eduwork/dsh-desktop-pet`](https://www.npmjs.com/package/@eduwork/dsh-desktop-pet) | 0.4.5 开发版起内置的可选桌宠，与任务和通知状态联动；含红/蓝小页、大肥鱼和小花狮，默认关闭，可在“设置 → 桌面宠物”中开启。 |
 
 同时继承技能管理和工作台设置等能力，浏览器复用 DSH 官方 Playwright MCP，联网搜索由学校账户接口提供。公共技能包括 Word、PPT、表格、PDF、图像、语音、视频创作，Knowledge Studio、浏览器、技能创建与产品帮助，见[公版完整插件与技能清单](https://github.com/ECNU/EduWork#随包插件)。所需模型和服务按配置启用，个人 API Key 与其他模型仍可使用。
+
+本版暂不预装远程访问。有自建中继的用户仍可通过插件管理安装 [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access)，重启后在“设置 → 远程访问”中填写中继地址和接入 Key，开启并配对设备；不会自动接入学校中继。参见[中继部署指南](https://github.com/ECNU/EduWork/blob/main/packages/dsh-remote-access/docs/DEPLOYMENT.md)。
 
 ### 华师版增加的插件
 
@@ -144,7 +147,7 @@ Knowledge Studio 是独立插件，通过宿主的侧栏插槽（slot）接入�
 
 ## 安装与使用
 
-支持 **Windows x64** 和 **macOS 15+ Apple Silicon（arm64）**。客户端在自己的电脑上运行，无需额外部署 EduWork 服务端。
+支持 **Windows x64**、**macOS 15+ Apple Silicon（arm64）** 和 **Intel（x64）**。客户端在自己的电脑上运行，无需额外部署 EduWork 服务端。
 
 1. 从学校发布渠道或 [GitHub Releases](https://github.com/ECNU/EduWork-ECNU/releases) 获取对应平台的完整桌面包。Windows 推荐下载 `windows-x64-setup.zip`，解压后运行其中的安装程序；也可将完整程序 ZIP 解压到可写目录，运行 `EduWork-Electron.exe`。Mac 打开 DMG，将应用拖入“应用程序”；也可使用完整程序 ZIP。GitHub 的 Source code 压缩包不是桌面包。
 2. 首次启动联网下载学校配置，按引导使用学校账号登录并授权。返回客户端后，确认学校服务已连接，再选择模型。

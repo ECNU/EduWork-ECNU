@@ -2,6 +2,8 @@
 
 音乐技能由 `edition/skills/ecnu-music` 和 Host 插件 `tool-ecnu-music` 配合提供。仅导入技能目录不会安装原生工具；需要装配包含该插件的华师版客户端。
 
+当前接入范围限定在 `EduWork-ECNU` 仓库和华师版发行，公版暂不引入音乐插件或技能。插件使用现有 DSH 工具注册和 EduWork OIDC Host 接口，不要求修改 DSH Runtime；它仍依赖宿主提供这些服务，不能仅导入技能目录就获得调用能力。
+
 用户在 EduWork 登录学校账号后即可使用，无需再次输入 Key。学校需给调用主体分配 `ecnu-music`，OAuth 需包含 `llm:invoke`。图像、TTS 和音乐共享 `oidcAccounts.modelAuthorization` / `authorizedFetch`，Token 保存、到期刷新、退出登录失效和请求目标检查均由现有 OIDC Host 实现。音乐插件不读取学校凭据，不向技能或模型暴露 Token。
 
 ## 配置

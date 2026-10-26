@@ -6,6 +6,8 @@
 
 用户在 EduWork 登录学校账号后即可使用，无需再次输入 Key。学校需给调用主体分配 `ecnu-music`，OAuth 需包含 `llm:invoke`。图像、TTS 和音乐共享 `oidcAccounts.modelAuthorization` / `authorizedFetch`，Token 保存、到期刷新、退出登录失效和请求目标检查均由现有 OIDC Host 实现。音乐插件不读取学校凭据，不向技能或模型暴露 Token。
 
+现有 `media-openai` 适配器支持图像和语音 Provider；音乐服务的 `/music/*` 接口采用异步任务，需要提交、续查、取消、列出产物和下载等操作，不能仅增加一个图像或 TTS 模型配置。这里新增的插件负责这些音乐接口与原生工具的适配，复用已有登录能力；skill 负责创作流程与工具选择。将音乐适配单独放在学校仓库，便于独立迭代，也符合本轮仅华师版接入的范围。
+
 ## 配置
 
 发行默认值在 `edition/distribution.json`，个人覆盖放在同一份 `eduwork.jsonc`：

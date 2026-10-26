@@ -8,6 +8,7 @@ import {Readable} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 import {join,resolve,dirname} from 'node:path'
 import {fileURLToPath,pathToFileURL} from 'node:url'
+import {websiteManifest,websitePlatforms} from './website-pointers.mjs'
 
 export const repository='ECNU/EduWork-ECNU',product='EduWork-ECNU'
 const edition=resolve(dirname(fileURLToPath(import.meta.url)),'../..')
@@ -70,6 +71,7 @@ async function cachedArchive(asset,cache){
 
 export async function prepareDeltas({core,releases,version,platform,cache,output,limit=3}){
  const m=await coreModules(core),plan=releasePlan(releases,{version,platform,...m,limit})
+ const website=plan.channel==='stable'?websiteManifest(releases.find(r=>r.tag_name==='v'+plan.version),platform):undefined
  if(platform==='macos')assert.equal(process.platform,'darwin','Generate Sparkle deltas on native macOS')
  await mkdir(output,{recursive:false});await save(join(output,'plan.json'),plan)
  const archive=await cachedArchive(plan.target.archive,cache),bases=[]
@@ -107,6 +109,13 @@ export async function prepareDeltas({core,releases,version,platform,cache,output
  }
  const result={...plan,kind:'eduwork-ecnu-oss-deltas',coreCommit:m.coreCommit,verified:true,nativeReconstruction:platform==='macos'?'BinaryDelta apply and full tree diff':'file manifest matching; installed updater acceptance required',deltas,files,
   skippedBases:plan.bases.filter(b=>!deltas.some(d=>d.from===b.version)).map(b=>({version:b.version,reason:'delta-larger-than-half-full-archive'}))}
+ // Stable delivery also needs the website installer pointer; dev delivery must
+ // never produce a stable website promotion input.
+ if(website){
+  const name=websitePlatforms[platform].pointer,path=join(output,name)
+  await save(path,website)
+  result.website={name,bytes:(await stat(path)).size,sha256:await fileHash(path)}
+ }
  await save(join(output,'delta-receipt.json'),result)
  console.log(JSON.stringify({version:plan.version,platform,deltas:deltas.map(({from,bytes})=>({from,bytes})),skipped:result.skippedBases}))
  return result

@@ -25,10 +25,10 @@ test('foreign or unhashed archive cannot become a trusted OSS delta input',()=>{
  assert.throws(()=>plan([target]),/same edition/)
  const base=release(from);delete base.assets[0].digest;assert.throws(()=>plan([release(version),base]),/digest/)
 })
-async function fixture(t){
+async function fixture(t,targetVersion=version){
  const root=await mkdtemp(join(tmpdir(),'ecnu-oss-delta-'));t.after(()=>rm(root,{recursive:true,force:true}))
  const cache=join(root,'cache');await mkdir(cache);const runtime=randomBytes(128*1024),releases=[]
- for(const [v,text]of [[from,'old'],[version,'new']]){
+ for(const [v,text]of [[from,'old'],[targetVersion,'new']]){
   const files={'EduWork-Electron.exe':runtime,'resources/app.js':Buffer.from(text),'config/eduwork.jsonc':Buffer.from('{}')}
   const manifest=Buffer.from(JSON.stringify({schemaVersion:1,version:v,launcherVersion:v,flavor:'offline',files:Object.entries(files).map(([path,b])=>({path,bytes:b.length,sha256:hash(b)}))}))
   const name=release(v).assets[0].name,zip=await m.ZipWriter.create(join(cache,name));await zip.addEntry(product+'/RELEASE-MANIFEST.json',manifest)
@@ -40,6 +40,8 @@ async function fixture(t){
 test('actual public delta builder supports dev-to-dev and manifest keeps full fallback',async t=>{
  const f=await fixture(t),output=join(f.root,'delta')
  const result=await prepareDeltas({core,...f,version,platform:'windows',output})
+ assert.equal(result.website,undefined,'Development delivery never prepares a stable website pointer')
+ await assert.rejects(readFile(join(output,'latest-windows-amd64.json')),{code:'ENOENT'})
  assert.equal(result.deltas.length,1);assert.equal(result.deltas[0].from,from)
  const full={version,channel:'development',distribution:'eduwork-chatecnu',target:'windows-amd64',artifacts:[{shell:'electron',flavor:'offline',fileName:result.target.archive.name,bytes:result.target.archive.bytes,sha256:result.target.archive.sha256,url:result.target.archive.url}]}
  const before=structuredClone(full),updated=windowsManifest(full,result,'https://example.org/development/'+version+'/')
@@ -67,6 +69,17 @@ test('actual public delta builder supports dev-to-dev and manifest keeps full fa
  await writeFile(join(f.cache,result.target.archive.name),'corrupt')
  await assert.rejects(prepareDeltas({core,...f,version,platform:'windows',output:join(f.root,'corrupt-output')}))
 })
+test('stable delta preparation includes an installer pointer and records its hash',async t=>{
+ const stable='0.4.6',f=await fixture(t,stable),target=f.releases.find(r=>r.tag_name==='v'+stable)
+ const name=`${product}-${stable}-windows-x64-setup.zip`
+ target.assets.push({name,size:123,digest:'sha256:'+hash('synthetic installer'),browser_download_url:`https://github.com/${repository}/releases/download/v${stable}/${name}`})
+ const output=join(f.root,'stable-delta')
+ const result=await prepareDeltas({core,...f,version:stable,platform:'windows',output})
+ const bytes=await readFile(join(output,'latest-windows-amd64.json')),pointer=JSON.parse(bytes)
+ assert.equal(pointer.version,stable);assert.equal(pointer.artifacts[0].fileName,name)
+ assert.deepEqual(result.website,{name:'latest-windows-amd64.json',bytes:bytes.length,sha256:hash(bytes)})
+})
+
 test('Mac signing uses a separate derived receipt and preserves CI provenance',()=>{
  const archive={name:'app.zip',bytes:100,sha256:'a'.repeat(64)},full={passed:true,version,edition:product,asset:archive,editionCommit:'b'.repeat(40),deltas:[]}
  const receipt={kind:'eduwork-ecnu-oss-deltas',verified:true,platform:'macos',version,target:{archive},bases:[{version:from}],deltas:[{from,name:`${product}-${version}-macos-arm64-electron-from-${from}.delta`,bytes:20,sha256:'c'.repeat(64)}]}

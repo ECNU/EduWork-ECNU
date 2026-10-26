@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.6",
+  "version": "0.4.9",
   "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-18T03:29:19.101Z",
-  "fileSetSHA256": "4c71a1ceccf4dbd6b0f10482ba0a5fb36dce8a19386929c6fbff3c40603ec0a6",
+  "createdAt": "2026-10-25T03:21:40.927Z",
+  "fileSetSHA256": "8a09dd5c001214d8d83f73c766e7a32310c560dc10e6d279828809e2e85955c5",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,23 +13,19 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "d6983b6e4b9c3d1a4a93fe3ad7500adaa0bb69e1c772a9036311f00040c01736"
+      "sha256": "c49ecf17f25461df5cfa978e71b583725ab6cee9d10b0725c308ea02856a5eb2"
     },
     {
       "path": ".github/workflows/oss-deltas.yml",
-      "sha256": "c53a392fc41b82029ce59d167f5ecb072324adbd326f172029a8393958550312"
+      "sha256": "7303517c1f8e95ebaceb9661ec330a4a4fe260025bb40de4e129658568957d43"
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
-      "sha256": "21ca5853d3699f95d4ffff5581ff47b232312d6c89eea70f49a3daf6f088ac05"
-    },
-    {
-      "path": ".github/workflows/release-windows.yml",
-      "sha256": "51de65989038e2117d437195f14a8103399970b772a38b8898c1611c0633c376"
+      "sha256": "ab5c3c629289992d29a73600c7ab171c51c17eb16d13694ce0cc20e00304b222"
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "9613dd91c5f1aecce9a0e682b868e0df98c78ee6ea1157846f51836e28634ca0"
+      "sha256": "091f4f497f8fe32007299c9b29d4158862d3fb4ed6b65d07e22b28c5cc36cdc8"
     },
     {
       "path": ".gitignore",
@@ -41,11 +37,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "0c35878293d10657f249920cf6cfeb8c9aba987f54b670405ed038a00d689ee2"
+      "sha256": "896c515b1ba85e35f7fb74ae7fe6f7b20b6df7037c072d32f156ca068b92f7ae"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "34e3a14ea2d16a75d910bb19e8057cd39768494d7a65961c95ac437cd25723a0"
+      "sha256": "3c7d8c23c2c55d018958bc423a55f7e3711e2c5c264e47d32b36add669a0ec9f"
     },
     {
       "path": "docs/images/quiz.png",
@@ -85,7 +81,7 @@
     },
     {
       "path": "docs/OSS_UPDATES.md",
-      "sha256": "7755e0c59e08a435a2ff89100a4b63f598d59cc9a458b70609d138374d53e803"
+      "sha256": "5bb6f7e08cdfe73997905c6bd5dace420ffac31e14a94a91dd6458adab4cac1f"
     },
     {
       "path": "docs/releases/0.3.5.md",
@@ -164,6 +160,18 @@
       "sha256": "cc6f391472fa32ee130e0f0434877f59d9e60450f13378c049deb7757a97f987"
     },
     {
+      "path": "docs/releases/0.4.7.md",
+      "sha256": "0fde27f6e06d14796abec776ff56612a302345b1f1b064d57239d8ac6b945b32"
+    },
+    {
+      "path": "docs/releases/0.4.8.md",
+      "sha256": "6ad5a960539a0d97c0b6f1507d065595406b689acefc4c64e8acb6c807474aea"
+    },
+    {
+      "path": "docs/releases/0.4.9.md",
+      "sha256": "64e9f24dbfd25cc5962e3d58c3c2153c0dad746530aa31f92699c9e1c29daf1f"
+    },
+    {
       "path": "docs/USER_GUIDE.md",
       "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
     },
@@ -221,7 +229,7 @@
     },
     {
       "path": "edition/desktop/mac-updates.json",
-      "sha256": "842a522150427321e5df20fc3ed634bdecbe9eefd69eb75ae7c65e3134cd472e"
+      "sha256": "2a64de40b17333f68e4d8451acc2815df9a114b30e9502f7301aa64b6c4c615e"
     },
     {
       "path": "edition/desktop/media-defaults.json",
@@ -237,7 +245,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "0e636e8202d71e7c59955c0953cb096db362a83ea04b18a9c65e6906dc2ab609"
+      "sha256": "629aaedd18fc057d9286ef95ddb6c7542c7e6fa7f793f84aa06b6dccfa06f450"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -469,11 +477,15 @@
     },
     {
       "path": "edition/release/oss-deltas.mjs",
-      "sha256": "cddd6a9e11af74c4363fa21c3217003f61b85bdf3b53bd2ac24154fd22af9347"
+      "sha256": "ae368f2486a722891a0d9f361e298dc19ed5cc2b8567f42245f7aaa1df3ad1a4"
     },
     {
       "path": "edition/release/oss-feed-inputs.mjs",
       "sha256": "3ab148c1ce5799543d5692cc9e8fcae17251fccfa79a83c292f37e693d159481"
+    },
+    {
+      "path": "edition/release/website-pointers.mjs",
+      "sha256": "db0dba8cdd19daa9bfb227f29b308dc7c7c433acc0334f0104a8083f45691037"
     },
     {
       "path": "edition/skills/artifact-images/references/image-guidance.md",
@@ -505,11 +517,19 @@
     },
     {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "bc5475fde65204aadab5971a330e9827674e13d61e7e4f8ea1c76012bf606981"
+      "sha256": "1777680b9fa4423f9d1905c628208099a5ecf81d71f9ec393ef7bb438c2a5d41"
+    },
+    {
+      "path": "edition/test/macos-architecture.test.mjs",
+      "sha256": "9aec79c1735fcfc1858140d7ac3552dc30df9062a0f5930ac174e88622b0dd8b"
+    },
+    {
+      "path": "edition/test/optional-packaging.test.mjs",
+      "sha256": "f1213d1aeb4f1bdebc915da5c5d6bbf62543b32f3e6c6cd479a333f7502173e0"
     },
     {
       "path": "edition/test/oss-deltas.test.mjs",
-      "sha256": "07f95c40bbb4b2859fef13a3ad0ae0e5a6480500e5402cfb1c7aa709d22df50b"
+      "sha256": "e865ce1f8a2d44e05f65ea359fe0c8750a59b681c7ebfca32faaed702512358e"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",
@@ -524,16 +544,20 @@
       "sha256": "94dbe6830627dce39659943ac6ce96803faeb94e475411b39e5a9de1f4d88824"
     },
     {
+      "path": "edition/test/website-pointers.test.mjs",
+      "sha256": "da3e4fac82bb49a96e8818b0d2334b2e76231f276a184c4c85d7c86afb25ec9a"
+    },
+    {
       "path": "LICENSE",
       "sha256": "dc719b536b8f7a51cd0ffaf928d37146894a3996119cb07d4fb7b67e551882dc"
     },
     {
       "path": "README_EN.md",
-      "sha256": "8ccb1ac6174891c6b120f1e9daf0b0ec66101c7bf1006ba027871632f327e1e0"
+      "sha256": "c733de1239a8ef0940a95144a03ff4de8035931007ea6cd6f9caca443071afe7"
     },
     {
       "path": "README.md",
-      "sha256": "63ff55ad112ba516ac4facddaf0f1f84e80a697bded307fb0c02829d952c329e"
+      "sha256": "8314c8d8e4f78ddf021beff3c14907b5199f6477ae4bfa326c0a73e135145ec0"
     }
   ],
   "artifacts": [],

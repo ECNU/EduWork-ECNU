@@ -21,52 +21,115 @@ on:
         default: false
         type: boolean
       publish:
-        description: 'Publish directly from CI after both platforms and signed first launch pass'
+        description: 'Publish directly from CI after all three targets and signed first launch pass'
         required: true
         default: false
         type: boolean
       platform:
-        description: 'Build both platforms, or diagnose one native platform'
+        description: 'Build all three targets, or diagnose one native platform'
         required: true
         default: both
         type: choice
-        options: [both, windows, macos]
+        options: [both, windows, macos, macos-arm64, macos-x64]
 permissions:
   contents: read
 concurrency:
   group: desktop-candidate-${{ github.sha }}-${{ inputs.platform || 'both' }}
   cancel-in-progress: false
 jobs:
-  build:
-    # Manual, read-only candidate builds may validate a maintainer-selected branch before merge.
-    if: github.event_name == 'workflow_dispatch'
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(inputs.platform == 'windows' && '[{"runner":"windows-latest","platform":"windows"}]' || inputs.platform == 'macos' && '[{"runner":"macos-15","platform":"macos"}]' || '[{"runner":"windows-latest","platform":"windows"},{"runner":"macos-15","platform":"macos"}]') }}
-    runs-on: ${{ matrix.runner }}
+  policy:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.validate.outputs.version }}
+      targets: ${{ steps.validate.outputs.targets }}
+      mac_targets: ${{ steps.validate.outputs.mac_targets }}
+      core_commit: ${{ steps.core.outputs.commit }}
     steps:
       - uses: actions/checkout@v4
         with:
           path: institution
           persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
       - name: Read the pinned public core
         id: core
-        shell: pwsh
         run: |
-          $lock = Get-Content institution/core.lock.json -Raw | ConvertFrom-Json
-          if ($lock.repository -ne 'https://github.com/ecnu/EduWork.git' -or $lock.commit -notmatch '^[a-f0-9]{40}$') { throw 'Pin an exact public core commit.' }
-          "commit=$($lock.commit)" >> $env:GITHUB_OUTPUT
+          node --input-type=module -e "import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('institution/core.lock.json'));if(x.repository.toLowerCase()!=='https://github.com/ecnu/eduwork.git'||!/^[a-f0-9]{40}$/.test(x.commit))throw Error('Invalid core lock');fs.appendFileSync(process.env.GITHUB_OUTPUT,'commit='+x.commit+'\n')"
       - uses: actions/checkout@v4
         with:
           repository: ECNU/EduWork
           ref: ${{ steps.core.outputs.commit }}
           path: core
           persist-credentials: false
+      - name: Validate requested build and publication
+        id: validate
+        shell: bash
+        env:
+          DEVELOPMENT_BUILD: ${{ inputs.development }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_NOTES: ${{ inputs.release_notes }}
+          RELEASE_NOTES_APPROVED: ${{ inputs.notes_approved }}
+          PUBLISH_RELEASE: ${{ inputs.publish }}
+          SELECTED_PLATFORMS: ${{ inputs.platform }}
+        run: |
+          set -euo pipefail
+          RELEASE_VERSION="${RELEASE_VERSION#"${RELEASE_VERSION%%[![:space:]]*}"}"
+          RELEASE_VERSION="${RELEASE_VERSION%"${RELEASE_VERSION##*[![:space:]]}"}"
+          if [[ "$DEVELOPMENT_BUILD" == true ]]; then
+            [[ "$PUBLISH_RELEASE" != true ]]
+            [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-dev\.[0-9]{8}\.[1-9][0-9]*$ ]] || { echo '::error::Development version must use X.Y.Z-dev.YYYYMMDD.N'; exit 1; }
+            [[ -z "$RELEASE_NOTES" ]]
+            [[ "$RELEASE_NOTES_APPROVED" != true ]]
+          else
+            node core/scripts/desktop-build-plan.mjs --core ./core --edition ./institution --version "$RELEASE_VERSION" >/dev/null
+            [[ "$RELEASE_NOTES_APPROVED" == true ]]
+            [[ "$RELEASE_NOTES" == "docs/releases/$RELEASE_VERSION.md" ]]
+            [[ -s "institution/$RELEASE_NOTES" ]]
+          fi
+          if [[ "$PUBLISH_RELEASE" == true ]]; then
+            [[ "$GITHUB_REF" == refs/heads/main ]]
+            [[ "$SELECTED_PLATFORMS" == both ]]
+            [[ "$RELEASE_NOTES_APPROVED" == true ]]
+            [[ "$RELEASE_NOTES" == "docs/releases/$RELEASE_VERSION.md" ]]
+            [[ -s "institution/$RELEASE_NOTES" ]]
+          fi
+          targets=$(node core/scripts/desktop-build-targets.mjs "$SELECTED_PLATFORMS" node)
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+          echo "mac_targets=$(node -e 'console.log(JSON.stringify(JSON.parse(process.argv[1]).filter(t => t.script === "macos")))' "$targets")" >> "$GITHUB_OUTPUT"
+          echo "version=$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
+  build:
+    name: Build (${{ matrix.platform }})
+    needs: policy
+    # Manual, read-only candidate builds may validate a maintainer-selected branch before merge.
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.policy.outputs.targets) }}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: institution
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: ${{ needs.policy.outputs.core_commit }}
+          path: core
+          persist-credentials: false
           token: ${{ github.token }}
       - uses: actions/setup-node@v4
         with:
-          node-version: '24.18.0'
+          node-version: '24.22.1'
+      - name: Select the shared macOS toolchain
+        if: matrix.script == 'macos'
+        run: sudo xcode-select --switch /Applications/Xcode_26.6.app/Contents/Developer
+      - uses: actions/setup-python@v5
+        if: matrix.script == 'macos'
+        with:
+          python-version: '3.11'
       - uses: actions/setup-go@v5
         with:
           go-version: '1.26.6'
@@ -75,7 +138,7 @@ jobs:
         shell: bash
         env:
           DEVELOPMENT_BUILD: ${{ inputs.development }}
-          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_VERSION: ${{ needs.policy.outputs.version }}
           RELEASE_NOTES: ${{ inputs.release_notes }}
           RELEASE_NOTES_APPROVED: ${{ inputs.notes_approved }}
           PUBLISH_RELEASE: ${{ inputs.publish }}
@@ -97,7 +160,7 @@ jobs:
             args+=(--release-notes-file "$RELEASE_NOTES")
             if [[ "$RELEASE_NOTES_APPROVED" == true ]]; then args+=(--release-notes-approved); fi
           fi
-          node core/scripts/ci-eduwork-${{ matrix.platform }}-release.mjs "${args[@]}"
+          node core/scripts/ci-eduwork-${{ matrix.script }}-release.mjs "${args[@]}"
       - name: Validate institution plugins with the assembled Runtime
         shell: pwsh
         run: ./institution/edition/test/test-desktop-candidate.ps1 -CoreRoot (Resolve-Path ./core).Path -EditionRoot (Resolve-Path ./institution).Path -Product "$env:RUNNER_TEMP/ew-candidate/product"
@@ -117,16 +180,48 @@ jobs:
           compression-level: 0
           retention-days: 3
           if-no-files-found: error
+  compatibility:
+    name: macOS 15 (${{ matrix.platform }})
+    needs: [policy, build]
+    if: inputs.platform != 'windows'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.policy.outputs.mac_targets) }}
+    runs-on: ${{ matrix.compatibilityRunner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: ${{ needs.policy.outputs.core_commit }}
+          path: core
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-release
+          path: ${{ runner.temp }}/candidate
+      - name: Verify the macOS 26-built archive on macOS 15
+        run: node core/scripts/accept-macos-candidate.mjs "$RUNNER_TEMP/candidate" "$RUNNER_TEMP/macos-15-acceptance"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.platform }}-macos15-validation
+          path: ${{ runner.temp }}/macos-15-acceptance/evidence-public
+          retention-days: 7
+          if-no-files-found: warn
   publish:
-    needs: build
-    if: inputs.publish && !inputs.development
+    needs: [policy, build, compatibility]
+    if: always() && inputs.publish && !inputs.development && needs.build.result == 'success' && needs.compatibility.result == 'success'
     permissions:
       actions: read
       contents: write
     uses: ./.github/workflows/publish-desktop-candidate.yml
     with:
       source_run_id: '${{ github.run_id }}'
-      version: ${{ inputs.version }}
+      version: ${{ needs.policy.outputs.version }}
       release_notes: ${{ inputs.release_notes }}
       notes_approved: ${{ inputs.notes_approved }}
       publish: true

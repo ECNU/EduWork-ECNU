@@ -2,6 +2,9 @@
   "schemaVersion": 1,
   "id": "eduwork-chatecnu",
   "coreBase": "config/distributions/generic.json",
+  "excludedOptionalBundles": [
+    "@eduwork/dsh-remote-access"
+  ],
   "brand": {
     "product": {
       "name": "EduWork@ECNU"
@@ -87,13 +90,7 @@
       "root": "edition",
       "name": "ecnu-campus-search",
       "source": "edition/skills/ecnu-campus-search",
-      "defaultEnabled": true,
-      "metadata": {
-        "eduwork": {
-          "credentialRef": "EDUWORK_API_KEY",
-          "oidcProfileId": "ecnu"
-        }
-      }
+      "defaultEnabled": true
     },
     {
       "root": "edition",

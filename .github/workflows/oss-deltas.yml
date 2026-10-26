@@ -4,6 +4,7 @@ on:
     paths:
       - 'edition/release/**'
       - 'edition/test/oss-deltas.test.mjs'
+      - 'edition/test/website-pointers.test.mjs'
       - '.github/workflows/oss-deltas.yml'
   workflow_dispatch:
     inputs:
@@ -43,10 +44,10 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          node-version: '24.18.0'
+          node-version: '24.22.1'
       - name: Check OSS source selection and manifest contracts
         shell: bash
-        run: EDUWORK_CORE_ROOT="$GITHUB_WORKSPACE/core" node --test institution/edition/test/oss-deltas.test.mjs
+        run: EDUWORK_CORE_ROOT="$GITHUB_WORKSPACE/core" node --test institution/edition/test/oss-deltas.test.mjs institution/edition/test/website-pointers.test.mjs
       - name: Generate and verify patches from published archives
         shell: bash
         env:

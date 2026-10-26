@@ -1,4 +1,21 @@
 {
+  "plugins.chatecnu-music.baseURL": [
+    "音乐服务的模型 API 根地址，不带 /music；学校模式须与登录发现的模型地址一致。",
+    "https://models.example.org/v1"
+  ],
+  "plugins.chatecnu-music.oidcProfileId": [
+    "复用学校登录的 organizations[].id；显式置空才使用独立 Key，不自动回退。",
+    "ecnu"
+  ],
+  "plugins.chatecnu-music.credentialRef": [
+    "独立 Key 模式的凭据引用，不填写明文 Key；学校模式不读取此凭据。",
+    "EDUWORK_API_KEY"
+  ],
+  "plugins.chatecnu-music.requestTimeoutMs": [
+    "单次 HTTP 调用超时 1000–180000 毫秒；不限制或取消服务端推理，提交后凭任务 ID 续查。",
+    120000,
+    true
+  ],
   "plugins.ecnu-account-resources.profileIDs": [
     "提供配额展示的企业 ID 列表。",
     [

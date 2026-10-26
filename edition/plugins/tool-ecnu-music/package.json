@@ -1,0 +1,10 @@
+{
+  "name": "@chatecnu-work/dsh-tool-ecnu-music",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "files": ["lib", "README.md", "README_EN.md"],
+  "scripts": {"test": "node --test test/core.test.mjs"},
+  "license": "MIT"
+}

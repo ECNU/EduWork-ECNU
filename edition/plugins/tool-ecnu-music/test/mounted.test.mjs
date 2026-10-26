@@ -9,7 +9,7 @@ import { apply, musicAuthorization } from '../lib/index.js'
 import { resolveMusicConfig } from '../lib/core.js'
 
 const config = { baseURL: 'https://school.example.org/open/api/v1', oidcProfileId: 'school', credentialRef: 'TEST_MUSIC_KEY' }
-function mount(account, credentials = { resolve() { throw Error('must not read personal key in school mode') } }, overrides = {}) {
+function mount(account, credentials = { resolve() { throw Error('must not read personal key in school mode') } }, overrides = {}, rawConfig = config) {
   const tools = new Map(), handlers = new Map(), disposers = []
   const ctx = {
     tools: { register(tool) { tools.set(tool.name, tool) } }, credentials,
@@ -20,7 +20,7 @@ function mount(account, credentials = { resolve() { throw Error('must not read p
     on(name, handler) { handlers.set(name, handler) },
     effect(callback) { disposers.push(callback()) }, ...overrides,
   }
-  apply(ctx, config)
+  apply(ctx, rawConfig)
   return { ctx, tools, handlers, disposers }
 }
 const result = value => JSON.parse(value.reportJSON)
@@ -115,4 +115,59 @@ test('school skill is assembled once with matching account binding and native pl
   assert.ok(skill.includes(`credentialRef: ${plugin.config.credentialRef}`))
   const metadata = JSON.parse(await readFile(new URL('../../../desktop/configuration-options.json', import.meta.url)))
   for (const key of Object.keys(plugin.config)) assert.ok(metadata[`plugins.chatecnu-music.${key}`])
+})
+
+test('actual OIDC Host login authorizes music HTTP; logout blocks it without key fallback', async t => {
+  const { Context, Service } = await import('@deepseek-ai/cordis')
+  const { default: LlmRuntime } = await import('@deepseek-ai/dsh-llm')
+  const { default: Oidc } = await import('@eduwork/dsh-oidc')
+  const { fixture } = await import('../../ecnu-account-resources/test/helpers/oidc-http-fixture.mjs')
+  const f = await fixture(t, { resources: true, async resourceHandler(req, res, url) {
+    if (!url.pathname.startsWith('/v1/music/')) return false
+    assert.equal(req.headers.authorization, 'Bearer <ACCESS_TOKEN>')
+    if (url.pathname.endsWith('/generations')) {
+      const chunks = []; for await (const part of req) chunks.push(part)
+      assert.equal(JSON.parse(Buffer.concat(chunks)).seed, undefined)
+      assert.ok(req.headers['idempotency-key'])
+      res.writeHead(202, { 'Content-Type': 'application/json' }); res.end('{"id":"oidc-job","status":"queued"}')
+    } else if (url.pathname.endsWith('/artifacts')) {
+      res.writeHead(200, { 'Content-Type': 'application/json' }); res.end('{"artifacts":[{"name":"audio.flac"}]}')
+    } else if (url.pathname.endsWith('/audio.flac')) {
+      res.writeHead(200, { 'Content-Type': 'audio/flac' }); res.end('fLaC-synthetic')
+    } else { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end('{"id":"oidc-job","status":"succeeded"}') }
+    return true
+  } })
+  const records = new Map(), opened = [], root = new Context(), fibers = []
+  class Credentials extends Service {
+    constructor(ctx) { super(ctx, 'credentials') }
+    async resolve(ref) { assert.notEqual(ref, 'TEST_MUSIC_KEY'); return records.has(ref) ? { value: records.get(ref) } : undefined }
+    async set(ref, value) { records.set(ref, value); this.ctx.emit('credentials/reference-updated', { ref }) }
+    async unset(ref) { records.delete(ref); this.ctx.emit('credentials/reference-updated', { ref }) }
+  }
+  class DesktopServices extends Service {
+    constructor(ctx) { super(ctx, 'desktopServices') }
+    async openExternal(url) { opened.push(url) }
+  }
+  t.after(async () => { for (const fiber of fibers.reverse()) await fiber.dispose() })
+  for (const plugin of [LlmRuntime, Credentials, DesktopServices]) fibers.push(await root.plugin(plugin))
+  fibers.push(await root.plugin(Oidc, { backend: 'desktop', profile: f.rawProfile }))
+  await root.oidcAccounts.begin('desktop-test')
+  assert.equal((await fetch(opened.at(-1))).status, 200)
+  assert.equal((await root.oidcAccounts.status('desktop-test')).state, 'connected')
+  const { tools } = mount(root.oidcAccounts, root.credentials, { on: (name, callback) => root.on(name, callback) }, {
+    ...config, baseURL: f.origin + '/v1', oidcProfileId: 'desktop-test',
+  })
+  const exec = await workspace(t)
+  const call = async (name, args = {}) => result(await tools.get(name).execute(args, exec))
+  const submitted = await call('ecnu_music_submit', { operation: 'generate', style: 'choral anthem', lyrics: '春风与希望' })
+  assert.equal(submitted.submission, 'accepted')
+  assert.equal((await call('ecnu_music_job', { job_id: submitted.job.id })).status, 'succeeded')
+  const downloaded = await call('ecnu_music_download', { job_id: submitted.job.id, artifact: 'audio.flac' })
+  assert.equal(await readFile(downloaded.path, 'utf8'), 'fLaC-synthetic')
+  assert.doesNotMatch(JSON.stringify([submitted, downloaded]), /ACCESS_TOKEN|synthetic-refresh/)
+  await root.oidcAccounts.logout('desktop-test')
+  const before = f.requests.filter(row => row.path.startsWith('/v1/music')).length
+  await assert.rejects(call('ecnu_music_job', { job_id: 'oidc-job' }), /登录/)
+  assert.equal(f.requests.filter(row => row.path.startsWith('/v1/music')).length, before)
+  assert.equal(records.size, 0)
 })

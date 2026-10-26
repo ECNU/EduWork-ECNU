@@ -31,20 +31,22 @@ test('campus skill and tool share school authorization without requiring a legac
   assert.equal(skill.defaultEnabled, true)
 })
 
-test('the desktop assembly preserves campus search display metadata and account binding', async t => {
+test('the desktop assembly preserves school skill metadata, references and account binding', async t => {
   const { copyDshBundledSkills } = await import(pathToFileURL(resolve(core, 'scripts/lib/dsh-skills.mjs')))
   const root = await mkdtemp(join(tmpdir(), 'ecnu-campus-skill-'))
   t.after(() => rm(root, { recursive: true, force: true }))
   const repository = fileURLToPath(new URL('../../', import.meta.url))
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url)))
-  const skill = distribution.skills.find(row => row.name === 'ecnu-campus-search')
   const skillRoot = join(root, 'skills')
-  await copyDshBundledSkills({ repository, packageRoot: join(root, 'node_modules'), skillRoot, skills: [skill] })
-  const original = await readFile(new URL('../skills/ecnu-campus-search/SKILL.md', import.meta.url))
-  const installed = await readFile(join(skillRoot, skill.name, 'SKILL.md'))
-  assert.deepEqual(installed, original)
-  const text = installed.toString('utf8')
-  for (const expected of ['displayName: 华东师大校园智搜', 'displayDescription:', 'credentialRef: EDUWORK_API_KEY', 'oidcProfileId: ecnu']) assert.ok(text.includes(expected), expected)
+  for (const name of ['ecnu-campus-search', 'ecnu-music']) {
+    const skill = distribution.skills.find(row => row.name === name)
+    await copyDshBundledSkills({ repository, packageRoot: join(root, 'node_modules'), skillRoot, skills: [skill] })
+    const original = await readFile(new URL(`../skills/${name}/SKILL.md`, import.meta.url))
+    const installed = await readFile(join(skillRoot, name, 'SKILL.md'))
+    assert.deepEqual(installed, original)
+    for (const expected of ['displayName:', 'displayDescription:', 'credentialRef: EDUWORK_API_KEY', 'oidcProfileId: ecnu']) assert.ok(installed.toString('utf8').includes(expected), expected)
+  }
+  assert.deepEqual(await readFile(join(skillRoot, 'ecnu-music/references/workflows.md')), await readFile(new URL('../skills/ecnu-music/references/workflows.md', import.meta.url)))
 })
 
 test('all school plugin options are visible, active defaults survive restart, and UAT overrides reach the adapters', async t => {

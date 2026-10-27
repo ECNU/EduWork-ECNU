@@ -2,12 +2,8 @@
 
 [简体中文](README.md) | **English**
 
-Enabling this plugin writes the bundled academic year into its own managed source before any Agent conversation. No school account or network request is needed.
+ECNU's institution-side data layer for the academic calendar: it holds the school's official calendar as structured data and answers date questions derived from it. Teaching and examination weeks are background structure, never calendar events. Once enabled it provides the `ctx.ecnuCalendar` service (`describeDate(date)` answers term, teaching week, odd/even week, phase or break); week-view titles, month-view week numbers and phase bands arrive with the public calendar's display slots (EduWork #186). It reads no school account and makes no network requests.
 
-The 2026–2027 dataset is transcribed from the [official undergraduate calendar](https://bksy.ecnu.edu.cn/b6/33/c40558a767539/page.htm). It covers teaching/examination weeks, continuing-student registration, winter vacation and the short summer term. Individual courses, holiday adjustments and later notices are outside this dataset. All-day end dates are inclusive.
+The 2026–2027 dataset is transcribed from the [official undergraduate calendar](https://bksy.ecnu.edu.cn/b6/33/c40558a767539/page.htm): autumn term starts 2026-09-14 (18 weeks, teaching through 2027-01-01, final exams 2027-01-04 to 01-15), winter vacation 2027-01-18 to 02-20, spring term starts 2027-02-22 (18 weeks, teaching through 2027-06-13, final exams 2027-06-14 to 06-25), short summer term 2027-06-28 to 07-23. Registration and similar dates stay ordinary events. The short summer term carries no week numbers the official calendar does not state, and none are inferred.
 
-The public calendar-management Skill receives edition references. The shared calendar is not duplicated per account; future personal timetables use separate account sources. Updates preserve manual events and private settings.
-
-Data revisions retain stable event IDs, increase revision and identify original instances when dates change. An older bundle cannot downgrade a newer cache. This is a local integration pilot; institutional data review and target-product acceptance are required before deployment.
-
-Future fetching, schedules, login and reconnect retries belong to the institution data plugin. There is no network polling or real timetable integration. The public calendar creates due reminder receipts; the product desktop notification channel owns system delivery rather than the institution data plugin.
+The data layout and validation rules live in `data/2026-2027.json`: weeks run seven days from each term's `firstDay`, the last week cut at `lastDay`; week numbering ignores holidays; term, phase and break spans never overlap; everything is validated at load so a bad transcription fails immediately. Field names follow the institution's reading for now and will align with the public format once finalised. Personal timetable access (teaching classes with full meeting lists) arrives in a follow-up institution plugin through the public subscription pipeline.

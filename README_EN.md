@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#installation-and-use)
+[![License: MulanPSL-2.0](https://img.shields.io/badge/license-MulanPSL--2.0-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#installation-and-use)
 
 [简体中文](README.md) | **English**
 
@@ -211,4 +211,4 @@ Detailed documentation defaults to Chinese.
 
 EduWork@ECNU is built on [EduWork](https://github.com/ECNU/EduWork) and [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Knowledge Studio's source-based creation and learning interactions are inspired by NotebookLM.
 
-Code in this repository uses the [MIT License](LICENSE). The public core and third-party components retain their own licenses; see the [EduWork third-party notices](https://github.com/ECNU/EduWork/blob/main/THIRD_PARTY_NOTICES.md).
+Original contributions in this repository use [Mulan PSL v2](LICENSE); historical MIT code and exceptions are described in the [licensing scope](LICENSING.md). The public core and third-party components retain their own licenses; see the [EduWork third-party notices](https://github.com/ECNU/EduWork/blob/main/THIRD_PARTY_NOTICES.md).

@@ -36,7 +36,7 @@ Electron 和单机 Web 共用 DSH Host 的 OAuth 后端，配置名称沿用 `ba
 
 已登录但没有模型 Key 的身份账号也能上报。`oidc/accounts-changed` 事件只用于对应 profile 的启停；重新授权即使仍是“已连接”，也会解除旧错误导致的暂停，并丢弃旧请求的迟到结果。浏览器在下一次本机 presence 返回等待、成功或其他非登录失败状态时撤销旧提示；重新登录后的临时网络故障不会继续显示旧的登录失效提示。已主动退出的账号保持安静，失效账号交由 OIDC 登录流程处理。
 
-安装标识默认保存在 `$DSH_HOME/state/chatecnu-active/installation-id`。也可显式设置绝对 `stateDirectory`，或提供非秘密的固定 `installationID`；不同独立安装不应共用固定值。为迁移旧版身份，可让 `stateDirectory` 指向已迁移的原生 `state/chatecnu` 目录，复用其中的 `installation-id`。文件损坏时报告本地错误，不悄悄覆盖原标识。
+安装标识默认保存在 `$DSH_HOME/state/chatecnu-active/installation-id`。也可显式设置绝对 `stateDirectory`，或提供非秘密的固定 `installationID`；不同独立安装不应共用固定值。为迁移旧版身份，可让 `stateDirectory` 指向已迁移的原生 `state/chatecnu` 目录，复用其中的 `installation-id`。新标识写完整后才落盘；中断写入留下的空文件视为不存在并重新生成。内容损坏时报告本地错误，不悄悄覆盖原标识。
 
 请求保持已有 `POST /user/active` 协议，wire 标识是 `client.installation_id`；OAuth `client_id` 在 OIDC profile 中配置，没有另造 `device_id` 或 `client_id` 请求字段。其他元数据为 name/version/platform/channel/device/os/arch/locale/timezone；超过协议长度的版本号会省略。服务端 `next_heartbeat_in` 默认 600 秒，限定在 60–3600 秒。
 

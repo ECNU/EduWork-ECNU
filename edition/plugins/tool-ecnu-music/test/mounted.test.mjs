@@ -12,6 +12,7 @@ const config = { baseURL: 'https://school.example.org/open/api/v1', oidcProfileI
 function mount(account, credentials = { resolve() { throw Error('must not read personal key in school mode') } }, overrides = {}, rawConfig = config) {
   const tools = new Map(), handlers = new Map(), disposers = []
   const ctx = {
+    plugin() {}, // The Studio service is covered by the actual Cordis integration test.
     tools: { register(tool) { tools.set(tool.name, tool) } }, credentials,
     fs: { resolve: async (path, options) => resolve(options.cwd, path), processPath: path => path,
       contains(root, path) { const rel = relative(root, path); return !isAbsolute(rel) && rel !== '..' && !rel.startsWith('..\\') && !rel.startsWith('../') } },
@@ -30,7 +31,7 @@ async function workspace(t) {
   return { agent: { session: { id: 'synthetic-session', header: { cwd } } }, signal: new AbortController().signal }
 }
 
-test('real DSH defineTool registers all six tools and uses only Host authorization', async t => {
+test('real DSH defineTool registers music tools and uses only Host authorization', async t => {
   const calls = [], exec = await workspace(t)
   let loggedIn = true
   const mounted = mount({
@@ -46,7 +47,7 @@ test('real DSH defineTool registers all six tools and uses only Host authorizati
       return Response.json({ id: 'host-job', status: init.method === 'POST' ? 'queued' : 'succeeded' }, { status: url.endsWith('/generations') ? 202 : 200 })
     },
   })
-  assert.equal(mounted.tools.size, 6)
+  assert.equal(mounted.tools.size, 7)
   const call = async (name, args = {}) => result(await mounted.tools.get(name).execute(args, exec))
   assert.deepEqual((await call('ecnu_music_capabilities')).operations, ['generate', 'cover', 'transcribe', 'plan'])
   const submitted = await call('ecnu_music_submit', { operation: 'generate', style: 'orchestra', lyrics: '希望', n: 2 })

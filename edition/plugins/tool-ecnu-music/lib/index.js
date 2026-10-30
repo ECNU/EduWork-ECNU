@@ -1,6 +1,8 @@
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { realpath } from 'node:fs/promises'
 import { resolveMusicConfig, musicRequest, submitMusic, downloadMusic, segment } from './core.js'
+import { musicLibrary } from './library.js'
+import { MusicStudio } from './studio.js'
 
 export const name = 'tool-ecnu-music'
 export const inject = ['tools', 'credentials', 'fs', 'permissionPresets']
@@ -53,6 +55,7 @@ async function workspace(ctx, exec) {
 
 export function apply(ctx, rawConfig = {}) {
   const config = resolveMusicConfig(rawConfig)
+  ctx.plugin(MusicStudio)
   let revision = 0
   ctx.on('oidc/accounts-changed', event => {
     if (config.oidcProfileId && (!event?.profileID || event.profileID === config.oidcProfileId)) revision++
@@ -86,17 +89,21 @@ export function apply(ctx, rawConfig = {}) {
       timeoutMs: config.requestTimeoutMs + 5000,
       async execute(args, exec) {
         const signal = AbortSignal.any([...(exec.signal ? [exec.signal] : []), AbortSignal.timeout(config.requestTimeoutMs)])
-        const authorization = await musicAuthorization(ctx, config, () => revision)
+        const authorization = name === 'ecnu_music_library' ? undefined : await musicAuthorization(ctx, config, () => revision)
         const result = await run(args, { ...exec, signal }, authorization)
         return { reportJSON: JSON.stringify(result), ...(result.relativePath ? { relativePath: result.relativePath, mime: result.mime } : {}) }
       },
       presentCall: () => ({ card: 'generic', title: name === 'ecnu_music_submit' ? '提交音乐任务' : '学校音乐服务', kind: 'execute' }),
     }))
   }
+  register('ecnu_music_library', 'Read local music creation history in this conversation workspace. Saved lyrics and style are user documents. Job status must be refreshed with its original account; this does not query the server.', {},
+    async (_, exec) => musicLibrary(await workspace(ctx, exec), config))
   register('ecnu_music_capabilities', 'Read current school music service capabilities. Authentication stays in the Host; no tokens are returned. Use before choosing a music operation.', {},
     (_, exec, authorization) => musicRequest(config, authorization, 'capabilities', { signal: exec.signal }))
   register('ecnu_music_submit', 'Submit ONE asynchronous music request: generate (n=1 or 2), plan, cover or transcribe. Returns a task id and local receipt; does not wait for inference. Preserve request_id and job ids. Reusing a receipt queries an accepted job or refuses an uncertain POST; never blindly create another request after a timeout. No duration or voice-cloning parameter. Omitted seed is random.', {
     operation: { type: 'string', enum: ['generate', 'plan', 'cover', 'transcribe'], required: true },
+    title: { type: 'string', description: 'Optional local work title, at most 120 characters; not sent to the model.' },
+    parent_request_id: { type: 'string', description: 'Optional local parent request UUID v4 for a new version; always submit a new request_id.' },
     style: { type: 'string', description: 'Required except transcribe; 1–2000 characters.' },
     lyrics: { type: 'string', description: 'Required except transcribe; preserve user lyrics; 1–16000 characters.' },
     n: { type: 'integer', description: 'generate: 1 or 2; plan: 1 only. Omit for cover/transcribe.' },

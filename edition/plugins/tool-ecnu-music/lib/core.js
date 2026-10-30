@@ -39,8 +39,10 @@ export function resolveMusicConfig(raw = {}) {
 export function normalizeSubmission(args) {
   const operation = args.operation ?? 'generate'
   if (!Object.hasOwn(operations, operation)) throw Error('operation must be generate, plan, cover or transcribe')
-  const fields = ['operation', 'request_id', ...(operation === 'transcribe' ? ['audio', 'mode'] : ['style', 'lyrics', 'seed', 'cfg_scale', ...(operation === 'cover' ? ['audio'] : ['n', 'cot', 'abc'])])]
+  const fields = ['operation', 'request_id', 'title', 'parent_request_id', ...(operation === 'transcribe' ? ['audio', 'mode'] : ['style', 'lyrics', 'seed', 'cfg_scale', ...(operation === 'cover' ? ['audio'] : ['n', 'cot', 'abc'])])]
   for (const key of Object.keys(args)) if (!fields.includes(key)) throw Error(`${key} is not supported for ${operation}`)
+  if (args.title !== undefined) text(args.title, 'title', 120)
+  if (args.parent_request_id !== undefined) requestID(args.parent_request_id)
   const body = { model: 'ecnu-music' }
   if (operation !== 'transcribe') {
     body.style = text(args.style, 'style', 2000)
@@ -157,9 +159,13 @@ export async function submitMusic({ config, authorization, root, args, signal })
   const normalized = normalizeSubmission(args), id = requestID(args.request_id)
   const audio = ['cover', 'transcribe'].includes(normalized.operation) ? await upload(root, args.audio) : undefined
   const fingerprint = hash(JSON.stringify([normalized.operation, normalized.body, audio ? hash(audio.bytes) : null]))
-  const binding = hash(JSON.stringify([config.baseURL, config.oidcProfileId ?? null, config.credentialRef]))
+  const binding = serviceBinding(config)
   const receiptName = `request-${id}.json`, acceptedName = `accepted-${id}.json`
-  const receipt = { version: 1, request_id: id, operation: normalized.operation, binding, fingerprint, created_at: new Date().toISOString() }
+  // Local creative history, never part of the upstream payload. Like other
+  // workspace documents this contains user content, but never credentials.
+  const receipt = { version: 2, request_id: id, operation: normalized.operation, binding, fingerprint, created_at: new Date().toISOString(),
+    title: args.title ?? '', parent_request_id: args.parent_request_id,
+    input: { ...normalized.body, ...(audio ? { audio: args.audio } : {}) } }
   const receiptPath = join(await safeDirectory(root), receiptName)
   authorization.assertCurrent()
   try { await exclusive(root, receiptName, JSON.stringify(receipt, null, 2) + '\n') }
@@ -189,9 +195,13 @@ export async function submitMusic({ config, authorization, root, args, signal })
     // No raw upstream exception/body: they may contain headers or user data.
     return { request_id: id, receiptPath, submission: 'unknown', ...(error.musicStatus ? { httpStatus: error.musicStatus, diagnostic: error.message } : {}), message: 'Submission did not complete locally. It may have reached the server; no automatic retry was made. Keep this receipt and check the original account and service logs before submitting again.' }
   }
-  try { await exclusive(root, acceptedName, JSON.stringify({ id: job.id, request_id: id }) + '\n') }
+  try { await exclusive(root, acceptedName, JSON.stringify({ id: job.id, request_id: id, status: job.status }) + '\n') }
   catch { return { request_id: id, receiptPath, submission: 'accepted', job, warning: 'Could not save the accepted task id locally. Preserve this returned id and query it directly; do not resubmit.' } }
   return { request_id: id, receiptPath, submission: 'accepted', job }
+}
+
+export function serviceBinding(config) {
+  return hash(JSON.stringify([config.baseURL, config.oidcProfileId ?? null, config.credentialRef]))
 }
 
 export function artifactNames(data) {

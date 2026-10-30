@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "academicYear": "2026-2027",
-  "revision": 2026062401,
+  "revision": 2026102801,
   "source": {
     "publisher": "华东师范大学本科生院",
     "publishedAt": "2026-06-24",
@@ -9,29 +9,65 @@
     "documentURL": "https://bksy.ecnu.edu.cn/_upload/article/files/c8/da/48b951284008baa0e48364c1c599/a81ca6da-5738-4fff-a856-1c0639b842b7.pdf",
     "documentSHA256": "fd361a4a60aef93b684e9df2dc35be519e2255c2dfceae086409591efb6f31bc"
   },
-  "coverage": "学期、教学周、考试与假期阶段、注册和暑期短学期；不含个人课表、具体考试安排及后续调休通知。",
-  "weekNumbering": "每个学期从 firstDay 起按 7 天计周：第 n 周为 firstDay + (n-1)*7 起的 7 天，末周以 lastDay 截断。周次沿用官方校历，节假日不改变编号；官方未标明周次的学期（如暑期短学期）不给出 weekCount，也不推断。",
+  "coverage": "学期、教学周、考试与假期阶段、注册、暑期短学期，以及校历说明列出的全校事项（新生报到与军训、缓补考、校运动会、节假日、校园主题活动日）。节假日只记官方点名的当日，放假日程以学校通知为准，不自行推算；不含个人课表、具体考试安排及后续调休通知。",
+  "weekNumbering": "每个学期从 firstDay 起按 7 天计周：第 n 周为 firstDay + (n-1)*7 起的 7 天；学期周次为整周（秋季至 2027-01-17、春季至 2027-06-27 止）。周次沿用官方校历（暑期短学期为第 1 至第 4 周），节假日不改变编号；官方未标明周次的期间不推断。",
   "terms": [
     {
       "id": "2026-autumn",
       "name": "秋季学期",
       "firstDay": "2026-09-14",
-      "lastDay": "2027-01-15",
+      "lastDay": "2027-01-17",
       "weekCount": 18,
       "phases": [
-        { "kind": "teaching", "name": "教学", "firstDay": "2026-09-14", "lastDay": "2027-01-01", "weeks": [1, 16] },
-        { "kind": "examination", "name": "期末考试", "firstDay": "2027-01-04", "lastDay": "2027-01-15", "weeks": [17, 18] }
+        {
+          "kind": "teaching",
+          "name": "教学",
+          "firstDay": "2026-09-14",
+          "lastDay": "2027-01-01",
+          "weeks": [
+            1,
+            16
+          ]
+        },
+        {
+          "kind": "examination",
+          "name": "期末考试",
+          "firstDay": "2027-01-04",
+          "lastDay": "2027-01-15",
+          "weeks": [
+            17,
+            18
+          ]
+        }
       ]
     },
     {
       "id": "2027-spring",
       "name": "春季学期",
       "firstDay": "2027-02-22",
-      "lastDay": "2027-06-25",
+      "lastDay": "2027-06-27",
       "weekCount": 18,
       "phases": [
-        { "kind": "teaching", "name": "教学", "firstDay": "2027-02-22", "lastDay": "2027-06-13", "weeks": [1, 16] },
-        { "kind": "examination", "name": "期末考试", "firstDay": "2027-06-14", "lastDay": "2027-06-25", "weeks": [17, 18] }
+        {
+          "kind": "teaching",
+          "name": "教学",
+          "firstDay": "2027-02-22",
+          "lastDay": "2027-06-13",
+          "weeks": [
+            1,
+            16
+          ]
+        },
+        {
+          "kind": "examination",
+          "name": "期末考试",
+          "firstDay": "2027-06-14",
+          "lastDay": "2027-06-25",
+          "weeks": [
+            17,
+            18
+          ]
+        }
       ]
     },
     {
@@ -40,15 +76,144 @@
       "firstDay": "2027-06-28",
       "lastDay": "2027-07-23",
       "phases": [
-        { "kind": "teaching", "name": "短学期教学", "firstDay": "2027-06-28", "lastDay": "2027-07-23" }
-      ]
+        {
+          "kind": "teaching",
+          "name": "短学期教学",
+          "firstDay": "2027-06-28",
+          "lastDay": "2027-07-23",
+          "weeks": [
+            1,
+            4
+          ]
+        }
+      ],
+      "weekCount": 4,
+      "shortTerm": true
     }
   ],
   "breaks": [
-    { "id": "winter-2027", "name": "寒假", "firstDay": "2027-01-18", "lastDay": "2027-02-20" }
+    {
+      "id": "winter-2027",
+      "name": "寒假",
+      "firstDay": "2027-01-18",
+      "lastDay": "2027-02-20"
+    },
+    {
+      "id": "summer-2027",
+      "name": "暑假",
+      "firstDay": "2027-07-26",
+      "lastDay": "2027-09-05"
+    }
   ],
   "events": [
-    { "uid": "autumn-registration-2026", "title": "老生注册（秋季）", "date": "2026-09-13" },
-    { "uid": "spring-registration-2027", "title": "全体学生注册（春季）", "date": "2027-02-21" }
+    {
+      "uid": "autumn-registration-2026",
+      "title": "老生缴费、注册（秋季）",
+      "date": "2026-09-13",
+      "note": "含辅修专业；9月14日（星期一）正式上课"
+    },
+    {
+      "uid": "undergraduate-arrival-2026",
+      "title": "本科新生报到",
+      "date": "2026-09-04",
+      "note": "9月5日至18日入学教育、军训，9月21日正式上课"
+    },
+    {
+      "uid": "undergraduate-orientation-2026",
+      "title": "本科新生入学教育、军训",
+      "date": "2026-09-05",
+      "lastDay": "2026-09-18"
+    },
+    {
+      "uid": "graduate-arrival-2026",
+      "title": "研究生新生报到",
+      "date": "2026-09-11",
+      "note": "9月14日至18日入学教育，9月21日正式上课"
+    },
+    {
+      "uid": "graduate-orientation-2026",
+      "title": "研究生新生入学教育",
+      "date": "2026-09-14",
+      "lastDay": "2026-09-18"
+    },
+    {
+      "uid": "makeup-exams-2026",
+      "title": "缓补考",
+      "date": "2026-09-07",
+      "lastDay": "2026-09-11"
+    },
+    {
+      "uid": "mid-autumn-2026",
+      "title": "中秋节",
+      "date": "2026-09-25",
+      "note": "放假安排以学校通知为准"
+    },
+    {
+      "uid": "national-day-2026",
+      "title": "国庆节",
+      "date": "2026-10-01",
+      "note": "放假安排以学校通知为准"
+    },
+    {
+      "uid": "sports-meet-2026",
+      "title": "校运动会",
+      "date": "2026-10-27",
+      "lastDay": "2026-10-28",
+      "note": "27日全天、28日上下午，全校停课（28日晚上不停课）"
+    },
+    {
+      "uid": "campus-activity-day-2026",
+      "title": "校园主题活动日",
+      "date": "2026-10-28",
+      "note": "具体安排以学校通知为准"
+    },
+    {
+      "uid": "new-year-2027",
+      "title": "元旦",
+      "date": "2027-01-01",
+      "note": "放假安排以学校通知为准"
+    },
+    {
+      "uid": "spring-festival-2027",
+      "title": "春节",
+      "date": "2027-02-06",
+      "note": "放假安排以学校通知为准"
+    },
+    {
+      "uid": "spring-registration-2027",
+      "title": "全体学生注册（春季）",
+      "date": "2027-02-21",
+      "note": "含辅修专业；2月22日（星期一）正式上课"
+    },
+    {
+      "uid": "womens-day-2027",
+      "title": "妇女节",
+      "date": "2027-03-08",
+      "note": "女职工轮休半天（不停课）"
+    },
+    {
+      "uid": "qingming-2027",
+      "title": "清明节",
+      "date": "2027-04-05",
+      "note": "放假安排以学校通知为准"
+    },
+    {
+      "uid": "campus-activity-day-2027",
+      "title": "校园主题活动日",
+      "date": "2027-04-21",
+      "note": "不停课"
+    },
+    {
+      "uid": "labor-day-2027",
+      "title": "劳动节",
+      "date": "2027-05-01",
+      "note": "放假安排以学校通知为准"
+    },
+    {
+      "uid": "dragon-boat-2027",
+      "title": "端午节",
+      "date": "2027-06-09",
+      "note": "放假安排以学校通知为准"
+    }
   ]
 }

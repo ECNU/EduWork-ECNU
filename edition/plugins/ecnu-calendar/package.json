@@ -6,7 +6,18 @@
   "license": "MIT",
   "description": "ECNU academic calendar data and date queries",
   "main": "lib/index.js",
-  "exports": { ".": "./lib/index.js", "./package.json": "./package.json" },
-  "files": ["lib/*.js", "data/*.json", "README.md", "README_EN.md"],
-  "peerDependencies": { "@deepseek-ai/cordis": ">=4.0.2 <4.1.0" }
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/*.js",
+    "data/*.json",
+    "README.md",
+    "README_EN.md"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.2 <4.1.0",
+    "@eduwork/dsh-academic-calendar": ">=0.1.0-dev <0.2.0"
+  }
 }

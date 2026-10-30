@@ -17,6 +17,7 @@ const ctx = {
 }
 const dispose = await client.apply(ctx)
 assert.ok(mounted); assert.equal(tab.kind, 'ecnu-music-studio'); assert.equal(tab.title(), '音乐工作室')
+assert.equal(tab.keepMounted, true)
 assert.equal(slot.value.key, '@chatecnu-work/dsh-tool-ecnu-music'); assert.equal(typeof slot.Component, 'function')
 assert.equal(slot.value.inject().service, ctx.remote.ecnuMusicStudio)
 for (const cleanup of cleanups.reverse()) cleanup()

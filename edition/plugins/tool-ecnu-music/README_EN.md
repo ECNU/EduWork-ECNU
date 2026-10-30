@@ -2,7 +2,7 @@
 
 [简体中文](README.md) | **English**
 
-An independent music sidebar for EduWork's ECNU edition: song creation, melody planning, covers, audio transcription, candidate playback and ABC staff notation. It is separate from Knowledge Studio, with three columns when expanded and paged views in a narrow sidebar.
+An independent music sidebar for EduWork's ECNU edition: song creation, melody planning, covers, audio transcription, candidate playback and ABC staff notation. It is separate from Knowledge Studio and opens expanded by default. Collapse it to work alongside the conversation. Wide views use three columns and narrow sidebars use paged views; switching preserves the current draft.
 
 Sign in with a school account, open Music Studio in a conversation with a workspace, and provide lyrics and style. Select completed artifacts to listen or inspect notation; edit the ABC and use it in a new version. Covers and transcription accept workspace audio paths. An empty seed is random; an explicit seed overrides it. Generation supports one or two candidates.
 

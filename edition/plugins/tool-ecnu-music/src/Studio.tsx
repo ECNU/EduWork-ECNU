@@ -36,7 +36,7 @@ function saveText(name: string, text: string, mime: string) {
 const date = (value: string) => new Date(value).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })
 const filenameRows = (value: any): string[] => (Array.isArray(value) ? value : value?.artifacts || []).map((r: any) => typeof r === 'string' ? r : r.name).filter(Boolean)
 
-export function MusicStudioView({ adapter, active = true }: { adapter: Adapter; active?: boolean }) {
+export function MusicStudioView({ adapter, active = true, presentation }: { adapter: Adapter; active?: boolean; presentation?: { expanded: boolean; toggle(): void } }) {
   const id = useId(), [form, setForm] = useState<Form>(emptyForm), [rows, setRows] = useState<any[]>([]), [jobs, setJobs] = useState<Record<string, any>>({}), [selected, setSelected] = useState('')
   const [page, setPage] = useState('create'), [filter, setFilter] = useState(''), [capabilities, setCapabilities] = useState<any>(null), [capError, setCapError] = useState(''), [error, setError] = useState(''), [notice, setNotice] = useState(''), [pollEpoch, setPollEpoch] = useState(0)
   const [busy, setBusy] = useState(''), [attempt, setAttempt] = useState(false), [candidate, setCandidate] = useState(''), [files, setFiles] = useState<string[]>([]), [abc, setABC] = useState(''), [audio, setAudio] = useState<{ url: string; name: string } | null>(null), [saved, setSaved] = useState('')
@@ -140,7 +140,7 @@ export function MusicStudioView({ adapter, active = true }: { adapter: Adapter; 
   const filtered = rows.filter(row => `${row.title} ${row.input?.style || ''}`.toLowerCase().includes(filter.toLowerCase()))
 
   return <div className="ms-root"><style>{styles}</style>
-    <header className="ms-header"><div className="ms-brand"><MusicIcon size={30}/><div><div className="ms-kicker">Create · Listen · Refine</div><h1>Music Studio <span className="ms-muted">音乐工作室</span></h1></div></div><span className="ms-header-tag">YuE2 · ECNU</span></header>
+    <header className="ms-header"><div className="ms-brand"><MusicIcon size={30}/><div><div className="ms-kicker">Create · Listen · Refine</div><h1>Music Studio <span className="ms-muted">音乐工作室</span></h1></div></div><span className="ms-header-tag">YuE2 · ECNU</span>{presentation && <button onClick={presentation.toggle} aria-label={presentation.expanded ? '收回侧栏' : '展开音乐工作室'}>{presentation.expanded ? '收回侧栏' : '展开工作室'}</button>}</header>
     {adapter.demo && <div className="ms-note">交互预览 · 示例数据，不调用线上模型。试听为本地合成旋律。</div>}
     <nav className="ms-nav" aria-label="音乐工作室视图">{[['create', '创作'], ['library', '作品库'], ['detail', '作品详情']].map(([key, label]) => <button key={key} aria-current={page === key ? 'page' : undefined} onClick={() => setPage(key)}>{label}</button>)}</nav>
     <div className="ms-grid">

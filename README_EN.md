@@ -57,7 +57,6 @@ Remote access is not preinstalled in this edition. Users with their own relay ca
 | --- | --- |
 | [Campus and web search](edition/plugins/tool-ecnu-campus-search/README_EN.md) | Use the school account to find campus services, departments, policies, and news, and search the public web, retaining source links. |
 | [Account and quota](edition/plugins/ecnu-account-resources/README_EN.md) | View university model allowances, usage, and resource pools. |
-| [School decision model](edition/plugins/tool-ecnu-decision/README_EN.md) | Classify supplied material, check conditions and score against rubrics with `ecnu-decision`, guided by a companion skill. |
 | [Image understanding assistance](edition/plugins/provider-vision-fallback/README_EN.md) | Supply configured text-only models with textual evidence from a university vision model; can be disabled. |
 | [Activity heartbeat](edition/plugins/chatecnu-active-heartbeat/README_EN.md) | Report client activity after university sign-in; see Data and privacy below for the disclosed fields. |
 
@@ -66,6 +65,8 @@ ECNU also bundles the **`ecnu-campus-search` skill**, which guides campus source
 The [image creation skill](edition/skills/artifact-images/SKILL.md) reuses the public image tools with guidance for the university model: roughly 1K output by default and prompt expansion by the assistant. Text-to-image requests default to Chinese people when no identity or background is specified; editing preserves the identity of reference subjects. Explicit user requirements take precedence.
 
 Distribution configuration supplies university branding, default models, media services, and update channels. See the [ECNU distribution manifest](edition/distribution.json) for the complete combination.
+
+See [decision service configuration](docs/DECISION_EN.md) for the public decision plugin's school parameters. This repository owns configuration only; tools and skills come from the public package. Preinstallation follows the actual distribution and npm locks.
 
 ## University sign-in
 

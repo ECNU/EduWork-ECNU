@@ -28,6 +28,19 @@
   },
   // [eduwork] 已安装插件的选项，以插件 ID 为键；不会安装新插件。下方列出可编辑默认值；设置中保存的个人偏好可能优先。
   "plugins": {
+    // 公共决策插件安装后的学校默认参数；此配置不负责安装 npm 包。
+    "decision": {
+      "enabled": true,
+      "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+      "model": "ecnu-decision",
+      "authMode": "oidc",
+      "oidcProfileId": "ecnu",
+      "credentialRef": "EDUWORK_API_KEY",
+      "imageInput": "data-uri",
+      "maxQuestions": 64,
+      "maxRequestBytes": 12582912,
+      "requestTimeoutMs": 190000
+    },
     "eduwork-brand-settings": {
       // [eduwork] 默认配色：ecnu-liwa 红色、dsh 蓝色；设置中保存的个人偏好优先。
       "visualStyle": "ecnu-liwa",

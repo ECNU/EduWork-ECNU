@@ -66,6 +66,8 @@ The [image creation skill](edition/skills/artifact-images/SKILL.md) reuses the p
 
 Distribution configuration supplies university branding, default models, media services, and update channels. See the [ECNU distribution manifest](edition/distribution.json) for the complete combination.
 
+See [decision service configuration](docs/DECISION_EN.md) for the public decision plugin's school parameters. This repository owns configuration only; tools and skills come from the public package. Preinstallation follows the actual distribution and npm locks.
+
 ## University sign-in
 
 On first launch, the client automatically downloads and verifies university configuration. Sign in with a university account to discover authorized models, without manually entering endpoints or copying model API keys.

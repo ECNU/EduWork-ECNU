@@ -166,7 +166,7 @@ export function MusicStudioView({ adapter, active = true, presentation }: { adap
           </fieldset>
           {form.parent_request_id && <p className="ms-text">基于已有作品的新版本；提交会创建独立任务。</p>}
           <button className="ms-primary ms-submit" disabled={!!busy || attempt || !capabilities || !supportedMode} type="submit">{busy === '提交中' ? '正在提交…' : attempt ? '本次已提交 · 可新建版本' : modes[form.operation].action}</button>
-          <p className="ms-submit-note">{!supportedMode ? '当前服务未开放此能力。' : '时长由模型与内容决定。生成结果与乐谱需要试听、校对。'}</p>
+          <p className="ms-submit-note">{capabilities && !supportedMode ? '当前服务未开放此能力。' : '时长由模型与内容决定。生成结果与乐谱需要试听、校对。'}</p>
         </form>
         {capError ? <div className="ms-alert ms-error" role="alert">音乐服务尚未就绪：{capError}<p><button onClick={checkCapabilities}>重新连接</button></p></div> : !capabilities && <p className="ms-text" role="status">正在连接音乐服务…</p>}
       </section>

@@ -57,6 +57,7 @@ Remote access is not preinstalled in this edition. Users with their own relay ca
 | --- | --- |
 | [Campus and web search](edition/plugins/tool-ecnu-campus-search/README_EN.md) | Use the school account to find campus services, departments, policies, and news, and search the public web, retaining source links. |
 | [Account and quota](edition/plugins/ecnu-account-resources/README_EN.md) | View university model allowances, usage, and resource pools. |
+| [School decision model](edition/plugins/tool-ecnu-decision/README_EN.md) | Classify supplied material, check conditions and score against rubrics with `ecnu-decision`, guided by a companion skill. |
 | [Image understanding assistance](edition/plugins/provider-vision-fallback/README_EN.md) | Supply configured text-only models with textual evidence from a university vision model; can be disabled. |
 | [Activity heartbeat](edition/plugins/chatecnu-active-heartbeat/README_EN.md) | Report client activity after university sign-in; see Data and privacy below for the disclosed fields. |
 

@@ -57,6 +57,7 @@ flowchart TD
 | --- | --- |
 | [校内搜索与联网搜索](edition/plugins/tool-ecnu-campus-search/README.md) | 用学校账号检索校园办事、机构、政策与新闻，并联网补充公开资料，保留来源链接。 |
 | [账户与配额](edition/plugins/ecnu-account-resources/README.md) | 查看学校模型额度、使用进度和资源池。 |
+| [学校决策模型](edition/plugins/tool-ecnu-decision/README.md) | 通过 `ecnu-decision` 对给定材料做分类、条件判断与量表评分，配套技能指导按需调用。 |
 | [图片理解辅助](edition/plugins/provider-vision-fallback/README.md) | 为配置中的纯文本模型补充学校视觉模型提取的文字证据，可关闭。 |
 | [活跃心跳](edition/plugins/chatecnu-active-heartbeat/README.md) | 登录学校账号后上报客户端活跃状态；具体字段见下方数据与隐私说明。 |
 

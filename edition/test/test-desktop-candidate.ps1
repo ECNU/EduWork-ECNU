@@ -9,5 +9,6 @@ $env:DSH_OIDC_PACKAGE_ROOT=Join-Path $env:EDUWORK_TEST_RUNTIME 'node_modules/@ed
 $env:ECNU_ACCOUNT_PACKAGE_ROOT=Join-Path $env:EDUWORK_TEST_RUNTIME 'node_modules/@chatecnu-work/dsh-ecnu-account-resources'
 Push-Location $EditionRoot
 try {
+    node --import ./edition/test/runtime-resolver.mjs --test edition/plugins/tool-ecnu-decision/test/*.test.mjs
     node --import ./edition/test/runtime-resolver.mjs --test edition/test/*.test.mjs edition/plugins/chatecnu-active-heartbeat/test/*.test.mjs edition/plugins/ecnu-account-resources/test/*.test.mjs edition/plugins/provider-vision-fallback/test/*.test.js edition/plugins/provider-vision-fallback/test/*.test.mjs edition/plugins/tool-ecnu-campus-search/test/*.test.js edition/plugins/tool-ecnu-campus-search/test/*.test.mjs
 } finally { Pop-Location }

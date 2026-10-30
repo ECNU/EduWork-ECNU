@@ -44,6 +44,20 @@
     },
     {
       "root": "edition",
+      "source": "edition/plugins/tool-ecnu-decision",
+      "id": "chatecnu-decision",
+      "name": "@chatecnu-work/dsh-tool-ecnu-decision",
+      "config": {
+        "enabled": true,
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "model": "ecnu-decision",
+        "oidcProfileId": "ecnu",
+        "credentialRef": "EDUWORK_API_KEY",
+        "requestTimeoutMs": 190000
+      }
+    },
+    {
+      "root": "edition",
       "source": "edition/plugins/provider-vision-fallback",
       "id": "chatecnu-vision",
       "name": "@chatecnu-work/dsh-provider-vision-fallback",
@@ -79,6 +93,12 @@
     }
   ],
   "skills": [
+    {
+      "root": "edition",
+      "name": "ecnu-decision",
+      "source": "edition/skills/ecnu-decision",
+      "defaultEnabled": true
+    },
     {
       "root": "edition",
       "name": "ecnu-campus-search",

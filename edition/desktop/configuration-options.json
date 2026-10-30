@@ -1,4 +1,10 @@
 {
+  "plugins.chatecnu-decision.enabled": ["是否启用学校决策工具；不影响聊天模型。", true],
+  "plugins.chatecnu-decision.baseURL": ["SystemOne 服务 API 基地址；学校模式须与账号的模型服务地址一致。", "https://models.example.org/v1"],
+  "plugins.chatecnu-decision.model": ["决策模型公开名称；不自动回退到其他模型。", "ecnu-decision"],
+  "plugins.chatecnu-decision.oidcProfileId": ["学校账号 ID；显式置空才使用独立 API Key。", "ecnu"],
+  "plugins.chatecnu-decision.credentialRef": ["独立 Key 模式的凭据引用，不填写 Key 本身。", "EDUWORK_API_KEY"],
+  "plugins.chatecnu-decision.requestTimeoutMs": ["决策请求超时毫秒，1–195000，默认 190000；失败不自动重试。", 190000, true],
   "plugins.ecnu-account-resources.profileIDs": [
     "提供配额展示的企业 ID 列表。",
     [

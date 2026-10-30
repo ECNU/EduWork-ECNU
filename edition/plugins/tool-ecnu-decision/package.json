@@ -1,0 +1,12 @@
+{
+  "name": "@chatecnu-work/dsh-tool-ecnu-decision",
+  "version": "0.1.0-dev",
+  "private": true,
+  "description": "Authenticated SystemOne decision tool for EduWork@ECNU",
+  "type": "module",
+  "main": "lib/index.js",
+  "files": ["lib", "README.md", "README_EN.md", "LICENSE"],
+  "scripts": { "test": "node --test test/core.test.mjs" },
+  "peerDependencies": { "@deepseek-ai/dsh-tools": "0.2.1-rc.3" },
+  "license": "MulanPSL-2.0"
+}

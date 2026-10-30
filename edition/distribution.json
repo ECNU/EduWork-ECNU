@@ -145,6 +145,21 @@
       "root": "edition",
       "source": "edition/desktop/configuration-options.json",
       "target": "desktop/configuration-options.json"
+    },
+    {
+      "root": "edition",
+      "source": "LICENSE",
+      "target": "licenses/EduWork-ECNU/LICENSE"
+    },
+    {
+      "root": "edition",
+      "source": "LICENSE-MIT",
+      "target": "licenses/EduWork-ECNU/LICENSE-MIT"
+    },
+    {
+      "root": "edition",
+      "source": "LICENSING.md",
+      "target": "licenses/EduWork-ECNU/LICENSING.md"
     }
   ],
   "patches": [

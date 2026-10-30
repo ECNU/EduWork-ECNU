@@ -6,7 +6,7 @@ info:
     Existing ECNU institution wire. Not part of the public EduWork resource
     contract or OIDC. Only an explicitly configured institution extension
     requests this API, using the managed model key rather than identity token.
-  license: { name: MIT, identifier: MIT }
+  license: { name: "Mulan PSL v2 and historical MIT", identifier: "MulanPSL-2.0 AND MIT" }
 servers:
   - url: https://ai.example.edu/open/api/v1
 security:

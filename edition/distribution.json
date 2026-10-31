@@ -20,6 +20,18 @@
   "plugins": [
     {
       "root": "edition",
+      "source": "edition/plugins/tool-ecnu-music",
+      "id": "chatecnu-music",
+      "name": "@chatecnu-work/dsh-tool-ecnu-music",
+      "config": {
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "oidcProfileId": "ecnu",
+        "credentialRef": "EDUWORK_API_KEY",
+        "requestTimeoutMs": 120000
+      }
+    },
+    {
+      "root": "edition",
       "source": "edition/plugins/ecnu-account-resources",
       "id": "ecnu-account-resources",
       "name": "@chatecnu-work/dsh-ecnu-account-resources",
@@ -79,6 +91,12 @@
     }
   ],
   "skills": [
+    {
+      "root": "edition",
+      "name": "ecnu-music",
+      "source": "edition/skills/ecnu-music",
+      "defaultEnabled": true
+    },
     {
       "root": "edition",
       "name": "ecnu-campus-search",

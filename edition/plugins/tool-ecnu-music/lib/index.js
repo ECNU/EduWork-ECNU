@@ -114,18 +114,19 @@ export function apply(ctx, rawConfig = {}) {
     }
     return renderMusicScore({ root, args, signal: exec.signal })
   })
-  register('ecnu_music_export_song', 'Export a portable offline song directory: index.html with an audio player, supplied lyrics and SVG sheet music, plus original audio, lyrics.txt and score.abc. Audio uses a relative file link, never Base64 or a remote URL. Copy the entire output directory to share. Deliver both HTML and standalone audio paths. Use an external browser for complete playback; the current built-in HTML preview does not resolve sibling audio files. Requires an existing workspace audio file, lyrics and exactly one ABC input; does not generate music or verify playback/timing/accuracy. No login or network.', {
+  register('ecnu_music_export_song', 'Export a portable offline song directory with an audio player, timed lyric stage, supplied lyrics, SVG notation, timeline.json and shared song-timeline.js. Supports portrait view, SRT/LRC/Caption import and manual timing. Optional timeline_path must match the audio and ABC hashes. No automatic alignment; empty tracks remain pending. Audio uses a relative link, never Base64 or a remote URL. Share the entire directory. Use the music skill loopback preview script or an external browser; built-in HTML file preview does not resolve sibling audio. Deliver the page and standalone audio paths. Requires workspace audio, lyrics and exactly one ABC input; does not generate music or verify playback/timing. No login or network.', {
     audio_path: { type: 'string', required: true, description: 'Existing workspace FLAC, MP3, WAV or OGG file, up to 128 MiB. Keep the candidate matched to its ABC.' },
     lyrics: { type: 'string', required: true, description: 'Original creation lyrics, 1–16000 characters. Preserve supplied lyrics; not an audio transcript.' },
     abc: { type: 'string', description: 'ABC text, up to 256 KiB UTF-8. Mutually exclusive with abc_path.' },
     abc_path: { type: 'string', description: 'Existing workspace .abc file. Mutually exclusive with abc.' },
     title: { type: 'string', description: 'Displayed song title, 1–120 characters.' },
     style: { type: 'string', description: 'Optional original style/arrangement description, 1–2000 characters.' },
+    timeline_path: { type: 'string', description: 'Optional workspace timeline.json exported by this song page, bound to the same audio and ABC SHA-256. Without it, timing remains pending. Page supports SRT/LRC/Caption JSON import and manual timing; no automatic alignment.' },
   }, async (args, exec) => {
     const root = await workspace(ctx, exec)
     const cwd = ctx.get?.('workingDirectory')?.get(exec.agent.session) ?? exec.agent.session.header.cwd
     args = { ...args }
-    for (const key of ['audio_path', 'abc_path']) if (args[key]) args[key] = ctx.fs.processPath(await ctx.fs.resolve(args[key], { cwd, signal: exec.signal }))
+    for (const key of ['audio_path', 'abc_path', 'timeline_path']) if (args[key]) args[key] = ctx.fs.processPath(await ctx.fs.resolve(args[key], { cwd, signal: exec.signal }))
     return exportMusicSong({ root, args, signal: exec.signal })
   })
   register('ecnu_music_capabilities', 'Read current school music service capabilities. Authentication stays in the Host; no tokens are returned. Use before choosing a music operation.', {},

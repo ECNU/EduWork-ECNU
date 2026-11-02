@@ -126,6 +126,11 @@ test('native song export resolves workspace paths and does not request credentia
   assert.equal(output.mime,'text/html')
   assert.match(output.relativePath,/song-[^/]+\/index.html$/)
   assert.deepEqual(await readFile(join(result(output).directory,'audio.wav')),wave())
+  const timeline=JSON.parse(await readFile(join(result(output).directory,'timeline.json'),'utf8'))
+  timeline.durationMs=2000;timeline.lyrics.cues=[{text:'希望',startMs:500,endMs:1500}]
+  await writeFile(join(exec.agent.session.header.cwd,'timeline.json'),JSON.stringify(timeline))
+  const timed=await mounted.tools.get('ecnu_music_export_song').execute({abc:'X:1\nK:C\nCDEF|',lyrics:'希望',audio_path:'audio.wav',timeline_path:'timeline.json'},exec)
+  assert.equal(result(timed).timelineStatus,'draft')
 })
 
 test('school skill is assembled once with matching account binding and native plugin', async () => {

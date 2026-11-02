@@ -1,0 +1,38 @@
+# HTML 同步作品页与时间轴
+
+HTML 是主要试听与校时入口。横/竖屏画面显示前句、当前句、后句及进度，音频 `currentTime` 是唯一播放时钟；暂停、跳转、循环与倍速不另建计时器。未提供时间数据时照常播放并显示原歌词、静态谱面，标为“待对齐”。
+
+## 本地预览
+
+找到当前技能目录，以本机可用的 Node 执行以下命令，参数替换为工具回执的真实 `directory`。命令行参数逐项正确转义，不将歌词或标题拼成 shell 代码。
+
+```text
+node <技能目录>/scripts/serve-song.mjs start <作品目录>
+node <技能目录>/scripts/serve-song.mjs status <返回的state路径>
+node <技能目录>/scripts/serve-song.mjs stop <返回的state路径>
+```
+
+`start` 后台启动并返回 `url`、`pid`、`state`；同一目录再次启动会复用存活服务。仅监听本机随机端口，只提供该目录固定作品文件，支持音频 Range。将真实 URL 作为网页打开（有侧栏网页工具时可以使用）；不通过 HTML 文件的隔离预览。核对音频能播放并能拖动，再报告播放通过。文件仍可在外部浏览器通过 `file://` 打开。
+
+状态和 stdout/stderr 日志位于作品父目录 `.previews/`，不在分享文件内。服务保持运行直到 `stop` 或系统退出，不承诺重启后原链接有效；关闭页面不会停服。向用户保留状态入口，结束试听时可用 `stop` 关闭本次服务。不要公开监听 `0.0.0.0`、提供整个工作区或结束其他 Node 进程。启动锁冲突时先查状态和日志，不重复启动。没有 Node 时降级到外部浏览器，不为预览改底层或自动装新运行时。
+
+## 时间轴导入与校时
+
+页面支持 SRT、LRC、`Caption[]` JSON 和完整 `timeline.json`。SRT 保留明确起止；LRC 的结束暂取下一标记，空时间标记可以表达间奏，末句暂取音轨末尾，必须再核对。导入字幕默认 `draft`，不会覆盖原始歌词。字幕不支持同时显示多条重叠唱词；合唱应选择明确的主歌词轨。
+
+在“校对歌词时间”中边听边记录每句开始/结束，或直接填写秒数。未填的句子不参与同步；前奏、间奏留空，不自动均分。只有试听核对后才勾选已核对并应用。更改仅在当前页面内存中：点击“导出时间轴”保存，再将该 JSON 放入工作区，通过 `ecnu_music_export_song.timeline_path` 导出新的完整作品目录。不要直接覆盖旧作品或声称刷新页面会保留未保存的修改。
+
+时间戳来源和可靠性按 [song-video.md](song-video.md) 核查。识别工具的结果只是候选；当前音乐插件没有自动强制对齐工具。字幕草稿可以预览，但交付时明确待校对，不能称为精准同步。
+
+## 共用格式
+
+`timeline.json` 使用 `eduwork.music.timeline.v1`，最多 1 MiB；`audioSha256` 与 `abcSha256` 绑定原音频字节和 UTF-8 ABC，防止将另一版本的时间套上来。`durationMs` 是实际音轨毫秒时长，未知时为 `null`。不同音频/ABC 版本、超时长、重叠或倒序时间会被拒绝；不能为绕过校验随意改指纹。
+
+两条轨均含 `status: "draft" | "reviewed"`、`source` 和 `cues`，未对齐时 `cues: []`、`status: "draft"`。`reviewed` 只表示人工确认记录，不是模型准确性认证。
+
+- `lyrics.cues`: `{text,startMs,endMs,timestampMs:null,confidence:null}`，对应 Remotion Caption 数据；区间左闭右开，时间相对完整原音频起点。段落标题不当作唱词。
+- `score.cues`: `{startMs,endMs,startChar,endChar}`，字符范围为同一 ABC 文本的 JavaScript UTF-16 偏移。只有实际音频事件到 ABC 音符元素的对应关系核实后才填写。页面高亮范围内音符，谱面缩放/重排后重新映射。一个时间段可对应一段谱面，不承诺任意复调声部逐音符对齐。
+
+生成阶段 ABC 的 BPM、小节和 `w:` 歌词不能证明最终音轨的时刻。没有经验证的映射就保留静态谱面，不从歌词时间轴猜音符时间。
+
+目录附带无 DOM 的 `song-timeline.js`，导出 `validateTimeline`、`sampleTimeline` 等函数。HTML 和未来视频均可对同一毫秒位置取当前歌词/谱面索引、进度及入场位置；视频适配器传 `frame / fps * 1000`，使用同一背景和文字排布。它提供共用数据/时间模型，不会自动把 HTML 变成 MP4，视频仍需 Remotion 场景与音轨编码。

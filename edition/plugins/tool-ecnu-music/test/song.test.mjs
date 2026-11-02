@@ -14,7 +14,7 @@ test('song export preserves audio bytes, lyrics and ABC in a portable directory 
   const args = { abc, lyrics, audio_path: 'audio.wav', title: '校园 <歌>', style: 'Acoustic choir' }
   const one = await exportMusicSong({ root, args }), two = await exportMusicSong({ root, args })
   assert.notEqual(one.directory, two.directory)
-  assert.deepEqual((await readdir(one.directory)).sort(), ['audio.wav','index.html','lyrics.txt','score.abc'])
+  assert.deepEqual((await readdir(one.directory)).sort(), ['audio.wav','index.html','lyrics.txt','score.abc','song-timeline.js','timeline.json'])
   assert.deepEqual(await readFile(join(one.directory,'audio.wav')), await readFile(join(root,'audio.wav')))
   assert.equal(one.audioPath, join(one.directory, 'audio.wav'))
   assert.equal(one.audioRelativePath, one.relativePath.replace(/index\.html$/, 'audio.wav'))
@@ -42,4 +42,17 @@ test('song export rejects invalid inputs, escaped paths and oversized audio; rem
   const signal = AbortSignal.abort(); await assert.rejects(exportMusicSong({root,args,signal}), /abort/i)
   assert.deepEqual(await readdir(join(root,'.eduwork/generated/music')), [])
   assert.deepEqual(await readFile(join(root,'audio.wav')), wave())
+})
+
+test('timeline export binds audio and ABC; stale import cleans up only the new output',async t=>{
+  const root=await workspace(t),args={abc,lyrics:'唱一句',audio_path:'audio.wav'}
+  const one=await exportMusicSong({root,args}),timeline=JSON.parse(await readFile(join(one.directory,'timeline.json'),'utf8'))
+  timeline.durationMs=2000;timeline.lyrics={status:'reviewed',source:'manual',cues:[{text:'唱一句',startMs:200,endMs:1800}]}
+  await writeFile(join(root,'timing.json'),JSON.stringify(timeline))
+  const two=await exportMusicSong({root,args:{...args,timeline_path:'timing.json'}})
+  assert.equal(two.timelineStatus,'reviewed');assert.equal(two.audioSha256,one.audioSha256)
+  assert.equal(JSON.parse((await readFile(two.path,'utf8')).match(/<script id="song-data"[^>]*>([^]*?)<\/script>/)[1]).timeline.lyrics.cues[0].text,'唱一句')
+  const before=await readdir(join(root,'.eduwork/generated/music'))
+  await assert.rejects(exportMusicSong({root,args:{...args,abc:abc+'\n',timeline_path:'timing.json'}}),/同一版本/)
+  assert.deepEqual(await readdir(join(root,'.eduwork/generated/music')),before)
 })

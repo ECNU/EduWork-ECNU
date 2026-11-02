@@ -8,6 +8,8 @@ Sign in with a school account and describe the lyrics and style in a conversatio
 
 `ecnu_music_render_score` saves ABC text or a workspace `.abc` file as a standalone offline HTML document with SVG staff notation, source ABC, download and print / save-as-PDF controls. This step runs locally without login or music model requests, and does not require opening Music Studio.
 
+Use `ecnu_music_export_song` to export a complete song directory: `index.html` combines lyrics, an audio player and staff notation, with the original audio, lyrics text and ABC files alongside it. It supports looping, playback speed, notation zoom and printing. Audio uses a relative file link; copy the entire directory for offline sharing. Lyrics and notes do not have synchronized highlighting.
+
 The UI and `ecnu-music` skill share the Host tools, permission checks and image/TTS school authorization interface; neither receives tokens. Titles, lyrics, parameters, parent versions and downloaded artifacts stay in the workspace. ABC engraving does not guarantee note accuracy or a complete orchestral score. This version does not offer stem editing or precise duration control.
 
 Assembled through the ECNU distribution, without inclusion in the public edition. See the [music integration guide](../../../docs/MUSIC.md) for configuration, tools, local interactive preview and validation. Importing SKILL.md alone does not install the native tools or UI.

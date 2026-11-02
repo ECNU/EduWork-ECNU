@@ -1,12 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, rm, readFile } from 'node:fs/promises'
+import { mkdtemp, rm, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve, relative, isAbsolute } from 'node:path'
 import { createServer } from 'node:http'
 import { once } from 'node:events'
 import { apply, musicAuthorization } from '../lib/index.js'
 import { resolveMusicConfig } from '../lib/core.js'
+import { wave } from './audio-fixture.mjs'
 
 const config = { baseURL: 'https://school.example.org/open/api/v1', oidcProfileId: 'school', credentialRef: 'TEST_MUSIC_KEY' }
 function mount(account, credentials = { resolve() { throw Error('must not read personal key in school mode') } }, overrides = {}, rawConfig = config) {
@@ -47,7 +48,7 @@ test('real DSH defineTool registers music tools and uses only Host authorization
       return Response.json({ id: 'host-job', status: init.method === 'POST' ? 'queued' : 'succeeded' }, { status: url.endsWith('/generations') ? 202 : 200 })
     },
   })
-  assert.equal(mounted.tools.size, 8)
+  assert.equal(mounted.tools.size, 9)
   const call = async (name, args = {}) => result(await mounted.tools.get(name).execute(args, exec))
   assert.deepEqual((await call('ecnu_music_capabilities')).operations, ['generate', 'cover', 'transcribe', 'plan'])
   const submitted = await call('ecnu_music_submit', { operation: 'generate', style: 'orchestra', lyrics: '希望', n: 2 })
@@ -98,12 +99,14 @@ test('mutations follow workspace policy, read-only approval and narrowed write r
   ctx.permissionPresets.current = () => 'read-only'
   assert.equal((await check({ ...exec, name: 'ecnu_music_submit' }, next)).kind, 'ask')
   assert.equal((await check({ ...exec, name: 'ecnu_music_render_score' }, next)).kind, 'ask')
+  assert.equal((await check({ ...exec, name: 'ecnu_music_export_song' }, next)).kind, 'ask')
   assert.equal((await check({ ...exec, name: 'ecnu_music_cancel' }, next)).displayReason.zh.includes('音乐'), true)
   assert.deepEqual(await check({ name: 'ecnu_music_job' }, next), { kind: 'continue' })
   assert.equal((await check({ name: 'ecnu_music_download' }, next)).kind, 'deny')
   ctx.get = name => name === 'sandboxPolicy' ? { resolve: () => ({ mode: 'workspace-write', workspaceRoot: join(exec.agent.session.header.cwd, 'narrow') }) } : undefined
   assert.equal((await check({ ...exec, name: 'ecnu_music_download' }, next)).kind, 'deny')
   assert.equal((await check({ ...exec, name: 'ecnu_music_render_score' }, next)).kind, 'deny')
+  assert.equal((await check({ ...exec, name: 'ecnu_music_export_song' }, next)).kind, 'deny')
 })
 
 test('native HTML score tool works without login or credentials and returns a workspace preview', async t => {
@@ -113,6 +116,16 @@ test('native HTML score tool works without login or credentials and returns a wo
   assert.equal(output.mime, 'text/html')
   assert.match(output.relativePath, /^\.eduwork\/generated\/music\/score-.*\.html$/)
   assert.match(await readFile(result(output).path, 'utf8'), /abcjs_basic v6\.7\.2/)
+})
+
+test('native song export resolves workspace paths and does not request credentials or school login', async t => {
+  const exec = await workspace(t)
+  await writeFile(join(exec.agent.session.header.cwd, 'audio.wav'), wave())
+  const mounted = mount({ modelAuthorization() { throw Error('Local export must not request authorization') } })
+  const output = await mounted.tools.get('ecnu_music_export_song').execute({abc:'X:1\nK:C\nCDEF|',lyrics:'希望',audio_path:'audio.wav'},exec)
+  assert.equal(output.mime,'text/html')
+  assert.match(output.relativePath,/song-[^/]+\/index.html$/)
+  assert.deepEqual(await readFile(join(result(output).directory,'audio.wav')),wave())
 })
 
 test('school skill is assembled once with matching account binding and native plugin', async () => {

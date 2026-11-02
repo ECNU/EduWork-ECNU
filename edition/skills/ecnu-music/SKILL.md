@@ -1,21 +1,21 @@
 ---
 name: ecnu-music
-description: 通过对话使用学校音乐服务创作歌曲、翻唱改编、规划旋律、音频转谱，根据已有作品与 ABC 乐谱创作新版本，或将 ABC 排版为离线 HTML 五线谱。适用于原创歌曲、校歌改编、乐谱交付和音乐创作记录续查；普通朗读和会议语音识别使用语音工具。
+description: 通过对话创作歌曲、翻唱改编、规划旋律、音频转谱及续作；将 ABC 排成五线谱，或交付包含歌词、音频和乐谱的离线 HTML 作品页。适用于音乐创作、校歌改编与作品整理；普通朗读和会议转写使用语音工具。
 metadata:
   eduwork:
     displayName: 音乐创作
-    displayDescription: 使用学校账号生成歌曲、改编音频，并获取音乐规划、旋律与乐谱。
+    displayDescription: 通过对话创作与改编歌曲，获取乐谱，交付含歌词、音频和五线谱的作品页。
     credentialRef: EDUWORK_API_KEY
     oidcProfileId: ecnu
 ---
 
 # 音乐创作
 
-通过 EduWork 原生 `ecnu_music_*` 工具在对话中完成音乐创作，无需打开 Music Studio。Host 复用当前学校登录并管理 Token 刷新；无需用户另填 Key 或 Base URL。工具缺失时说明需要包含音乐插件的 EduWork 版本。未登录时引导用户在学校账号入口登录，不读取凭据文件、导出 Token 或用 shell 拼接授权请求。
+通过 EduWork 原生 `ecnu_music_*` 工具在对话中完成音乐创作，无需打开 Music Studio。Host 复用当前学校登录并管理 Token 刷新；无需用户另填 Key 或 Base URL。工具缺失时说明需要包含音乐插件的 EduWork 版本。线上任务未登录时引导用户在学校账号入口登录，不读取凭据文件、导出 Token 或用 shell 拼接授权请求。
 
 ## 选择任务
 
-使用线上音乐服务的新会话或能力不明时，先调用 `ecnu_music_capabilities` 获取当前能力；任务续查直接使用已有 ID。仅将已有 ABC 排版成五线谱时，直接调用本地 `ecnu_music_render_score`，无需查询服务或学校登录。按目标选择 `ecnu_music_submit` 的操作：
+使用线上音乐服务的新会话或能力不明时，先调用 `ecnu_music_capabilities` 获取当前能力；任务续查直接使用已有 ID。已有 ABC 排谱用 `ecnu_music_render_score`；已有音频、歌词和 ABC 打包为作品页用 `ecnu_music_export_song`。这两个工具本地执行，无需查询服务或学校登录。按目标选择 `ecnu_music_submit` 的操作：
 
 | 目标 | operation | 输入 |
 | --- | --- | --- |
@@ -44,6 +44,12 @@ metadata:
 5. 完成后用 `ecnu_music_artifacts` 列出真实文件，再通过 `ecnu_music_download` 下载所需音频或乐谱。向用户提供工具返回的实际路径，必要时用播放器预览；不编造下载地址。乐谱可能是 ABC 或 MIDI，不能把扩展名改为 PDF，不能承诺四声部总谱。
 
 查询、下载和取消必须使用创建任务时的同一账号。404 也可能表示账号不一致或任务过期；401 提示重新登录，403 检查模型分配、`llm:invoke`、OpenApp 状态及 IP 白名单。用户要求停止任务时调用 `ecnu_music_cancel`；退出对话或本地请求超时不会自动取消服务端任务。
+
+## 完整作品交付
+
+交付完整歌曲时，若同一候选的音频、ABC 和原始歌词齐全，额外用 `ecnu_music_export_song` 生成包含播放器、歌词与五线谱的 HTML 作品页，同时保留原音频与乐谱。用户只要求音频、单独排谱或规划时按其范围交付。已有作品直接复用文件，不为排版重提生成。
+
+传入真实 `audio_path`、`abc_path`（或 `abc`）、原始 `lyrics`，以及标题和可选编曲描述。返回的是一个目录：`index.html` 通过相对路径播放同目录音频，另附 `lyrics.txt` 和 `score.abc`。提供 HTML 入口并说明分享需复制整个目录；不将音频 Base64 内嵌、不依赖在线链接，不把它称为单文件作品。多个候选分别导出，不能混配音频与乐谱。详细参数、缺少产物时的处理和验证见工作流的“完整歌曲作品页”。
 
 ## 能力边界
 

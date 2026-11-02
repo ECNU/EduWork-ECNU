@@ -1,5 +1,5 @@
 import { randomUUID, createHash } from 'node:crypto'
-import { lstat, mkdir, open, readFile, realpath } from 'node:fs/promises'
+import { lstat, mkdir, open, readFile, realpath, rm } from 'node:fs/promises'
 import { basename, extname, isAbsolute, join, relative, resolve } from 'node:path'
 
 const operations = { generate: 'generations', plan: 'plans', cover: 'covers', transcribe: 'transcriptions' }
@@ -139,6 +139,15 @@ async function exclusive(root, name, bytes) {
 export async function writeMusicArtifact(root, name, bytes) {
   if (!/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,240}$/.test(name)) throw Error('Invalid music artifact name')
   return exclusive(root, name, bytes)
+}
+export async function writeMusicArtifactDirectory(root, name, write) {
+  if (!/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,240}$/.test(name)) throw Error('Invalid music artifact directory')
+  const parent = await safeDirectory(root), path = join(parent, name)
+  // A single validated child of the canonical, fenced output directory; never an existing directory.
+  if (relative(parent, path) !== name) throw Error('Invalid music artifact directory')
+  await mkdir(path)
+  try { return { path, result: await write(path) } }
+  catch (error) { await rm(path, { recursive: true, force: true }); throw error }
 }
 async function record(root, name) {
   const path = join(await safeDirectory(root), name)

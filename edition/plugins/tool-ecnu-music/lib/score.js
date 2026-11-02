@@ -1,46 +1,35 @@
 import { randomUUID } from 'node:crypto'
-import { open, readFile, realpath } from 'node:fs/promises'
-import { extname, isAbsolute, relative, resolve } from 'node:path'
+import { readFile } from 'node:fs/promises'
+import { extname } from 'node:path'
 import { writeMusicArtifact } from './core.js'
+import { readWorkspaceAsset } from './artifact-files.js'
 
 const MAX_ABC = 256 * 1024
-const contained = (root, path) => { const rel = relative(root, path); return !isAbsolute(rel) && rel !== '..' && !rel.startsWith('../') && !rel.startsWith('..\\') }
-const escapeHTML = text => text.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char])
-const jsonData = data => JSON.stringify(data).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
+export const escapeHTML = text => text.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char])
+export const jsonData = data => JSON.stringify(data).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
 let assets
-async function rendererAssets() {
+export async function rendererAssets() {
   if (!assets) assets = Promise.all(['abcjs.cjs', 'LICENSE.md'].map(name => readFile(new URL(`../vendor/abcjs/${name}`, import.meta.url), 'utf8')))
   return assets
 }
 
 async function readABC(root, path, signal) {
   if (typeof path !== 'string' || !path.trim() || path.length > 4096 || extname(path).toLowerCase() !== '.abc') throw Error('abc_path must name a workspace .abc file')
-  const project = await realpath(root), source = await realpath(resolve(project, path))
-  if (!contained(project, source)) throw Error('ABC must be inside the session workspace')
-  const handle = await open(source, 'r')
-  try {
-    const info = await handle.stat()
-    if (!info.isFile() || info.size < 1 || info.size > MAX_ABC) throw Error('ABC must be a regular file of 1–256 KiB')
-    const bytes = Buffer.alloc(MAX_ABC + 1)
-    let size = 0
-    while (size < bytes.length) {
-      signal?.throwIfAborted()
-      const { bytesRead } = await handle.read(bytes, size, bytes.length - size, null)
-      if (!bytesRead) break
-      size += bytesRead
-    }
-    if (size > MAX_ABC) throw Error('ABC exceeds 256 KiB')
-    return new TextDecoder('utf-8', { fatal: true }).decode(bytes.subarray(0, size))
-  } finally { await handle.close() }
+  return new TextDecoder('utf-8', { fatal: true }).decode(await readWorkspaceAsset(root, path, MAX_ABC, signal))
+}
+
+export async function scoreSource(root, args, signal) {
+  if ((args.abc !== undefined) === (args.abc_path !== undefined)) throw Error('Provide exactly one of abc or abc_path')
+  const abc = args.abc_path !== undefined ? await readABC(root, args.abc_path, signal) : args.abc
+  if (typeof abc !== 'string' || !abc.trim() || Buffer.byteLength(abc) > MAX_ABC) throw Error('ABC must contain 1–256 KiB of UTF-8 text')
+  if (!/^K\s*:/m.test(abc)) throw Error('ABC requires a K: key field')
+  return abc
 }
 
 export async function renderMusicScore({ root, args, signal }) {
   signal?.throwIfAborted()
   for (const key of Object.keys(args)) if (!['abc', 'abc_path', 'title'].includes(key)) throw Error(`Unsupported score parameter: ${key}`)
-  if ((args.abc !== undefined) === (args.abc_path !== undefined)) throw Error('Provide exactly one of abc or abc_path')
-  const abc = args.abc_path !== undefined ? await readABC(root, args.abc_path, signal) : args.abc
-  if (typeof abc !== 'string' || !abc.trim() || Buffer.byteLength(abc) > MAX_ABC) throw Error('ABC must contain 1–256 KiB of UTF-8 text')
-  if (!/^K\s*:/m.test(abc)) throw Error('ABC requires a K: key field')
+  const abc = await scoreSource(root, args, signal)
   const title = args.title ?? '音乐乐谱'
   if (typeof title !== 'string' || !title.trim() || [...title].length > 120) throw Error('title must contain 1–120 characters')
   const [renderer, license] = await rendererAssets(), nonce = randomUUID().replaceAll('-', '')

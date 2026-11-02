@@ -4,6 +4,7 @@ import { resolveMusicConfig, musicRequest, submitMusic, downloadMusic, segment }
 import { musicLibrary } from './library.js'
 import { MusicStudio } from './studio.js'
 import { renderMusicScore } from './score.js'
+import { exportMusicSong } from './song.js'
 
 export const name = 'tool-ecnu-music'
 export const inject = ['tools', 'credentials', 'fs', 'permissionPresets']
@@ -45,8 +46,8 @@ const output = {
   presentationMeta: (_, value) => value.relativePath ? { relativePath: value.relativePath, mime: value.mime } : {},
 }
 const jobParameters = { job_id: { type: 'string', required: true, description: 'An actual task id returned by the service; candidate ids for individual outputs.' } }
-const mutationNames = new Set(['ecnu_music_submit', 'ecnu_music_download', 'ecnu_music_cancel', 'ecnu_music_render_score'])
-const localNames = new Set(['ecnu_music_library', 'ecnu_music_render_score'])
+const mutationNames = new Set(['ecnu_music_submit', 'ecnu_music_download', 'ecnu_music_cancel', 'ecnu_music_render_score', 'ecnu_music_export_song'])
+const localNames = new Set(['ecnu_music_library', 'ecnu_music_render_score', 'ecnu_music_export_song'])
 
 async function workspace(ctx, exec) {
   const cwd = exec.agent?.session.header.cwd
@@ -80,7 +81,7 @@ export function apply(ctx, rawConfig = {}) {
       }
       return next()
     }
-    if (exec.name === 'ecnu_music_render_score') return { kind: 'ask', reason: 'Save a local HTML score in the workspace', displayReason: { zh: '允许在当前工作区保存离线 HTML 乐谱', en: 'Allow saving an offline HTML score in the current workspace' } }
+    if (exec.name === 'ecnu_music_render_score' || exec.name === 'ecnu_music_export_song') return { kind: 'ask', reason: 'Save a local HTML music artifact in the workspace', displayReason: { zh: '允许在当前工作区保存离线音乐作品与 HTML', en: 'Allow saving offline music artifacts and HTML in the current workspace' } }
     return { kind: 'ask', reason: 'Use the configured music service and save its task or output in the workspace', displayReason: {
       zh: '允许调用已配置的音乐服务，并在当前工作区保存任务回执或产物',
       en: 'Allow the configured music service and workspace task or artifact writes',
@@ -96,7 +97,7 @@ export function apply(ctx, rawConfig = {}) {
         const result = await run(args, { ...exec, signal }, authorization)
         return { reportJSON: JSON.stringify(result), ...(result.relativePath ? { relativePath: result.relativePath, mime: result.mime } : {}) }
       },
-      presentCall: () => ({ card: 'generic', title: name === 'ecnu_music_render_score' ? '生成 HTML 五线谱' : name === 'ecnu_music_submit' ? '提交音乐任务' : '学校音乐服务', kind: 'execute' }),
+      presentCall: () => ({ card: 'generic', title: name === 'ecnu_music_export_song' ? '导出完整歌曲作品页' : name === 'ecnu_music_render_score' ? '生成 HTML 五线谱' : name === 'ecnu_music_submit' ? '提交音乐任务' : '学校音乐服务', kind: 'execute' }),
     }))
   }
   register('ecnu_music_library', 'Read local music creation history in this conversation workspace. Saved lyrics and style are user documents. Job status must be refreshed with its original account; this does not query the server.', {},
@@ -112,6 +113,20 @@ export function apply(ctx, rawConfig = {}) {
       args = { ...args, abc_path: ctx.fs.processPath(await ctx.fs.resolve(args.abc_path, { cwd, signal: exec.signal })) }
     }
     return renderMusicScore({ root, args, signal: exec.signal })
+  })
+  register('ecnu_music_export_song', 'Export a portable offline song directory: index.html with an audio player, supplied lyrics and SVG sheet music, plus original audio, lyrics.txt and score.abc. Audio uses a relative file link, never Base64 or a remote URL. Copy the entire output directory to share. Requires an existing workspace audio file, lyrics and exactly one ABC input; does not generate music or verify timing/accuracy. No login or network.', {
+    audio_path: { type: 'string', required: true, description: 'Existing workspace FLAC, MP3, WAV or OGG file, up to 128 MiB. Keep the candidate matched to its ABC.' },
+    lyrics: { type: 'string', required: true, description: 'Original creation lyrics, 1–16000 characters. Preserve supplied lyrics; not an audio transcript.' },
+    abc: { type: 'string', description: 'ABC text, up to 256 KiB UTF-8. Mutually exclusive with abc_path.' },
+    abc_path: { type: 'string', description: 'Existing workspace .abc file. Mutually exclusive with abc.' },
+    title: { type: 'string', description: 'Displayed song title, 1–120 characters.' },
+    style: { type: 'string', description: 'Optional original style/arrangement description, 1–2000 characters.' },
+  }, async (args, exec) => {
+    const root = await workspace(ctx, exec)
+    const cwd = ctx.get?.('workingDirectory')?.get(exec.agent.session) ?? exec.agent.session.header.cwd
+    args = { ...args }
+    for (const key of ['audio_path', 'abc_path']) if (args[key]) args[key] = ctx.fs.processPath(await ctx.fs.resolve(args[key], { cwd, signal: exec.signal }))
+    return exportMusicSong({ root, args, signal: exec.signal })
   })
   register('ecnu_music_capabilities', 'Read current school music service capabilities. Authentication stays in the Host; no tokens are returned. Use before choosing a music operation.', {},
     (_, exec, authorization) => musicRequest(config, authorization, 'capabilities', { signal: exec.signal }))

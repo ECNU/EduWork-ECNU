@@ -36,6 +36,7 @@
 | `ecnu_music_capabilities` | 查询当前能力 | GET `/music/capabilities` |
 | `ecnu_music_library` | 当前工作区的本地创作记录 | 不请求服务器 |
 | `ecnu_music_render_score` | ABC 排版为独立离线 HTML 五线谱 | 本地执行，不请求服务器或学校授权 |
+| `ecnu_music_export_song` | 歌词、原音频、五线谱的完整 HTML 作品目录 | 本地执行，不请求服务器或学校授权 |
 | `ecnu_music_submit` | `generate`、`plan`、`cover`、`transcribe` | POST `/music/generations`、`plans`、`covers`、`transcriptions` |
 | `ecnu_music_job` | 续查任务或候选 | GET `/music/jobs/{id}` |
 | `ecnu_music_cancel` | 用户主动取消 | POST `/music/jobs/{id}/cancel` |
@@ -57,6 +58,10 @@
 ABC/MIDI 的获取属于模型产物交付；已有 ABC 可通过本地 `ecnu_music_render_score` 排版，无需学校登录或启动生成任务。输入 `abc` 文本或工作区内的 `abc_path`（二选一，最多 256 KiB UTF-8，需有 `K:` 字段），以及可选的 `title`（最多 120 字符）。返回 `.eduwork/generated/music/score-<uuid>.html`，每次生成新文件，保留原 ABC。
 
 HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五线谱，可查看源码、下载 ABC、打印 / 另存 PDF。页面使用 CSP 限制网络与脚本，文本输入按数据处理。文件创建成功不代表浏览器排版或音符准确性已验证；HTML 也不是已导出的 PDF。精确时长、音色克隆、分轨混音、局部音频修补和完整配器总谱不属于现有接口承诺。
+
+完整歌曲交付可用 `ecnu_music_export_song`：必填 `audio_path` 和原始 `lyrics`，以及 `abc` / `abc_path` 二选一；可选 `title`、`style`。音频支持 FLAC、MP3、WAV、OGG，最多 128 MiB；歌词最多 16000 字符，标题 120，风格 2000，ABC 限制同上。输入文件限当前工作区，输出遵循 Host 写入权限。
+
+工具新建 `.eduwork/generated/music/song-<uuid>/`，内含 `index.html`、`audio.*`、`lyrics.txt`、`score.abc`。音频分块复制并保留原字节，通过相对路径播放，不做 Base64 内嵌，也不依赖服务下载链接。作品页提供播放器、歌词、谱面缩放与展开、下载及打印样式；不推断时间对齐。分享或迁移时需携带整个目录。只展示导出所需作品内容，不包含工作区绝对路径、账号或任务回执。
 
 ## Music Studio
 
@@ -87,12 +92,14 @@ node edition/plugins/tool-ecnu-music/test/build-studio.mjs
 
 ## 验证与装配
 
-插件逻辑测试：`node --test edition/plugins/tool-ecnu-music/test/core.test.mjs edition/plugins/tool-ecnu-music/test/model.test.mjs edition/plugins/tool-ecnu-music/test/score.test.mjs`。
+插件逻辑测试：在 `edition/plugins/tool-ecnu-music` 目录运行 `npm test`，覆盖任务协议、输入、排谱与完整作品目录。
 
 挂载测试使用已装配的 DSH Runtime：设置 `EDUWORK_TEST_RUNTIME` 为产品 `d` 目录，运行 `node --import ./edition/test/runtime-resolver.mjs --test edition/plugins/tool-ecnu-music/test/mounted.test.mjs edition/plugins/tool-ecnu-music/test/studio.test.mjs`。测试只使用合成账号和本地响应，不消耗线上生成额度。发行装配通过现有 `edition/test/test-desktop-candidate.ps1` 纳入这些测试；源码接入与正式客户端发布分别进行。
 
 浏览器验证先构建预览，再运行 `node edition/plugins/tool-ecnu-music/test/browser-studio.mjs`。需要 Playwright 浏览器；可设置 `MUSIC_TEST_BROWSER_CHANNEL=msedge` 使用本机 Edge。验证包含离线打开、音频解码、ABC 排版、谱复用、双候选、取消和窄侧栏。
 
 独立乐谱工具的浏览器验证：使用同一 `EDUWORK_TEST_RUNTIME`，运行 `node edition/plugins/tool-ecnu-music/test/browser-score.mjs`，无需构建 Studio。可设置 `MUSIC_SCORE_ABC` 为实际 ABC 路径，`MUSIC_SCORE_OUTPUT_ROOT` 为本地验证目录（默认插件 `dist/score-check`）。检查离线 SVG 排版、ABC 下载往返、窄屏页面宽度、打印样式、输入注入无效及无 HTTP 请求；输出 HTML、截图和 `checks.json`。这些检查不等同于音符准确性或桌面客户端发布验收。
+
+完整作品页浏览器验证使用 `node edition/plugins/tool-ecnu-music/test/browser-song.mjs`，默认生成合成音频与示例谱。可通过 `MUSIC_SONG_INPUT` 指向私有 JSON `{ "root": "工作区路径", "args": { ...工具参数 } }` 使用真实产物，`MUSIC_SONG_OUTPUT_ROOT` 指定验证目录。检查目录迁移后离线播放、循环/倍速、原音频打开、歌词/ABC 下载字节一致性、谱面缩放/展开、窄屏及打印样式，保留截图与检查回执。真实作品和私有 JSON 不提交仓库。
 
 真实验收需在包含该插件的客户端用学校登录查询能力、提交任务、退出/重登录后续查，并实际下载试听。自动化模拟测试不能替代这个验收。当前接口无精确时长参数；乐谱格式以产物为准，ABC 不是 PDF，也不是保证完整配器的总谱。

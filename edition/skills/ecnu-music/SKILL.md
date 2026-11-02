@@ -47,15 +47,17 @@ metadata:
 
 ## 完整作品交付
 
-交付完整歌曲时，若同一候选的音频、ABC 和原始歌词齐全，额外用 `ecnu_music_export_song` 生成包含播放器、歌词与五线谱的 HTML 作品页，同时保留原音频与乐谱。用户只要求音频、单独排谱或规划时按其范围交付。已有作品直接复用文件，不为排版重提生成。
+日常试听与分享默认交付 **MP3 192 kbps**，用本技能 `scripts/prepare-media.mjs` 从下载音频生成本地副本，保留无损源；已有 MP3 直接复用。用户明确要求无损或其他格式时遵从，不重新生成歌曲。命令、运行时发现及验证见 [references/media-delivery.md](references/media-delivery.md)。
 
-传入真实 `audio_path`、`abc_path`（或 `abc`）、原始 `lyrics`，以及标题和可选编曲描述。HTML 默认完整列出歌词，配静态渐变背景和播放器；手机保留可读字号，歌词区可滚动、播放器常驻，PC 并排展示乐谱。自动浏览开关按整曲时长缓慢滚动，明确不与演唱逐句同步；无需先转写、对齐或等待字幕。乐谱可离线按多声部演奏，支持各声部独奏、静音、音量和音色选择；和弦标记生成的伴奏单独列出、可关闭。音符高亮跟随可听声部，试听会暂停原曲，不能称为歌声同步或音频分轨。字幕导入/校时折叠为可选工具，有真实时间轴才传 `timeline_path`。目录含 HTML、原音频、歌词、ABC、时间轴和共用时间模型，分享整个目录，不内嵌 Base64 音频。详见 [references/song-timeline.md](references/song-timeline.md)。
+交付完整歌曲时，若同一候选的音频、ABC 和原始歌词齐全，额外用 `ecnu_music_export_song` 生成包含播放器、歌词与五线谱的 HTML 作品页，`audio_path` 默认传已验证的 MP3；无损源留在原下载处。用户只要求音频、单独排谱或规划时按其范围交付。已有作品直接复用文件，不为排版重提生成。
+
+传入真实 `audio_path`、`abc_path`（或 `abc`）、原始 `lyrics`，以及标题和可选编曲描述。HTML 默认完整列出歌词，配静态渐变背景和播放器；手机保留可读字号，歌词区可滚动、播放器常驻，PC 并排展示乐谱。自动浏览开关按整曲时长缓慢滚动，明确不与演唱逐句同步；无需先转写、对齐或等待字幕。乐谱可离线按多声部演奏，支持各声部独奏、静音、音量和音色选择；和弦标记生成的伴奏单独列出、可关闭。音符高亮跟随可听声部，试听会暂停原曲，不能称为歌声同步或音频分轨。字幕导入/校时折叠为可选工具，有真实时间轴才传 `timeline_path`。目录含 HTML、播放音频（默认 MP3）、歌词、ABC、时间轴和共用时间模型，分享整个目录，不内嵌 Base64 音频。详见 [references/song-timeline.md](references/song-timeline.md)。
 
 交付时使用本技能 `scripts/serve-song.mjs` 为这一个作品目录启动临时本地 HTTP 服务，给出脚本实际返回的 URL，并以网页方式打开；不要把本地 HTML 文件再次送入隔离文档预览。服务只绑定 `127.0.0.1`，支持音频 Range/拖动，保存 PID、状态和日志；命令与停止方法见 [references/song-timeline.md](references/song-timeline.md)。同时保留 HTML 文件和回执的独立 `audioPath` / `audioRelativePath`。没有可用 Node 时用外部浏览器打开完整目录里的 HTML 并说明降级。页面加载不代表实际播放或同步通过；遇到 `0:00` 先检查打开方式、文件与格式，不要求重新登录、放宽权限或重新生成歌曲。
 
 ## 歌曲视频
 
-用户需要视频时阅读 [references/song-video.md](references/song-video.md)，复用现有 `artifact-video` 与 `video_project`。默认一个背景、完整歌词自动浏览、进度条和竖屏 `9:16`：按整曲时长从头滚到尾，首尾停留；说明是歌词阅读视频，不声称逐句卡点。HTML 用音频时间，视频用帧号 / 帧率，复用 `song-timeline.js` 的 `sampleReading`。只有用户明确要求唱词同步时，才走可靠时间轴的对齐流程。插件尚无一键 MP4 工具，普通歌曲交付不自动追加视频。
+用户需要视频时阅读 [references/song-video.md](references/song-video.md)，复用现有 `artifact-video` 与 `video_project`。默认一个背景、完整歌词自动浏览、进度条和竖屏 `9:16`，按 [分享预设](references/media-delivery.md) 交付 720p H.264/AAC 小体积 MP4：按整曲时长从头滚到尾，首尾停留；说明是歌词阅读视频，不声称逐句卡点。HTML 用音频时间，视频用帧号 / 帧率，复用 `song-timeline.js` 的 `sampleReading`。只有用户明确要求唱词同步时，才走可靠时间轴的对齐流程。插件尚无一键 MP4 工具，普通歌曲交付不自动追加视频。
 
 ## 能力边界
 

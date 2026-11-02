@@ -71,12 +71,12 @@
 
 ## 完整歌曲作品页
 
-用户要求歌曲完整交付、作品页或“歌词、音频和五线谱放在一起”时，使用 `ecnu_music_export_song`。先从同一候选下载真实音频与 ABC；歌词使用用户原文或该任务的创作回执，不能从文件名、提示词或试听猜写。输入示例中的路径与歌词须替换为实际内容：
+用户要求歌曲完整交付、作品页或“歌词、音频和五线谱放在一起”时，使用 `ecnu_music_export_song`。先从同一候选下载真实音频与 ABC；默认按 [media-delivery.md](media-delivery.md) 转成 MP3 分享副本，再将 MP3 传入作品页，原始无损源保留。歌词使用用户原文或该任务的创作回执，不能从文件名、提示词或试听猜写。输入示例中的路径与歌词须替换为实际内容：
 
 ```json
 {
   "title": "校园之歌",
-  "audio_path": "inputs/song.flac",
+  "audio_path": "inputs/song.mp3",
   "abc_path": "inputs/song.abc",
   "lyrics": "这里替换为这首歌的完整创作歌词",
   "style": "Mandarin campus anthem, mixed choir and acoustic orchestra"

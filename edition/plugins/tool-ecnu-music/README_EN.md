@@ -14,4 +14,6 @@ The skill can start a temporary loopback HTTP preview for one song directory, wi
 
 The UI and `ecnu-music` skill share the Host tools, permission checks and image/TTS school authorization interface; neither receives tokens. Titles, lyrics, parameters, parent versions and downloaded artifacts stay in the workspace. ABC engraving does not guarantee note accuracy or a complete orchestral score. This version does not offer stem editing or precise duration control.
 
+The music skill defaults to a 192 kbps MP3 listening copy and uses it in song pages, retaining the lossless source for further production. Song videos default to 720p H.264/AAC sharing copies, compressed locally with the installed media runtime. Explicit lossless or higher-quality requests take precedence. Download/export tools themselves preserve the input format; see the [media delivery presets](../../skills/ecnu-music/references/media-delivery.md).
+
 Assembled through the ECNU distribution, without inclusion in the public edition. See the [music integration guide](../../../docs/MUSIC.md) for configuration, tools, local interactive preview and validation. Importing SKILL.md alone does not install the native tools or UI.

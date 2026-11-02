@@ -6,6 +6,7 @@ import { writeMusicArtifactDirectory } from './core.js'
 import { copyWorkspaceAsset, readWorkspaceAsset } from './artifact-files.js'
 import { emptyTimeline, validateTimeline } from './song-timeline.js'
 import { escapeHTML, jsonData, rendererAssets, scoreSource } from './score.js'
+import { scorePianoAssets } from './score-piano.js'
 
 const audioTypes = { '.flac': 'audio/flac', '.mp3': 'audio/mpeg', '.wav': 'audio/wav', '.ogg': 'audio/ogg' }
 function textField(value, name, max, optional = false) {
@@ -27,6 +28,7 @@ export async function exportMusicSong({ root, args, signal }) {
   const title = textField(args.title ?? '音乐作品', 'title', 120)
   const lyrics = textField(args.lyrics, 'lyrics', 16000), style = textField(args.style, 'style', 2000, true)
   const abc = await scoreSource(root, args, signal)
+  const piano = await scorePianoAssets(abc)
   if (typeof args.audio_path !== 'string') throw Error('audio_path is required')
   const extension = extname(args.audio_path).toLowerCase(), mime = audioTypes[extension]
   if (!mime) throw Error('audio_path must be a workspace FLAC, MP3, WAV or OGG file')
@@ -48,10 +50,10 @@ export async function exportMusicSong({ root, args, signal }) {
       STYLE: escapeHTML(style), STYLE_HIDDEN: style ? '' : 'hidden',
       FORMAT: extension.slice(1).toUpperCase(), AUDIO_SIZE: (audioBytes / (1024 * 1024)).toFixed(1),
       AUDIO_FILE: 'audio' + extension, AUDIO_MIME: mime,
-      DATA: jsonData({ title, lyrics, abc, extension, timeline }),
+      DATA: jsonData({ title, lyrics, abc, extension, timeline, piano: piano.samples }),
       PLAYBACK: playback, TIMELINE_JS: timelineRuntime.replace(/^export /gm,''), PLAYBACK_JS:playbackScript,
       READING_CSS: readingStyle, READING_JS: readingScript, SCORE_AUDIO_JS:scoreAudioScript.replace(/^export /gm,''),
-      ABCJS: renderer.replace(/<\/script/gi, '<\\/script'), LICENSE: escapeHTML(license),
+      ABCJS: renderer.replace(/<\/script/gi, '<\\/script'), LICENSE: escapeHTML(license + '\n\n' + piano.license),
     }
     const html = template.replace(/\{\{([A-Z_]+)\}\}/g, (_, key) => {
       if (!(key in replacements)) throw Error('Unknown song template field: ' + key)

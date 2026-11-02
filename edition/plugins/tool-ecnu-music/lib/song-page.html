@@ -46,7 +46,7 @@ const data = JSON.parse(document.getElementById('song-data').textContent);
 const audio = document.getElementById('audio'), score = document.getElementById('score'), status = document.getElementById('status');
 window.musicReader = installSongReading({audio});
 const playback = installSongPlayback({data,audio,score});
-const scorePlayer = installScoreAudio({score,audio});
+const scorePlayer = installScoreAudio({score,audio,piano:data.piano});
 window.musicScorePlayer = scorePlayer;
 document.getElementById('source').textContent = data.abc;
 for (const [file, text, type] of [['lyrics.txt',data.lyrics,'text/plain'],['score.abc',data.abc,'text/vnd.abc']]) {

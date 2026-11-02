@@ -61,7 +61,7 @@ HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五
 
 完整歌曲交付可用 `ecnu_music_export_song`：必填 `audio_path` 和原始 `lyrics`，以及 `abc` / `abc_path` 二选一；可选 `title`、`style` 和 `timeline_path`。音频支持 FLAC、MP3、WAV、OGG，最多 128 MiB；歌词最多 16000 字符，标题 120，风格 2000，ABC 限制同上。输入文件限当前工作区，输出遵循 Host 写入权限。
 
-工具新建 `.eduwork/generated/music/song-<uuid>/`，内含 `index.html`、`audio.*`、`lyrics.txt`、`score.abc`、`timeline.json` 和 `song-timeline.js`。音频分块复制并保留原字节，通过相对路径播放，不做 Base64 内嵌，也不依赖服务下载链接。作品页默认完整列出歌词，配背景与原曲播放器；手机歌词区可滚动、播放器常驻，PC 并排看谱。可选自动浏览按整曲时长滚动，明确不是演唱同步，不依赖 ASR。乐谱试听使用离线合成音色按 ABC 演奏并高亮，原曲与试谱互斥。字幕导入/校时折叠为可选工具，支持谱面缩放、下载及打印。分享或迁移需携带整个目录，不包含工作区绝对路径、账号或任务回执。
+工具新建 `.eduwork/generated/music/song-<uuid>/`，内含 `index.html`、`audio.*`、`lyrics.txt`、`score.abc`、`timeline.json` 和 `song-timeline.js`。音频分块复制并保留原字节，通过相对路径播放，不做 Base64 内嵌，也不依赖服务下载链接。作品页默认完整列出歌词，配背景与原曲播放器；手机歌词区可滚动、播放器常驻，PC 并排看谱。可选自动浏览按整曲时长滚动，明确不是演唱同步，不依赖 ASR。乐谱试听使用离线合成音色按 ABC 演奏并高亮，原曲与试谱互斥。各声部保留身份，支持独奏、静音、音量和合成音色选择；原声部略分左右声像，和弦标记生成的可选伴奏居中，不代表从原音频分离的分轨。字幕导入/校时折叠为可选工具，支持谱面缩放、下载及打印。分享或迁移需携带整个目录，不包含工作区绝对路径、账号或任务回执。
 
 回执另提供 `audioPath`、`audioRelativePath` 与 `audioMime`，用于交付独立音频入口。当前内置 HTML 文件预览尚未接入同目录音频；技能使用 `scripts/serve-song.mjs start <作品目录>` 启动仅监听本机的临时 HTTP 服务，以实际 URL 打开网页，或降级到外部浏览器直接打开 HTML。服务支持 Range，保留 PID、日志与状态，提供 `status`、`stop` 命令，不修改核心预览。导出、外部浏览器播放、桌面网页预览需分别验证，不将预览兼容问题当作账号或文件夹权限问题。
 
@@ -115,3 +115,5 @@ node edition/plugins/tool-ecnu-music/test/build-studio.mjs
 真实验收需在包含该插件的客户端用学校登录查询能力、提交任务、退出/重登录后续查，并实际下载试听。自动化模拟测试不能替代这个验收。当前接口无精确时长参数；乐谱格式以产物为准，ABC 不是 PDF，也不是保证完整配器的总谱。
 
 完整阅读页与谱面试听验证运行 `node edition/plugins/tool-ecnu-music/test/browser-reading.mjs`（同样设置上述 runtime/output 环境变量）。检查长歌词完整呈现、手机播放器可见、自动浏览与手动打断、离线试谱音频调度及音符高亮、原曲/乐谱互斥、跳转与重排。脚本调度通过不等于音色经过人工试听。
+
+多声部试听验证：`node edition/plugins/tool-ecnu-music/test/browser-mixer.mjs`（同样设置 runtime/output 环境变量）。除调度外，还测量两个声部同时输出的音频信号，以及独奏、静音、音量归零后的实际变化；验证声部高亮、重排保留设置、跳转与移动端布局。

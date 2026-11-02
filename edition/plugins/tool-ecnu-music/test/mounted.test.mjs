@@ -47,7 +47,7 @@ test('real DSH defineTool registers music tools and uses only Host authorization
       return Response.json({ id: 'host-job', status: init.method === 'POST' ? 'queued' : 'succeeded' }, { status: url.endsWith('/generations') ? 202 : 200 })
     },
   })
-  assert.equal(mounted.tools.size, 7)
+  assert.equal(mounted.tools.size, 8)
   const call = async (name, args = {}) => result(await mounted.tools.get(name).execute(args, exec))
   assert.deepEqual((await call('ecnu_music_capabilities')).operations, ['generate', 'cover', 'transcribe', 'plan'])
   const submitted = await call('ecnu_music_submit', { operation: 'generate', style: 'orchestra', lyrics: '希望', n: 2 })
@@ -97,11 +97,22 @@ test('mutations follow workspace policy, read-only approval and narrowed write r
   assert.deepEqual(await check({ ...exec, name: 'ecnu_music_submit' }, next), { kind: 'continue' })
   ctx.permissionPresets.current = () => 'read-only'
   assert.equal((await check({ ...exec, name: 'ecnu_music_submit' }, next)).kind, 'ask')
+  assert.equal((await check({ ...exec, name: 'ecnu_music_render_score' }, next)).kind, 'ask')
   assert.equal((await check({ ...exec, name: 'ecnu_music_cancel' }, next)).displayReason.zh.includes('音乐'), true)
   assert.deepEqual(await check({ name: 'ecnu_music_job' }, next), { kind: 'continue' })
   assert.equal((await check({ name: 'ecnu_music_download' }, next)).kind, 'deny')
   ctx.get = name => name === 'sandboxPolicy' ? { resolve: () => ({ mode: 'workspace-write', workspaceRoot: join(exec.agent.session.header.cwd, 'narrow') }) } : undefined
   assert.equal((await check({ ...exec, name: 'ecnu_music_download' }, next)).kind, 'deny')
+  assert.equal((await check({ ...exec, name: 'ecnu_music_render_score' }, next)).kind, 'deny')
+})
+
+test('native HTML score tool works without login or credentials and returns a workspace preview', async t => {
+  const exec = await workspace(t)
+  const mounted = mount({ modelAuthorization() { throw Error('Local score must not request school authorization') }, authorizedFetch() { throw Error('Local score must not call network') } })
+  const output = await mounted.tools.get('ecnu_music_render_score').execute({ abc: 'X:1\nK:C\nCDEF|' }, exec)
+  assert.equal(output.mime, 'text/html')
+  assert.match(output.relativePath, /^\.eduwork\/generated\/music\/score-.*\.html$/)
+  assert.match(await readFile(result(output).path, 'utf8'), /abcjs_basic v6\.7\.2/)
 })
 
 test('school skill is assembled once with matching account binding and native plugin', async () => {

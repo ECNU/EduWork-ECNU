@@ -6,7 +6,7 @@
   "main": "lib/index.js",
   "exports": {".": "./lib/index.js", "./client": "./lib/client.js", "./typert": "./lib/typert.host.js", "./package.json": "./package.json"},
   "files": ["lib", "src", "vendor", "README.md", "README_EN.md", "LICENSE", "LICENSE-MIT", "LICENSING.md"],
-  "scripts": {"test": "node --test test/core.test.mjs", "preview:build": "node test/build-studio.mjs"},
+  "scripts": {"test": "node --test test/core.test.mjs test/model.test.mjs test/score.test.mjs", "preview:build": "node test/build-studio.mjs"},
   "dsh": {"client": {
     "inject": ["@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-client-ui-conversation", "@deepseek-ai/dsh-client-ui-layout", "@deepseek-ai/dsh-client-ui-workspace"],
     "platform": "web", "immediately": true

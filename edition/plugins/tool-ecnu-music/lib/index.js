@@ -3,6 +3,7 @@ import { realpath } from 'node:fs/promises'
 import { resolveMusicConfig, musicRequest, submitMusic, downloadMusic, segment } from './core.js'
 import { musicLibrary } from './library.js'
 import { MusicStudio } from './studio.js'
+import { renderMusicScore } from './score.js'
 
 export const name = 'tool-ecnu-music'
 export const inject = ['tools', 'credentials', 'fs', 'permissionPresets']
@@ -44,7 +45,8 @@ const output = {
   presentationMeta: (_, value) => value.relativePath ? { relativePath: value.relativePath, mime: value.mime } : {},
 }
 const jobParameters = { job_id: { type: 'string', required: true, description: 'An actual task id returned by the service; candidate ids for individual outputs.' } }
-const mutationNames = new Set(['ecnu_music_submit', 'ecnu_music_download', 'ecnu_music_cancel'])
+const mutationNames = new Set(['ecnu_music_submit', 'ecnu_music_download', 'ecnu_music_cancel', 'ecnu_music_render_score'])
+const localNames = new Set(['ecnu_music_library', 'ecnu_music_render_score'])
 
 async function workspace(ctx, exec) {
   const cwd = exec.agent?.session.header.cwd
@@ -78,6 +80,7 @@ export function apply(ctx, rawConfig = {}) {
       }
       return next()
     }
+    if (exec.name === 'ecnu_music_render_score') return { kind: 'ask', reason: 'Save a local HTML score in the workspace', displayReason: { zh: '允许在当前工作区保存离线 HTML 乐谱', en: 'Allow saving an offline HTML score in the current workspace' } }
     return { kind: 'ask', reason: 'Use the configured music service and save its task or output in the workspace', displayReason: {
       zh: '允许调用已配置的音乐服务，并在当前工作区保存任务回执或产物',
       en: 'Allow the configured music service and workspace task or artifact writes',
@@ -89,15 +92,27 @@ export function apply(ctx, rawConfig = {}) {
       timeoutMs: config.requestTimeoutMs + 5000,
       async execute(args, exec) {
         const signal = AbortSignal.any([...(exec.signal ? [exec.signal] : []), AbortSignal.timeout(config.requestTimeoutMs)])
-        const authorization = name === 'ecnu_music_library' ? undefined : await musicAuthorization(ctx, config, () => revision)
+        const authorization = localNames.has(name) ? undefined : await musicAuthorization(ctx, config, () => revision)
         const result = await run(args, { ...exec, signal }, authorization)
         return { reportJSON: JSON.stringify(result), ...(result.relativePath ? { relativePath: result.relativePath, mime: result.mime } : {}) }
       },
-      presentCall: () => ({ card: 'generic', title: name === 'ecnu_music_submit' ? '提交音乐任务' : '学校音乐服务', kind: 'execute' }),
+      presentCall: () => ({ card: 'generic', title: name === 'ecnu_music_render_score' ? '生成 HTML 五线谱' : name === 'ecnu_music_submit' ? '提交音乐任务' : '学校音乐服务', kind: 'execute' }),
     }))
   }
   register('ecnu_music_library', 'Read local music creation history in this conversation workspace. Saved lyrics and style are user documents. Job status must be refreshed with its original account; this does not query the server.', {},
     async (_, exec) => musicLibrary(await workspace(ctx, exec), config))
+  register('ecnu_music_render_score', 'Create one offline HTML sheet-music file from ABC using bundled abcjs. Supply exactly one of abc text or abc_path. No network, login, API key or music generation; writes a new file in the workspace. HTML renders SVG notation in a browser, preserves ABC source and supports printing. Does not certify note accuracy or a full orchestral score.', {
+    abc: { type: 'string', description: 'ABC source text, UTF-8 up to 256 KiB, with K: field. Mutually exclusive with abc_path.' },
+    abc_path: { type: 'string', description: 'Existing .abc file inside the current workspace. Mutually exclusive with abc.' },
+    title: { type: 'string', description: 'Optional displayed document title, 1–120 characters; does not change the source ABC.' },
+  }, async (args, exec) => {
+    const root = await workspace(ctx, exec)
+    if (args.abc_path) {
+      const cwd = ctx.get?.('workingDirectory')?.get(exec.agent.session) ?? exec.agent.session.header.cwd
+      args = { ...args, abc_path: ctx.fs.processPath(await ctx.fs.resolve(args.abc_path, { cwd, signal: exec.signal })) }
+    }
+    return renderMusicScore({ root, args, signal: exec.signal })
+  })
   register('ecnu_music_capabilities', 'Read current school music service capabilities. Authentication stays in the Host; no tokens are returned. Use before choosing a music operation.', {},
     (_, exec, authorization) => musicRequest(config, authorization, 'capabilities', { signal: exec.signal }))
   register('ecnu_music_submit', 'Submit ONE asynchronous music request: generate (n=1 or 2), plan, cover or transcribe. Returns a task id and local receipt; does not wait for inference. Preserve request_id and job ids. Reusing a receipt queries an accepted job or refuses an uncertain POST; never blindly create another request after a timeout. No duration or voice-cloning parameter. Omitted seed is random.', {

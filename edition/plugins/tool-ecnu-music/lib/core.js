@@ -136,6 +136,10 @@ async function exclusive(root, name, bytes) {
   try { await file.writeFile(bytes) } finally { await file.close() }
   return path
 }
+export async function writeMusicArtifact(root, name, bytes) {
+  if (!/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,240}$/.test(name)) throw Error('Invalid music artifact name')
+  return exclusive(root, name, bytes)
+}
 async function record(root, name) {
   const path = join(await safeDirectory(root), name)
   try {

@@ -35,13 +35,14 @@
 | --- | --- | --- |
 | `ecnu_music_capabilities` | 查询当前能力 | GET `/music/capabilities` |
 | `ecnu_music_library` | 当前工作区的本地创作记录 | 不请求服务器 |
+| `ecnu_music_render_score` | ABC 排版为独立离线 HTML 五线谱 | 本地执行，不请求服务器或学校授权 |
 | `ecnu_music_submit` | `generate`、`plan`、`cover`、`transcribe` | POST `/music/generations`、`plans`、`covers`、`transcriptions` |
 | `ecnu_music_job` | 续查任务或候选 | GET `/music/jobs/{id}` |
 | `ecnu_music_cancel` | 用户主动取消 | POST `/music/jobs/{id}/cancel` |
 | `ecnu_music_artifacts` | 列出实际产物 | GET `/music/jobs/{id}/artifacts` |
 | `ecnu_music_download` | 下载并保存命名产物 | GET `/music/jobs/{id}/artifacts/{name}` |
 
-工具输出 `reportJSON`；下载另提供 `relativePath` 和 `mime`，沿用现有媒体工具的工作区预览约定。所有音频输入、回执和输出限定在当前工作区；外部附件先复制进工作区。音频上传上限 39 MiB，下载上限 128 MiB。提交、取消和下载遵循 Host 当前权限模式；只读模式通过原生审批入口请求授权。
+工具输出 `reportJSON`；下载和乐谱排版另提供 `relativePath` 和 `mime`，沿用现有媒体工具的工作区预览约定。所有文件输入、回执和输出限定在当前工作区；外部附件先复制进工作区。音频上传上限 39 MiB，下载上限 128 MiB。提交、取消、下载和排版遵循 Host 当前权限模式；只读模式通过原生审批入口请求授权。
 
 音乐服务采用异步任务：提交 HTTP 202 后立即返回任务 ID，不将长时间推理塞进一次工具调用。客户端请求超时只限制 HTTP 调用，不终止服务器推理。每次提交前将 UUID 幂等键和参数摘要保存到 `.eduwork/generated/music/request-*.json`，接受后另存任务 ID；相同回执只续查已接受任务，未知结果不自动重放 POST。若提交结果丢失且尚未持久化任务 ID，需要服务管理员按幂等键确认；不假定重登录或换账号后仍可安全重试。
 
@@ -53,9 +54,13 @@
 
 “找回上次那首”“保留歌词换一种风格”等续作通过本地创作库、任务续查和父版本记录衔接。不同风格是独立任务，同一风格的两个候选才使用 `n=2`。完整的多阶段流程按用户要求推进，只要求规划或讨论时不额外提交生成。
 
-ABC/MIDI 的获取属于模型产物交付，ABC 转五线谱图片或 PDF 属于本地排版。当前对话工具覆盖前者和 ABC 复用，尚无独立乐谱排版工具；Music Studio 内的 abcjs 预览不能等同于对话已支持五线谱导出。精确时长、音色克隆、分轨混音、局部音频修补和完整配器总谱也不属于现有接口承诺。
+ABC/MIDI 的获取属于模型产物交付；已有 ABC 可通过本地 `ecnu_music_render_score` 排版，无需学校登录或启动生成任务。输入 `abc` 文本或工作区内的 `abc_path`（二选一，最多 256 KiB UTF-8，需有 `K:` 字段），以及可选的 `title`（最多 120 字符）。返回 `.eduwork/generated/music/score-<uuid>.html`，每次生成新文件，保留原 ABC。
+
+HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五线谱，可查看源码、下载 ABC、打印 / 另存 PDF。页面使用 CSP 限制网络与脚本，文本输入按数据处理。文件创建成功不代表浏览器排版或音符准确性已验证；HTML 也不是已导出的 PDF。精确时长、音色克隆、分轨混音、局部音频修补和完整配器总谱不属于现有接口承诺。
 
 ## Music Studio
+
+对话使用及 HTML 乐谱交付均不依赖打开此界面。
 
 音乐工作室是独立侧栏页签，类型为 `ecnu-music-studio`，与 Knowledge Studio 分开。新打开时默认使用宿主的展开视图，可通过标题栏「收回侧栏 / 展开工作室」切换；恢复的历史页签沿用宿主保存的布局。切换布局或临时隐藏页签时保留草稿，关闭页签或退出应用前仍应保存需要保留的内容。使用宿主的侧栏展开、关闭与会话归属机制；不另建全屏浮层。
 
@@ -82,10 +87,12 @@ node edition/plugins/tool-ecnu-music/test/build-studio.mjs
 
 ## 验证与装配
 
-插件逻辑测试：`node --test edition/plugins/tool-ecnu-music/test/core.test.mjs edition/plugins/tool-ecnu-music/test/model.test.mjs`。
+插件逻辑测试：`node --test edition/plugins/tool-ecnu-music/test/core.test.mjs edition/plugins/tool-ecnu-music/test/model.test.mjs edition/plugins/tool-ecnu-music/test/score.test.mjs`。
 
 挂载测试使用已装配的 DSH Runtime：设置 `EDUWORK_TEST_RUNTIME` 为产品 `d` 目录，运行 `node --import ./edition/test/runtime-resolver.mjs --test edition/plugins/tool-ecnu-music/test/mounted.test.mjs edition/plugins/tool-ecnu-music/test/studio.test.mjs`。测试只使用合成账号和本地响应，不消耗线上生成额度。发行装配通过现有 `edition/test/test-desktop-candidate.ps1` 纳入这些测试；源码接入与正式客户端发布分别进行。
 
 浏览器验证先构建预览，再运行 `node edition/plugins/tool-ecnu-music/test/browser-studio.mjs`。需要 Playwright 浏览器；可设置 `MUSIC_TEST_BROWSER_CHANNEL=msedge` 使用本机 Edge。验证包含离线打开、音频解码、ABC 排版、谱复用、双候选、取消和窄侧栏。
+
+独立乐谱工具的浏览器验证：使用同一 `EDUWORK_TEST_RUNTIME`，运行 `node edition/plugins/tool-ecnu-music/test/browser-score.mjs`，无需构建 Studio。可设置 `MUSIC_SCORE_ABC` 为实际 ABC 路径，`MUSIC_SCORE_OUTPUT_ROOT` 为本地验证目录（默认插件 `dist/score-check`）。检查离线 SVG 排版、ABC 下载往返、窄屏页面宽度、打印样式、输入注入无效及无 HTTP 请求；输出 HTML、截图和 `checks.json`。这些检查不等同于音符准确性或桌面客户端发布验收。
 
 真实验收需在包含该插件的客户端用学校登录查询能力、提交任务、退出/重登录后续查，并实际下载试听。自动化模拟测试不能替代这个验收。当前接口无精确时长参数；乐谱格式以产物为准，ABC 不是 PDF，也不是保证完整配器的总谱。

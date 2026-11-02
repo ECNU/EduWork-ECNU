@@ -46,12 +46,16 @@ for (const [file, text, type] of [['lyrics.txt',data.lyrics,'text/plain'],['scor
   });
 }
 function durationText(seconds) { const n = Math.floor(seconds); return Math.floor(n/60) + ':' + String(n%60).padStart(2,'0'); }
-function audioMetadata() { if(Number.isFinite(audio.duration)) document.getElementById('duration').textContent = durationText(audio.duration); }
+function audioMetadata() { if(Number.isFinite(audio.duration)) { document.getElementById('duration').textContent = durationText(audio.duration); document.getElementById('audio-error').hidden = true; document.getElementById('play-state').textContent = audio.paused ? '准备播放' : '正在播放'; } }
 audio.addEventListener('loadedmetadata', audioMetadata); audioMetadata();
 audio.addEventListener('play', () => { document.getElementById('play-state').textContent = '正在播放'; });
 audio.addEventListener('pause', () => { document.getElementById('play-state').textContent = audio.ended ? '播放结束' : '已暂停'; });
 audio.addEventListener('ended', () => { document.getElementById('play-state').textContent = '播放结束'; });
-audio.addEventListener('error', () => { document.getElementById('audio-error').hidden = false; document.getElementById('play-state').textContent = '音频不可用'; document.getElementById('duration').textContent = '时长未知'; });
+audio.addEventListener('error', () => {
+  const notice = document.getElementById('audio-error');
+  if (/^(?:blob:|about:)/i.test(document.URL)) notice.textContent = '当前内置预览未能读取同目录音频。请使用预览顶部的浏览器按钮打开完整作品页，或返回对话单独打开音频文件。';
+  notice.hidden = false; document.getElementById('play-state').textContent = '音频不可用'; document.getElementById('duration').textContent = '时长未知';
+});
 // Source elements report unsupported formats before the audio element emits an error.
 audio.querySelector('source').addEventListener('error', () => audio.dispatchEvent(new Event('error')));
 document.getElementById('loop').addEventListener('click', event => { audio.loop = !audio.loop; event.currentTarget.setAttribute('aria-pressed', String(audio.loop)); });

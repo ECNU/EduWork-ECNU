@@ -67,6 +67,33 @@ try {
   assert.equal(await page.evaluate(()=>window.pwned),undefined)
   assert.equal(await page.locator('#lyrics').textContent(),attack)
   assert.deepEqual(errors,[]);assert.equal(requests.some(url=>/^https?:/.test(url)),false)
-  const report={artifact,portableDirectory:moved,duration,checks:['relocated directory opens offline','audio plays and pauses','loop and speed controls','original audio opens separately','ABC/lyrics downloads byte-identical','notation zoom and expanded view','375px and 768px layout','lyrics and score print styles','no network or original workspace paths','title/lyrics/style/ABC injection inert'],errors}
+  await page.emulateMedia({media:'screen'})
+  await page.goto(pathToFileURL(join(moved,'index.html')).href)
+  await page.waitForFunction(()=>Number.isFinite(document.querySelector('audio').duration))
+  const audioFile=await page.locator('audio source').getAttribute('src')
+  await page.locator('audio').evaluate(a=>{a.querySelector('source').setAttribute('src','missing.wav');a.load()})
+  await page.locator('#audio-error').waitFor({state:'visible'})
+  assert.match(await page.locator('#audio-error').textContent(),/整个作品目录/)
+  await page.locator('audio').evaluate((a,file)=>{a.querySelector('source').setAttribute('src',file);a.load()},audioFile)
+  await page.waitForFunction(()=>Number.isFinite(document.querySelector('audio').duration))
+  assert.equal(await page.locator('#audio-error').isVisible(),false)
+  // Reproduce the isolated Blob document used by HTML previews. This is a browser
+  // regression for the fallback message, not acceptance of the desktop renderer.
+  const embeddedPage=await browser.newPage({viewport:{width:1000,height:900}})
+  await embeddedPage.evaluate(html=>{
+    const frame=document.createElement('iframe');frame.sandbox='allow-scripts'
+    frame.style.cssText='width:100%;height:850px;border:0'
+    frame.src=URL.createObjectURL(new Blob([html],{type:'text/html'}));document.body.append(frame)
+  },await readFile(join(moved,'index.html'),'utf8'))
+  const embedded=embeddedPage.frameLocator('iframe')
+  await embedded.locator('#audio-error').waitFor({state:'visible'})
+  assert.match(await embedded.locator('#audio-error').textContent(),/浏览器按钮/)
+  assert.match(await embedded.locator('#audio-error').textContent(),/单独打开音频/)
+  assert.equal(await embedded.locator('audio').evaluate(a=>a.currentSrc),'')
+  await embedded.locator('#score svg').first().waitFor()
+  await embedded.locator('.player').screenshot({path:join(root,'song-preview-fallback.png')})
+  await embeddedPage.close()
+  assert.deepEqual(errors,[])
+  const report={artifact,portableDirectory:moved,duration,checks:['relocated directory opens offline','audio plays and pauses','loop and speed controls','original audio opens separately','ABC/lyrics downloads byte-identical','notation zoom and expanded view','375px and 768px layout','lyrics and score print styles','no network or original workspace paths','title/lyrics/style/ABC injection inert','missing local audio reports file recovery','audio recovery clears error','isolated Blob preview offers external browser and standalone audio fallback (not desktop acceptance)'],errors}
   await writeFile(join(root,'checks.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report))
 } finally {await browser.close()}

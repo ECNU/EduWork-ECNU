@@ -114,7 +114,7 @@ export function apply(ctx, rawConfig = {}) {
     }
     return renderMusicScore({ root, args, signal: exec.signal })
   })
-  register('ecnu_music_export_song', 'Export a portable offline song directory: index.html with an audio player, supplied lyrics and SVG sheet music, plus original audio, lyrics.txt and score.abc. Audio uses a relative file link, never Base64 or a remote URL. Copy the entire output directory to share. Requires an existing workspace audio file, lyrics and exactly one ABC input; does not generate music or verify timing/accuracy. No login or network.', {
+  register('ecnu_music_export_song', 'Export a portable offline song directory: index.html with an audio player, supplied lyrics and SVG sheet music, plus original audio, lyrics.txt and score.abc. Audio uses a relative file link, never Base64 or a remote URL. Copy the entire output directory to share. Deliver both HTML and standalone audio paths. Use an external browser for complete playback; the current built-in HTML preview does not resolve sibling audio files. Requires an existing workspace audio file, lyrics and exactly one ABC input; does not generate music or verify playback/timing/accuracy. No login or network.', {
     audio_path: { type: 'string', required: true, description: 'Existing workspace FLAC, MP3, WAV or OGG file, up to 128 MiB. Keep the candidate matched to its ABC.' },
     lyrics: { type: 'string', required: true, description: 'Original creation lyrics, 1–16000 characters. Preserve supplied lyrics; not an audio transcript.' },
     abc: { type: 'string', description: 'ABC text, up to 256 KiB UTF-8. Mutually exclusive with abc_path.' },

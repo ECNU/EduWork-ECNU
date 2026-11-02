@@ -63,6 +63,8 @@ HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五
 
 工具新建 `.eduwork/generated/music/song-<uuid>/`，内含 `index.html`、`audio.*`、`lyrics.txt`、`score.abc`。音频分块复制并保留原字节，通过相对路径播放，不做 Base64 内嵌，也不依赖服务下载链接。作品页提供播放器、歌词、谱面缩放与展开、下载及打印样式；不推断时间对齐。分享或迁移时需携带整个目录。只展示导出所需作品内容，不包含工作区绝对路径、账号或任务回执。
 
+回执另提供 `audioPath`、`audioRelativePath` 与 `audioMime`，用于在对话中交付独立音频入口。当前内置 HTML 预览尚未接入同目录音频；完整作品页需通过预览顶部的浏览器按钮打开，独立音频可用客户端音频预览。页面遇到隔离预览下的音频加载失败会提示这一处理方式。导出、外部浏览器播放、内置预览需分别验证，不将预览兼容问题当作学校账号或文件夹权限问题。
+
 ## Music Studio
 
 对话使用及 HTML 乐谱交付均不依赖打开此界面。
@@ -101,5 +103,7 @@ node edition/plugins/tool-ecnu-music/test/build-studio.mjs
 独立乐谱工具的浏览器验证：使用同一 `EDUWORK_TEST_RUNTIME`，运行 `node edition/plugins/tool-ecnu-music/test/browser-score.mjs`，无需构建 Studio。可设置 `MUSIC_SCORE_ABC` 为实际 ABC 路径，`MUSIC_SCORE_OUTPUT_ROOT` 为本地验证目录（默认插件 `dist/score-check`）。检查离线 SVG 排版、ABC 下载往返、窄屏页面宽度、打印样式、输入注入无效及无 HTTP 请求；输出 HTML、截图和 `checks.json`。这些检查不等同于音符准确性或桌面客户端发布验收。
 
 完整作品页浏览器验证使用 `node edition/plugins/tool-ecnu-music/test/browser-song.mjs`，默认生成合成音频与示例谱。可通过 `MUSIC_SONG_INPUT` 指向私有 JSON `{ "root": "工作区路径", "args": { ...工具参数 } }` 使用真实产物，`MUSIC_SONG_OUTPUT_ROOT` 指定验证目录。检查目录迁移后离线播放、循环/倍速、原音频打开、歌词/ABC 下载字节一致性、谱面缩放/展开、窄屏及打印样式，保留截图与检查回执。真实作品和私有 JSON 不提交仓库。
+
+该浏览器验证还模拟隔离的 Blob 预览，检查音频加载失败时的外部浏览器提示，并验证缺失音频与恢复加载的状态；它不是实际桌面预览的播放验收。
 
 真实验收需在包含该插件的客户端用学校登录查询能力、提交任务、退出/重登录后续查，并实际下载试听。自动化模拟测试不能替代这个验收。当前接口无精确时长参数；乐谱格式以产物为准，ABC 不是 PDF，也不是保证完整配器的总谱。

@@ -55,7 +55,8 @@ export async function exportMusicSong({ root, args, signal }) {
     return { bytes: Buffer.byteLength(html), audioBytes }
   })
   return { path: join(directory, 'index.html'), directory, relativePath: `.eduwork/generated/music/${name}/index.html`, mime: 'text/html', title,
+    audioPath: join(directory, 'audio' + extension), audioRelativePath: `.eduwork/generated/music/${name}/audio${extension}`, audioMime: mime,
     ...result, audioFormat: extension.slice(1), offline: true, portable: 'Copy the entire song directory, not index.html alone.',
     includes: ['original audio', 'supplied lyrics', 'ABC source', 'SVG notation'],
-    message: 'Offline song directory created with relative audio and download links. Open index.html to verify playback and notation. Lyrics are supplied text, not verified transcription; audio, lyrics and notation are not time-aligned.' }
+    message: 'Offline song directory created. Provide both the HTML and standalone audio paths. Open index.html in an external browser for the complete player; the current built-in HTML preview does not resolve sibling audio files. Export success does not verify playback. Lyrics are supplied text, not verified transcription; audio, lyrics and notation are not time-aligned.' }
 }

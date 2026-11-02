@@ -17,6 +17,7 @@ const {server,record}=await createSongServer(artifact.directory),browser=await c
 try{
   const page=await browser.newPage({viewport:{width:1440,height:1000}});page.on('pageerror',e=>errors.push(e.message))
   await page.goto(record.url);await page.locator('#score svg').first().waitFor();await page.waitForFunction(()=>Number.isFinite(document.querySelector('audio').duration))
+  await page.locator('.advanced-sync > summary').click()
   assert.match(await page.locator('#lyrics-sync-state').textContent(),/待对齐/)
   const upload=async(value,name='timeline.json')=>{await page.locator('#timeline-import').setInputFiles({name,mimeType:'application/json',buffer:Buffer.from(typeof value==='string'?value:JSON.stringify(value))});await page.waitForFunction(()=>!document.querySelector('#timeline-warning').hidden)}
   await upload(timeline);assert.match(await page.locator('#lyrics-sync-state').textContent(),/草稿/)

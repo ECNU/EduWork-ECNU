@@ -42,6 +42,7 @@ function installSongPlayback({data,audio,score}) {
     renderAt(audio.currentTime*1000)
   }
   function renderAt(timeMs){
+    window.musicReader?.renderAt(timeMs)
     const state=sampleTimeline(timeline,timeMs,duration()),cues=timeline.lyrics.cues,index=state.lyricIndex
     $('stage-clock').textContent=clock(state.timeMs);$('stage-total').textContent=duration()?clock(duration()):'—'
     $('stage-progress-fill').style.transform='scaleX('+state.progress+')';$('stage-progress-fill').parentElement.setAttribute('aria-valuenow',String(Math.round(state.progress*100)))
@@ -58,7 +59,7 @@ function installSongPlayback({data,audio,score}) {
       $('stage-next').textContent=index>=0?(cues[index+1]?.text||''):(state.nextIndex>=0?cues[state.nextIndex].text:'')
       for(const row of $('lyrics').querySelectorAll('[data-cue]')){
         const active=Number(row.dataset.cue)===index;row.classList.toggle('active-lyric',active)
-        if(active&&follow&&$('lyrics').parentElement.scrollHeight>$('lyrics').parentElement.clientHeight){const pane=$('lyrics').parentElement;pane.scrollTop+=row.getBoundingClientRect().top-pane.getBoundingClientRect().top-pane.clientHeight/2}
+        if(active&&follow&&!window.musicReader?.automatic&&$('lyrics').parentElement.scrollHeight>$('lyrics').parentElement.clientHeight){const pane=$('lyrics').parentElement;pane.scrollTop+=row.getBoundingClientRect().top-pane.getBoundingClientRect().top-pane.clientHeight/2}
       }
     }
     if(state.scoreIndex!==lastScore){

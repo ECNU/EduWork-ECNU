@@ -30,9 +30,9 @@ export async function exportMusicSong({ root, args, signal }) {
   if (typeof args.audio_path !== 'string') throw Error('audio_path is required')
   const extension = extname(args.audio_path).toLowerCase(), mime = audioTypes[extension]
   if (!mime) throw Error('audio_path must be a workspace FLAC, MP3, WAV or OGG file')
-  const [[renderer, license], template, timelineRuntime, playback, playbackScript] = await Promise.all([
+  const [[renderer, license], template, timelineRuntime, playback, playbackScript, readingStyle, readingScript, scoreAudioScript] = await Promise.all([
     rendererAssets(), readFile(new URL('./song-page.html', import.meta.url), 'utf8'),
-    ...['song-timeline.js','song-playback.html','song-playback.js'].map(file=>readFile(new URL(file,import.meta.url),'utf8')),
+    ...['song-timeline.js','song-playback.html','song-playback.js','song-reading.css','song-reading.js','score-audio.js'].map(file=>readFile(new URL(file,import.meta.url),'utf8')),
   ])
   const suppliedTimeline=args.timeline_path?JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await readWorkspaceAsset(root,args.timeline_path,1024*1024,signal))):null
   const name = `song-${randomUUID()}`
@@ -50,6 +50,7 @@ export async function exportMusicSong({ root, args, signal }) {
       AUDIO_FILE: 'audio' + extension, AUDIO_MIME: mime,
       DATA: jsonData({ title, lyrics, abc, extension, timeline }),
       PLAYBACK: playback, TIMELINE_JS: timelineRuntime.replace(/^export /gm,''), PLAYBACK_JS:playbackScript,
+      READING_CSS: readingStyle, READING_JS: readingScript, SCORE_AUDIO_JS:scoreAudioScript.replace(/^export /gm,''),
       ABCJS: renderer.replace(/<\/script/gi, '<\\/script'), LICENSE: escapeHTML(license),
     }
     const html = template.replace(/\{\{([A-Z_]+)\}\}/g, (_, key) => {
@@ -66,5 +67,5 @@ export async function exportMusicSong({ root, args, signal }) {
     audioPath: join(directory, 'audio' + extension), audioRelativePath: `.eduwork/generated/music/${name}/audio${extension}`, audioMime: mime,
     ...result, audioFormat: extension.slice(1), offline: true, portable: 'Copy the entire song directory, not index.html alone.',
     includes: ['original audio', 'supplied lyrics', 'ABC source', 'SVG notation','timeline JSON','shared time model'],
-    message: 'Song page created with time-driven lyric stage, subtitle import and timing editor. Provide HTML and standalone audio. Serve this directory on loopback HTTP or open index.html externally; built-in HTML file preview does not resolve sibling audio. No alignment is inferred: empty tracks stay pending and imported draft timings require listening review. Export does not verify playback or timing. Share the entire directory.' }
+    message: 'Song page created with complete readable lyrics, background, manual/automatic reading and offline ABC score audition. Automatic reading follows total duration, NOT sung lyric timing. Optional subtitle import and timing editor remain available. Provide HTML and standalone audio. Serve this directory on loopback HTTP or open index.html externally; built-in HTML file preview does not resolve sibling audio. No alignment is inferred: empty tracks stay pending and imported draft timings require listening review. Export does not verify playback or timing. Share the entire directory.' }
 }

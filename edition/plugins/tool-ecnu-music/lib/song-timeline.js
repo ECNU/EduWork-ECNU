@@ -1,5 +1,11 @@
 // Shared, DOM-free time model. HTML uses audio.currentTime; a video adapter uses frame / fps.
 export const timelineSchema = 'eduwork.music.timeline.v1'
+// Reading motion only. These positions never represent sung-lyric alignment.
+export function sampleReading(timeMs,durationMs){
+  const duration=Number.isFinite(durationMs)&&durationMs>0?durationMs:0
+  const holdMs=Math.min(5000,duration*.1),span=duration-holdMs*2
+  return {progress:span>0?Math.max(0,Math.min(1,(timeMs-holdMs)/span)):0,holdMs}
+}
 export function emptyTimeline(audioSha256, abcSha256) {
   return {schema:timelineSchema,audioSha256,abcSha256,durationMs:null,lyrics:{status:'draft',source:'',cues:[]},score:{status:'draft',source:'',cues:[]}}
 }

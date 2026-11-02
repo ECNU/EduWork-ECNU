@@ -16,19 +16,20 @@
 @media(max-width:600px){html{scroll-padding-top:20px}.shell{padding:18px 14px}.masthead{margin-bottom:18px}.masthead nav{gap:15px;font-size:12px}.brand{font-size:10px;letter-spacing:.08em}.hero{grid-template-columns:1fr;padding:26px;min-height:0}.sleeve{display:none}h1{font-size:34px}.player{position:static;padding:16px;margin-bottom:20px;grid-template-columns:1fr}.player-heading{grid-column:auto}audio{grid-column:auto}.play-options{justify-content:flex-end}.content{gap:20px}.card{padding:22px 18px;border-radius:14px}.lyrics{columns:1}.lyrics p{font-size:16px}.section-top{gap:10px;margin-bottom:18px}h2{font-size:24px}.mobile-hint{display:block}.score-tools{width:100%}.score-tools button{flex:1}.footer{display:block}.footer details{margin-top:16px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 @media print{@page{size:A4;margin:14mm}body{background:#fff;font-size:12px}.shell{padding:0;max-width:none}.masthead,.sleeve,.player,.score-tools,.downloads,.details-card,.footer,.mobile-hint,.section-top a{display:none}.hero{background:#fff;color:#111;display:block;min-height:0;border-radius:0;border-bottom:1px solid #aaa;padding:0 0 18px;margin-bottom:22px}.hero h1{font-size:28px;margin:0 0 10px}.hero .eyebrow,.hero p{color:#333}.facts{margin-top:12px}.facts span{color:#333;border-color:#aaa}.content,.focus-score .content{display:block}.card,.lyrics-card{position:static;max-height:none;overflow:visible;border:0;border-radius:0;padding:0}.focus-score .lyrics-card{display:block}.lyrics-card{margin-bottom:24px}.lyrics{columns:2;column-gap:30px}.lyrics p{font-size:12px;line-height:1.7;break-inside:avoid}.lyrics h3{font-size:11px;break-after:avoid}.section-top{margin-bottom:12px}h2{font-size:20px}.score{overflow:visible}.score svg{min-width:0;width:100%}.score-status,.small-note{font-size:10px}.score-card{break-before:page}}
+{{READING_CSS}}
 </style>
 </head>
 <body>
 <div class="shell">
-<header class="masthead"><a class="brand" href="#top" aria-label="返回作品顶部"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>MUSIC COLLECTION</a><nav aria-label="作品导航"><a href="#listen">听音乐</a><a href="#lyrics-section">读歌词</a><a href="#score-section">看乐谱</a></nav></header>
+<header class="masthead"><a class="brand" href="#top" aria-label="返回作品顶部"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>MUSIC COLLECTION</a><nav aria-label="作品导航"><a href="#listen">听音乐</a><a href="#lyrics-section">读歌词</a><a href="#score-section">看乐谱</a></nav><button id="mobile-score" type="button" aria-pressed="false">查看乐谱</button></header>
 <main id="top">
 <section class="hero" aria-labelledby="title"><div><div class="eyebrow">一首歌 · 一份完整收藏</div><h1 id="title">{{TITLE}}</h1><p>把声音、文字与旋律，留在同一页。</p><div class="facts"><span>原始音频 · {{FORMAT}}</span><span id="duration">正在读取时长</span><span id="meter" hidden></span><span id="key" hidden></span><span id="tempo" hidden></span></div></div><div class="sleeve" aria-hidden="true"><div class="record"><div class="record-label">A SIDE<br>MUSIC</div></div><span class="sleeve-caption">SOUND / WORDS / NOTES</span></div></section>
 <section class="player" id="listen" aria-label="音乐播放器"><div class="player-heading"><strong>聆听作品</strong><span id="play-state" role="status">准备播放</span></div><audio id="audio" controls preload="metadata" aria-label="{{TITLE}} 音频"><source src="{{AUDIO_FILE}}" type="{{AUDIO_MIME}}">浏览器不支持此音频，请下载后播放。</audio><div class="play-options"><button id="loop" type="button" aria-pressed="false">循环播放</button><label for="speed" class="eyebrow">速度</label><select id="speed" aria-label="播放速度"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></div><p id="audio-error" class="audio-error" role="alert" hidden>音频未能播放。请确认整个作品目录已一起保存，或下载原音频用本地播放器打开。</p></section>
-{{PLAYBACK}}
 <div class="content">
-<section class="card lyrics-card" id="lyrics-section" aria-labelledby="lyrics-heading"><div class="section-top"><div><div class="eyebrow">01 / WORDS</div><h2 id="lyrics-heading">歌词</h2></div><a href="lyrics.txt" download>下载歌词 ↓</a></div><div class="lyrics" id="lyrics">{{LYRICS}}</div><p class="small-note">创作歌词原文。已有对应时间轴的句子可点击跳转；字幕校时不改写原歌词。</p></section>
-<section class="card score-card" id="score-section" aria-labelledby="score-heading"><div class="section-top"><div><div class="eyebrow">02 / NOTATION</div><h2 id="score-heading">五线谱</h2></div><div class="score-tools"><select id="score-size" aria-label="谱面大小"><option value="1">标准谱面</option><option value="1.25">放大谱面</option><option value="1.5">大字谱面</option></select><button id="focus-score" type="button" aria-pressed="false">展开谱面</button><button id="print" type="button">打印 / PDF</button></div></div><p id="status" class="score-status" role="status">正在排版乐谱…</p><div id="warnings" class="warnings" role="status"></div><p class="mobile-hint">左右滑动可查看完整谱行。</p><div id="score" class="score" role="region" aria-label="五线谱，可横向滚动" tabindex="0"></div><p class="small-note">按原始 ABC 排版；谱面与录音需核对，不代表完整配器总谱。</p><div class="details-card"><details><summary>查看 ABC 源码</summary><pre id="source"></pre></details><details {{STYLE_HIDDEN}}><summary>风格与编曲说明</summary><p class="style-text">{{STYLE}}</p></details></div></section>
+<section class="card lyrics-card" id="lyrics-section" aria-labelledby="lyrics-heading"><div class="section-top"><div><div class="eyebrow">01 / WORDS</div><h2 id="lyrics-heading">歌词</h2></div><a href="lyrics.txt" download>下载歌词 ↓</a></div><div class="reading-toolbar"><button id="reading-auto" type="button" aria-pressed="false">自动浏览</button><span id="reading-notice">完整歌词 · 可上下滚动阅读</span></div><div class="lyrics-scroll" id="lyrics-scroll" tabindex="0" role="region" aria-label="完整歌词，可上下滚动"><div class="lyrics" id="lyrics">{{LYRICS}}</div></div><p class="small-note">创作歌词原文。已有对应时间轴的句子可点击跳转；字幕校时不改写原歌词。</p></section>
+<section class="card score-card" id="score-section" aria-labelledby="score-heading"><div class="section-top"><div><div class="eyebrow">02 / NOTATION</div><h2 id="score-heading">五线谱</h2></div><div class="score-tools"><select id="score-size" aria-label="谱面大小"><option value="1">标准谱面</option><option value="1.25">放大谱面</option><option value="1.5">大字谱面</option></select><button id="focus-score" type="button" aria-pressed="false">展开谱面</button><button id="print" type="button">打印 / PDF</button></div></div><div class="score-listen"><div class="score-listen-controls"><button id="score-play" type="button" disabled>试听乐谱</button><button id="score-stop" type="button">从头开始</button><span id="score-clock">0:00 / 0:00</span></div><input id="score-seek" type="range" min="0" max="1" step="0.01" value="0" disabled aria-label="乐谱试听位置"><p id="score-audio-state" role="status">正在读取乐谱…</p><p>按谱面音符演奏，不是原曲歌声；开始试听会暂停原曲。</p></div><p id="status" class="score-status" role="status">正在排版乐谱…</p><div id="warnings" class="warnings" role="status"></div><p class="mobile-hint">左右滑动可查看完整谱行。</p><div id="score" class="score" role="region" aria-label="五线谱，可横向滚动" tabindex="0"></div><p class="small-note">按原始 ABC 排版；谱面与录音需核对，不代表完整配器总谱。</p><div class="details-card"><details><summary>查看 ABC 源码</summary><pre id="source"></pre></details><details {{STYLE_HIDDEN}}><summary>风格与编曲说明</summary><p class="style-text">{{STYLE}}</p></details></div></section>
 </div>
+<details class="advanced-sync"><summary>字幕时间轴与校时（可选）</summary>{{PLAYBACK}}</details>
 <div class="downloads" aria-label="作品文件"><a class="action" href="{{AUDIO_FILE}}" target="_blank" rel="noopener">打开原音频 · {{FORMAT}} / {{AUDIO_SIZE}} MiB ↗</a><a class="action" href="score.abc" download>下载 ABC 乐谱</a><a class="action" href="lyrics.txt" download>下载歌词文本</a></div>
 </main>
 <footer class="footer"><p>离线作品页 · 分享时请复制整个目录，保留同目录音频与文件。</p><details><summary>排版与开源许可</summary><p>五线谱由 abcjs 6.7.2 排版。</p><pre>{{LICENSE}}</pre></details></footer>
@@ -39,9 +40,14 @@
 <script nonce="{{NONCE}}">
 {{TIMELINE_JS}}
 {{PLAYBACK_JS}}
+{{READING_JS}}
+{{SCORE_AUDIO_JS}}
 const data = JSON.parse(document.getElementById('song-data').textContent);
 const audio = document.getElementById('audio'), score = document.getElementById('score'), status = document.getElementById('status');
+window.musicReader = installSongReading({audio});
 const playback = installSongPlayback({data,audio,score});
+const scorePlayer = installScoreAudio({score,audio});
+window.musicScorePlayer = scorePlayer;
 document.getElementById('source').textContent = data.abc;
 for (const [file, text, type] of [['lyrics.txt',data.lyrics,'text/plain'],['score.abc',data.abc,'text/vnd.abc']]) {
   for (const link of document.querySelectorAll('a[href="' + file + '"]')) link.addEventListener('click', event => {
@@ -75,6 +81,7 @@ function render(width) {
     const zoom = printing ? 1 : Number(document.getElementById('score-size').value);
     const tunes = ABCJS.renderAbc(score, data.abc, {staffwidth:Math.max(480,Math.floor((width-35)/zoom)),responsive:'resize',oneSvgPerLine:true,add_classes:true,wrap:{minSpacing:1.8,maxSpacing:2.7,preferredMeasuresPerLine:4}});
     playback.scoreChanged(tunes);
+    scorePlayer.scoreChanged(tunes);
     if (!score.querySelector('svg')) throw Error('没有可排版的乐谱，请检查 ABC。');
     const warnings = tunes.flatMap(tune => tune.warnings || []);
     document.getElementById('warnings').textContent = warnings.join('\n');

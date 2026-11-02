@@ -1,6 +1,6 @@
 ---
 name: ecnu-music
-description: 通过对话创作歌曲、翻唱改编、规划旋律、音频转谱及续作；将 ABC 排成五线谱，交付含音频、歌词同步画面与乐谱的 HTML 作品页，支持字幕导入和校时。适用于音乐创作、校歌改编与作品整理；普通朗读和会议转写使用语音工具。
+description: 通过对话创作歌曲、翻唱改编、规划旋律、音频转谱及续作；交付含音频、完整歌词、背景与可试听乐谱的 HTML 作品页，支持自动浏览和可选字幕校时。适用于音乐创作、校歌改编与作品整理；普通朗读和会议转写使用语音工具。
 metadata:
   eduwork:
     displayName: 音乐创作
@@ -49,13 +49,13 @@ metadata:
 
 交付完整歌曲时，若同一候选的音频、ABC 和原始歌词齐全，额外用 `ecnu_music_export_song` 生成包含播放器、歌词与五线谱的 HTML 作品页，同时保留原音频与乐谱。用户只要求音频、单独排谱或规划时按其范围交付。已有作品直接复用文件，不为排版重提生成。
 
-传入真实 `audio_path`、`abc_path`（或 `abc`）、原始 `lyrics`，以及标题和可选编曲描述；已有本页导出的同版本时间轴时传 `timeline_path`。返回作品目录含 `index.html`、同目录原音频、`lyrics.txt`、`score.abc`、`timeline.json` 和共用时间模型 `song-timeline.js`。HTML 自带横/竖屏歌词画面、进度、字幕导入和逐句校时；时间轴为空时显示待对齐，有谱面映射时高亮对应音符。不能靠歌词字数或 ABC 速度伪造同步。多个候选分别导出，分享需复制整个目录，不内嵌 Base64 音频。详见工作流的“完整歌曲作品页”和 [references/song-timeline.md](references/song-timeline.md)。
+传入真实 `audio_path`、`abc_path`（或 `abc`）、原始 `lyrics`，以及标题和可选编曲描述。HTML 默认完整列出歌词，配静态渐变背景和播放器；手机保留可读字号，歌词区可滚动、播放器常驻，PC 并排展示乐谱。自动浏览开关按整曲时长缓慢滚动，明确不与演唱逐句同步；无需先转写、对齐或等待字幕。乐谱可离线用合成音色试听并高亮音符，试听会暂停原曲，不能称为歌声同步。字幕导入/校时折叠为可选工具，有真实时间轴才传 `timeline_path`。目录含 HTML、原音频、歌词、ABC、时间轴和共用时间模型，分享整个目录，不内嵌 Base64 音频。详见 [references/song-timeline.md](references/song-timeline.md)。
 
 交付时使用本技能 `scripts/serve-song.mjs` 为这一个作品目录启动临时本地 HTTP 服务，给出脚本实际返回的 URL，并以网页方式打开；不要把本地 HTML 文件再次送入隔离文档预览。服务只绑定 `127.0.0.1`，支持音频 Range/拖动，保存 PID、状态和日志；命令与停止方法见 [references/song-timeline.md](references/song-timeline.md)。同时保留 HTML 文件和回执的独立 `audioPath` / `audioRelativePath`。没有可用 Node 时用外部浏览器打开完整目录里的 HTML 并说明降级。页面加载不代表实际播放或同步通过；遇到 `0:00` 先检查打开方式、文件与格式，不要求重新登录、放宽权限或重新生成歌曲。
 
 ## 歌曲视频
 
-先在同一 HTML 作品页预览并核对时间轴，用户需要视频时再阅读 [references/song-video.md](references/song-video.md)，复用现有 `artifact-video` 与 `video_project` 的可编辑 Remotion 工程。HTML 用音频时间驱动画面；视频复用 `timeline.json` 和 `song-timeline.js`，用帧号 / 帧率驱动同样的歌词与进度，不另造一套字幕。当前插件提供 HTML 和共用时间模型，没有一键视频渲染工具。默认一个背景、逐句歌词、进度条和竖屏 `9:16`；没有可靠时间轴时先对齐。普通歌曲交付不自动追加视频。
+用户需要视频时阅读 [references/song-video.md](references/song-video.md)，复用现有 `artifact-video` 与 `video_project`。默认一个背景、完整歌词自动浏览、进度条和竖屏 `9:16`：按整曲时长从头滚到尾，首尾停留；说明是歌词阅读视频，不声称逐句卡点。HTML 用音频时间，视频用帧号 / 帧率，复用 `song-timeline.js` 的 `sampleReading`。只有用户明确要求唱词同步时，才走可靠时间轴的对齐流程。插件尚无一键 MP4 工具，普通歌曲交付不自动追加视频。
 
 ## 能力边界
 

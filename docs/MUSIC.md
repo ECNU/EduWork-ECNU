@@ -61,13 +61,13 @@ HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五
 
 完整歌曲交付可用 `ecnu_music_export_song`：必填 `audio_path` 和原始 `lyrics`，以及 `abc` / `abc_path` 二选一；可选 `title`、`style` 和 `timeline_path`。音频支持 FLAC、MP3、WAV、OGG，最多 128 MiB；歌词最多 16000 字符，标题 120，风格 2000，ABC 限制同上。输入文件限当前工作区，输出遵循 Host 写入权限。
 
-工具新建 `.eduwork/generated/music/song-<uuid>/`，内含 `index.html`、`audio.*`、`lyrics.txt`、`score.abc`、`timeline.json` 和 `song-timeline.js`。音频分块复制并保留原字节，通过相对路径播放，不做 Base64 内嵌，也不依赖服务下载链接。作品页提供横/竖屏歌词画面、播放进度、字幕导入、逐句校时、谱面缩放、下载及打印。没有时间轴时显示待对齐，不推断时间；有经核对的谱面映射时高亮对应音符。分享或迁移需携带整个目录，不包含工作区绝对路径、账号或任务回执。
+工具新建 `.eduwork/generated/music/song-<uuid>/`，内含 `index.html`、`audio.*`、`lyrics.txt`、`score.abc`、`timeline.json` 和 `song-timeline.js`。音频分块复制并保留原字节，通过相对路径播放，不做 Base64 内嵌，也不依赖服务下载链接。作品页默认完整列出歌词，配背景与原曲播放器；手机歌词区可滚动、播放器常驻，PC 并排看谱。可选自动浏览按整曲时长滚动，明确不是演唱同步，不依赖 ASR。乐谱试听使用离线合成音色按 ABC 演奏并高亮，原曲与试谱互斥。字幕导入/校时折叠为可选工具，支持谱面缩放、下载及打印。分享或迁移需携带整个目录，不包含工作区绝对路径、账号或任务回执。
 
 回执另提供 `audioPath`、`audioRelativePath` 与 `audioMime`，用于交付独立音频入口。当前内置 HTML 文件预览尚未接入同目录音频；技能使用 `scripts/serve-song.mjs start <作品目录>` 启动仅监听本机的临时 HTTP 服务，以实际 URL 打开网页，或降级到外部浏览器直接打开 HTML。服务支持 Range，保留 PID、日志与状态，提供 `status`、`stop` 命令，不修改核心预览。导出、外部浏览器播放、桌面网页预览需分别验证，不将预览兼容问题当作账号或文件夹权限问题。
 
 时间轴用音频与 ABC 的 SHA-256 绑定版本，拒绝错配、重叠或越界时间。SRT/LRC/Caption JSON 导入默认草稿；LRC 结束时间需再校对。页面的校时更改需导出保存，再用 `timeline_path` 生成新的作品目录。共用格式与本地服务命令见[HTML 同步作品页](../edition/skills/ecnu-music/references/song-timeline.md)。当前没有自动歌词强制对齐工具，生成 ABC 的速度不证明最终音轨同步。
 
-HTML 以 `audio.currentTime` 驱动画面，共用 `song-timeline.js` 可供后续 Remotion 以 `frame / fps` 采样同一时间轴。当前实现包含 HTML 及共用时间模型；歌曲视频仍需现有可编辑视频工具完成场景与编码，不把它描述为已完成的一键 MP4 导出。工作流见[歌曲视频](../edition/skills/ecnu-music/references/song-video.md)。
+HTML 以 `audio.currentTime` 驱动画面，共用 `song-timeline.js` 的 `sampleReading` 提供按时长自动浏览；后续 Remotion 用 `frame / fps` 驱动同一滚动规则。只有唱词同步模式才使用 `sampleTimeline` 与实际字幕。当前实现包含 HTML 及共用时间模型；歌曲视频仍需现有可编辑视频工具完成场景与编码，不把它描述为已完成的一键 MP4 导出。工作流见[歌曲视频](../edition/skills/ecnu-music/references/song-video.md)。
 
 ## Music Studio
 
@@ -113,3 +113,5 @@ node edition/plugins/tool-ecnu-music/test/build-studio.mjs
 同步页验证运行 `node edition/plugins/tool-ecnu-music/test/browser-timeline.mjs`，需设置相同的 `EDUWORK_TEST_RUNTIME` 和 `MUSIC_SONG_OUTPUT_ROOT`。使用合成音轨和明确的测试时间轴，覆盖 HTTP 播放、前奏/间奏/结尾、拖动回退、重复歌词、暂停倍速、谱面高亮重排、字幕导入、人工校时和时间轴导出再导入。该测试证明时间机制，不证明真实歌声已自动对齐。
 
 真实验收需在包含该插件的客户端用学校登录查询能力、提交任务、退出/重登录后续查，并实际下载试听。自动化模拟测试不能替代这个验收。当前接口无精确时长参数；乐谱格式以产物为准，ABC 不是 PDF，也不是保证完整配器的总谱。
+
+完整阅读页与谱面试听验证运行 `node edition/plugins/tool-ecnu-music/test/browser-reading.mjs`（同样设置上述 runtime/output 环境变量）。检查长歌词完整呈现、手机播放器可见、自动浏览与手动打断、离线试谱音频调度及音符高亮、原曲/乐谱互斥、跳转与重排。脚本调度通过不等于音色经过人工试听。

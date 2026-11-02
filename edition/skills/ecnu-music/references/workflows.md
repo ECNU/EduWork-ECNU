@@ -87,7 +87,7 @@
 
 输出目录 `.eduwork/generated/music/song-<uuid>/` 包含 `index.html`、原格式 `audio.*`、`lyrics.txt`、`score.abc`、`timeline.json` 和 `song-timeline.js`。音频分块复制、字节不变，HTML 使用相对路径；页面内含排谱依赖，不访问 CDN。默认保留目录结构，单独拷走 HTML 会丢失音频。分享整个目录，不自动公开上传。
 
-页面支持播放、横/竖屏歌词同步画面、进度、循环、倍速、歌词阅读、谱面放大/展开、下载与打印。可选 `timeline_path` 是同版本音频和 ABC 绑定的完整时间轴，最多 1 MiB；未提供时待对齐。字幕导入、逐句校时、保存、乐谱字符映射和本地 HTTP 服务见 [song-timeline.md](song-timeline.md)。不拿原歌词或谱面速度当作实际时间戳；核对音频、歌词、谱面与同步状态，打印入口不等于 PDF 已导出。目录迁移后外部 `file://` 打开仍应工作。
+页面默认完整歌词阅读、渐变背景和常驻播放器，PC 并排看谱，手机可切换乐谱。支持手动滚动、按总时长自动浏览、原曲播放、循环、倍速、谱面合成试听与高亮、谱面放大/展开、下载与打印。自动浏览不代表唱词同步，无需为普通交付启动转写。可选 `timeline_path` 是同版本音频和 ABC 绑定的完整时间轴，最多 1 MiB；未提供也可完整交付阅读页。折叠工具内支持字幕导入、逐句校时、保存、乐谱字符映射和本地 HTTP 服务见 [song-timeline.md](song-timeline.md)。不拿原歌词或谱面速度当作实际时间戳；核对音频、歌词、谱面与同步状态，打印入口不等于 PDF 已导出。目录迁移后外部 `file://` 打开仍应工作。
 
 用技能附带的 `serve-song.mjs start <directory>` 启动本地预览，交付实际返回的网页 URL，并保留 `path` / `relativePath` 和 `audioPath` / `audioRelativePath`。当前内置 HTML 文件预览使用隔离文档，尚未接入同目录音频；使用 URL 网页入口或外部浏览器。旧版回执缺少音频字段时使用下载工具已有路径，不编造路径。分享仍需整个目录。
 

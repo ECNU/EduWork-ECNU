@@ -32,9 +32,9 @@ export async function exportMusicSong({ root, args, signal }) {
   if (typeof args.audio_path !== 'string') throw Error('audio_path is required')
   const extension = extname(args.audio_path).toLowerCase(), mime = audioTypes[extension]
   if (!mime) throw Error('audio_path must be a workspace FLAC, MP3, WAV or OGG file')
-  const [[renderer, license], template, timelineRuntime, playback, playbackScript, readingStyle, readingScript, scoreAudioScript] = await Promise.all([
+  const [[renderer, license], template, timelineRuntime, playback, playbackScript, readingStyle, readingScript, scoreAudioScript, notationScript] = await Promise.all([
     rendererAssets(), readFile(new URL('./song-page.html', import.meta.url), 'utf8'),
-    ...['song-timeline.js','song-playback.html','song-playback.js','song-reading.css','song-reading.js','score-audio.js'].map(file=>readFile(new URL(file,import.meta.url),'utf8')),
+    ...['song-timeline.js','song-playback.html','song-playback.js','song-reading.css','song-reading.js','score-audio.js','score-notation.js'].map(file=>readFile(new URL(file,import.meta.url),'utf8')),
   ])
   const suppliedTimeline=args.timeline_path?JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await readWorkspaceAsset(root,args.timeline_path,1024*1024,signal))):null
   const name = `song-${randomUUID()}`
@@ -53,6 +53,7 @@ export async function exportMusicSong({ root, args, signal }) {
       DATA: jsonData({ title, lyrics, abc, extension, timeline, piano: piano.samples }),
       PLAYBACK: playback, TIMELINE_JS: timelineRuntime.replace(/^export /gm,''), PLAYBACK_JS:playbackScript,
       READING_CSS: readingStyle, READING_JS: readingScript, SCORE_AUDIO_JS:scoreAudioScript.replace(/^export /gm,''),
+      NOTATION_JS: notationScript.replace(/^export /gm,''),
       ABCJS: renderer.replace(/<\/script/gi, '<\\/script'), LICENSE: escapeHTML(license + '\n\n' + piano.license),
     }
     const html = template.replace(/\{\{([A-Z_]+)\}\}/g, (_, key) => {

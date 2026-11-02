@@ -33,6 +33,7 @@ export async function renderMusicScore({ root, args, signal }) {
   const title = args.title ?? '音乐乐谱'
   if (typeof title !== 'string' || !title.trim() || [...title].length > 120) throw Error('title must contain 1–120 characters')
   const [renderer, license] = await rendererAssets(), nonce = randomUUID().replaceAll('-', '')
+  const notationScript = await readFile(new URL('./score-notation.js', import.meta.url), 'utf8')
   const html = `<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
@@ -45,6 +46,7 @@ export async function renderMusicScore({ root, args, signal }) {
 <script id="score-data" type="application/json" nonce="${nonce}">${jsonData({ abc })}</script>
 <script nonce="${nonce}">${renderer.replace(/<\/script/gi, '<\\/script')}</script>
 <script nonce="${nonce}">
+${notationScript.replace(/^export /gm,'')}
 const abc = JSON.parse(document.getElementById('score-data').textContent).abc;
 const score = document.getElementById('score'), status = document.getElementById('status');
 document.getElementById('source').textContent = abc;
@@ -56,7 +58,8 @@ document.getElementById('print').addEventListener('click', () => window.print())
 function render(width) {
   try {
     score.replaceChildren();
-    const tunes = ABCJS.renderAbc(score, abc, { staffwidth:Math.max(600,width-40), responsive:'resize', oneSvgPerLine:true, add_classes:true, wrap:{minSpacing:1.8,maxSpacing:2.7,preferredMeasuresPerLine:4} });
+    const notation = prepareScoreNotation(abc, ABCJS);
+    const tunes = notation.apply(ABCJS.renderAbc(score, notation.abc, { staffwidth:Math.max(600,width-40), responsive:'resize', oneSvgPerLine:true, add_classes:true, wrap:{minSpacing:1.8,maxSpacing:2.7,preferredMeasuresPerLine:4} }));
     if (!score.querySelector('svg')) throw Error('没有可排版的乐谱，请检查 ABC。');
     const warnings = tunes.flatMap(tune => tune.warnings || []);
     document.getElementById('warnings').textContent = warnings.length ? warnings.join('\\n') : '';

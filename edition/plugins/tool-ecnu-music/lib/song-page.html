@@ -42,7 +42,9 @@
 {{PLAYBACK_JS}}
 {{READING_JS}}
 {{SCORE_AUDIO_JS}}
+{{NOTATION_JS}}
 const data = JSON.parse(document.getElementById('song-data').textContent);
+let notation;
 const audio = document.getElementById('audio'), score = document.getElementById('score'), status = document.getElementById('status');
 window.musicReader = installSongReading({audio});
 const playback = installSongPlayback({data,audio,score});
@@ -77,9 +79,10 @@ for (const [field, id, label] of [['M','meter','拍号'],['K','key','调号'],['
 let lastWidth = 0, timer, printing = false;
 function render(width) {
   try {
+    notation ??= prepareScoreNotation(data.abc, ABCJS);
     score.replaceChildren();
     const zoom = printing ? 1 : Number(document.getElementById('score-size').value);
-    const tunes = ABCJS.renderAbc(score, data.abc, {staffwidth:Math.max(480,Math.floor((width-35)/zoom)),responsive:'resize',oneSvgPerLine:true,add_classes:true,wrap:{minSpacing:1.8,maxSpacing:2.7,preferredMeasuresPerLine:4}});
+    const tunes = notation.apply(ABCJS.renderAbc(score, notation.abc, {staffwidth:Math.max(480,Math.floor((width-35)/zoom)),responsive:'resize',oneSvgPerLine:true,add_classes:true,wrap:{minSpacing:1.8,maxSpacing:2.7,preferredMeasuresPerLine:4}}));
     playback.scoreChanged(tunes);
     scorePlayer.scoreChanged(tunes);
     if (!score.querySelector('svg')) throw Error('没有可排版的乐谱，请检查 ABC。');

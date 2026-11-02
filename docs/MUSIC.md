@@ -67,6 +67,8 @@ HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五
 
 回执另提供 `audioPath`、`audioRelativePath` 与 `audioMime`，用于交付独立音频入口。当前内置 HTML 文件预览尚未接入同目录音频；技能使用 `scripts/serve-song.mjs start <作品目录>` 启动仅监听本机的临时 HTTP 服务，以实际 URL 打开网页，或降级到外部浏览器直接打开 HTML。服务支持 Range，保留 PID、日志与状态，提供 `status`、`stop` 命令，不修改核心预览。导出、外部浏览器播放、桌面网页预览需分别验证，不将预览兼容问题当作账号或文件夹权限问题。
 
+单曲排谱先展开压缩多小节休止符，避免换行时将不同小节的声部排在同一系统；排版元素映射回原 ABC 字符位置，合奏仍使用原始时序和和弦事件，原 ABC 文件不改写。独立排谱与歌曲页共享这项处理。
+
 时间轴用音频与 ABC 的 SHA-256 绑定版本，拒绝错配、重叠或越界时间。SRT/LRC/Caption JSON 导入默认草稿；LRC 结束时间需再校对。页面的校时更改需导出保存，再用 `timeline_path` 生成新的作品目录。共用格式与本地服务命令见[HTML 同步作品页](../edition/skills/ecnu-music/references/song-timeline.md)。当前没有自动歌词强制对齐工具，生成 ABC 的速度不证明最终音轨同步。
 
 HTML 以 `audio.currentTime` 驱动画面，共用 `song-timeline.js` 的 `sampleReading` 提供按时长自动浏览；后续 Remotion 用 `frame / fps` 驱动同一滚动规则。只有唱词同步模式才使用 `sampleTimeline` 与实际字幕。当前实现包含 HTML 及共用时间模型；歌曲视频仍需现有可编辑视频工具完成场景与编码，不把它描述为已完成的一键 MP4 导出。工作流见[歌曲视频](../edition/skills/ecnu-music/references/song-video.md)。

@@ -89,10 +89,11 @@ export function apply(ctx, rawConfig = {}) {
   })
 
   function register(name, description, parameters, run) {
+    const download = name === 'ecnu_music_download'
     ctx.tools.register(defineTool({ name, description, parameters, output,
-      timeoutMs: config.requestTimeoutMs + 5000,
+      ...(download ? {} : { timeoutMs: config.requestTimeoutMs + 5000 }),
       async execute(args, exec) {
-        const signal = AbortSignal.any([...(exec.signal ? [exec.signal] : []), AbortSignal.timeout(config.requestTimeoutMs)])
+        const signal = download ? exec.signal : AbortSignal.any([...(exec.signal ? [exec.signal] : []), AbortSignal.timeout(config.requestTimeoutMs)])
         const authorization = localNames.has(name) ? undefined : await musicAuthorization(ctx, config, () => revision)
         const result = await run(args, { ...exec, signal }, authorization)
         return { reportJSON: JSON.stringify(result), ...(result.relativePath ? { relativePath: result.relativePath, mime: result.mime } : {}) }
@@ -159,7 +160,7 @@ export function apply(ctx, rawConfig = {}) {
     (args, exec, authorization) => musicRequest(config, authorization, `jobs/${segment(args.job_id)}/artifacts`, { signal: exec.signal }))
   register('ecnu_music_cancel', 'Cancel the specified music job when the user asks to cancel it. A local timeout does not cancel server inference.', jobParameters,
     (args, exec, authorization) => musicRequest(config, authorization, `jobs/${segment(args.job_id)}/cancel`, { method: 'POST', signal: exec.signal }))
-  register('ecnu_music_download', 'Download an artifact listed by ecnu_music_artifacts through the original authenticated service, into .eduwork/generated/music in the current workspace. Returns a real file path and preview metadata; preserves actual file format and never overwrites an existing output.', {
+  register('ecnu_music_download', 'Stream an existing artifact through the original authenticated service into .eduwork/generated/music. Active transfers can exceed the ordinary request timeout; only a stalled transfer or caller cancellation stops them. Returns a completed file and SHA-256, preserving format and existing files. On failure, partial files are removed; check the diagnostic before retrying the download, never regenerate the song to retrieve it.', {
     ...jobParameters, artifact: { type: 'string', required: true, description: 'Exact filename from the server artifact listing, such as audio.flac or score.abc.' },
   }, async (args, exec, authorization) => downloadMusic({ config, authorization, root: await workspace(ctx, exec), jobID: args.job_id, artifact: args.artifact, signal: exec.signal }))
 }

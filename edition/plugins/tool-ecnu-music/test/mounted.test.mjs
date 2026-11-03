@@ -49,6 +49,8 @@ test('real DSH defineTool registers music tools and uses only Host authorization
     },
   })
   assert.equal(mounted.tools.size, 9)
+  assert.equal(mounted.tools.get('ecnu_music_download').timeoutMs, undefined, 'active downloads have no tool-wide deadline')
+  assert.equal(mounted.tools.get('ecnu_music_job').timeoutMs, 125000, 'ordinary requests remain bounded')
   const call = async (name, args = {}) => result(await mounted.tools.get(name).execute(args, exec))
   assert.deepEqual((await call('ecnu_music_capabilities')).operations, ['generate', 'cover', 'transcribe', 'plan'])
   const submitted = await call('ecnu_music_submit', { operation: 'generate', style: 'orchestra', lyrics: '希望', n: 2 })
@@ -63,6 +65,27 @@ test('real DSH defineTool registers music tools and uses only Host authorization
   const count = calls.length
   await assert.rejects(call('ecnu_music_capabilities'), /登录/)
   assert.equal(calls.length, count)
+})
+
+test('mounted download keeps receiving beyond requestTimeoutMs and preserves caller signal', async t => {
+  const exec = await workspace(t)
+  const mounted = mount({
+    modelAuthorization: async () => true,
+    authorizedFetch: async (_id, url) => {
+      if (url.endsWith('/artifacts')) return Response.json({ artifacts: [{ name: 'audio.flac' }] })
+      let timer
+      return new Response(new ReadableStream({
+        start(controller) {
+          let n = 0
+          timer = setInterval(() => { controller.enqueue(new Uint8Array([++n])); if (n === 6) { clearInterval(timer); controller.close() } }, 250)
+        }, cancel() { clearInterval(timer) },
+      }))
+    },
+  }, undefined, {}, { ...config, requestTimeoutMs: 1000, downloadIdleTimeoutMs: 1000 })
+  const started = Date.now()
+  const value = result(await mounted.tools.get('ecnu_music_download').execute({ job_id: 'slow', artifact: 'audio.flac' }, exec))
+  assert.ok(Date.now() - started > 1000)
+  assert.deepEqual(await readFile(value.path), Buffer.from([1, 2, 3, 4, 5, 6]))
 })
 
 test('logout or authorization replacement prevents stale result delivery', async () => {

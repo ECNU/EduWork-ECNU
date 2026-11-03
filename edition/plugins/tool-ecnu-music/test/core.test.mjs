@@ -40,6 +40,9 @@ test('service configuration does not accept credential URLs or session reference
   assert.throws(() => resolveMusicConfig({ baseURL: config.baseURL, credentialRef: 'DSH_OIDC_SCHOOL' }), /oidcProfileId/)
   assert.throws(() => resolveMusicConfig({ baseURL: config.baseURL, apiKey: 'never-allowed' }), /Unknown/)
   assert.equal(resolveMusicConfig({ baseURL: 'http://127.0.0.1:1234/v1/' }).baseURL, 'http://127.0.0.1:1234/v1')
+  assert.equal(resolveMusicConfig({ baseURL: config.baseURL }).downloadIdleTimeoutMs, 60000)
+  assert.throws(() => resolveMusicConfig({ baseURL: config.baseURL, downloadIdleTimeoutMs: 0 }), /downloadIdleTimeoutMs/)
+  assert.throws(() => resolveMusicConfig({ baseURL: config.baseURL, downloadIdleTimeoutMs: 600001 }), /downloadIdleTimeoutMs/)
 })
 
 test('submit persists idempotency before network, resumes by GET, rejects changed parameters', async t => {

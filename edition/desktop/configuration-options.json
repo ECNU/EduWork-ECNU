@@ -12,8 +12,13 @@
     "EDUWORK_API_KEY"
   ],
   "plugins.chatecnu-music.requestTimeoutMs": [
-    "单次 HTTP 调用超时 1000–180000 毫秒；不限制或取消服务端推理，提交后凭任务 ID 续查。",
+    "普通 HTTP 请求及下载响应头等待上限 1000–180000 毫秒；不限制持续传输的总时长，也不取消服务端推理。修改后重启客户端生效。",
     120000,
+    true
+  ],
+  "plugins.chatecnu-music.downloadIdleTimeoutMs": [
+    "下载连续无数据等待上限 1000–600000 毫秒，默认 60 秒；持续传输会继续，用户可随时取消。修改后重启客户端生效。",
+    60000,
     true
   ],
   "plugins.ecnu-account-resources.profileIDs": [

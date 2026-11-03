@@ -27,7 +27,8 @@
         "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
         "oidcProfileId": "ecnu",
         "credentialRef": "EDUWORK_API_KEY",
-        "requestTimeoutMs": 120000
+        "requestTimeoutMs": 120000,
+        "downloadIdleTimeoutMs": 60000
       }
     },
     {

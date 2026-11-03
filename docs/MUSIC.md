@@ -19,13 +19,16 @@
       "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
       "oidcProfileId": "ecnu",
       "credentialRef": "EDUWORK_API_KEY",
-      "requestTimeoutMs": 120000
+      "requestTimeoutMs": 120000,
+      "downloadIdleTimeoutMs": 60000
     }
   }
 }
 ```
 
 `baseURL` 是学校模型 API 根地址，不带 `/music`；必须与该学校账号发现的模型 API 地址一致。音乐适配器在其下调用 `/music/*`，不会扩大 OIDC 的可访问范围。学校账号模式中 `credentialRef` 不会被读取；未登录、授权不足或地址不一致时不回退到个人 Key。
+
+`requestTimeoutMs`（默认 120 秒，范围 1–180 秒）限制普通 API 请求和下载响应头等待；`downloadIdleTimeoutMs`（默认 60 秒，范围 1–600 秒）限制下载连续无数据的等待。下载持续收到数据时不设工具总时长截止，用户取消仍立即中断网络读取。产物按块写入工作区临时文件，检查大小、完整性和账号后才发布最终文件，返回 SHA-256；失败或取消清理该次临时文件，不覆盖已有产物。下载上限仍为 128 MiB，目前不承诺断点续传。插件配置在装配时读取，修改后需重启客户端；不要为单次慢下载反复调整配置。
 
 独立 Key 部署可显式将 `oidcProfileId` 设为 `""`，通过凭据管理器保存 `credentialRef` 对应 Key；不要把明文 Key 写入 JSONC。这种部署的技能元数据也需去掉学校 `oidcProfileId` 绑定，保留 `credentialRef`，才能按独立凭据显示。默认华师版保持学校登录绑定。
 

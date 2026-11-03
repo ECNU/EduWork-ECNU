@@ -1,6 +1,7 @@
 import { randomUUID, createHash } from 'node:crypto'
 import { lstat, mkdir, open, readFile, realpath, rm } from 'node:fs/promises'
 import { basename, extname, isAbsolute, join, relative, resolve } from 'node:path'
+import { streamDownload } from './download.js'
 
 const operations = { generate: 'generations', plan: 'plans', cover: 'covers', transcribe: 'transcriptions' }
 const MAX_JSON = 2 * 1024 * 1024
@@ -22,7 +23,7 @@ export function requestID(value = randomUUID()) {
   return value.toLowerCase()
 }
 export function resolveMusicConfig(raw = {}) {
-  const allowed = ['baseURL', 'credentialRef', 'oidcProfileId', 'requestTimeoutMs']
+  const allowed = ['baseURL', 'credentialRef', 'oidcProfileId', 'requestTimeoutMs', 'downloadIdleTimeoutMs']
   for (const key of Object.keys(raw)) if (!allowed.includes(key)) throw Error(`Unknown music setting: ${key}`)
   const url = new URL(text(raw.baseURL, 'baseURL', 2048))
   if ((url.protocol !== 'https:' && !(url.protocol === 'http:' && ['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname))) || url.username || url.password || url.search || url.hash) throw Error('Music baseURL requires HTTPS (HTTP loopback is allowed), without credentials, query or fragment')
@@ -33,7 +34,9 @@ export function resolveMusicConfig(raw = {}) {
   const oidcProfileId = raw.oidcProfileId ? text(raw.oidcProfileId, 'oidcProfileId', 128) : undefined
   const requestTimeoutMs = raw.requestTimeoutMs ?? 120000
   if (!Number.isSafeInteger(requestTimeoutMs) || requestTimeoutMs < 1000 || requestTimeoutMs > 180000) throw Error('requestTimeoutMs must be 1000–180000')
-  return { baseURL, credentialRef, oidcProfileId, requestTimeoutMs }
+  const downloadIdleTimeoutMs = raw.downloadIdleTimeoutMs ?? 60000
+  if (!Number.isSafeInteger(downloadIdleTimeoutMs) || downloadIdleTimeoutMs < 1000 || downloadIdleTimeoutMs > 600000) throw Error('downloadIdleTimeoutMs must be 1000–600000')
+  return { baseURL, credentialRef, oidcProfileId, requestTimeoutMs, downloadIdleTimeoutMs }
 }
 
 export function normalizeSubmission(args) {
@@ -225,12 +228,25 @@ export function artifactNames(data) {
 export async function downloadMusic({ config, authorization, root, jobID, artifact, signal }) {
   const id = segment(jobID)
   if (typeof artifact !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,127}\.(flac|wav|mp3|ogg|abc|mid|midi|pdf|json)$/i.test(artifact)) throw Error('Choose a supported artifact filename from music artifacts')
-  const listing = await musicRequest(config, authorization, `jobs/${id}/artifacts`, { signal })
+  signal?.throwIfAborted()
+  const listingSignal = AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(config.requestTimeoutMs)])
+  const listing = await musicRequest(config, authorization, `jobs/${id}/artifacts`, { signal: listingSignal })
   if (!artifactNames(listing).includes(artifact)) throw Error('Artifact is not in the server listing')
-  const result = await musicRequest(config, authorization, `jobs/${id}/artifacts/${encodeURIComponent(artifact)}`, { signal, binary: true })
-  if (!result.bytes.length) throw Error('Empty music artifact')
-  if (extname(artifact).toLowerCase() === '.pdf' && result.bytes.subarray(0, 5).toString() !== '%PDF-') throw Error('Server returned a non-PDF score; use its actual artifact format')
   authorization.assertCurrent()
-  const path = await exclusive(root, `${id}-${randomUUID()}-${artifact}`, result.bytes)
-  return { id, artifact, path, relativePath: relative(await realpath(root), path).split('\\').join('/'), mime: result.mime, bytes: result.bytes.length }
+  const path = join(await safeDirectory(root), `${id}-${randomUUID()}-${artifact}`)
+  const result = await streamDownload({ path, signal, requestTimeoutMs: config.requestTimeoutMs,
+    idleTimeoutMs: config.downloadIdleTimeoutMs, maximum: MAX_DOWNLOAD,
+    assertCurrent: () => authorization.assertCurrent(), pdf: extname(artifact).toLowerCase() === '.pdf',
+    async fetchResponse(signal) {
+      const response = await authorization.fetch(`${config.baseURL}/music/jobs/${id}/artifacts/${encodeURIComponent(artifact)}`, {
+        method: 'GET', headers: { Accept: '*/*', 'Accept-Encoding': 'identity' }, redirect: 'error', signal,
+      })
+      if (!response.ok) {
+        void response.body?.cancel().catch(() => {})
+        throw Object.assign(Error(`Music HTTP ${response.status}: ${statusMessages[response.status] ?? 'Request failed'}`), { musicStatus: response.status })
+      }
+      return response
+    },
+  })
+  return { id, artifact, path, relativePath: relative(await realpath(root), path).split('\\').join('/'), ...result }
 }

@@ -33,4 +33,3 @@ test('creative history preserves input and parent, excludes local metadata upstr
   assert.equal((await musicLibrary(root, config)).skipped, 1)
   assert.doesNotMatch(JSON.stringify(library), /credential|Bearer|fingerprint|binding/)
 })
-

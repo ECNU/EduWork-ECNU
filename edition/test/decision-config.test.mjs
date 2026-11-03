@@ -15,7 +15,12 @@ test('school supplies public decision configuration without copying a tool or sk
   assert.equal(decision.oidcProfileId, 'ecnu'); assert.equal(decision.maxQuestions, 64)
   assert.equal(decision.baseURL, 'https://chat.ecnu.edu.cn/open/api/v1')
   const descriptions = JSON.parse(await readFile(new URL('../desktop/configuration-options.json', import.meta.url)))
-  for (const key of Object.keys(decision)) assert.ok(descriptions[`plugins.decision.${key}`])
+  for (const [key, value] of Object.entries(decision)) {
+    const description = descriptions[`plugins.decision.${key}`]
+    assert.ok(description)
+    assert.deepEqual(description[1], value)
+    assert.equal(description[2], true, `${key} must also initialize upgrades that have no decision settings`)
+  }
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url)))
   assert.ok(!distribution.plugins.some(row => row.name.includes('decision')))
   assert.ok(!distribution.skills.some(row => row.name.includes('decision')))

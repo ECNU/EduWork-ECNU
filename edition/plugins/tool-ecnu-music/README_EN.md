@@ -4,6 +4,8 @@
 
 Conversational music tools for EduWork's ECNU edition: song creation, melody planning, covers, audio transcription, creation history and ABC staff notation. Use them with the `ecnu-music` skill in a conversation.
 
+Version 0.4.10 prepares the underlying tools. The companion skill will be distributed when the school music service launches. The workflows below require that skill and model access.
+
 Sign in with a school account and describe the lyrics and style in a conversation with a workspace. Download completed artifacts, edit the ABC and use it in a new version. Covers and transcription accept workspace audio paths. An empty seed is random; an explicit seed overrides it. Generation supports one or two candidates.
 
 Downloads stream to disk and may exceed the ordinary 120-second request limit while data continues arriving. The default inactivity limit is 60 seconds; callers can cancel at any time. Completed files include a SHA-256 checksum, while failed transfers remove their temporary files and preserve existing artifacts. Request and download inactivity limits are configured separately in the music integration guide.

@@ -94,12 +94,6 @@
   "skills": [
     {
       "root": "edition",
-      "name": "ecnu-music",
-      "source": "edition/skills/ecnu-music",
-      "defaultEnabled": true
-    },
-    {
-      "root": "edition",
       "name": "ecnu-campus-search",
       "source": "edition/skills/ecnu-campus-search",
       "defaultEnabled": true

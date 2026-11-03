@@ -1,4 +1,14 @@
 {
+  "plugins.decision.enabled": ["启用已安装的公共决策插件；不改变聊天模型。", true],
+  "plugins.decision.baseURL": ["SystemOne API 基地址，须匹配机构授权资源。", "https://models.example.org/v1"],
+  "plugins.decision.model": ["决策模型公开名称。", "ecnu-decision"],
+  "plugins.decision.authMode": ["oidc 使用机构登录；api-key 使用独立 Key；none 明确免鉴权。", "oidc"],
+  "plugins.decision.oidcProfileId": ["OIDC 模式的机构账号 ID。", "ecnu"],
+  "plugins.decision.credentialRef": ["API Key 模式的凭据引用，不填写 Key 本身。", "EDUWORK_API_KEY"],
+  "plugins.decision.imageInput": ["学校服务支持 Data URI 图片扩展；设为 none 关闭。", "data-uri"],
+  "plugins.decision.maxQuestions": ["单次问题数客户端上限，学校 D3 配置为 64。", 64, true],
+  "plugins.decision.maxRequestBytes": ["完整请求字节上限；服务端可能有更小限制。", 12582912, true],
+  "plugins.decision.requestTimeoutMs": ["超时毫秒，1–195000，默认 190000；失败不自动重试。", 190000, true],
   "plugins.ecnu-account-resources.profileIDs": [
     "提供配额展示的企业 ID 列表。",
     [

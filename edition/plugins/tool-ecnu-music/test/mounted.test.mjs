@@ -155,13 +155,12 @@ test('native song export resolves workspace paths and does not request credentia
   assert.equal(result(timed).timelineStatus,'draft')
 })
 
-test('school skill is assembled once with matching account binding and native plugin', async () => {
+test('deferred school skill source keeps matching account binding with the assembled native plugin', async () => {
   const distribution = JSON.parse(await readFile(new URL('../../../distribution.json', import.meta.url)))
   const plugin = distribution.plugins.find(row => row.id === 'chatecnu-music')
   assert.equal(plugin.name, '@chatecnu-work/dsh-tool-ecnu-music')
   const skills = distribution.skills.filter(row => row.name === 'ecnu-music')
-  assert.equal(skills.length, 1)
-  assert.equal(skills[0].metadata, undefined, 'preserve full display metadata during assembly')
+  assert.equal(skills.length, 0, 'music skill is distributed after the model service launches')
   const skill = await readFile(new URL('../../../skills/ecnu-music/SKILL.md', import.meta.url), 'utf8')
   assert.ok(skill.includes(`oidcProfileId: ${plugin.config.oidcProfileId}`))
   assert.ok(skill.includes(`credentialRef: ${plugin.config.credentialRef}`))

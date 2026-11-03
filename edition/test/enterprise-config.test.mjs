@@ -38,7 +38,7 @@ test('the desktop assembly preserves school skill metadata, references and accou
   const repository = fileURLToPath(new URL('../../', import.meta.url))
   const distribution = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url)))
   const skillRoot = join(root, 'skills')
-  for (const name of ['ecnu-campus-search', 'ecnu-music']) {
+  for (const name of ['ecnu-campus-search']) {
     const skill = distribution.skills.find(row => row.name === name)
     await copyDshBundledSkills({ repository, packageRoot: join(root, 'node_modules'), skillRoot, skills: [skill] })
     const original = await readFile(new URL(`../skills/${name}/SKILL.md`, import.meta.url))
@@ -46,7 +46,6 @@ test('the desktop assembly preserves school skill metadata, references and accou
     assert.deepEqual(installed, original)
     for (const expected of ['displayName:', 'displayDescription:', 'credentialRef: EDUWORK_API_KEY', 'oidcProfileId: ecnu']) assert.ok(installed.toString('utf8').includes(expected), expected)
   }
-  assert.deepEqual(await readFile(join(skillRoot, 'ecnu-music/references/workflows.md')), await readFile(new URL('../skills/ecnu-music/references/workflows.md', import.meta.url)))
 })
 
 test('all school plugin options are visible, active defaults survive restart, and UAT overrides reach the adapters', async t => {

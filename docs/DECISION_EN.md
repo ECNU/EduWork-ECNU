@@ -6,7 +6,7 @@ The school edition uses the public `@eduwork/dsh-decision` package, its `decisio
 
 Use it for routing material by labels, condition checks and rubric scoring. Sign in with an account allocated `ecnu-decision`, then ask to classify a request into campus card, network or other. OAuth requires the service's model-invocation scope (`llm:invoke` for this school service).
 
-After initial npm publication and verification, the public component lock must pin the package, and the school edition follows that public version. The currently pinned public 0.4.9 does not contain it. This prepares configuration for an installed package; it does not claim the existing installer has the tool. The native plugin ID is `decision`; it is disabled by default, with school configuration enabling it after installation.
+The school 0.4.10 distribution follows the public exact lock and preinstalls `@eduwork/dsh-decision@0.1.0`. Its plugin ID is `decision`, enabled by the school configuration below. Existing users retain their saved plugin switches and configuration; model access depends on their school authorization.
 
 Set `plugins.decision` in the active `config/eduwork.jsonc` (under the user data directory on macOS):
 

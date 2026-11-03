@@ -1,0 +1,4 @@
+# Optional bundle; does not change the edition's default composition.
+- insert:
+    - id: ecnu-external-agents
+      name: '@chatecnu-work/dsh-external-agents'

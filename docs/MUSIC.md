@@ -62,9 +62,7 @@
 
 “找回上次那首”“保留歌词换一种风格”等续作通过本地创作库、任务续查和父版本记录衔接。不同风格是独立任务，同一风格的两个候选才使用 `n=2`。完整的多阶段流程按用户要求推进，只要求规划或讨论时不额外提交生成。
 
-ABC/MIDI 的获取属于模型产物交付；已有 ABC 可通过本地 `ecnu_music_render_score` 排版，无需学校登录或启动生成任务。输入 `abc` 文本或工作区内的 `abc_path`（二选一，最多 256 KiB UTF-8，需有 `K:` 字段），以及可选的 `title`（最多 120 字符）。返回 `.eduwork/generated/music/score-<uuid>.html`，每次生成新文件，保留原 ABC。
-
-HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五线谱，可查看源码、下载 ABC、打印 / 另存 PDF。页面使用 CSP 限制网络与脚本，文本输入按数据处理。文件创建成功不代表浏览器排版或音符准确性已验证；HTML 也不是已导出的 PDF。精确时长、音色克隆、分轨混音、局部音频修补和完整配器总谱不属于现有接口承诺。
+ABC/MIDI 的获取属于模型产物交付；已有 ABC 可通过本地 `ecnu_music_render_score` 排版，无需学校登录或启动生成任务。输入 `abc` 文本或工作区内的 `abc_path`（二选一，最多 256 KiB UTF-8，需有 `K:` 字段），以及可选的 HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五线谱，可查看源码、下载 ABC、打印 / 另存 PDF。页面使用 CSP 限制网络与脚本，文本输入按数据处理。文件创建成功不代表浏览器排版或音符准确性已验证；HTML 也不是已导出的 PDF。精确时长、音色克隆、分轨混音、局部音频修补和完整配器总谱不属于现有接口承诺。
 
 音乐技能默认先用随附 `scripts/prepare-media.mjs` 生成 MP3 192 kbps 分享副本，再作为独立音频和作品页输入；无损源保留在原下载处。歌曲视频默认生成 720p H.264/AAC 小体积副本，不修改公共核心编码器或音乐下载协议。脚本复用已安装媒体运行时，拒绝覆盖源文件/已有输出，核对完整时长并记录大小回执；用户指定无损或更高画质时遵从。参见[媒体交付预设](../edition/skills/ecnu-music/references/media-delivery.md)。
 
@@ -80,6 +78,9 @@ HTML 内嵌 abcjs 6.7.2 与许可，浏览器直接离线打开后生成 SVG 五
 
 HTML 以 `audio.currentTime` 驱动画面，共用 `song-timeline.js` 的 `sampleReading` 提供按时长自动浏览；后续 Remotion 用 `frame / fps` 驱动同一滚动规则。只有唱词同步模式才使用 `sampleTimeline` 与实际字幕。当前实现包含 HTML 及共用时间模型；歌曲视频仍需现有可编辑视频工具完成场景与编码，不把它描述为已完成的一键 MP4 导出。工作流见[歌曲视频](../edition/skills/ecnu-music/references/song-video.md)。
 
+`title`（最多 120 字符）。返回 `.eduwork/generated/music/score-<uuid>.html`，每次生成新文件，保留原 ABC。
+ABC 排版使用随包固定的 abcjs 6.7.2，无 CDN 或在线字体依赖。ABC 五线谱与模型生成音频分别呈现，不宣称逐音对齐、完整 SATB 或管弦乐总谱。精确时长、音色克隆、分轨混音和局部重生成不在此版范围内。
+
 ## Music Studio
 
 对话使用及 HTML 乐谱交付均不依赖打开此界面。
@@ -94,8 +95,6 @@ HTML 以 `audio.currentTime` 驱动画面，共用 `song-timeline.js` 的 `sampl
 `title`（最多 120 字符）、`parent_request_id` 是提交工具的本地元数据，不发送给音乐模型。新回执还保存创作参数和完整歌词，属于工作区用户文档，应按项目内容保管；历史回执若没有参数，仍可查询任务，但无法恢复原始创作表单。本地库按服务地址及配置档案分组，不代表账号级隔离；服务器始终校验当前调用身份的任务归属。未确认的提交不会自动重放。
 
 UI 通过 `ecnuMusicStudio.execute(sessionId, action, argumentsJSON)` 调用 Host 的 `tools.execute`，只允许音乐工具白名单，经过原生权限链；不向 renderer 提供认证信息。只读预览 RPC 仅允许当前会话 `.eduwork/generated/music` 中的普通音频与 ABC 文件，拒绝路径跳出、符号链接和回执读取。音频内嵌预览上限 32 MiB，ABC 上限 256 KiB；超限仍可从宿主文件预览打开已下载的原文件。
-
-ABC 排版使用随包固定的 abcjs 6.7.2，无 CDN 或在线字体依赖。ABC 五线谱与模型生成音频分别呈现，不宣称逐音对齐、完整 SATB 或管弦乐总谱。精确时长、音色克隆、分轨混音和局部重生成不在此版范围内。
 
 ## 本地交互预览
 

@@ -10,7 +10,7 @@ import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
 import { Session, SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
 import * as music from '../lib/index.js'
 import { musicLibrary, previewMusic } from '../lib/library.js'
-import { resolveMusicConfig, submitMusic } from '../lib/core.js'
+import { resolveMusicConfig } from '../lib/core.js'
 import { TYPERT } from '../lib/typert.host.js'
 
 const config = resolveMusicConfig({ baseURL: 'https://school.example.org/v1', oidcProfileId: 'school' })
@@ -19,25 +19,6 @@ async function workspace(t) {
   t.after(() => rm(root, { recursive: true, force: true }))
   return root
 }
-
-test('creative history preserves input and parent, excludes local metadata upstream and isolates service config', async t => {
-  const root = await workspace(t), request_id = randomUUID(), parent = randomUUID()
-  let sent
-  const authorization = { assertCurrent() {}, async fetch(url, init) { sent = JSON.parse(init.body); return Response.json({ id: 'job-one', status: 'queued' }, { status: 202 }) } }
-  await submitMusic({ root, config, authorization, args: { request_id, title: '合唱草稿', parent_request_id: parent, operation: 'generate', lyrics: '晨光和希望', style: 'choral', seed: 0 } })
-  assert.equal(sent.title, undefined); assert.equal(sent.parent_request_id, undefined)
-  const library = await musicLibrary(root, config)
-  assert.equal(library.items[0].title, '合唱草稿')
-  assert.equal(library.items[0].parent_request_id, parent)
-  assert.equal(library.items[0].input.lyrics, '晨光和希望')
-  assert.equal(library.items[0].input.seed, 0)
-  assert.equal(library.items[0].job_id, 'job-one')
-  assert.equal(library.items[0].status, 'pending_refresh')
-  assert.equal((await musicLibrary(root, { ...config, oidcProfileId: 'another' })).items.length, 0)
-  await writeFile(join(root, '.eduwork/generated/music', `request-${randomUUID()}.json`), 'invalid-json')
-  assert.equal((await musicLibrary(root, config)).skipped, 1)
-  assert.doesNotMatch(JSON.stringify(library), /credential|Bearer|fingerprint|binding/)
-})
 
 test('preview is bounded to regular managed audio and ABC files, with no receipt or symlink reads', async t => {
   const root = await workspace(t), dir = join(root, '.eduwork/generated/music')

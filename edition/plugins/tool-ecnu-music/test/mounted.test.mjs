@@ -13,6 +13,7 @@ const config = { baseURL: 'https://school.example.org/open/api/v1', oidcProfileI
 function mount(account, credentials = { resolve() { throw Error('must not read personal key in school mode') } }, overrides = {}, rawConfig = config) {
   const tools = new Map(), handlers = new Map(), disposers = []
   const ctx = {
+    plugin() {}, // The Studio service is covered by the actual Cordis integration test.
     tools: { register(tool) { tools.set(tool.name, tool) } }, credentials,
     fs: { resolve: async (path, options) => resolve(options.cwd, path), processPath: path => path,
       contains(root, path) { const rel = relative(root, path); return !isAbsolute(rel) && rel !== '..' && !rel.startsWith('..\\') && !rel.startsWith('../') } },

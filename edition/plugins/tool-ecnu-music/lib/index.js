@@ -2,6 +2,7 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import { realpath } from 'node:fs/promises'
 import { resolveMusicConfig, musicRequest, submitMusic, downloadMusic, segment } from './core.js'
 import { musicLibrary } from './library.js'
+import { MusicStudio } from './studio.js'
 import { renderMusicScore } from './score.js'
 import { exportMusicSong } from './song.js'
 
@@ -57,6 +58,7 @@ async function workspace(ctx, exec) {
 
 export function apply(ctx, rawConfig = {}) {
   const config = resolveMusicConfig(rawConfig)
+  ctx.plugin(MusicStudio)
   let revision = 0
   ctx.on('oidc/accounts-changed', event => {
     if (config.oidcProfileId && (!event?.profileID || event.profileID === config.oidcProfileId)) revision++

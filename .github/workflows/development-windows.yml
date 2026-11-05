@@ -136,6 +136,7 @@ jobs:
           go-version: '1.26.6'
           cache: false
       - name: Build and validate the exact desktop archive
+        id: desktop
         shell: bash
         env:
           DEVELOPMENT_BUILD: ${{ inputs.development }}
@@ -165,6 +166,12 @@ jobs:
       - name: Validate institution plugins with the assembled Runtime
         shell: pwsh
         run: ./institution/edition/test/test-desktop-candidate.ps1 -CoreRoot (Resolve-Path ./core).Path -EditionRoot (Resolve-Path ./institution).Path -Product "$env:RUNNER_TEMP/ew-candidate/product"
+      - name: Collect bounded first-launch failure evidence
+        if: failure() && steps.desktop.outcome == 'failure'
+        env:
+          EDUWORK_CORE_ROOT: ${{ github.workspace }}/core
+          ECNU_CI_FIRST_LAUNCH: 'true'
+        run: node institution/edition/release/collect-candidate-failure.mjs
       - name: Retain validation reports
         if: always()
         uses: actions/upload-artifact@v4

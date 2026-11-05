@@ -78,6 +78,8 @@ Mac 贡献者先在公共核心完成路径、资源和签名适配，再由学�
 
 ## Electron 开发候选与发行
 
+候选构建失败时，学校工作流将隔离 CI 首启的固定诊断文件写入验证 artifact 的 `failure-diagnostics/`：GUI 回执、失败界面状态、stdout/stderr，以及 `desktop-start.json`、`startup-error.log`、`desktop-host.log`。仅当 GUI 回执确认失败且为 `launch-only` 时保留该次截图；CI 不登录真实账号。文本复用锁定公版的诊断脱敏，再过滤敏感环境变量值和私钥块；单份文本最多 128 KiB（日志取尾部完整行，超过 4096 字符的单行省略），截图最多 2 MiB，收集文件合计最多 3 MiB，另附小型 `collection.json` 清单。缺失、超限或路径检查拒绝的文件在清单中标注，不遍历或复制配置、凭据、会话及用户目录。该收集不改变 20 秒 UI 等待、学校配置首次加载验证和签名、发布门禁；原构建失败仍须查明原因。
+
 Source Alpha 的 GitHub 发布直接在 CI 内完成，不经维护者电脑转传安装包。候选工作流选择 `main`、版本、全部平台并开启 `publish`，提供已确认的说明文件并确认 `notes_approved` 后，构建成功会自动调用云端发布任务。默认不开启发布。
 
 已有成功构建可以单独运行 `Publish ECNU desktop candidate`，填写原 `source_run_id`、版本和 `docs/releases/<版本>.md`。先以 `publish=false` 验证，再以 `publish=true` 发布；上传失败也复用同一构建重试，不重新打包。发布脚本来自 `core.lock.json` 锁定的公版核心，检查两个平台回执和哈希后才将草稿公开。Source Alpha 发布为非 Latest 的 prerelease；0.4.0 stable 发布为正式 Release 并标记 Latest。预发布同样生成 Windows 更新清单并保留 macOS 更新能力；发布 GitHub Release 不会自动部署 OSS 或修改配置源。只有远端附件和标签核对完成，才算发布完成。

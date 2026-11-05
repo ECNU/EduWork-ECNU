@@ -49,7 +49,7 @@ The institution edition reuses the public workbench, Studio, skills, and desktop
 
 Skill management and workbench settings are inherited too. Browsing uses DSH's official Playwright MCP provider, while web search uses the university account service. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
 
-Version 0.4.10 preinstalls [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access). Signed school configuration supplies the relay and school identity. After school sign-in, enable Settings → Remote Access, create a pairing link and confirm the other device on the local computer. No manual server address or access Key is required. Remote access starts disabled; users can also choose their own relay. See [Remote access](docs/REMOTE_ACCESS_EN.md).
+The next release will preinstall [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access). Signed school configuration supplies the relay and school identity. After school sign-in, enable Settings → Remote Access, create a pairing link and confirm the other device on the local computer. No manual server address or access Key is required. Remote access starts disabled; users can also choose their own relay. See [Remote access](docs/REMOTE_ACCESS_EN.md).
 
 ### Plugins added by the ECNU edition
 

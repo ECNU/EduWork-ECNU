@@ -49,7 +49,7 @@ flowchart TD
 
 同时继承技能管理和工作台设置等能力，浏览器复用 DSH 官方 Playwright MCP，联网搜索由学校账户接口提供。公共技能包括 Word、PPT、表格、PDF、图像、语音、视频创作，Knowledge Studio、浏览器、技能创建与产品帮助，见[公版完整插件与技能清单](https://github.com/ECNU/EduWork#随包插件)。所需模型和服务按配置启用，个人 API Key 与其他模型仍可使用。
 
-从 0.4.10 起预装 [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access)。学校签名配置提供中继地址与学校身份接入；登录学校账号后，在“设置 → 远程访问”开启服务、生成配对链接，并在本机确认其他终端的配对请求即可使用，无需手填服务器地址或接入 Key。远控默认关闭，用户也可选择自己的中继。见[远程访问说明](docs/REMOTE_ACCESS.md)。
+下一版本将预装 [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access)。学校签名配置提供中继地址与学校身份接入；登录学校账号后，在“设置 → 远程访问”开启服务、生成配对链接，并在本机确认其他终端的配对请求即可使用，无需手填服务器地址或接入 Key。远控默认关闭，用户也可选择自己的中继。见[远程访问说明](docs/REMOTE_ACCESS.md)。
 
 ### 华师版增加的插件
 

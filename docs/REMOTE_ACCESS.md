@@ -2,7 +2,7 @@
 
 [English](REMOTE_ACCESS_EN.md) | [返回首页](../README.md)
 
-0.4.10 起随包提供公版的独立插件 `@eduwork/dsh-remote-access`。首次启动下载的签名学校配置会提供中继服务和学校身份，用户无需另装插件、填写服务器地址或复制 Token。
+下一版本将随包提供公版的独立插件 `@eduwork/dsh-remote-access`。首次启动下载的签名学校配置会提供中继服务和学校身份，用户无需另装插件、填写服务器地址或复制 Token。
 
 1. 在 EduWork@ECNU 中登录学校账号。
 2. 打开“设置 → 远程访问”，使用学校身份，开启远程访问。可先测试连接。

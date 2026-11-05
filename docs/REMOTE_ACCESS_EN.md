@@ -2,7 +2,7 @@
 
 [中文](REMOTE_ACCESS.md) | [Home](../README_EN.md)
 
-Starting with 0.4.10, EduWork@ECNU includes the standalone public `@eduwork/dsh-remote-access` plugin. Signed school configuration downloaded at startup supplies the relay and school identity. No plugin installation, server address or copied Token is required.
+The next EduWork@ECNU release will include the standalone public `@eduwork/dsh-remote-access` plugin. Signed school configuration downloaded at startup supplies the relay and school identity. No plugin installation, server address or copied Token is required.
 
 1. Sign in with your school account in EduWork@ECNU.
 2. Open Settings → Remote Access, use the school identity and enable access. You can test the connection first.

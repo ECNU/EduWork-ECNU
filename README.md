@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MulanPSL-2.0](https://img.shields.io/badge/license-MulanPSL--2.0-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#安装与使用)
+[![License: MulanPSL-2.0](https://img.shields.io/badge/license-MulanPSL--2.0-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.5](https://img.shields.io/badge/DSH-0.2.1--rc.5-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.5) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#安装与使用)
 
 **简体中文** | [English](README_EN.md)
 
@@ -49,7 +49,7 @@ flowchart TD
 
 同时继承技能管理和工作台设置等能力，浏览器复用 DSH 官方 Playwright MCP，联网搜索由学校账户接口提供。公共技能包括 Word、PPT、表格、PDF、图像、语音、视频创作，Knowledge Studio、浏览器、技能创建与产品帮助，见[公版完整插件与技能清单](https://github.com/ECNU/EduWork#随包插件)。所需模型和服务按配置启用，个人 API Key 与其他模型仍可使用。
 
-本版暂不预装远程访问。有自建中继的用户仍可通过插件管理安装 [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access)，重启后在“设置 → 远程访问”中填写中继地址和接入 Key，开启并配对设备；不会自动接入学校中继。参见[中继部署指南](https://github.com/ECNU/EduWork/blob/main/packages/dsh-remote-access/docs/DEPLOYMENT.md)。
+下一版本将预装 [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access)。学校签名配置提供中继地址与学校身份接入；登录学校账号后，在“设置 → 远程访问”开启服务、生成配对链接，并在本机确认其他终端的配对请求即可使用，无需手填服务器地址或接入 Key。远控默认关闭，用户也可选择自己的中继。见[远程访问说明](docs/REMOTE_ACCESS.md)。
 
 ### 华师版增加的插件
 

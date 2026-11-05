@@ -1,0 +1,112 @@
+name: Sign ECNU Windows candidates
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Generate inner request, ingest inner signatures / generate Setup request, or finalize'
+        required: true
+        type: choice
+        options: [inner-request, outer-request, finalize]
+      source_run_id:
+        description: 'Successful ECNU original candidate run at this exact commit'
+        required: true
+        type: string
+      parent_run_id:
+        description: 'Previous signing run; empty for inner-request'
+        type: string
+      response_json:
+        description: 'Public signature response JSON; never a PIN or private key'
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: windows-signing-${{ github.repository }}-${{ inputs.source_run_id }}-${{ inputs.stage }}-${{ inputs.parent_run_id }}
+  cancel-in-progress: false
+jobs:
+  signing:
+    if: github.repository == 'ECNU/EduWork-ECNU'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: institution
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - name: Read exact source pins
+        id: pins
+        shell: pwsh
+        run: |
+          foreach ($entry in @(@('core','institution/core.lock.json'), @('tools','institution/edition/release/windows-signing/tools.lock.json'))) {
+            $lock = Get-Content -Raw -LiteralPath $entry[1] | ConvertFrom-Json
+            if ($lock.repository.ToLowerInvariant() -ne 'https://github.com/ecnu/eduwork.git' -or $lock.commit -cnotmatch '^[a-f0-9]{40}$') { throw 'Invalid source pin' }
+            "$($entry[0])=$($lock.commit)" >> $env:GITHUB_OUTPUT
+          }
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: ${{ steps.pins.outputs.core }}
+          path: core
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: ${{ steps.pins.outputs.tools }}
+          path: setup-tools
+          persist-credentials: false
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.6'
+          cache: false
+      - name: Validate source and perform hosted stage without a private key
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SIGNING_STAGE: ${{ inputs.stage }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          PARENT_RUN_ID: ${{ inputs.parent_run_id }}
+          SIGNING_RESPONSE: ${{ inputs.response_json }}
+          EDUWORK_CORE_ROOT: ${{ github.workspace }}/core
+          EDUWORK_SETUP_CORE_ROOT: ${{ github.workspace }}/setup-tools
+          GOFLAGS: '-mod=readonly'
+        run: node institution/edition/release/windows-signing/hosted.mjs
+      - uses: actions/upload-artifact@v4
+        if: inputs.stage != 'finalize'
+        with:
+          name: windows-signing-state
+          path: ${{ runner.temp }}/windows-signing-${{ github.run_id }}/state
+          compression-level: 0
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: inputs.stage != 'finalize'
+        with:
+          name: windows-signing-request
+          path: ${{ runner.temp }}/windows-signing-${{ github.run_id }}/request
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: inputs.stage == 'finalize'
+        with:
+          name: windows-release
+          path: ${{ runner.temp }}/windows-signing-${{ github.run_id }}/publish
+          compression-level: 0
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: inputs.stage != 'finalize'
+        with:
+          name: windows-signing-files
+          path: ${{ runner.temp }}/windows-signing-${{ github.run_id }}/request-files
+          compression-level: 0
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-signing-validation
+          path: ${{ runner.temp }}/windows-signing-${{ github.run_id }}/evidence-public
+          retention-days: 30
+          if-no-files-found: warn

@@ -21,7 +21,7 @@ on:
         default: false
         type: boolean
       publish:
-        description: 'Publish directly from CI after all three targets and signed first launch pass'
+        description: 'Reserved: must remain false; publication uses the separate signed-candidate workflow'
         required: true
         default: false
         type: boolean
@@ -74,6 +74,7 @@ jobs:
           SELECTED_PLATFORMS: ${{ inputs.platform }}
         run: |
           set -euo pipefail
+          [[ "$PUBLISH_RELEASE" != true ]] || { echo '::error::Complete Windows signing, then use Publish ECNU desktop candidate'; exit 1; }
           RELEASE_VERSION="${RELEASE_VERSION#"${RELEASE_VERSION%%[![:space:]]*}"}"
           RELEASE_VERSION="${RELEASE_VERSION%"${RELEASE_VERSION##*[![:space:]]}"}"
           if [[ "$DEVELOPMENT_BUILD" == true ]]; then
@@ -175,10 +176,10 @@ jobs:
       - name: Retain candidate files for acceptance before publication
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}-release
+          name: ${{ matrix.platform == 'windows' && 'windows-unsigned' || format('{0}-release', matrix.platform) }}
           path: ${{ runner.temp }}/ew-candidate/publish
           compression-level: 0
-          retention-days: 3
+          retention-days: 14
           if-no-files-found: error
   compatibility:
     name: macOS 15 (${{ matrix.platform }})
@@ -212,16 +213,3 @@ jobs:
           path: ${{ runner.temp }}/macos-15-acceptance/evidence-public
           retention-days: 7
           if-no-files-found: warn
-  publish:
-    needs: [policy, build, compatibility]
-    if: always() && inputs.publish && !inputs.development && needs.build.result == 'success' && needs.compatibility.result == 'success'
-    permissions:
-      actions: read
-      contents: write
-    uses: ./.github/workflows/publish-desktop-candidate.yml
-    with:
-      source_run_id: '${{ github.run_id }}'
-      version: ${{ needs.policy.outputs.version }}
-      release_notes: ${{ inputs.release_notes }}
-      notes_approved: ${{ inputs.notes_approved }}
-      publish: true

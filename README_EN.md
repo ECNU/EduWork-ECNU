@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MulanPSL-2.0](https://img.shields.io/badge/license-MulanPSL--2.0-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.5](https://img.shields.io/badge/DSH-0.2.1--rc.5-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.5) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#installation-and-use)
+[![License: MulanPSL-2.0](https://img.shields.io/badge/license-MulanPSL--2.0-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.2-rc.1](https://img.shields.io/badge/DSH-0.2.2--rc.1-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-rc.1) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#installation-and-use)
 
 [简体中文](README.md) | **English**
 
@@ -48,6 +48,8 @@ The institution edition reuses the public workbench, Studio, skills, and desktop
 | [`@eduwork/dsh-desktop-pet`](https://www.npmjs.com/package/@eduwork/dsh-desktop-pet) | Optional desktop pet from the 0.4.5 development release, reflecting task and notification states. Includes red/blue Page, Dafeiyu, and Huashi; disabled by default, available in Settings → Desktop Pet. |
 
 Skill management and workbench settings are inherited too. Browsing uses DSH's official Playwright MCP provider, while web search uses the university account service. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
+
+Annotations, side chat, literature, mail, remote access and external agents can be enabled or disabled individually on the Plugins page; choices persist across restarts. External agents start disabled and can connect to locally installed Codex or Claude CLIs when enabled; the other five start enabled. Services such as mail retrieval and remote connections remain controlled by their own settings.
 
 The next release will preinstall [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access). Signed school configuration supplies the relay and school identity. After school sign-in, enable Settings → Remote Access, create a pairing link and confirm the other device on the local computer. No manual server address or access Key is required. Remote access starts disabled; users can also choose their own relay. See [Remote access](docs/REMOTE_ACCESS_EN.md).
 

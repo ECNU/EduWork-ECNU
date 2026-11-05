@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os'
 import { randomUUID } from 'node:crypto'
 import { Context } from '@deepseek-ai/cordis'
 import ToolRuntime from '@deepseek-ai/dsh-tools'
+import * as NativeToolExecutor from '@deepseek-ai/dsh-tool-executor-native'
 import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
 import { Session, SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
 import * as music from '../lib/index.js'
@@ -35,11 +36,19 @@ test('conversation calls use native tool policy, session workspace and Host auth
     },
   })
   t.after(async () => { for (const fiber of fibers.reverse()) await fiber.dispose() })
-  for (const plugin of [SystemPrompt, ToolRuntime]) fibers.push(await ctx.plugin(plugin))
+  // Match rc.1's official composition: registration and execution are separate
+  // services. Exercise the native batch dispatcher rather than bypassing policy.
+  for (const plugin of [SystemPrompt, ToolRuntime, NativeToolExecutor]) fibers.push(await ctx.plugin(plugin))
   ctx.on('tools/pre-execute', (exec, next) => { checks.push(exec.name); return next() })
   fibers.push(await ctx.plugin(music, { baseURL: 'https://school.example.org/v1', oidcProfileId: 'school' }))
-  const execute = (action, args) => ctx.tools.execute({ callId: randomUUID(), agent,
-    signal: new AbortController().signal, name: `ecnu_music_${action}`, arguments: args })
+  const execute = async (action, args) => {
+    const callId = randomUUID()
+    const batch = await ctx.tools.execute({ agent, signal: new AbortController().signal,
+      calls: [{ id: callId, name: `ecnu_music_${action}`, arguments: JSON.stringify(args) }] })
+    assert.equal(batch.results.length, 1)
+    assert.equal(batch.results[0].callId, callId)
+    return batch.results[0].result
+  }
   const args = { operation: 'generate', title: '对话创作', lyrics: '希望', style: 'orchestra', request_id: randomUUID() }
   const response = await execute('submit', args)
   assert.equal(response.isError, false, response.error?.message)

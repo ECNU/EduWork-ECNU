@@ -14,7 +14,8 @@ function Invoke-SignTool([string[]]$Arguments) {
   if ($LASTEXITCODE -ne 0) { throw "SignTool failed ($LASTEXITCODE)" }
 }
 if ($Mode -eq 'inventory') {
-  $rows = @(Get-ChildItem -LiteralPath $jobData.root -File -Recurse | Where-Object { $_.Extension -in @('.exe','.dll','.node') -and [IO.Path]::GetRelativePath($jobData.root,$_.FullName).Replace('\','/') -notin $jobData.exclude } | ForEach-Object {
+  . "$PSScriptRoot/pe.ps1"
+  $rows = @(Get-ChildItem -LiteralPath $jobData.root -File -Recurse | Where-Object { $_.Extension -in @('.exe','.dll','.node') -and [IO.Path]::GetRelativePath($jobData.root,$_.FullName).Replace('\','/') -notin $jobData.exclude } | Where-Object { Test-WindowsPE $_.FullName } | ForEach-Object {
     $signature = Get-AuthenticodeSignature -LiteralPath $_.FullName
     if ($signature.Status -notin @('Valid','NotSigned')) { throw "Invalid existing signature: $($_.FullName): $($signature.Status)" }
     [pscustomobject]@{path=[IO.Path]::GetRelativePath($jobData.root,$_.FullName).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(); status=[string]$signature.Status; thumbprint=$signature.SignerCertificate.Thumbprint}

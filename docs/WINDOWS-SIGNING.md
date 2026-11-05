@@ -10,6 +10,7 @@
 - [Setup 工具锁](../edition/release/windows-signing/tools.lock.json) 单独固定支持 Authenticode 尾部证书表的解压器源码。它仅用于 Setup，业务核心、运行时、启动器和更新器仍来自 `core.lock.json`。
 - 正式候选须通过源码快照、依赖、原始桌面启动和学校签名配置首次加载。签名结束后对实际解压的包再次执行首次启动、原生运行时及清单校验。
 - 原始 CI 产物名为 `windows-unsigned`，保留原构建回执；它不能进入学校发布入口。只有最后一轮签名验收通过才产生 `windows-release`。
+- 第三方原生文件按 DOS/PE 文件头识别 Windows PE 后检查原有签名；随依赖附带的 Mach-O/ELF 不调用 Authenticode。损坏或截断的 PE 仍拒绝，所有非自有文件继续参与完整 manifest 哈希比对，不重签第三方文件。
 - 最终包含全量 ZIP、Setup ZIP、版本化 `EduWork-ECNU-<version>-windows-x64-setup.exe`、对应 SHA256、签名来源回执及从已发布旧版本生成的差分。更新器仍使用原全量 ZIP 和差分协议。
 
 ## 操作顺序

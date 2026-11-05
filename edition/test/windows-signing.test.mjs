@@ -14,6 +14,80 @@ import { compareManifests, validateSignedFiles, validateOriginalReceipt } from '
 import { coreModule, toolsLock } from '../release/windows-signing/core.mjs'
 const {ZipWriter}=await coreModule('scripts/lib/zip.mjs')
 
+async function inventory(root, work, exclude = []) {
+  await mkdir(work, { recursive: true })
+  const job = join(work, 'inventory.json'), output = join(work, 'result.json')
+  await writeFile(job, JSON.stringify({ root, output, exclude }))
+  await promisify(execFile)('pwsh', ['-NoProfile', '-File', fileURLToPath(new URL('../release/windows-signing/tool.ps1', import.meta.url)), '-Mode', 'inventory', '-Job', job], { windowsHide: true })
+  return JSON.parse(await readFile(output, 'utf8'))
+}
+
+// Header-only synthetic image; never executed or signed. Mutations below must
+// be rejected before Get-AuthenticodeSignature can classify a broken PE as unsigned.
+function peHeaderFixture() {
+  const bytes = Buffer.alloc(1024)
+  bytes.write('MZ'); bytes.writeUInt32LE(128, 60); bytes.write('PE\0\0', 128)
+  bytes.writeUInt16LE(0x8664, 132); bytes.writeUInt16LE(1, 134)
+  bytes.writeUInt16LE(240, 148); bytes.writeUInt16LE(0x20b, 152)
+  bytes.writeUInt32LE(512, 128 + 24 + 240 + 16)
+  bytes.writeUInt32LE(512, 128 + 24 + 240 + 20)
+  return bytes
+}
+
+test('native inventory recognizes actual Windows PE and skips ELF/Mach-O without changing any bytes', { skip: process.platform !== 'win32' }, async t => {
+  const root = await mkdtemp(join(tmpdir(), 'ecnu-pe-inventory-')); t.after(() => rm(root, { recursive: true, force: true }))
+  const input = join(root, 'input'); await mkdir(input)
+  const bytes = await readFile(process.execPath)
+  await writeFile(join(input, 'windows.node'), bytes)
+  const fixtures = new Map([['windows.node', sha256(bytes)]])
+  for (const magic of ['7f454c46', 'cefaedfe', 'feedface', 'cffaedfe', 'feedfacf', 'cafebabe', 'bebafeca', 'cafebabf', 'bfbafeca']) {
+    const file = `foreign-${magic}.node`, body = Buffer.concat([Buffer.from(magic, 'hex'), Buffer.alloc(60)])
+    await writeFile(join(input, file), body); fixtures.set(file, sha256(body))
+  }
+  // Institution-owned files are inventoried/signed through their separate allowlist.
+  await writeFile(join(input, 'EduWork.exe'), 'excluded fixture')
+  const result = await inventory(input, join(root, 'work'), ['EduWork.exe'])
+  assert.equal(result.length, 1)
+  assert.equal(result[0].path, 'windows.node')
+  assert(['Valid', 'NotSigned'].includes(result[0].status))
+  assert.equal(result[0].sha256, fixtures.get('windows.node'))
+  for (const [file, hash] of fixtures) assert.equal(sha256(await readFile(join(input, file))), hash)
+})
+
+test('native inventory rejects damaged MZ, out-of-bounds headers and truncated PE sections', { skip: process.platform !== 'win32' }, async t => {
+  const root = await mkdtemp(join(tmpdir(), 'ecnu-broken-pe-')); t.after(() => rm(root, { recursive: true, force: true }))
+  const cases = [
+    ['truncated-dos', () => Buffer.from('MZ')],
+    ['offset-overflow', b => { b.writeUInt32LE(0xffffffff, 60); return b }],
+    ['bad-signature', b => { b.write('NOPE', 128); return b }],
+    ['bad-optional-magic', b => { b.writeUInt16LE(0x999, 152); return b }],
+    ['truncated-optional', b => { b.writeUInt16LE(65535, 148); return b }],
+    ['section-overflow', b => { b.writeUInt32LE(0xffffffff, 128 + 24 + 240 + 20); return b }],
+    ['truncated-section', b => b.subarray(0, 800)],
+  ]
+  for (const [name, mutate] of cases) {
+    const input = join(root, name); await mkdir(input)
+    await writeFile(join(input, 'broken.node'), mutate(peHeaderFixture()))
+    await assert.rejects(inventory(input, join(root, name + '-work')), error => /Malformed PE/u.test(error.stderr || error.message), name)
+  }
+  const unknown = join(root, 'unknown'); await mkdir(unknown)
+  await writeFile(join(unknown, 'unknown.node'), 'not a recognized native binary')
+  await assert.rejects(inventory(unknown, join(root, 'unknown-work')), error => /Unrecognized native binary/u.test(error.stderr || error.message))
+})
+
+test('native inventory still rejects an actual PE with a damaged existing signature', { skip: process.platform !== 'win32' }, async t => {
+  const root = await mkdtemp(join(tmpdir(), 'ecnu-tampered-pe-')); t.after(() => rm(root, { recursive: true, force: true }))
+  const input = join(root, 'input'); await mkdir(input)
+  const bytes = await readFile(process.execPath)
+  const pe = bytes.readUInt32LE(60), optional = pe + 24
+  const certificateEntry = optional + (bytes.readUInt16LE(optional) === 0x20b ? 112 : 96) + 4 * 8
+  assert(bytes.readUInt32LE(certificateEntry + 4) > 0, 'Windows Node fixture must have its upstream signature')
+  const section = optional + bytes.readUInt16LE(pe + 20)
+  bytes[bytes.readUInt32LE(section + 20)] ^= 1
+  await writeFile(join(input, 'tampered.exe'), bytes)
+  await assert.rejects(inventory(input, join(root, 'work')), error => /Invalid existing signature[\s\S]*HashMismatch/u.test(error.stderr || error.message))
+})
+
 // Synthetic ephemeral certificate and CMS. No institution identity, private-key
 // fixture, token or external trust-store changes are involved in these tests.
 function der(tag,...parts){

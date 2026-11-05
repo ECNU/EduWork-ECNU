@@ -173,6 +173,7 @@ test('school workflows keep unsigned builds away from the publisher and require 
   const build=await read('.github/workflows/development-windows.yml'),signing=await read('.github/workflows/windows-signing.yml'),publish=await read('.github/workflows/publish-desktop-candidate.yml')
   assert.match(build,/'windows-unsigned'/);assert.doesNotMatch(build,/uses: .*publish-desktop-candidate/)
   assert.match(signing,/contents: read/);assert.doesNotMatch(signing,/contents: write|secrets\.|self-hosted/)
+  assert.match(signing,/name: windows-signing-state\s+path: [^\n]+\s+include-hidden-files: true/)
   assert.match(signing,/institution\/edition\/release\/windows-signing\/hosted.mjs/)
   assert.match(signing,/if: inputs.stage == 'finalize'[\s\S]*name: windows-release/)
   assert.match(publish,/WINDOWS_SIGNING_RUN_ID:/);assert.match(publish,/institution\/edition\/release\/windows-signing\/publish.mjs/)
@@ -198,6 +199,13 @@ test('signed file gate hashes delivered archives, Setup, notes, feeds and sideca
   await save('release-receipt.json',JSON.stringify(receipt))
   const context={repository:'ECNU/EduWork-ECNU',version:'0.4.11',commit:receipt.editionCommit,policy}
   const result=await validateSignedFiles(root,context);assert.equal(result.files.length,10)
+  const originalExtractor=JSON.stringify(extractor),originalDescriptor=structuredClone(receipt.portableExtractor.receipt)
+  extractor.extractor.sourceCommit=receipt.coreCommit
+  receipt.portableExtractor.receipt=await save(originalDescriptor.name,JSON.stringify(extractor))
+  await save('release-receipt.json',JSON.stringify(receipt))
+  await assert.rejects(validateSignedFiles(root,context),/extractor source/)
+  await save(originalDescriptor.name,originalExtractor);receipt.portableExtractor.receipt=originalDescriptor
+  await save('release-receipt.json',JSON.stringify(receipt))
   await assert.rejects(validateSignedFiles(root,{...context,repository:'ECNU/EduWork'}))
   for(const field of ['publication','signing']) {
     const altered=structuredClone(receipt);delete altered[field]

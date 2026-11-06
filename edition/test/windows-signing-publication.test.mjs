@@ -1,9 +1,21 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises'
 import { join, dirname, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { validatePublicationSource } from '../release/windows-signing/publication-source.mjs'
+import { localSigningPolicy } from '../release/windows-signing/io.mjs'
+
+test('publisher reads and validates the actual public signing policy from disk', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'ecnu-publication-policy-')); assert.equal(dirname(root), resolve(tmpdir()))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  assert.equal(await localSigningPolicy(root), null)
+  const bytes = await readFile(new URL('../windows-signing.json', import.meta.url))
+  await mkdir(join(root, 'edition')); await writeFile(join(root, 'edition/windows-signing.json'), bytes)
+  assert.deepEqual(await localSigningPolicy(root), JSON.parse(bytes))
+  await writeFile(join(root, 'edition/windows-signing.json'), '{}')
+  await assert.rejects(localSigningPolicy(root), /Unexpected protocol fields/)
+})
 
 test('repaired main publisher keeps original candidate identity and refuses ancestry/pin/policy/notes drift', async t => {
   const root = await mkdtemp(join(tmpdir(), 'ecnu-publication-source-')); assert.equal(dirname(root), resolve(tmpdir()))

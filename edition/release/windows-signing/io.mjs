@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { createWriteStream } from 'node:fs'
 import { mkdir, readFile, lstat } from 'node:fs/promises'
-import { dirname } from 'node:path'
+import { join, dirname } from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import { Readable } from 'node:stream'
 import { unpackArtifact } from './artifact-zip.mjs'

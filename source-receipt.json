@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "sourceState": "local-development-snapshot",
-  "createdAt": "2026-11-05T10:53:50.444Z",
-  "fileSetSHA256": "02237d94017c407fa6ab767e4d9146216b84696f4e5cfadd036e4e53be196b57",
+  "createdAt": "2026-11-06T08:00:59.765Z",
+  "fileSetSHA256": "17bf17b1b8732454dfc9c7b42b21ce471b3978d81039970ffac29c1a36f1cfa9",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "c49ecf17f25461df5cfa978e71b583725ab6cee9d10b0725c308ea02856a5eb2"
+      "sha256": "cdef8ea342b89590d054d1499ba21953db2dfdd31aedc61f8ac804bb6b2bb2d4"
     },
     {
       "path": ".github/workflows/oss-deltas.yml",
@@ -21,11 +21,19 @@
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
-      "sha256": "ab5c3c629289992d29a73600c7ab171c51c17eb16d13694ce0cc20e00304b222"
+      "sha256": "0608fdc7a137ca5f632d4c27abd4a8066a971423ff23acdc6e2f692e6965c25c"
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "091f4f497f8fe32007299c9b29d4158862d3fb4ed6b65d07e22b28c5cc36cdc8"
+      "sha256": "ff086bcade8b43851341ac045455f82100134cd162d2832d656aab3882f569d3"
+    },
+    {
+      "path": ".github/workflows/validate-windows-signing.yml",
+      "sha256": "4031d33e5d412f39d13632717f91c74ad0dcc29313b9d0c72fde553c9cbf8e40"
+    },
+    {
+      "path": ".github/workflows/windows-signing.yml",
+      "sha256": "82cb627a393e03bf3c7cbb146d3057987a818fcfee33c0abec32ba90d6210011"
     },
     {
       "path": ".gitignore",
@@ -41,11 +49,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "64cfa5ebf7248a56623bb8d8db6b4fcc502cb94b64271eb16ea088a694824ec6"
+      "sha256": "3a8aa414deb4e8e14457f28b73c71b45ede2845985170a7d4917b5f1921841dd"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "3c7d8c23c2c55d018958bc423a55f7e3711e2c5c264e47d32b36add669a0ec9f"
+      "sha256": "750522a621e6c29aadd0e9251f90b84c503ef118e148704a255da177adc296fe"
     },
     {
       "path": "docs/DECISION_EN.md",
@@ -97,7 +105,7 @@
     },
     {
       "path": "docs/OSS_UPDATES.md",
-      "sha256": "5bb6f7e08cdfe73997905c6bd5dace420ffac31e14a94a91dd6458adab4cac1f"
+      "sha256": "d15141cabd75c951889448402f392524fd8f6e8d22d9b399d638a244142e19d6"
     },
     {
       "path": "docs/releases/0.3.5.md",
@@ -156,6 +164,14 @@
       "sha256": "dee9dadc91ff5945248aea5df76a7e4abc01e5f47c10025a28d21401cc3af24e"
     },
     {
+      "path": "docs/releases/0.4.11.md",
+      "sha256": "910e11cb80cef558611e41d13e884c75e6d972c7525090c035968762ca89cfff"
+    },
+    {
+      "path": "docs/releases/0.4.12.md",
+      "sha256": "181d6b0e436b1b0f4ddfa0235635708f2be64a66f03b704bb97596a7f6be96b0"
+    },
+    {
       "path": "docs/releases/0.4.2.md",
       "sha256": "acce4644954f121500052c9a531dcf26e8c34dc9bdcbbe1409df5aee4d8a5ec5"
     },
@@ -202,6 +218,10 @@
     {
       "path": "docs/USER_GUIDE.md",
       "sha256": "218736c2cb8b940bd8759f719a9642407492c591856d81c1e4ef6289c93913ba"
+    },
+    {
+      "path": "docs/WINDOWS-SIGNING.md",
+      "sha256": "d35b1a49878ca364add4e647dbc0d09496fa67a3f6e10fc0c61aa44a38d67e2b"
     },
     {
       "path": "edition/desktop-020/publisher-bootstrap.darwin.json",
@@ -1036,6 +1056,10 @@
       "sha256": "16744d0577e1a1127ccfd623ee044067c6a9c75de7383052597af2a5fcfbfccd"
     },
     {
+      "path": "edition/release/collect-candidate-failure.mjs",
+      "sha256": "03828e795806be0105f8b7e4e4a339ecfee41f04bfc0a81e8607e1e4a92d6e54"
+    },
+    {
       "path": "edition/release/oss-deltas.mjs",
       "sha256": "ae368f2486a722891a0d9f361e298dc19ed5cc2b8567f42245f7aaa1df3ad1a4"
     },
@@ -1045,7 +1069,71 @@
     },
     {
       "path": "edition/release/website-pointers.mjs",
-      "sha256": "db0dba8cdd19daa9bfb227f29b308dc7c7c433acc0334f0104a8083f45691037"
+      "sha256": "762ce7ee8509c51023baa9341b14cdb782753afcedf12c9144852b0a1fdd9f35"
+    },
+    {
+      "path": "edition/release/windows-signing/artifact-zip.mjs",
+      "sha256": "7d63a6910c3601557c53093f6a0615955d36b744d91898f4beee7008cd1289dc"
+    },
+    {
+      "path": "edition/release/windows-signing/core.mjs",
+      "sha256": "dca790f756bc6a6dd949e56347fe67227eee568e127f355ba3f2b6f3a7b6de7a"
+    },
+    {
+      "path": "edition/release/windows-signing/files.mjs",
+      "sha256": "67a77a18b3c025dab4d51a25b4a64bf21ef9feaea0168e7da8dbaf392abbcf5b"
+    },
+    {
+      "path": "edition/release/windows-signing/hosted.mjs",
+      "sha256": "07e7118cb4bef2b07e7290c88d194c35857fa55a54dae28d4ec19be3cd224f02"
+    },
+    {
+      "path": "edition/release/windows-signing/io.mjs",
+      "sha256": "1d72fbc419089d5e9be04ac5f24d43e3faa24f2263d52f372f85403664cf55db"
+    },
+    {
+      "path": "edition/release/windows-signing/operations.mjs",
+      "sha256": "7af5dd9cd138726e7c1f25400ba03bb3693d6dfad02cf17b2eceeb32b90bf16f"
+    },
+    {
+      "path": "edition/release/windows-signing/packaging.mjs",
+      "sha256": "e282682238f9ccc9418e9656853f6f3da49b496381dbebacd7bd1321870baefc"
+    },
+    {
+      "path": "edition/release/windows-signing/pe.ps1",
+      "sha256": "367a7a2df29959478b787a4dc225c3add11b7172fcdac9155f515708a5dbdd4e"
+    },
+    {
+      "path": "edition/release/windows-signing/protocol.mjs",
+      "sha256": "dfe3ba407e5b29f1cd4dae8f40cf080efe977ab151903d05e2d7dd1f9dc56b30"
+    },
+    {
+      "path": "edition/release/windows-signing/publication-source.mjs",
+      "sha256": "2baa54bb3763a79b37f3de77c042897306f376bbc25f07bd4792d9690be71039"
+    },
+    {
+      "path": "edition/release/windows-signing/publish.mjs",
+      "sha256": "69a12f1c56ec5784a7c9267662aa79ce8605c54076510bdcdf17493a07bd7967"
+    },
+    {
+      "path": "edition/release/windows-signing/receipt.mjs",
+      "sha256": "655821b4c57a7ce1d2204cf6411d80fc5ca4e0a9eb5b1a699e86faa4c7d5115e"
+    },
+    {
+      "path": "edition/release/windows-signing/sign-request.mjs",
+      "sha256": "fd6c7baad17b4c457d526d7d005e1bb77f9d5902b89dd5760b2a2f3e71431e14"
+    },
+    {
+      "path": "edition/release/windows-signing/tool.ps1",
+      "sha256": "8f07b545414f78a836a5a3290f4eef8099c0f697bbb9a1386b7c4ee6d6b5a0f9"
+    },
+    {
+      "path": "edition/release/windows-signing/tools.lock.json",
+      "sha256": "55c36f6592aed40d68b16b8028d2638792717cbb1be957755d536e1be5f78a05"
+    },
+    {
+      "path": "edition/release/windows-signing/util.mjs",
+      "sha256": "91825fdaa5535f6f5b192f3e8dacda047ff115f730683625b912e6f20b1c095f"
     },
     {
       "path": "edition/skills/artifact-images/references/image-guidance.md",
@@ -1104,6 +1192,10 @@
       "sha256": "f279157c920628ad4f0e3b921889fa1006d8d874196100fdad5714006b53c150"
     },
     {
+      "path": "edition/test/candidate-failure-evidence.test.mjs",
+      "sha256": "22ca59432e07a3d7ab572d6e8f86a0e4a3138d69a6c8500564c091933eb47f51"
+    },
+    {
       "path": "edition/test/chat-model-catalog.test.mjs",
       "sha256": "53a04ee55b49b2e77ee629a8d544010bbc86493232724973ab5ee75cfaf063a7"
     },
@@ -1145,7 +1237,23 @@
     },
     {
       "path": "edition/test/website-pointers.test.mjs",
-      "sha256": "da3e4fac82bb49a96e8818b0d2334b2e76231f276a184c4c85d7c86afb25ec9a"
+      "sha256": "18444d9827847592cd1a0a35fcba2fc2683a63d4379bcb5a08cb10e46266f41c"
+    },
+    {
+      "path": "edition/test/windows-signing-artifact.test.mjs",
+      "sha256": "b88fbec45c8ffbefe571e394216cdd49f753ec23fd17ce758d77128c553db212"
+    },
+    {
+      "path": "edition/test/windows-signing-publication.test.mjs",
+      "sha256": "61b27b497d499e53bd7527cf65a3d1a7535f7b8d3ddc2da7d360678c66c7d4c5"
+    },
+    {
+      "path": "edition/test/windows-signing.test.mjs",
+      "sha256": "b2e1e37ba95659c3431c31394179f2b9101695de1f69ab93b10a7f27ee0eb814"
+    },
+    {
+      "path": "edition/windows-signing.json",
+      "sha256": "3d01f2b892b8bd5732661117b7037248e473c1f7fb981d4d006f8577f7c84613"
     },
     {
       "path": "LICENSE",

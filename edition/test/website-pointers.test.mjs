@@ -26,6 +26,11 @@ test('stable website chooses Windows setup and Mac DMG from exact release assets
  const release=fixture(),before=structuredClone(release)
  assert.equal(websiteManifest(release,'windows').artifacts[0].format,'setup-zip')
  assert.equal(websiteManifest(release,'macos').artifacts[0].format,'dmg')
+ assert.equal(websiteManifest(release,'macos-x64').target,'darwin-amd64')
+ const exe=websiteManifest(release,'windows-exe')
+ assert.equal(exe.artifacts[0].format,'setup-exe')
+ assert.deepEqual(exe.fallbackArtifact,websiteManifest(release,'windows').artifacts[0])
+ assert.notEqual(websitePlatforms.windows.pointer,websitePlatforms['windows-exe'].pointer)
  assert.deepEqual(release,before)
 })
 for(const [name,mutate] of [
@@ -36,7 +41,15 @@ for(const [name,mutate] of [
 
 test('delivery verification accepts both current installer pointers',async()=>{
  const release=fixture(),result=await verifyWebsiteRelease(release,{fetcher:server(release)})
- assert.equal(result.websiteVerified,true);assert.equal(result.platforms.length,2)
+ assert.equal(result.websiteVerified,true);assert.equal(result.platforms.length,4)
+})
+
+test('EXE promotion requires both the exact EXE and the backup ZIP',()=>{
+ for(const platform of ['windows','windows-exe']){
+  const release=fixture()
+  release.assets=release.assets.filter(a=>!a.name.endsWith(websitePlatforms[platform].suffix))
+  assert.throws(()=>websiteManifest(release,'windows-exe'),/Expected one website installer/)
+ }
 })
 for(const [name,mutate] of [
  ['old version',map=>{[...map.values()][0].body.version='0.4.3'}],

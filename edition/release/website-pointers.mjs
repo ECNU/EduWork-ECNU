@@ -8,8 +8,11 @@ export const websiteOrigin='https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.co
 const prefix='/chatecnu-work/releases-bridge/stable/'
 const repository='ECNU/EduWork-ECNU'
 export const websitePlatforms={
+ // Keep the legacy ZIP pointer usable by already deployed website versions.
  windows:{target:'windows-amd64',suffix:'windows-x64-setup.zip',format:'setup-zip',pointer:'latest-windows-amd64.json'},
+ 'windows-exe':{target:'windows-amd64',suffix:'windows-x64-setup.exe',format:'setup-exe',pointer:'latest-windows-amd64-exe.json'},
  macos:{target:'darwin-arm64',suffix:'macos-arm64-electron.dmg',format:'dmg',pointer:'latest-macos-arm64.json'},
+ 'macos-x64':{target:'darwin-amd64',suffix:'macos-x64-electron.dmg',format:'dmg',pointer:'latest-macos-x64.json'},
 }
 
 function originURL(value){
@@ -36,9 +39,11 @@ export function websiteManifest(release,platform,origin=websiteOrigin){
  assert.match(asset.digest??'',/^sha256:[a-f0-9]{64}$/,'Installer must carry a GitHub SHA-256 digest')
  assert.ok(Number.isSafeInteger(asset.size)&&asset.size>0)
  const url=origin+prefix+version+'/'+name
- return {schemaVersion:1,distribution:'eduwork-chatecnu',channel:'stable',version,target:spec.target,publishedAt:release.published_at,
+ const manifest={schemaVersion:1,distribution:'eduwork-chatecnu',channel:'stable',version,target:spec.target,publishedAt:release.published_at,
   release:{tag:'v'+version,notes:'当前稳定版汇总了工作台、Knowledge Studio、学校服务与桌面体验更新，完整内容请查看发行说明。',schoolReleaseUrl:releaseURL,publicReleaseUrl:`https://github.com/ECNU/EduWork/releases/tag/v${version}`},
   artifacts:[{shell:'electron',flavor:'installer',format:spec.format,fileName:name,bytes:asset.size,sha256:asset.digest.slice(7),url,sha256Url:url+'.sha256'}]}
+ if(platform==='windows-exe')manifest.fallbackArtifact=websiteManifest(release,'windows',origin).artifacts[0]
+ return manifest
 }
 
 // Call only after original binaries have passed the deployment's full hash check.
@@ -54,13 +59,15 @@ export async function verifyWebsiteRelease(release,{origin=websiteOrigin,fetcher
   assert.ok(['*','https://aitools.ecnu.edu.cn'].includes(response.headers.get('access-control-allow-origin')),'Website CORS missing')
   assert.match(response.headers.get('cache-control')??'',/no-cache|no-store/,'Website pointer must revalidate')
   assert.deepEqual(await response.json(),manifest,'Website pointer differs from this stable release')
-  const asset=manifest.artifacts[0],head=await fetcher(asset.url,{method:'HEAD',cache:'no-store'})
+  for(const asset of [...manifest.artifacts,...(manifest.fallbackArtifact?[manifest.fallbackArtifact]:[])]){
+  const head=await fetcher(asset.url,{method:'HEAD',cache:'no-store'})
   assert.equal(head.status,200,'Website installer unavailable')
   assert.equal(Number(head.headers.get('content-length')),asset.bytes,'Website installer size mismatch')
   const checksum=await fetcher(asset.sha256Url,{cache:'no-store'})
   assert.equal(checksum.status,200,'Website installer checksum unavailable')
   assert.equal((await checksum.text()).trim(),`${asset.sha256}  ${asset.fileName}`,'Website installer checksum mismatch')
-  verified.push({target:spec.target,version:manifest.version,pointerURL,installer:asset.fileName})
+  }
+  verified.push({target:spec.target,version:manifest.version,pointerURL,installer:manifest.artifacts[0].fileName})
  }
  return {version:release.tag_name.slice(1),websiteVerified:true,platforms:verified}
 }

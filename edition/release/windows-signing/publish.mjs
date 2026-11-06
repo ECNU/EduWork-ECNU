@@ -11,13 +11,15 @@ import { verifySigningChain } from './receipt.mjs'
 import { validateSignedFiles } from './files.mjs'
 import { fileIdentity } from './operations.mjs'
 import { writeJSON, sha256File } from './util.mjs'
+import { validatePublicationSource } from './publication-source.mjs'
 
 export async function preparePublication(env=process.env) {
   const repository=env.GITHUB_REPOSITORY,workflow=candidateWorkflow(repository)
   assert.equal(env.GITHUB_ACTIONS,'true')
   assert(['true','false'].includes(env.PUBLISH_RELEASE));assert.equal(env.RELEASE_NOTES_APPROVED,'true')
   for(const key of ['SOURCE_RUN_ID','WINDOWS_SIGNING_RUN_ID','GITHUB_RUN_ID']) assert.match(env[key],/^[1-9][0-9]*$/)
-  if(env.PUBLISH_RELEASE==='true') assert.equal(env.GITHUB_REF,'refs/heads/main')
+  assert.equal(env.GITHUB_REF,'refs/heads/main')
+  await verifyCheckout(editionRoot,env.GITHUB_SHA)
   const version=env.RELEASE_VERSION,product='EduWork-ECNU',platforms=['windows','macos','macos-x64']
   assert.equal(env.RELEASE_NOTES,`docs/releases/${version}.md`)
   const notesPath=join(editionRoot,env.RELEASE_NOTES),notes=await readFile(notesPath,'utf8'),title=notes.split(/\r?\n/)[0]
@@ -27,11 +29,9 @@ export async function preparePublication(env=process.env) {
   assert(jobs.total_count<=100,'Ambiguous job pagination')
   const {validateRun,validatedNodeNpmFiles}=await coreModule('scripts/publish-desktop-candidate.mjs')
   validateRun(source,{repository,workflow,currentRun:env.GITHUB_RUN_ID,platforms,requireMacos15:true},jobs.jobs)
+  assert.equal(String(source.id),env.SOURCE_RUN_ID)
   assert.equal(source.status,'completed');assert.equal(source.conclusion,'success')
-  if(env.PUBLISH_RELEASE==='true') {
-    const ancestry=await github.request(`/compare/${source.head_sha}...main`)
-    assert.equal(ancestry.merge_base_commit.sha,source.head_sha,'Candidate must be merged into main')
-  } else assert.equal(source.head_sha,env.GITHUB_SHA,'Validation uses the exact candidate checkout')
+  const publicationSource=await validatePublicationSource({github,source,publisherCommit:env.GITHUB_SHA,publisherRef:env.GITHUB_REF,editionRoot,releaseNotes:env.RELEASE_NOTES})
   const lock=await github.sourceJSON('core.lock.json',source.head_sha)
   assert.equal(lock.repository.toLowerCase(),'https://github.com/ecnu/eduwork.git')
   await verifyCheckout(coreRoot(),lock.commit)
@@ -62,7 +62,7 @@ export async function preparePublication(env=process.env) {
   for(const receipt of receipts.slice(1)) for(const key of ['dshVersion','dshCommit','recipe','coreCommit','editionCommit']) assert.equal(receipt[key],receipts[0][key],`Cross-platform ${key} mismatch`)
   files.push({name:'RELEASE-NOTES.md',path:notesPath,...await fileIdentity(notesPath)})
   assert.equal(new Set(files.map(f=>f.name)).size,files.length,'Duplicate release asset')
-  return {root,files,notes,title,repository,version,editionCommit:source.head_sha,coreCommit:lock.commit,sourceRun:env.SOURCE_RUN_ID,windowsSigningRun:env.WINDOWS_SIGNING_RUN_ID,artifacts}
+  return {root,files,notes,title,repository,version,...publicationSource,publisherRun:env.GITHUB_RUN_ID,coreCommit:lock.commit,sourceRun:env.SOURCE_RUN_ID,windowsSigningRun:env.WINDOWS_SIGNING_RUN_ID,artifacts}
 }
 
 export async function publishPrepared(prepared,env=process.env) {

@@ -1,10 +1,10 @@
 name: Validate ECNU Windows signing
 on:
   pull_request:
-    paths: ['edition/release/windows-signing/**', 'edition/windows-signing.json', 'edition/test/windows-signing.test.mjs', '.github/workflows/*windows*.yml', '.github/workflows/publish-desktop-candidate.yml']
+    paths: ['edition/release/windows-signing/**', 'edition/windows-signing.json', 'edition/test/windows-signing*.test.mjs', '.github/workflows/*windows*.yml', '.github/workflows/publish-desktop-candidate.yml']
   push:
     branches: [main, feat/ecnu-windows-signing-20261106]
-    paths: ['edition/release/windows-signing/**', 'edition/windows-signing.json', 'edition/test/windows-signing.test.mjs', '.github/workflows/*windows*.yml', '.github/workflows/publish-desktop-candidate.yml']
+    paths: ['edition/release/windows-signing/**', 'edition/windows-signing.json', 'edition/test/windows-signing*.test.mjs', '.github/workflows/*windows*.yml', '.github/workflows/publish-desktop-candidate.yml']
 permissions:
   contents: read
 jobs:
@@ -34,4 +34,4 @@ jobs:
         shell: pwsh
         env:
           EDUWORK_CORE_ROOT: ${{ github.workspace }}/core
-        run: node --test institution/edition/test/windows-signing.test.mjs
+        run: node --test institution/edition/test/windows-signing.test.mjs institution/edition/test/windows-signing-artifact.test.mjs institution/edition/test/windows-signing-publication.test.mjs

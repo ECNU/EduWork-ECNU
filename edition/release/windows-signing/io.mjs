@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict'
 import { createWriteStream } from 'node:fs'
-import { mkdir, readFile, writeFile, lstat } from 'node:fs/promises'
+import { mkdir, readFile, lstat } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import { Readable } from 'node:stream'
-import { coreModule } from './core.mjs'
+import { unpackArtifact } from './artifact-zip.mjs'
 import { sha256File } from './util.mjs'
 import { safePath, validatePolicy, validateSigningRun } from './protocol.mjs'
 
@@ -19,23 +19,7 @@ export async function localSigningPolicy(editionRoot) {
   if (!bytes) return null
   const policy = JSON.parse(bytes); validatePolicy(policy); return policy
 }
-export async function unpackSafe(archive, directory) {
-  const { ZipReader } = await coreModule('scripts/lib/zip.mjs')
-  const zip = await ZipReader.open(archive), seen = new Set()
-  let total = 0
-  for (const entry of zip.entries) {
-    const path = safePath(entry.name.replace(/\/$/, '')), key = path.toLowerCase()
-    assert(!seen.has(key), 'Duplicate/case-colliding ZIP entry'); seen.add(key)
-    const type = (entry.externalAttributes >>> 16) & 0xf000
-    assert(type === 0 || type === (entry.isDirectory ? 0x4000 : 0x8000), 'ZIP links/devices forbidden')
-    total += entry.uncompressedSize; assert(total < 16 * 1024 ** 3, 'Oversized signing artifact')
-  }
-  for (const entry of zip.entries) {
-    const path = join(directory, entry.name)
-    await mkdir(entry.isDirectory ? path : dirname(path), {recursive:true})
-    if (!entry.isDirectory) await writeFile(path, zip.read(entry), {flag:'wx'})
-  }
-}
+export const unpackSafe = unpackArtifact
 export function signingGitHub(repository, token) {
   candidateWorkflow(repository)
   assert(token, 'GitHub read token required for provenance')
@@ -47,12 +31,16 @@ export function signingGitHub(repository, token) {
     assert(response.ok, `GitHub HTTP ${response.status}: ${path}`)
     return response.json()
   }
-  async function sourceJSON(path, commit, optional = false) {
+  async function sourceBytes(path, commit, optional = false) {
     assert.match(commit, /^[a-f0-9]{40}$/); safePath(path)
     const entry = await request(`/contents/${path}?ref=${commit}`, optional)
     if (!entry) return null
     assert.equal(entry.type,'file'); assert.equal(entry.encoding,'base64')
-    return JSON.parse(Buffer.from(entry.content,'base64').toString('utf8'))
+    return Buffer.from(entry.content,'base64')
+  }
+  async function sourceJSON(path, commit, optional = false) {
+    const bytes = await sourceBytes(path, commit, optional)
+    return bytes === null ? null : JSON.parse(bytes.toString('utf8'))
   }
   async function artifact(runId, name) {
     assert.match(String(runId),/^[1-9][0-9]*$/)
@@ -80,5 +68,5 @@ export function signingGitHub(repository, token) {
     validateSigningRun(run,{repository,editionCommit,runId:String(runId)})
     return run
   }
-  return {request,sourceJSON,artifact,download,signingRun}
+  return {request,sourceBytes,sourceJSON,artifact,download,signingRun}
 }

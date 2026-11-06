@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.12",
   "sourceState": "local-development-snapshot",
-  "createdAt": "2026-11-06T08:00:59.765Z",
-  "fileSetSHA256": "17bf17b1b8732454dfc9c7b42b21ce471b3978d81039970ffac29c1a36f1cfa9",
+  "createdAt": "2026-11-06T08:46:04.346Z",
+  "fileSetSHA256": "113e5e5bfb93dad36dacbc083f3b5132621dd9bba9be99c55206db787438e649",
   "files": [
     {
       "path": ".gitattributes",
@@ -29,7 +29,7 @@
     },
     {
       "path": ".github/workflows/validate-windows-signing.yml",
-      "sha256": "4031d33e5d412f39d13632717f91c74ad0dcc29313b9d0c72fde553c9cbf8e40"
+      "sha256": "5bf1bc8e195258e391b149a152d74522f11ebba0fc444f96a12fdc0303e23acb"
     },
     {
       "path": ".github/workflows/windows-signing.yml",
@@ -1241,7 +1241,7 @@
     },
     {
       "path": "edition/test/windows-signing-artifact.test.mjs",
-      "sha256": "b88fbec45c8ffbefe571e394216cdd49f753ec23fd17ce758d77128c553db212"
+      "sha256": "35c2451f8c62b7973823558498a9644c7717c4f55127e4e8a3c226fc2a56a90d"
     },
     {
       "path": "edition/test/windows-signing-publication.test.mjs",
@@ -1249,7 +1249,7 @@
     },
     {
       "path": "edition/test/windows-signing.test.mjs",
-      "sha256": "b2e1e37ba95659c3431c31394179f2b9101695de1f69ab93b10a7f27ee0eb814"
+      "sha256": "29b49b848350a340feaf389f57ef98d4b1370f0dd3aea566ba5b37b01b68e61e"
     },
     {
       "path": "edition/windows-signing.json",

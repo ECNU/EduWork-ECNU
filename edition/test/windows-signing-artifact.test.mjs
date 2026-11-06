@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, rm, readFile, writeFile, open, stat, mkdir, symlink } from 'node:fs/promises'
+import { mkdtemp, rm, readFile, writeFile, open, stat, mkdir, symlink, realpath } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { crc32, deflateRawSync } from 'node:zlib'
@@ -10,8 +10,11 @@ import { unpackSafe, signingGitHub } from '../release/windows-signing/io.mjs'
 import { sha256 } from '../release/windows-signing/protocol.mjs'
 
 async function temporary(t) {
-  const root = await mkdtemp(join(tmpdir(), 'ecnu-artifact-test-'))
-  assert.equal(dirname(root), resolve(tmpdir()))
+  // macOS exposes its temporary directory through the /var -> /private/var link.
+  // Use the physical fixture root; extraction must still reject linked targets.
+  const parent = await realpath(tmpdir())
+  const root = await mkdtemp(join(parent, 'ecnu-artifact-test-'))
+  assert.equal(dirname(root), resolve(parent))
   t.after(() => rm(root, { recursive: true, force: true }))
   return root
 }

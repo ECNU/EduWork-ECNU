@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { generateKeyPairSync, sign, X509Certificate, randomBytes } from 'node:crypto'
-import { mkdtemp, rm, readFile, mkdir, writeFile } from 'node:fs/promises'
+import { mkdtemp, rm, readFile, mkdir, writeFile, realpath } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { execFile } from 'node:child_process'
@@ -190,7 +190,7 @@ test('publisher independently fetches the two request artifacts and validates th
 test('artifact extraction refuses traversal, Windows aliases and case collisions',async t=>{
   assert.equal(safePath('resources/'+('long-component/'.repeat(30))+'asset.js'),'resources/'+('long-component/'.repeat(30))+'asset.js')
   for(const path of ['../a','a/../../b','C:/x','/x','a\\b','NUL.txt','a/COM1','a./b','a /b','a:b','a?b']) assert.throws(()=>safePath(path))
-  const root=await mkdtemp(join(tmpdir(),'eduwork-signing-zip-'));t.after(()=>rm(root,{recursive:true,force:true}))
+  const root=await mkdtemp(join(await realpath(tmpdir()),'eduwork-signing-zip-'));t.after(()=>rm(root,{recursive:true,force:true}))
   for(const [i,names] of [['a',['../escape']],['b',['a','A']],['c',['safe/file.txt']]]){
     const archive=join(root,i+'.zip'),zip=await ZipWriter.create(archive)
     for(const name of names) await zip.addEntry(name,Buffer.from('synthetic'))

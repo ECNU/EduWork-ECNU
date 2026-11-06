@@ -54,7 +54,7 @@ permissions:
   contents: read
 jobs:
   publish:
-    if: github.repository == 'ECNU/EduWork-ECNU' && (github.ref == 'refs/heads/main' || !inputs.publish)
+    if: github.repository == 'ECNU/EduWork-ECNU' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency:
       group: desktop-publication-${{ github.repository }}-${{ inputs.version }}

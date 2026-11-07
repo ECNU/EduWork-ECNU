@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.12",
+  "version": "0.4.13",
   "sourceState": "local-development-snapshot",
-  "createdAt": "2026-11-06T08:46:04.346Z",
-  "fileSetSHA256": "113e5e5bfb93dad36dacbc083f3b5132621dd9bba9be99c55206db787438e649",
+  "createdAt": "2026-11-07T06:12:30.762Z",
+  "fileSetSHA256": "8608d8bce1d56fb786cae6bc737e87af0f813402147cecec361b907a571ac007",
   "files": [
     {
       "path": ".gitattributes",
@@ -29,7 +29,7 @@
     },
     {
       "path": ".github/workflows/validate-windows-signing.yml",
-      "sha256": "5bf1bc8e195258e391b149a152d74522f11ebba0fc444f96a12fdc0303e23acb"
+      "sha256": "251ff70bb4e11a3670b01cda22da226d6e7155f8b8ae58b98f56e078bca0bb46"
     },
     {
       "path": ".github/workflows/windows-signing.yml",
@@ -49,7 +49,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "3a8aa414deb4e8e14457f28b73c71b45ede2845985170a7d4917b5f1921841dd"
+      "sha256": "3c9ba809bc128c90247ee8899377b3bd2209140f60fd9cddec7b29bb9a640968"
     },
     {
       "path": "docs/BUILD.md",
@@ -170,6 +170,10 @@
     {
       "path": "docs/releases/0.4.12.md",
       "sha256": "181d6b0e436b1b0f4ddfa0235635708f2be64a66f03b704bb97596a7f6be96b0"
+    },
+    {
+      "path": "docs/releases/0.4.13.md",
+      "sha256": "738393b47522da15f83907b742f794bcb21e1af5a6d5c6a7d26e0d136e7e7d0f"
     },
     {
       "path": "docs/releases/0.4.2.md",

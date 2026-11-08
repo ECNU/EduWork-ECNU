@@ -113,8 +113,7 @@
       "name": "calendar-management",
       "sourcePackage": "@eduwork/dsh-calendar",
       "sourcePath": "skills/calendar-management",
-      "defaultEnabled": true,
-      "replace": true,
+      "defaultEnabled": false,
       "references": [
         {
           "title": "ECNU 校历使用说明",

@@ -28,6 +28,11 @@ test('edition packaging reuses the public Skill and binds only local calendar re
     await mkdir(modules, { recursive: true })
     await copyDshPackagePayload(resolve(core, 'dsh-plugins/calendar'), join(modules, '@eduwork/dsh-calendar'))
     const edition = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url), 'utf8'))
+    const generic = JSON.parse(await readFile(resolve(core, 'config/distributions/generic.json'), 'utf8'))
+    for (const replacement of edition.skills.filter(row => row.replace === true)) {
+      assert.equal(generic.skills.filter(row => row.name === replacement.name).length, 1,
+        `Skill replacement must select one core skill: ${replacement.name}`)
+    }
     const skill = edition.skills.find(row => row.name === 'calendar-management')
     const result = await copyDshBundledSkills({ repository: resolve(core), packageRoot: modules, skillRoot: join(product, 'skills'), skills: [skill] })
     assert.deepEqual(result, ['calendar-management'])

@@ -1,0 +1,11 @@
+{
+  "name": "@chatecnu-work/dsh-tool-ecnu-music",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {".": "./lib/index.js", "./package.json": "./package.json"},
+  "files": ["lib", "vendor", "README.md", "README_EN.md", "LICENSE", "LICENSE-MIT", "LICENSING.md"],
+  "scripts": {"test": "node --test test/core.test.mjs test/download.test.mjs test/library.test.mjs test/score.test.mjs test/song.test.mjs test/timeline.test.mjs test/preview-server.test.mjs test/reading.test.mjs test/media-delivery.test.mjs test/notation.test.mjs"},
+  "license": "MulanPSL-2.0 AND MIT"
+}

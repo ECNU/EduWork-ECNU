@@ -1,4 +1,36 @@
 {
+  "plugins.chatecnu-music.baseURL": [
+    "音乐服务的模型 API 根地址，不带 /music；学校模式须与登录发现的模型地址一致。",
+    "https://models.example.org/v1"
+  ],
+  "plugins.chatecnu-music.oidcProfileId": [
+    "复用学校登录的 organizations[].id；显式置空才使用独立 Key，不自动回退。",
+    "ecnu"
+  ],
+  "plugins.chatecnu-music.credentialRef": [
+    "独立 Key 模式的凭据引用，不填写明文 Key；学校模式不读取此凭据。",
+    "EDUWORK_API_KEY"
+  ],
+  "plugins.chatecnu-music.requestTimeoutMs": [
+    "普通 HTTP 请求及下载响应头等待上限 1000–180000 毫秒；不限制持续传输的总时长，也不取消服务端推理。修改后重启客户端生效。",
+    120000,
+    true
+  ],
+  "plugins.chatecnu-music.downloadIdleTimeoutMs": [
+    "下载连续无数据等待上限 1000–600000 毫秒，默认 60 秒；持续传输会继续，用户可随时取消。修改后重启客户端生效。",
+    60000,
+    true
+  ],
+  "plugins.decision.enabled": ["启用已安装的公共决策插件；不改变聊天模型。", true, true],
+  "plugins.decision.baseURL": ["SystemOne API 基地址，须匹配机构授权资源。", "https://chat.ecnu.edu.cn/open/api/v1", true],
+  "plugins.decision.model": ["决策模型公开名称。", "ecnu-decision", true],
+  "plugins.decision.authMode": ["oidc 使用机构登录；api-key 使用独立 Key；none 明确免鉴权。", "oidc", true],
+  "plugins.decision.oidcProfileId": ["OIDC 模式的机构账号 ID。", "ecnu", true],
+  "plugins.decision.credentialRef": ["API Key 模式的凭据引用，不填写 Key 本身。", "EDUWORK_API_KEY", true],
+  "plugins.decision.imageInput": ["学校服务支持 Data URI 图片扩展；设为 none 关闭。", "data-uri", true],
+  "plugins.decision.maxQuestions": ["单次问题数客户端上限，学校 D3 配置为 64。", 64, true],
+  "plugins.decision.maxRequestBytes": ["完整请求字节上限；服务端可能有更小限制。", 12582912, true],
+  "plugins.decision.requestTimeoutMs": ["超时毫秒，1–195000，默认 190000；失败不自动重试。", 190000, true],
   "plugins.ecnu-account-resources.profileIDs": [
     "提供配额展示的企业 ID 列表。",
     [

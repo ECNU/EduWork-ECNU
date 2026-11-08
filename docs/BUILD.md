@@ -18,7 +18,7 @@
 
 运行 **Build ECNU desktop release candidates**，设置与公版基线匹配的版本、`platform=both`、`publish=false`，并提供已确认的发布说明；仅开发测试时改用下文的 `development=true`。版本决定更新渠道：`X.Y.Z` 为 stable；Alpha、Beta、RC 和日期 dev 版本为预发布。两者默认开启软件更新，由用户在设置中选择是否开启及接收渠道；关闭软件更新不影响签名配置更新。学校签名配置首次启动验证始终启用。常规升级只更新核心锁与装配配置，不新增工作流模式。
 
-实际装配、桌面检查和发布继续调用公版脚本；机构工作流另用实际装配的 Runtime 验证校内插件，测试使用合成账号和本机 HTTP 服务。学校登录与媒体服务仍需真机验收。通过检查不等于已发布，发布还须确认说明并启用 `publish`；发布任务强制执行签名配置首次启动检查，产物直接在 CI 上传。
+实际装配和桌面检查继续调用公版脚本；机构工作流另用实际装配的 Runtime 验证校内插件，测试使用合成账号和本机 HTTP 服务。Windows 原始构建产生 `windows-unsigned`，经学校[硬件签名流程](WINDOWS-SIGNING.md)两轮签名及重新验收后才产生 `windows-release`。独立发布任务同时接收原构建和最终签名运行 ID，直接从 CI 核验并上传三平台现有产物。构建入口的 `publish` 必须保持 `false`。学校登录与媒体服务仍需真机验收，签名配置首次启动检查始终启用。
 
 `edition/desktop-020/` 声明此版本的平台签名配置源。学校接入参数留在签名包中，不打入 GitHub 安装包。Windows 和 macOS 各提供 stable、development 两个渠道；部署前先验证兼容性和离线包。当前源只管理配置，技能由程序包提供。旧源迁移仅接受声明的同公钥来源，保留个人配置；新签名配置通过验证后才可启动。
 
@@ -78,9 +78,11 @@ Mac 贡献者先在公共核心完成路径、资源和签名适配，再由学�
 
 ## Electron 开发候选与发行
 
-Source Alpha 的 GitHub 发布直接在 CI 内完成，不经维护者电脑转传安装包。候选工作流选择 `main`、版本、全部平台并开启 `publish`，提供已确认的说明文件并确认 `notes_approved` 后，构建成功会自动调用云端发布任务。默认不开启发布。
+候选构建失败时，学校工作流将隔离 CI 首启的固定诊断文件写入验证 artifact 的 `failure-diagnostics/`：GUI 回执、失败界面状态、stdout/stderr，以及 `desktop-start.json`、`startup-error.log`、`desktop-host.log`。仅当 GUI 回执确认失败且为 `launch-only` 时保留该次截图；CI 不登录真实账号。文本复用锁定公版的诊断脱敏，再过滤敏感环境变量值和私钥块；单份文本最多 128 KiB（日志取尾部完整行，超过 4096 字符的单行省略），截图最多 2 MiB，收集文件合计最多 3 MiB，另附小型 `collection.json` 清单。缺失、超限或路径检查拒绝的文件在清单中标注，不遍历或复制配置、凭据、会话及用户目录。该收集不改变 20 秒 UI 等待、学校配置首次加载验证和签名、发布门禁；原构建失败仍须查明原因。
 
-已有成功构建可以单独运行 `Publish ECNU desktop candidate`，填写原 `source_run_id`、版本和 `docs/releases/<版本>.md`。先以 `publish=false` 验证，再以 `publish=true` 发布；上传失败也复用同一构建重试，不重新打包。发布脚本来自 `core.lock.json` 锁定的公版核心，检查两个平台回执和哈希后才将草稿公开。Source Alpha 发布为非 Latest 的 prerelease；0.4.0 stable 发布为正式 Release 并标记 Latest。预发布同样生成 Windows 更新清单并保留 macOS 更新能力；发布 GitHub Release 不会自动部署 OSS 或修改配置源。只有远端附件和标签核对完成，才算发布完成。
+GitHub 桌面发行使用 CI 产物。先合并已审核的源码、证书策略和已确认的发布说明，在 `main` 运行 `Build ECNU desktop release candidates`，设置 `platform=both`、`publish=false`、`release_notes=docs/releases/<version>.md` 和 `notes_approved=true`。候选工作流只构建 Windows x64、macOS arm64、macOS x64 并验收，不自动发布；Windows 的 `windows-unsigned` 不能进入发布入口。原构建成功后，在同一提交按 [Windows 硬件签名指南](WINDOWS-SIGNING.md) 完成内层、Setup 两轮签名及最终验收，得到 `windows-release`。
+
+运行 `Publish ECNU desktop candidate` 时，同时填写成功原构建的 `source_run_id`、最终签名运行的 `windows_signing_run_id`、相同版本、已确认的说明路径及 `notes_approved=true`。先以 `publish=false` 验证，获得发布授权后，在 `main` 以同一对运行 ID 设置 `publish=true`。学校[发布脚本](../edition/release/windows-signing/publish.mjs)复用锁定公版的校验模块，检查三平台回执、macOS 15 兼容验收、完整签名来源链与文件哈希，再直接上传已有 CI 文件。上传失败复用同一最终 artifact 重试，不重新打包或从本机转传。预发布不设 Latest，正式版标记 Latest；发布 GitHub Release 不自动部署 OSS 或修改配置源。只有远端附件、标签和适用的 Latest 状态核对完成，才算发布完成。
 
 `Build ECNU desktop release candidates` 工作流复用锁定公版的 Node `pinned-source` 构建入口，在 Windows x64、macOS arm64 和 macOS x64 上分别构建同版本候选，保留学校签名配置首次加载验证。默认 `publish=false`，仅生成供验收的 artifact；正式候选也必须提供已确认的 `docs/releases/<version>.md` 并设置 `notes_approved=true`。不需要发布说明的开发测试使用 `development=true` 和 `X.Y.Z-dev.YYYYMMDD.N` 版本号，不填写发布说明、不批准或发布 Release。维护者下载产物完成学校配置与登录验收后，由 CI 发布原包到 GitHub；部署 OSS 须另行授权，两处 ZIP 的 SHA-256 必须一致。Mac 支持 macOS 15+ 的 Apple Silicon 与 Intel。两种架构复用公版目标选择器，在 macOS 26、Xcode 26.6 环境原生构建，并将同一 ZIP 送到相应架构的 macOS 15 runner 验收。Mac 包只有 ad-hoc 签名，尚未 Apple 公证；常规 Mac 包使用公版 Sparkle 更新实现，用户确认后下载、替换和重启。`edition/desktop/mac-updates.json` 固定 Mac 双渠道和 Ed25519 公钥；Intel 通过 `feedsByArch.x64` 使用独立的 `releases/macos/x64/` 更新目录，Apple Silicon 保持原地址。候选构建不会上传或更新这些 OSS 清单。私钥留在仓库外，按公版 [Mac 更新指南](https://github.com/ECNU/EduWork/blob/main/docs/MACOS_UPDATES.md) 对 CI 原包生成签名 appcast。不得把 Windows 更新包配置到 Mac 渠道。旧 Mac 客户端首次仍需手动替换到支持 Sparkle 的包。
 

@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#安装与使用)
+[![License: MulanPSL-2.0](https://img.shields.io/badge/license-MulanPSL--2.0-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.2-rc.1](https://img.shields.io/badge/DSH-0.2.2--rc.1-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-rc.1) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#安装与使用)
 
 **简体中文** | [English](README_EN.md)
 
@@ -49,7 +49,9 @@ flowchart TD
 
 同时继承技能管理和工作台设置等能力，浏览器复用 DSH 官方 Playwright MCP，联网搜索由学校账户接口提供。公共技能包括 Word、PPT、表格、PDF、图像、语音、视频创作，Knowledge Studio、浏览器、技能创建与产品帮助，见[公版完整插件与技能清单](https://github.com/ECNU/EduWork#随包插件)。所需模型和服务按配置启用，个人 API Key 与其他模型仍可使用。
 
-本版暂不预装远程访问。有自建中继的用户仍可通过插件管理安装 [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access)，重启后在“设置 → 远程访问”中填写中继地址和接入 Key，开启并配对设备；不会自动接入学校中继。参见[中继部署指南](https://github.com/ECNU/EduWork/blob/main/packages/dsh-remote-access/docs/DEPLOYMENT.md)。
+批注、侧聊、文献、邮件、远程访问和外部智能体可在“插件”页分别启用或停用，重启后保留选择。外部智能体默认关闭，启用后可连接本机已安装的 Codex 或 Claude CLI；其他五项默认启用。邮件收取、远控连接等服务仍由各自设置控制。
+
+下一版本将预装 [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access)。学校签名配置提供中继地址与学校身份接入；登录学校账号后，在“设置 → 远程访问”开启服务、生成配对链接，并在本机确认其他终端的配对请求即可使用，无需手填服务器地址或接入 Key。远控默认关闭，用户也可选择自己的中继。见[远程访问说明](docs/REMOTE_ACCESS.md)。
 
 ### 华师版增加的插件
 
@@ -65,6 +67,8 @@ flowchart TD
 [图像创作技能](edition/skills/artifact-images/SKILL.md)沿用公版图像工具，增加学校模型的尺寸与提示词指导：默认约 1K 出图，由助手自行扩写；文生图中未指定身份背景的人物默认采用中国人形象，编辑则保留参考人物身份。用户明确要求优先。
 
 学校品牌、默认模型、媒体服务和更新渠道由发行配置提供。完整组合见[学校发行清单](edition/distribution.json)。
+
+公共决策插件的学校参数与接入方式见[决策服务配置](docs/DECISION.md)。学校仓仅维护配置，工具与技能统一由公版插件提供；是否预装以当前发行清单与 npm 锁为准。
 
 ## 学校账号接入
 
@@ -209,4 +213,4 @@ macOS 当前未使用 Apple Developer ID 签名或公证，首次打开可能出
 
 EduWork@ECNU 基于 [EduWork](https://github.com/ECNU/EduWork) 与 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 构建。Knowledge Studio 的资料创作与学习交互受 NotebookLM 启发。
 
-本仓库代码采用 [MIT 许可证](LICENSE)。公共核心及第三方组件保留各自的许可证，参见 [EduWork 第三方声明](https://github.com/ECNU/EduWork/blob/main/THIRD_PARTY_NOTICES.md)。
+本仓库原创贡献采用[木兰宽松许可证第 2 版](LICENSE)，历史 MIT 代码及适用边界见[许可范围](LICENSING.md)。公共核心及第三方组件保留各自的许可证，参见 [EduWork 第三方声明](https://github.com/ECNU/EduWork/blob/main/THIRD_PARTY_NOTICES.md)。

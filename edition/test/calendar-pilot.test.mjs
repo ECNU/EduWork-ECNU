@@ -5,12 +5,18 @@ import { tmpdir } from 'node:os'
 import { resolve, join, basename, sep, dirname } from 'node:path'
 import { createRequire } from 'node:module'
 import { pathToFileURL, fileURLToPath } from 'node:url'
+import { existsSync } from 'node:fs'
 import './runtime-resolver.mjs'
 
 const core = process.env.EDUWORK_CORE_ROOT
 if (!core) throw new Error('Set EDUWORK_CORE_ROOT to the explicit local core under test')
 const require = createRequire(resolve(process.env.EDUWORK_TEST_RUNTIME, 'package.json'))
 const load = name => import(pathToFileURL(require.resolve(name)).href)
+// The release pin can precede the public education plugin. Run integration
+// against an explicit source experiment or the published dependency once pinned.
+const academicAvailable = existsSync(resolve(core, 'packages/dsh-academic-calendar/lib/index.js'))
+  || (() => { try { require.resolve('@eduwork/dsh-academic-calendar'); return true } catch { return false } })()
+const academicTest = (name, run) => test(name, { skip: !academicAvailable && 'Public education plugin is not in the selected core/runtime; use the explicit source development assembly' }, run)
 
 test('edition packaging reuses the public Skill and binds only local calendar references', async () => {
   const root = await mkdtemp(join(tmpdir(), 'ecnu-calendar-pilot-'))
@@ -118,7 +124,7 @@ async function withCalendarService(run) {
   }
 }
 
-test('date queries answer term, teaching week, parity, phase and break', async () => {
+academicTest('date queries answer term, teaching week, parity, phase and break', async () => {
   await withCalendarService(service => {
     const on = date => service.describeDate(date)
     assert.deepEqual(on('2026-09-14'), { date: '2026-09-14', academicYear: '2026-2027', status: 'term',
@@ -156,7 +162,7 @@ test('date queries answer term, teaching week, parity, phase and break', async (
   })
 })
 
-test('dataset validation rejects inconsistent transcriptions', async () => {
+academicTest('dataset validation rejects inconsistent transcriptions', async () => {
   const { validateDataset } = await import('../plugins/ecnu-calendar/lib/index.js')
   const broken = mutate => {
     const copy = structuredClone(dataset)
@@ -178,7 +184,7 @@ test('dataset validation rejects inconsistent transcriptions', async () => {
   assert.ok(validateDataset(structuredClone(dataset)), 'the shipped dataset passes its own validation')
 })
 
-test('the dataset becomes calendar annotations: week labels and phase bands', async () => {
+academicTest('the dataset becomes calendar annotations: week labels and phase bands', async () => {
   const { annotationsForDataset } = await import('../plugins/ecnu-calendar/lib/index.js')
   const answer = annotationsForDataset(dataset, { from: '2027-01-04', to: '2027-01-31' })
   // The January window opens on examination week 17, numbers both examination
@@ -202,7 +208,7 @@ test('the dataset becomes calendar annotations: week labels and phase bands', as
   assert.deepEqual(summer.spans, [{ firstDay: '2027-07-01', lastDay: '2027-07-10', text: '2026-2027 暑期短学期', tone: 'quiet' }])
 })
 
-test('whole-school matters become all-day events; festivals stay single-day', async () => {
+academicTest('whole-school matters become all-day events; festivals stay single-day', async () => {
   const { eventsForDataset } = await import('../plugins/ecnu-calendar/lib/index.js')
   const events = eventsForDataset(dataset)
   assert.equal(events.length, dataset.events.length)
@@ -217,7 +223,7 @@ test('whole-school matters become all-day events; festivals stay single-day', as
   assert.equal(national.description, '放假安排以学校通知为准')
 })
 
-test('with the public calendar present, the plugin registers annotations and pushes its matters as events', async () => {
+academicTest('with the public calendar present, the plugin registers annotations and pushes its matters as events', async () => {
   const [cordis, hub, json, domain, calendar] = await Promise.all([
     load('@deepseek-ai/cordis'), load('@deepseek-ai/dsh-storage'), load('@deepseek-ai/dsh-storage-json'),
     load('@deepseek-ai/dsh-storage-domain'), import(pathToFileURL(resolve(core, 'dsh-plugins/calendar/lib/index.js'))),

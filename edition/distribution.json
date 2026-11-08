@@ -2,9 +2,6 @@
   "schemaVersion": 1,
   "id": "eduwork-chatecnu",
   "coreBase": "config/distributions/generic.json",
-  "excludedOptionalBundles": [
-    "@eduwork/dsh-remote-access"
-  ],
   "brand": {
     "product": {
       "name": "EduWork@ECNU"
@@ -18,6 +15,19 @@
     "images": true
   },
   "plugins": [
+    {
+      "root": "edition",
+      "source": "edition/plugins/tool-ecnu-music",
+      "id": "chatecnu-music",
+      "name": "@chatecnu-work/dsh-tool-ecnu-music",
+      "config": {
+        "baseURL": "https://chat.ecnu.edu.cn/open/api/v1",
+        "oidcProfileId": "ecnu",
+        "credentialRef": "EDUWORK_API_KEY",
+        "requestTimeoutMs": 120000,
+        "downloadIdleTimeoutMs": 60000
+      }
+    },
     {
       "root": "edition",
       "source": "edition/plugins/ecnu-account-resources",
@@ -76,13 +86,6 @@
         "endpoint": "/user/active",
         "productName": "EduWork@ECNU"
       }
-    },
-    {
-      "root": "edition",
-      "source": "edition/plugins/ecnu-calendar",
-      "id": "ecnu-calendar",
-      "name": "@chatecnu-work/dsh-ecnu-calendar",
-      "config": {}
     }
   ],
   "skills": [
@@ -179,6 +182,21 @@
       "root": "edition",
       "source": "edition/plugins/ecnu-calendar/data/2026-2027.json",
       "target": "calendar/2026-2027.json"
+    },
+    {
+      "root": "edition",
+      "source": "LICENSE",
+      "target": "licenses/EduWork-ECNU/LICENSE"
+    },
+    {
+      "root": "edition",
+      "source": "LICENSE-MIT",
+      "target": "licenses/EduWork-ECNU/LICENSE-MIT"
+    },
+    {
+      "root": "edition",
+      "source": "LICENSING.md",
+      "target": "licenses/EduWork-ECNU/LICENSING.md"
     }
   ],
   "patches": [

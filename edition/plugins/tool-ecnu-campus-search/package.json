@@ -10,7 +10,10 @@
   },
   "files": [
     "lib/**/*.js",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "LICENSE-MIT",
+    "LICENSING.md"
   ],
   "scripts": {
     "test": "node --test"
@@ -20,5 +23,5 @@
     "@deepseek-ai/dsh-credentials": "0.1.2-rc.1",
     "@deepseek-ai/dsh-tools": "0.1.2-rc.1"
   },
-  "license": "MIT"
+  "license": "MulanPSL-2.0 AND MIT"
 }

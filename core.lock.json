@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "repository": "https://github.com/ecnu/EduWork.git",
-  "version": "0.4.9",
-  "commit": "c7ee767907f7f734db2dea878a8b15ebc79cba46",
-  "sourceFileSetSHA256": "58a3c54399dfb6f53e4ae73b35f8373f3caaa8e8415eb22e7c87bc6fbea3be09",
+  "version": "0.4.13",
+  "commit": "6edcb3e507c36576f6352824af4e343fdc741120",
+  "sourceFileSetSHA256": "57bbc69f7651969e520c4eb731a2e086ef84fb75b74d5f522dc51ba7ad6e2cd0",
   "distributionConfig": "edition/distribution.json",
   "readiness": "source-candidate"
 }

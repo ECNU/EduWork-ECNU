@@ -17,7 +17,7 @@
     "README_EN.md"
   ],
   "peerDependencies": {
-    "@deepseek-ai/cordis": ">=4.0.2 <4.1.0",
+    "@deepseek-ai/cordis": ">=4.0.2 <4.1.0 || 4.1.0",
     "@eduwork/dsh-academic-calendar": ">=0.1.0-dev <0.2.0"
   }
 }

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.9",
-  "sourceState": "reviewed-source-snapshot",
-  "createdAt": "2026-10-25T03:21:40.927Z",
-  "fileSetSHA256": "8a09dd5c001214d8d83f73c766e7a32310c560dc10e6d279828809e2e85955c5",
+  "version": "0.4.13",
+  "sourceState": "local-development-snapshot",
+  "createdAt": "2026-11-07T06:12:30.762Z",
+  "fileSetSHA256": "8608d8bce1d56fb786cae6bc737e87af0f813402147cecec361b907a571ac007",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "c49ecf17f25461df5cfa978e71b583725ab6cee9d10b0725c308ea02856a5eb2"
+      "sha256": "cdef8ea342b89590d054d1499ba21953db2dfdd31aedc61f8ac804bb6b2bb2d4"
     },
     {
       "path": ".github/workflows/oss-deltas.yml",
@@ -21,11 +21,19 @@
     },
     {
       "path": ".github/workflows/publish-desktop-candidate.yml",
-      "sha256": "ab5c3c629289992d29a73600c7ab171c51c17eb16d13694ce0cc20e00304b222"
+      "sha256": "0608fdc7a137ca5f632d4c27abd4a8066a971423ff23acdc6e2f692e6965c25c"
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "091f4f497f8fe32007299c9b29d4158862d3fb4ed6b65d07e22b28c5cc36cdc8"
+      "sha256": "ff086bcade8b43851341ac045455f82100134cd162d2832d656aab3882f569d3"
+    },
+    {
+      "path": ".github/workflows/validate-windows-signing.yml",
+      "sha256": "251ff70bb4e11a3670b01cda22da226d6e7155f8b8ae58b98f56e078bca0bb46"
+    },
+    {
+      "path": ".github/workflows/windows-signing.yml",
+      "sha256": "82cb627a393e03bf3c7cbb146d3057987a818fcfee33c0abec32ba90d6210011"
     },
     {
       "path": ".gitignore",
@@ -36,12 +44,24 @@
       "sha256": "105a77b786ca87cb69f08c9b322100393d73be7a211bc69259cf80eafb60f7d4"
     },
     {
+      "path": "CONTRIBUTING.md",
+      "sha256": "81dd1f8a96e7bb59d2726fa65310a301b04ab600a1bd12c0f50dedaf1f990281"
+    },
+    {
       "path": "core.lock.json",
-      "sha256": "896c515b1ba85e35f7fb74ae7fe6f7b20b6df7037c072d32f156ca068b92f7ae"
+      "sha256": "3c9ba809bc128c90247ee8899377b3bd2209140f60fd9cddec7b29bb9a640968"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "3c7d8c23c2c55d018958bc423a55f7e3711e2c5c264e47d32b36add669a0ec9f"
+      "sha256": "750522a621e6c29aadd0e9251f90b84c503ef118e148704a255da177adc296fe"
+    },
+    {
+      "path": "docs/DECISION_EN.md",
+      "sha256": "666caac1b3ea52138ac8b848fd2d987a576bc48dd55662661f942f29dd90f864"
+    },
+    {
+      "path": "docs/DECISION.md",
+      "sha256": "413492385b7224a392a76a09da6c0e1af2b9154783e9a87ad6d7e24039d9bafb"
     },
     {
       "path": "docs/images/quiz.png",
@@ -80,8 +100,12 @@
       "sha256": "294783088c45fdce11ed6125557b9291e019b39d9e1977c4de4296cb95229866"
     },
     {
+      "path": "docs/MUSIC.md",
+      "sha256": "e357fffff70891e4fb5ebfb7419862e9bd0a5be0db3d190dab2ffc4a8563feec"
+    },
+    {
       "path": "docs/OSS_UPDATES.md",
-      "sha256": "5bb6f7e08cdfe73997905c6bd5dace420ffac31e14a94a91dd6458adab4cac1f"
+      "sha256": "d15141cabd75c951889448402f392524fd8f6e8d22d9b399d638a244142e19d6"
     },
     {
       "path": "docs/releases/0.3.5.md",
@@ -136,6 +160,22 @@
       "sha256": "dd2aab86b2e01218122fe1918ff8a77c5490a33f4c711f86ece3db5bc9e44b59"
     },
     {
+      "path": "docs/releases/0.4.10.md",
+      "sha256": "dee9dadc91ff5945248aea5df76a7e4abc01e5f47c10025a28d21401cc3af24e"
+    },
+    {
+      "path": "docs/releases/0.4.11.md",
+      "sha256": "910e11cb80cef558611e41d13e884c75e6d972c7525090c035968762ca89cfff"
+    },
+    {
+      "path": "docs/releases/0.4.12.md",
+      "sha256": "181d6b0e436b1b0f4ddfa0235635708f2be64a66f03b704bb97596a7f6be96b0"
+    },
+    {
+      "path": "docs/releases/0.4.13.md",
+      "sha256": "738393b47522da15f83907b742f794bcb21e1af5a6d5c6a7d26e0d136e7e7d0f"
+    },
+    {
       "path": "docs/releases/0.4.2.md",
       "sha256": "acce4644954f121500052c9a531dcf26e8c34dc9bdcbbe1409df5aee4d8a5ec5"
     },
@@ -172,16 +212,28 @@
       "sha256": "64e9f24dbfd25cc5962e3d58c3c2153c0dad746530aa31f92699c9e1c29daf1f"
     },
     {
+      "path": "docs/REMOTE_ACCESS_EN.md",
+      "sha256": "186dac39bef1f8fd2e76bf41a342d85f291ebcb4439308c64f04252742b3097a"
+    },
+    {
+      "path": "docs/REMOTE_ACCESS.md",
+      "sha256": "ac98dda63b057f6c79dfa43203430692830f98ea3554933f4514d021f65e4045"
+    },
+    {
       "path": "docs/USER_GUIDE.md",
-      "sha256": "7abc6b6e252d32715d08494c782bcca0d3b7b2894d57a21c08c4050d7acb8ef9"
+      "sha256": "218736c2cb8b940bd8759f719a9642407492c591856d81c1e4ef6289c93913ba"
+    },
+    {
+      "path": "docs/WINDOWS-SIGNING.md",
+      "sha256": "d35b1a49878ca364add4e647dbc0d09496fa67a3f6e10fc0c61aa44a38d67e2b"
     },
     {
       "path": "edition/desktop-020/publisher-bootstrap.darwin.json",
-      "sha256": "3e0ad76d5ddc97253e846040a21acf26b7234fb719bac5625517fc0c53c7d42b"
+      "sha256": "60e1de8c3048daa8acf44ef074245a30c2cd9bab9bdb5be159c305b5713982d3"
     },
     {
       "path": "edition/desktop-020/publisher-bootstrap.json",
-      "sha256": "36be73cd44231efb3b8c364c574d88c002f3c218bd19f6ed1652876572b4cbe0"
+      "sha256": "998028851deb805a79d4193afd96383f72f42f072a7a13123dcbb380fc3c08c4"
     },
     {
       "path": "edition/desktop-alpha/publisher-bootstrap.darwin.json",
@@ -213,7 +265,7 @@
     },
     {
       "path": "edition/desktop/configuration-options.json",
-      "sha256": "daa89a8765bcd390182d4ceed94f321e22f2f827dca2ac3a5b5fe05dd4df881d"
+      "sha256": "2255e4ef85a7145cf58d4a9a89440c4c6a14e589b7cd17f70236e98056159b3a"
     },
     {
       "path": "edition/desktop/configuration-policy.json",
@@ -225,7 +277,7 @@
     },
     {
       "path": "edition/desktop/eduwork.jsonc",
-      "sha256": "37e0e2a687547f10fe2cccb86523e6758806aa3ba72a29cf4e83ae94f1e99806"
+      "sha256": "21805e305176f1fe2a6a9a99e53b8e0afa26b523e5c868b836c4ed77e6c3b0ea"
     },
     {
       "path": "edition/desktop/mac-updates.json",
@@ -245,7 +297,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "629aaedd18fc057d9286ef95ddb6c7542c7e6fa7f793f84aa06b6dccfa06f450"
+      "sha256": "4bfd569a56c502529de50d76b9511117d647669e01dffb2204a632c18daaeb47"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -268,8 +320,20 @@
       "sha256": "cf37b59cc1205dabc639728b17655610ea7fa0aa24c482fe5fc232f1c07dc64d"
     },
     {
+      "path": "edition/plugins/chatecnu-active-heartbeat/LICENSE",
+      "sha256": "eb7a1d713eb919b146787629e22e4c975cb701f529a65d4d7e0fcd417558bf1c"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/LICENSE-MIT",
+      "sha256": "dc719b536b8f7a51cd0ffaf928d37146894a3996119cb07d4fb7b67e551882dc"
+    },
+    {
+      "path": "edition/plugins/chatecnu-active-heartbeat/LICENSING.md",
+      "sha256": "395b3838599a1c0a89977193b3a3bab7340ea2de18e80ebc86c2bdec26b1b64f"
+    },
+    {
       "path": "edition/plugins/chatecnu-active-heartbeat/package.json",
-      "sha256": "cdf129e8b37baf5e0c7dc4849f6e6a7af1724941c92e46b604eae70b14d24e0c"
+      "sha256": "6e87e903ded0dee160a1ffaf228d4875d5d3a27c80d2878f5e2de1d3dd3c297d"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/README_EN.md",
@@ -337,11 +401,19 @@
     },
     {
       "path": "edition/plugins/ecnu-account-resources/LICENSE",
+      "sha256": "eb7a1d713eb919b146787629e22e4c975cb701f529a65d4d7e0fcd417558bf1c"
+    },
+    {
+      "path": "edition/plugins/ecnu-account-resources/LICENSE-MIT",
       "sha256": "1967fded4b0975d4f786e00ce73d13cdae59823f492144c29b1e6d6450590a67"
     },
     {
+      "path": "edition/plugins/ecnu-account-resources/LICENSING.md",
+      "sha256": "f9d9057c2e6cdd7f423ea397d36bb4a1534e0f79ce2663ce3957b6b59fb50214"
+    },
+    {
       "path": "edition/plugins/ecnu-account-resources/package.json",
-      "sha256": "669af261a690a8802155e9d6d90a3ebd2b1b938e6262513e11f38eb65c3506fd"
+      "sha256": "16a96f0d404f28ae026ff628af12ffabac1ccf5404908fcc1a60b443696aff91"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/quota-protocol.en.md",
@@ -353,7 +425,7 @@
     },
     {
       "path": "edition/plugins/ecnu-account-resources/quota.openapi.yaml",
-      "sha256": "e0d4c354af2a3a5d6db44a51739198e7237731dbff752efb948bddc4740423ef"
+      "sha256": "a62b3faf8fce4d798d0bda6c2e404b3f992168a437bacd6fe67ea701d3921284"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/README_EN.md",
@@ -377,7 +449,7 @@
     },
     {
       "path": "edition/plugins/ecnu-account-resources/test/helpers/oidc-http-fixture.mjs",
-      "sha256": "541174abca377a3d45f57ee8fcb3ae3e06f9f88a7f7c6400e0d959e9dcfb528a"
+      "sha256": "78ccd39271112e584ff58212f7f34601ce77af051060bac705cf714d128367e7"
     },
     {
       "path": "edition/plugins/ecnu-account-resources/test/host.test.mjs",
@@ -412,8 +484,20 @@
       "sha256": "bf54ce8af64e2aa4f582b60193594d61add90ed716a128d9e809d9f9073cbea8"
     },
     {
+      "path": "edition/plugins/provider-vision-fallback/LICENSE",
+      "sha256": "eb7a1d713eb919b146787629e22e4c975cb701f529a65d4d7e0fcd417558bf1c"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/LICENSE-MIT",
+      "sha256": "dc719b536b8f7a51cd0ffaf928d37146894a3996119cb07d4fb7b67e551882dc"
+    },
+    {
+      "path": "edition/plugins/provider-vision-fallback/LICENSING.md",
+      "sha256": "52de90df39fe323190d739d97af0224df42c80c8d0c5b1c8453464c193084e73"
+    },
+    {
       "path": "edition/plugins/provider-vision-fallback/package.json",
-      "sha256": "48ccd6d542197eb64e94e0edc11ae6ddc0dc48072479d755b2a20f5e9eef7d73"
+      "sha256": "b693d2e6767ef4b493f6239518b8d6e9deb89eeb6d892470ddca2dcae9c6483e"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/README_EN.md",
@@ -456,8 +540,20 @@
       "sha256": "b50a8c216f932c656991cd05fae682b290950d2ca0a8766ff0e18eabe1829358"
     },
     {
+      "path": "edition/plugins/tool-ecnu-campus-search/LICENSE",
+      "sha256": "eb7a1d713eb919b146787629e22e4c975cb701f529a65d4d7e0fcd417558bf1c"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-campus-search/LICENSE-MIT",
+      "sha256": "dc719b536b8f7a51cd0ffaf928d37146894a3996119cb07d4fb7b67e551882dc"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-campus-search/LICENSING.md",
+      "sha256": "f6b6a07f992608e13d714fef9513d45a1367c4d79d5da0d4b9a32269d8de53a9"
+    },
+    {
       "path": "edition/plugins/tool-ecnu-campus-search/package.json",
-      "sha256": "9cb4a2a0503a940c18cab0e8e641176defdb634514d1ac25a3326b58fe7391ad"
+      "sha256": "5dde833b7a1afcd80f64118e02435c4dd3b4bb59a827c3860547a938b64f03c3"
     },
     {
       "path": "edition/plugins/tool-ecnu-campus-search/README_EN.md",
@@ -476,6 +572,498 @@
       "sha256": "542334d3891ac327b05f7f77458912917d962f7718a20f59a115fcd4d20a120d"
     },
     {
+      "path": "edition/plugins/tool-ecnu-music/lib/artifact-files.js",
+      "sha256": "cbdbce8ffdfb840edcc8a8a474a9d57c2ea95d6db1982dd99d742005f444c8da"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/core.js",
+      "sha256": "4e96145666be7f8a157837a30df62a11ae6f1f0f32711bc47c5a8a43d85aca7b"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/download.js",
+      "sha256": "290dc5ad10ca9de9234e9abdb265dfa97f61837046595f5d321bf2200ce0e5ec"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/index.js",
+      "sha256": "d3e97435f2e6fdbb0af4d47cf4695fd534c7683e9808ef4cd840ab28e2c0a65e"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/library.js",
+      "sha256": "b215422e27132045b64e7344dd51da7c55cc4bfcff3e32589ea9afe0e9f13899"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/score-audio.js",
+      "sha256": "047f8768f2bb84417221aafb152b024a4613527f82c511e894c68c1da0d1cda8"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/score-notation.js",
+      "sha256": "2c53550fc4f6419f641fc705a349461748b78ec812484015b194c5b5cffed7c2"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/score-piano.js",
+      "sha256": "c82634fafcc5c76cd65082237cdea873842a2638637fae810862da9c4fc70f7b"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/score.js",
+      "sha256": "0f5219f717ee88d0ed8a1be337da3e784c65b596cdc7ce57cebf6f0fc93af43e"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/song-page.html",
+      "sha256": "b0e2fcf97461ed2abff144c6ce7f4f4f9bbb30cef1dc908ebf4cb88c2290df75"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/song-playback.html",
+      "sha256": "a504b4ac53cd063f80ab53dfc03be45fca53a85357886ae175f622fbbf12b9be"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/song-playback.js",
+      "sha256": "1594b47d92da2b748448f326d4c2a6392780593073d1790d24fc51d24c6cb198"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/song-reading.css",
+      "sha256": "1d24a2a1ec717cef7d3adb1faf02ffb729a578a4d9d65ebb69404d5e77e19153"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/song-reading.js",
+      "sha256": "a83b504e7fd4a6401145541657d4c6f29623ac0206f9d7daa80dbab9d39a2442"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/song-timeline.js",
+      "sha256": "855155427cc9a97a3bbaeb86d052347f9b5256adbef4f274ec5555b9cf55d1c2"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/lib/song.js",
+      "sha256": "54450288216c7e933f8dfe068c50e1caf808489395f9ffb476b33102058009a3"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/LICENSE",
+      "sha256": "eb7a1d713eb919b146787629e22e4c975cb701f529a65d4d7e0fcd417558bf1c"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/LICENSE-MIT",
+      "sha256": "dc719b536b8f7a51cd0ffaf928d37146894a3996119cb07d4fb7b67e551882dc"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/LICENSING.md",
+      "sha256": "18d102bb292302c2f744a6f94ce087f9610915989fbde276ea2a2dcc0e142df7"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/package.json",
+      "sha256": "c602f190243af4504cc57e9bdfa1b23f04e55fe0f66a0d13958b6696fa37f740"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/README_EN.md",
+      "sha256": "7884d793f02fb07b322c3ac2ae47fb8894248ad8263176753756d1fe4a6dd4a9"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/README.md",
+      "sha256": "683def170d66c5c6a8011084201078fa3b333fb9a6edb155ce773989f2e6e26c"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/audio-fixture.mjs",
+      "sha256": "0707971bb692d370b268f8dbfa5e5dd9525f411866ffeb96cbde64b6e95e87e6"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/browser-mixer.mjs",
+      "sha256": "82be084ff29899bfd91ed79ec2f9688fedaf040681f01824f1096df00f19e9d0"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/browser-notation.mjs",
+      "sha256": "0b6bd993e639132efd273afe7bc4903343374c236a0d51035f0b0ea6e4f6d15a"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/browser-reading.mjs",
+      "sha256": "90bbae3b0b2e59125e140e62f349bc345b5024c9881bd93c381863255944c81f"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/browser-score.mjs",
+      "sha256": "880a17bf58fe1dec40bd08a305459781d27bc001cb891b748d9491f228d2190a"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/browser-song.mjs",
+      "sha256": "4bfb250b863c9b58d2276c3fbd94b04c93c67c8db31f693e95e4bc9e36c89356"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/browser-timeline.mjs",
+      "sha256": "0a1bac58e525e10a5b40f1f08545e4ff5f0e9f54476e65b87e3439a393043a0d"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/core.test.mjs",
+      "sha256": "c43e6bd0fea1594fff7624fa59c4cb6884ed50e66e488d51e446eae3507f3b94"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/download.test.mjs",
+      "sha256": "240b60417808ade66fd5a608d0f9ec7c60efa0dae552a611d4d869aaa6268194"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/library.test.mjs",
+      "sha256": "eec796e64de2b00a6283df3f22c8350cf3fe83c56bde2acd2521df257e062137"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/media-delivery.test.mjs",
+      "sha256": "ea429fd2c3a009999cab1ef0ce33ea2eb121c6bb3d95fdf78ac8c3d7cddab9d7"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/mounted.test.mjs",
+      "sha256": "0fb80641f8eae27c932772bd3ffeb40ac7d4e6d33faab5ed52f9213ae72eee20"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/notation.test.mjs",
+      "sha256": "8dcfe1c46fdd64794f130ffd292153fa4b7559f2a8de3ed9577e75c93b047bd4"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/preview-server.test.mjs",
+      "sha256": "82dd6543d4abd8a58d3761c5eacb0d833d5885e74db6ac5e4a0408ab495ba8c3"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/reading.test.mjs",
+      "sha256": "49bba4524d6410f05166d61c8f4806dfff180534213a1dba03731339958fcbf0"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/runtime.test.mjs",
+      "sha256": "d69ea80c64094881ee99eb188115ddf70d0a49feb68f5ae92810e687785194c1"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/score.test.mjs",
+      "sha256": "220e7cd308b7eb67a6da448317abd57a1a3edd1dc676366ca7d8eee193aeb64a"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/song.test.mjs",
+      "sha256": "f909d8cad011752b57eb6fd0140616b9ec47ab6e9319e02139a1eb809b95b44b"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/test/timeline.test.mjs",
+      "sha256": "deec7d01428ad6b929f7f0ec0de83772b3a791e6f2040f448a9504347ff9056f"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/abcjs/abcjs-basic-min.js.LICENSE",
+      "sha256": "57706d6d731055a627cde38fa5202cd1b274a8b1d57f98eb85b7dd5a1c09d247"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/abcjs/abcjs.cjs",
+      "sha256": "3290ef44c918d5e882029d3a47ad3dd63c16c8819da5abe921f3d1e642b4f4f0"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/abcjs/LICENSE.md",
+      "sha256": "d7bdcd152b978adee22a2f9b92a4d72c4ec2c20a86512766c7c210b462b54702"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/abcjs/PROVENANCE.md",
+      "sha256": "1b1fad40f67bc9d7d5de379fea120a3574b403a47f0737dc9e0fff9ec01d8bc4"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/A1.mp3",
+      "sha256": "abab379d4d0557abb93856f816b7bb395872e656533c3fe7f02048fc993834b7"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/A2.mp3",
+      "sha256": "e21d9ab9b30c73c0aea921c2cd0dd59fece4cc021619927c9ff3dee71f0a9679"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/A3.mp3",
+      "sha256": "02dee2fa184b9b94a5f72886c2370bd076103ebb76fc179982fa503e549dcc10"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/A4.mp3",
+      "sha256": "4f1671ac831bc41c845e67b18e6c9ea200fc9b753bdffe124703b7141aa928c3"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/A5.mp3",
+      "sha256": "2cccfe0aa8077bfd20bcbba470012faa0328ae97d5bd2297147c01f2b255e574"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/A6.mp3",
+      "sha256": "87dab2b5bfdd8bafa575fc24b99591e87e5a0c991a8bbdc8aeb8a1e517b576d2"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Ab1.mp3",
+      "sha256": "a9889722caea82aa67a8b7f600f1def8e51e095f1f423949c3a8e9dbf5c14abd"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Ab2.mp3",
+      "sha256": "b45bb57e125cdbbc3bb521ae643e67a90c0ff646d37e5b5284e5c70bfeff6c75"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Ab3.mp3",
+      "sha256": "843d633061631861c943266b4836573fe8ba8b8a10df9bd94adc380376cdb8ce"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Ab4.mp3",
+      "sha256": "e8612f8602d1c146f9b7f69a441ee518876ccdfa469457366c8064c25d9d3116"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Ab5.mp3",
+      "sha256": "31c86a311eb68761b8008359b34addfeec249d1c7d6795a52f8f2e172e3e8a05"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Ab6.mp3",
+      "sha256": "7775c09d08d344af9528edbf7abb6f59ac600e4d15efd6f139845bb107a822ed"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/B1.mp3",
+      "sha256": "048003df58298d2659bff084885ad69d9531fdc03837c7ee39c8bcf68334b5b9"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/B2.mp3",
+      "sha256": "be2df872b00b68adead4ca24ef68bd4a93bf0c4864d455d742171e5df91e86b7"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/B3.mp3",
+      "sha256": "82c0463af9c9fe51d44aa59b71d2dccefab11c1ea98e2748ee93244f8af9169e"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/B4.mp3",
+      "sha256": "5f09187820410b0f78575f232c3509f367478b7755b6eb5aa46ce6cf4c16a0e8"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/B5.mp3",
+      "sha256": "4e0932827d3e9390080c4a9acd420e9b83871a5f73723feaf61d2d7f6b628b01"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/B6.mp3",
+      "sha256": "d31aa62152acd598d55fb02cc024e59e0176a7dc13d27813882f299cae7baf7a"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Bb1.mp3",
+      "sha256": "6d4face1b6559a08af3f9a49fcbc472b43e974e072156b31850ab9a230713aa3"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Bb2.mp3",
+      "sha256": "78cc11431a2a2d52294f0c714c59107a886f637806ae2cba63d50ff53585b93e"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Bb3.mp3",
+      "sha256": "6ac0f67f18e15db35553d4fcd83ceec4473ebe639e31659ce93cf8466cb06644"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Bb4.mp3",
+      "sha256": "d8f729899595116cb62ca9b7b801b4dfb9322bdf50d1bbfa847010e43a39f8f5"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Bb5.mp3",
+      "sha256": "51224d4c26f1c89b08e43865ef55d3638367f7f40fbc92e4ab88610b54d4301d"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Bb6.mp3",
+      "sha256": "394488d6cbd2c58b40f202e5acc238abdb73f261bcebd7105fb81d091113c4aa"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/C2.mp3",
+      "sha256": "e02c5a80c03871e1889a3bb371d853f92294c1e8538ac06f70df0fd045540207"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/C3.mp3",
+      "sha256": "7d0409ea3c40af25c6d3d606f12890f88f896d93c381b6eb8c58497f308b30d3"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/C4.mp3",
+      "sha256": "b6d32e0d9d0c2e4b88165a2ec27b8787a970f131a03d96d065f28f158640af96"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/C5.mp3",
+      "sha256": "7a4be6dae323ac5564ad1a617b554fd595e5e0a63f19c3581e3ee94c33ae2e4b"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/C6.mp3",
+      "sha256": "6a0030c071ccd6c9a722455851d65b18cb86cbfe515772a6ded4c747eda339a0"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/C7.mp3",
+      "sha256": "5e4cadc06eb25e2302dcc5bf1af76fe85ed258759d02c46e9169376ade83845e"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/D2.mp3",
+      "sha256": "6233cc6f3670a287e33c7b8ece3b03a787ee1e169c8355432ce0b5e194bee612"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/D3.mp3",
+      "sha256": "b8a5ed9cf147e10f484f3ad39930130d487b12045a35cef73f48dab401e6583b"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/D4.mp3",
+      "sha256": "90539782bdbbbe714de579bfbbe6f478e07e112c6f78d03e8ee82462fbf2a569"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/D5.mp3",
+      "sha256": "b25b5e541807af700f4e2272ac4c55a2f9b5cc8f176fcd9961d4456803af2b87"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/D6.mp3",
+      "sha256": "46317b9dca22a75986ecfeba93ef34c8f7bc6d4e2e0223dc64b13c9a1984110b"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/D7.mp3",
+      "sha256": "d7db5e63d7caa2fc62e00f55366f9a5236b3a13f7eb0d141a9823e10c7cc4209"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Db2.mp3",
+      "sha256": "c5d76b97326a189786aba25685c8789f59d4dc41d5fbd4d6a6aa97986b2b7d1d"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Db3.mp3",
+      "sha256": "c5bd77b92ad8411c47e509643a7d6fc9c74f3aaba2290e2f4aed6a2ba1446e88"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Db4.mp3",
+      "sha256": "f49892c4e935296db1cb785000818e6a04bf0756c4443bffa6245144fdaf3e47"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Db5.mp3",
+      "sha256": "924a70321fe728ff7a69c941029e060f529e6ada507f20357ee74039e270e588"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Db6.mp3",
+      "sha256": "5e4b55cc27db80e899ea817c546f4c0cf15b43267f426f8de53baac770f90be7"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/E1.mp3",
+      "sha256": "740bf03f7ac2a9bbd41ae10f7daf876bc8bde6fe6d355f2f2781ae70d95c762a"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/E2.mp3",
+      "sha256": "316b392d51d9c27334976511643112b088a9812a8e37e598957e8acc6725aad0"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/E3.mp3",
+      "sha256": "5e556a4850b93b1adba6655372c9e58913169864c52a8e6f232f4b1e901ca2dc"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/E4.mp3",
+      "sha256": "48bcecf53832988af83f74aa65efd7daa34f1e3ebf10de4679363b89d54f3852"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/E5.mp3",
+      "sha256": "c48cee1a11528da53e1f780a1ed36558530f053b5ed8c7033709b2002b452513"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/E6.mp3",
+      "sha256": "e4de8378854d6b39b40d4cf7b022f60bda097993b492639c8a0a005f02a010e0"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/E7.mp3",
+      "sha256": "e757f51d2fb54dca2c0adb4ee6a2b86459a52e2f7dfa227529558a6a0f28fd07"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Eb1.mp3",
+      "sha256": "694e89cd30008f47411336ea1b76675503bbc5383c3849df676b2cf6b51eee67"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Eb2.mp3",
+      "sha256": "708ff787e5ae2bfa45fe386e5fadc90a9339817dd245ed6e6f62532e42fad8d2"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Eb3.mp3",
+      "sha256": "bec9944789ef9e7ec3dd7f9fcdf63ed1e5e82e29447c81be3578df9b1269b4b6"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Eb4.mp3",
+      "sha256": "96586e2865651cfa0469e762f3bd40821f6e45eecf4761a86a37bc59cfebfb2c"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Eb5.mp3",
+      "sha256": "aad99b852c20c2aee66143dd103513523566716cb2f4c6ef6ac478ef84f282b0"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Eb6.mp3",
+      "sha256": "c0f4c45d7930ed90edebfd93321807cdb7346e364ba1933867c4b49ba18d5368"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/F1.mp3",
+      "sha256": "6b83be26ca990ee91e4d404afd5756e5d63b7a6f9ac46da068c80b2692945dba"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/F2.mp3",
+      "sha256": "7bb9c26ec86e1d32194ab5ced3805e1026e638a4a5481d556a7e3f2860141c46"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/F3.mp3",
+      "sha256": "ff912c3211f80dc0c4f541ebd39c1db11f21cfda684d54999f9bce87aaf0cf20"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/F4.mp3",
+      "sha256": "a7426425ed95ea8652a888d850c34c4b766c7c7a11c168ed6899c38a6836be0c"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/F5.mp3",
+      "sha256": "d7f046daec924ce8607ec92360e0d0e42e29e4b3a108839179e04aba4adadc51"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/F6.mp3",
+      "sha256": "6f7794d298d1036ebbd514ad1b3605ffbd280556925fba05e29b83052cbf3dfd"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/F7.mp3",
+      "sha256": "f49b2b54f0b913f636b5822eae373a85dbb30ec5e9a6ebc18e498fdfe0547011"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/G1.mp3",
+      "sha256": "d187e74ca3a23d08248ea4073abc0893a758c8b15c4b6af16c3ba1d2394830db"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/G2.mp3",
+      "sha256": "034f90b9f81e5aca0012f1ff73d731308653578a7eb4bee30efca37af5afce77"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/G3.mp3",
+      "sha256": "3b75e4dfd657723b3c7a30bca0409dce8013b4083d54e703c8ec513b535cee99"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/G4.mp3",
+      "sha256": "37d21e13d5cecc8c0f1645c83bfe82f6032407a3b7de3dde14021c196526664e"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/G5.mp3",
+      "sha256": "2eb949282bc676f3dc96bf5008459b5fff02696e63b70ff799ff08c36bb97058"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/G6.mp3",
+      "sha256": "c24ccf8d6f0c6c9818fe244d150a42c42585629db413e6b245088fdb589e9f3d"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Gb1.mp3",
+      "sha256": "6ff97bc16a3020037f46ebe4196ce2602eed8af243b567768d4cb5d47a8ba0bc"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Gb2.mp3",
+      "sha256": "95ab26a90d088fdc938673005ba2b2a4b166ee188ffbad0c7f75fb746334b043"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Gb3.mp3",
+      "sha256": "91605f55bf0265c1e526b966a3901f9c2813473ac890f4b7330ee08874c5d30f"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Gb4.mp3",
+      "sha256": "f0db7ee32b9175907ca60cf53e6c7a129ea8e7c8f6562dc7ebe6e5c81dcbdf99"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Gb5.mp3",
+      "sha256": "bd1d81203f5338ab62372f88c0b4eb5b4a3133ef58518a8770f3dfdf34f74124"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/Gb6.mp3",
+      "sha256": "c5f87e3bf666919bd1e230f6945ee4af752761faa54dc1814f854e8e9d8a7920"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/LICENSE.txt",
+      "sha256": "6b0c2863672fe67efeba5203573b96da75e2912ace48c347d9abb39868c6c20b"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/manifest.json",
+      "sha256": "4ad03a1b71a0ca66df6171e02ba0c4e9c65ea758aa8584a737a7abe6f0691841"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/README_EN.md",
+      "sha256": "c539366ef92917a3d4b1ff30f39ec3a17c9254b2f1f65f2c6d934130f1429ae1"
+    },
+    {
+      "path": "edition/plugins/tool-ecnu-music/vendor/piano/README.md",
+      "sha256": "16744d0577e1a1127ccfd623ee044067c6a9c75de7383052597af2a5fcfbfccd"
+    },
+    {
+      "path": "edition/release/collect-candidate-failure.mjs",
+      "sha256": "03828e795806be0105f8b7e4e4a339ecfee41f04bfc0a81e8607e1e4a92d6e54"
+    },
+    {
       "path": "edition/release/oss-deltas.mjs",
       "sha256": "ae368f2486a722891a0d9f361e298dc19ed5cc2b8567f42245f7aaa1df3ad1a4"
     },
@@ -485,7 +1073,71 @@
     },
     {
       "path": "edition/release/website-pointers.mjs",
-      "sha256": "db0dba8cdd19daa9bfb227f29b308dc7c7c433acc0334f0104a8083f45691037"
+      "sha256": "762ce7ee8509c51023baa9341b14cdb782753afcedf12c9144852b0a1fdd9f35"
+    },
+    {
+      "path": "edition/release/windows-signing/artifact-zip.mjs",
+      "sha256": "7d63a6910c3601557c53093f6a0615955d36b744d91898f4beee7008cd1289dc"
+    },
+    {
+      "path": "edition/release/windows-signing/core.mjs",
+      "sha256": "dca790f756bc6a6dd949e56347fe67227eee568e127f355ba3f2b6f3a7b6de7a"
+    },
+    {
+      "path": "edition/release/windows-signing/files.mjs",
+      "sha256": "67a77a18b3c025dab4d51a25b4a64bf21ef9feaea0168e7da8dbaf392abbcf5b"
+    },
+    {
+      "path": "edition/release/windows-signing/hosted.mjs",
+      "sha256": "07e7118cb4bef2b07e7290c88d194c35857fa55a54dae28d4ec19be3cd224f02"
+    },
+    {
+      "path": "edition/release/windows-signing/io.mjs",
+      "sha256": "1d72fbc419089d5e9be04ac5f24d43e3faa24f2263d52f372f85403664cf55db"
+    },
+    {
+      "path": "edition/release/windows-signing/operations.mjs",
+      "sha256": "7af5dd9cd138726e7c1f25400ba03bb3693d6dfad02cf17b2eceeb32b90bf16f"
+    },
+    {
+      "path": "edition/release/windows-signing/packaging.mjs",
+      "sha256": "e282682238f9ccc9418e9656853f6f3da49b496381dbebacd7bd1321870baefc"
+    },
+    {
+      "path": "edition/release/windows-signing/pe.ps1",
+      "sha256": "367a7a2df29959478b787a4dc225c3add11b7172fcdac9155f515708a5dbdd4e"
+    },
+    {
+      "path": "edition/release/windows-signing/protocol.mjs",
+      "sha256": "dfe3ba407e5b29f1cd4dae8f40cf080efe977ab151903d05e2d7dd1f9dc56b30"
+    },
+    {
+      "path": "edition/release/windows-signing/publication-source.mjs",
+      "sha256": "2baa54bb3763a79b37f3de77c042897306f376bbc25f07bd4792d9690be71039"
+    },
+    {
+      "path": "edition/release/windows-signing/publish.mjs",
+      "sha256": "69a12f1c56ec5784a7c9267662aa79ce8605c54076510bdcdf17493a07bd7967"
+    },
+    {
+      "path": "edition/release/windows-signing/receipt.mjs",
+      "sha256": "655821b4c57a7ce1d2204cf6411d80fc5ca4e0a9eb5b1a699e86faa4c7d5115e"
+    },
+    {
+      "path": "edition/release/windows-signing/sign-request.mjs",
+      "sha256": "fd6c7baad17b4c457d526d7d005e1bb77f9d5902b89dd5760b2a2f3e71431e14"
+    },
+    {
+      "path": "edition/release/windows-signing/tool.ps1",
+      "sha256": "8f07b545414f78a836a5a3290f4eef8099c0f697bbb9a1386b7c4ee6d6b5a0f9"
+    },
+    {
+      "path": "edition/release/windows-signing/tools.lock.json",
+      "sha256": "55c36f6592aed40d68b16b8028d2638792717cbb1be957755d536e1be5f78a05"
+    },
+    {
+      "path": "edition/release/windows-signing/util.mjs",
+      "sha256": "91825fdaa5535f6f5b192f3e8dacda047ff115f730683625b912e6f20b1c095f"
     },
     {
       "path": "edition/skills/artifact-images/references/image-guidance.md",
@@ -504,20 +1156,60 @@
       "sha256": "cad296b926e8415de3bfdaeb9850d617318161576acf39f5098e9395e5a984e6"
     },
     {
+      "path": "edition/skills/ecnu-music/references/media-delivery.md",
+      "sha256": "0f157e8bb07f8b4650b92349a11fabfbea4d93b10e2979c60de6a6dd80e10e64"
+    },
+    {
+      "path": "edition/skills/ecnu-music/references/prompting.md",
+      "sha256": "ab1606b7c9bec7e3d319432d29997db6d3419d647c788913bb6f7bf349038bdd"
+    },
+    {
+      "path": "edition/skills/ecnu-music/references/song-timeline.md",
+      "sha256": "7868586dae3bf4c2e1a02ae67ef3179c8c4bafad1e2de83e35f0a434b1e86394"
+    },
+    {
+      "path": "edition/skills/ecnu-music/references/song-video.md",
+      "sha256": "ebd0efffc54d56cdb553f7c6e8cb926a5b3a92d48984f52f486c687cd3fb03a8"
+    },
+    {
+      "path": "edition/skills/ecnu-music/references/workflows.md",
+      "sha256": "96a574d3145182661939cccfc6f9d1b6ff3787fb60090a6b321ce12f70c67c65"
+    },
+    {
+      "path": "edition/skills/ecnu-music/scripts/prepare-media.mjs",
+      "sha256": "9a1435a0b4762f9b00b4b3aaa212b4ff90499f59061d7d5483e67528cb84ed5b"
+    },
+    {
+      "path": "edition/skills/ecnu-music/scripts/serve-song.mjs",
+      "sha256": "3d11f8e107b6bc6aea3dab25fcc1779208074bd328eef654faa1d6bad9905669"
+    },
+    {
+      "path": "edition/skills/ecnu-music/SKILL.md",
+      "sha256": "4af8251e8041f16cfa02d398284f0411b6fceef7bc005d4edd302d84422f1a5e"
+    },
+    {
       "path": "edition/test/browser-composition.test.mjs",
-      "sha256": "ee927daa687ddcd1ca9bae410a46c96b8ca5a7439b96143fb6e05d9628324dfa"
+      "sha256": "bbddca9c401feda0e4c90bb9488bc9c6fca05f4dfd534cb61aa162849b8c57d1"
     },
     {
       "path": "edition/test/build-pinned-product.mjs",
       "sha256": "f279157c920628ad4f0e3b921889fa1006d8d874196100fdad5714006b53c150"
     },
     {
+      "path": "edition/test/candidate-failure-evidence.test.mjs",
+      "sha256": "22ca59432e07a3d7ab572d6e8f86a0e4a3138d69a6c8500564c091933eb47f51"
+    },
+    {
       "path": "edition/test/chat-model-catalog.test.mjs",
       "sha256": "53a04ee55b49b2e77ee629a8d544010bbc86493232724973ab5ee75cfaf063a7"
     },
     {
+      "path": "edition/test/decision-config.test.mjs",
+      "sha256": "5635af73af89eeb79f899c400829fa9c706594fc05471a788da191ddf25a34f8"
+    },
+    {
       "path": "edition/test/enterprise-config.test.mjs",
-      "sha256": "1777680b9fa4423f9d1905c628208099a5ecf81d71f9ec393ef7bb438c2a5d41"
+      "sha256": "3350f6d21db82aa345433d2d3f41b743936eb366ca4d0242ec3264fadf9f6e02"
     },
     {
       "path": "edition/test/macos-architecture.test.mjs",
@@ -525,11 +1217,15 @@
     },
     {
       "path": "edition/test/optional-packaging.test.mjs",
-      "sha256": "f1213d1aeb4f1bdebc915da5c5d6bbf62543b32f3e6c6cd479a333f7502173e0"
+      "sha256": "f9ca45dfcdb1d1ff1ba3ad6b3806c8c86e4fcca2da3446377426b3c8e7dda7ef"
     },
     {
       "path": "edition/test/oss-deltas.test.mjs",
       "sha256": "e865ce1f8a2d44e05f65ea359fe0c8750a59b681c7ebfca32faaed702512358e"
+    },
+    {
+      "path": "edition/test/remote-configuration.test.mjs",
+      "sha256": "8b1bf93f00b268ae76a0eca3b704db7bc10a3beb457a6e42617db8fec327b90b"
     },
     {
       "path": "edition/test/runtime-resolver.mjs",
@@ -537,7 +1233,7 @@
     },
     {
       "path": "edition/test/test-desktop-candidate.ps1",
-      "sha256": "275e87f394684a4b87b265ccf3c370b01cfd770995ac76d2c793610818ec0e20"
+      "sha256": "0953126e37382c75c5723ad2d259966ef69d2b52a76f0039daa7f9fd2358e008"
     },
     {
       "path": "edition/test/typert-contract.test.mjs",
@@ -545,19 +1241,43 @@
     },
     {
       "path": "edition/test/website-pointers.test.mjs",
-      "sha256": "da3e4fac82bb49a96e8818b0d2334b2e76231f276a184c4c85d7c86afb25ec9a"
+      "sha256": "18444d9827847592cd1a0a35fcba2fc2683a63d4379bcb5a08cb10e46266f41c"
+    },
+    {
+      "path": "edition/test/windows-signing-artifact.test.mjs",
+      "sha256": "35c2451f8c62b7973823558498a9644c7717c4f55127e4e8a3c226fc2a56a90d"
+    },
+    {
+      "path": "edition/test/windows-signing-publication.test.mjs",
+      "sha256": "61b27b497d499e53bd7527cf65a3d1a7535f7b8d3ddc2da7d360678c66c7d4c5"
+    },
+    {
+      "path": "edition/test/windows-signing.test.mjs",
+      "sha256": "29b49b848350a340feaf389f57ef98d4b1370f0dd3aea566ba5b37b01b68e61e"
+    },
+    {
+      "path": "edition/windows-signing.json",
+      "sha256": "3d01f2b892b8bd5732661117b7037248e473c1f7fb981d4d006f8577f7c84613"
     },
     {
       "path": "LICENSE",
+      "sha256": "eb7a1d713eb919b146787629e22e4c975cb701f529a65d4d7e0fcd417558bf1c"
+    },
+    {
+      "path": "LICENSE-MIT",
       "sha256": "dc719b536b8f7a51cd0ffaf928d37146894a3996119cb07d4fb7b67e551882dc"
     },
     {
+      "path": "LICENSING.md",
+      "sha256": "18d102bb292302c2f744a6f94ce087f9610915989fbde276ea2a2dcc0e142df7"
+    },
+    {
       "path": "README_EN.md",
-      "sha256": "c733de1239a8ef0940a95144a03ff4de8035931007ea6cd6f9caca443071afe7"
+      "sha256": "b4c9c6ba19175d1446aaa885741820d7050485ddb40e35d77c3daf709d40bc4c"
     },
     {
       "path": "README.md",
-      "sha256": "8314c8d8e4f78ddf021beff3c14907b5199f6477ae4bfa326c0a73e135145ec0"
+      "sha256": "7b4eb10e5d7e9755f51be2dc376f800bf1cd84a004f4a2ce88148385d90b302b"
     }
   ],
   "artifacts": [],

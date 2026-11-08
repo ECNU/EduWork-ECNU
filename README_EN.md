@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.1-rc.3](https://img.shields.io/badge/DSH-0.2.1--rc.3-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.1-rc.3) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#installation-and-use)
+[![License: MulanPSL-2.0](https://img.shields.io/badge/license-MulanPSL--2.0-3DA66B?style=flat-square)](LICENSE) [![DSH: 0.2.2-rc.1](https://img.shields.io/badge/DSH-0.2.2--rc.1-4169e1?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-rc.1) [![Platform: Windows x64 / macOS arm64 / x64](https://img.shields.io/badge/platform-Windows%20x64%20%7C%20macOS%20arm64%20%2F%20x64-9f2636?style=flat-square)](#installation-and-use)
 
 [简体中文](README.md) | **English**
 
@@ -49,7 +49,9 @@ The institution edition reuses the public workbench, Studio, skills, and desktop
 
 Skill management and workbench settings are inherited too. Browsing uses DSH's official Playwright MCP provider, while web search uses the university account service. Public skills cover Word, presentations, spreadsheets, PDFs, images, speech, video, Knowledge Studio, browsing, skill creation, and product help. See the [public plugin and skill inventory](https://github.com/ECNU/EduWork/blob/main/README_EN.md#bundled-plugins). Models and services are enabled according to configuration; personal API keys and other models remain available.
 
-Remote access is not preinstalled in this edition. Users with their own relay can install [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access) through plugin management. Restart, then enter the relay URL and access Key in Settings → Remote Access to enable access and pair devices. Installation does not automatically connect to a university relay. See the [relay deployment guide](https://github.com/ECNU/EduWork/blob/main/packages/dsh-remote-access/docs/DEPLOYMENT_EN.md).
+Annotations, side chat, literature, mail, remote access and external agents can be enabled or disabled individually on the Plugins page; choices persist across restarts. External agents start disabled and can connect to locally installed Codex or Claude CLIs when enabled; the other five start enabled. Services such as mail retrieval and remote connections remain controlled by their own settings.
+
+The next release will preinstall [`@eduwork/dsh-remote-access`](https://www.npmjs.com/package/@eduwork/dsh-remote-access). Signed school configuration supplies the relay and school identity. After school sign-in, enable Settings → Remote Access, create a pairing link and confirm the other device on the local computer. No manual server address or access Key is required. Remote access starts disabled; users can also choose their own relay. See [Remote access](docs/REMOTE_ACCESS_EN.md).
 
 ### Plugins added by the ECNU edition
 
@@ -65,6 +67,8 @@ ECNU also bundles the **`ecnu-campus-search` skill**, which guides campus source
 The [image creation skill](edition/skills/artifact-images/SKILL.md) reuses the public image tools with guidance for the university model: roughly 1K output by default and prompt expansion by the assistant. Text-to-image requests default to Chinese people when no identity or background is specified; editing preserves the identity of reference subjects. Explicit user requirements take precedence.
 
 Distribution configuration supplies university branding, default models, media services, and update channels. See the [ECNU distribution manifest](edition/distribution.json) for the complete combination.
+
+See [decision service configuration](docs/DECISION_EN.md) for the public decision plugin's school parameters. This repository owns configuration only; tools and skills come from the public package. Preinstallation follows the actual distribution and npm locks.
 
 ## University sign-in
 
@@ -211,4 +215,4 @@ Detailed documentation defaults to Chinese.
 
 EduWork@ECNU is built on [EduWork](https://github.com/ECNU/EduWork) and [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Knowledge Studio's source-based creation and learning interactions are inspired by NotebookLM.
 
-Code in this repository uses the [MIT License](LICENSE). The public core and third-party components retain their own licenses; see the [EduWork third-party notices](https://github.com/ECNU/EduWork/blob/main/THIRD_PARTY_NOTICES.md).
+Original contributions in this repository use [Mulan PSL v2](LICENSE); historical MIT code and exceptions are described in the [licensing scope](LICENSING.md). The public core and third-party components retain their own licenses; see the [EduWork third-party notices](https://github.com/ECNU/EduWork/blob/main/THIRD_PARTY_NOTICES.md).

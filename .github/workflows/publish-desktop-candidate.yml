@@ -10,6 +10,10 @@ on:
         description: 'Approved product version'
         required: true
         type: string
+      windows_signing_run_id:
+        description: 'Successful final signing run for the same source commit and candidate'
+        required: true
+        type: string
       release_notes:
         description: 'Approved docs/releases/<version>.md'
         required: true
@@ -26,6 +30,9 @@ on:
         type: boolean
   workflow_call:
     inputs:
+      windows_signing_run_id:
+        required: true
+        type: string
       source_run_id:
         required: true
         type: string
@@ -47,7 +54,7 @@ permissions:
   contents: read
 jobs:
   publish:
-    if: github.ref == 'refs/heads/main'
+    if: github.repository == 'ECNU/EduWork-ECNU' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency:
       group: desktop-publication-${{ github.repository }}-${{ inputs.version }}
@@ -77,6 +84,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          WINDOWS_SIGNING_RUN_ID: ${{ inputs.windows_signing_run_id }}
+          EDUWORK_CORE_ROOT: ${{ github.workspace }}/core
           RELEASE_PLATFORMS: '["windows","macos","macos-x64"]'
           REQUIRE_MACOS15: 'true'
           RELEASE_VERSION: ${{ inputs.version }}
@@ -89,7 +98,7 @@ jobs:
           RELEASE_DISTRIBUTION: eduwork-chatecnu
           REQUIRE_PUBLISHER_BOOTSTRAP: 'true'
           CANDIDATE_WORKFLOW: .github/workflows/development-windows.yml
-        run: node core/scripts/publish-desktop-candidate.mjs
+        run: node institution/edition/release/windows-signing/publish.mjs
       - name: Retain publication verification
         if: always()
         uses: actions/upload-artifact@v4

@@ -43,22 +43,21 @@ test('old school browser activation choices survive while retired public entries
   assert.equal(rows([{ id: 'ecnu-browser', disabled: false }]).filter(row => row.id === 'ecnu-browser').length, 1)
 })
 
-test('reused public browser installs final denial and workspace interaction confirmation', async () => {
-  const { apply } = await import(pathToFileURL(require.resolve('@eduwork/dsh-browser-upstream')))
-  let guard, before, plugin, mode = 'workspace-write'
-  const ctx = {
-    tools: { guard(callback) { guard = callback } },
-    on(event, callback) { assert.equal(event, 'tools/pre-execute'); before = callback },
-    sandboxPolicy: { resolve: () => ({ mode }) },
-    plugin(provider, config) { plugin = { provider, config } },
-  }
-  apply(ctx, { executablePath: process.execPath })
-  assert.ok(plugin)
-  const exec = name => ({ name: 'mcp__playwright-mcp__' + name, agent: { session: {} }, arguments: {} })
-  assert.match(guard(exec('browser_run_code_unsafe')), /full access/)
-  assert.equal(before(exec('browser_click'), () => 'continue').kind, 'ask')
-  assert.equal(before(exec('browser_snapshot'), () => 'continue'), 'continue')
+test('school browser follows public ordinary-action and explicit-risk permissions', async () => {
+  // Inspect the policy actually installed in the school product. Mounting the
+  // real browser also requires workingDirectory and per-Agent resources; do
+  // not emulate that lifecycle with an obsolete single-hook fake Context.
+  const entry = require.resolve('@eduwork/dsh-browser-upstream')
+  const { browserGuard, browserPermission } = await import(pathToFileURL(join(dirname(entry), 'permission.js')))
+  let mode = 'workspace-write'
+  const ctx = { sandboxPolicy: { resolve: () => ({ mode }) } }
+  const exec = (name, args = {}) => ({ name: 'mcp__playwright-mcp__' + name, agent: { session: {} }, arguments: args })
+  assert.match(browserGuard(ctx, exec('browser_run_code_unsafe')), /full access/)
+  assert.equal(browserPermission(ctx, exec('browser_click'), () => 'continue'), 'continue')
+  assert.equal(browserPermission(ctx, exec('browser_snapshot'), () => 'continue'), 'continue')
+  assert.equal(browserPermission(ctx, exec('browser_evaluate'), () => 'continue').kind, 'ask')
+  assert.equal(browserPermission(ctx, exec('browser_navigate', { url: 'http://127.0.0.1/admin' }), () => 'continue').kind, 'ask')
   mode = 'danger-full-access'
-  assert.equal(guard(exec('browser_run_code_unsafe')), undefined)
-  assert.equal(before(exec('browser_click'), () => 'continue'), 'continue')
+  assert.equal(browserGuard(ctx, exec('browser_run_code_unsafe')), undefined)
+  assert.equal(browserPermission(ctx, exec('browser_click'), () => 'continue'), 'continue')
 })

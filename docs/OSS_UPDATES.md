@@ -31,8 +31,8 @@ node edition/release/oss-deltas.mjs --core ../EduWork \
 5. Windows 清单必须保留完整 artifact，同时带上 `deltas`；不能复制 GitHub 的原清单覆盖掉 OSS 新增的差分条目。
 6. Mac 使用派生的 `macos-signing-receipt.json` 和同目录原 ZIP，通过公版 `scripts/macos-update-feed.mjs sign` 签署完整包与每个差分，独立验签后更新 appcast。更新已有版本时替换该版本的整个 item，保留其他版本 item；不要重复插入同版本条目。
 7. 回读线上清单，验证匹配基线选择增量、不匹配基线回退全量，以及 stable/development 隔离。开发版发包不得覆盖 stable 清单；发布正式版时，development 的 Mac appcast 也应包含该正式版，以便开发用户正常转入正式版。
-8. **正式版还必须同步官网指针。** 网站读取 `releases-bridge/stable/website/latest-windows-amd64.json` 和 `latest-macos-arm64.json`，不读取客户端更新清单。正式版的差分 artifact 同时提供这两个平台各自的指针，分别只引用原 CI Windows setup ZIP 和 macOS DMG。安装包及其校验文件回读验证后，上传两份指针并设置 `Cache-Control: no-cache`，保留站点跨域读取能力；开发版不生成或更新这些指针。
-9. 发布完成前运行下述官网线上校验。仅四份客户端渠道清单成功，不代表正式版 OSS 交付完成；两份官网指针也必须版本一致、链接可用、大小与 SHA-256 匹配，否则发布状态仍应为未完成。
+8. **正式版还必须同步官网指针。** `website-pointers.mjs prepare` 从已发布 Release 生成 Windows EXE、兼容 Windows ZIP、Mac Apple Silicon、Mac Intel 共四份指针。网站主下载读取 `latest-windows-amd64-exe.json`、`latest-macos-arm64.json`、`latest-macos-x64.json`；EXE 指针的 `fallbackArtifact` 同时提供相同版本的 ZIP 备用下载。旧 `latest-windows-amd64.json` 保持只含 ZIP，使已部署的旧网页继续工作。只引用 CI 原文件，安装包、签名和校验文件回读验证后才上传指针，设置 `Cache-Control: no-cache` 并保留 CORS。开发版不更新官网指针。
+9. 发布完成前运行下述官网线上校验。六份客户端渠道清单（Windows 和 Mac 双架构各 stable/development）及四份官网指针都必须验证；版本、链接、大小或 SHA-256 不一致时，不能标记为完成。新增 EXE 下载的网页兼容改动需要部署一次，以后发版继续只更新指针；未部署前旧网页仍提供对应版本的 ZIP。
 
 Windows 清单输入示例（`base-url` 是完整版本目录）：
 
@@ -54,13 +54,13 @@ Mac 使用 Mac artifact、ZIP 目录与 `macos-release-receipt.json`，省略 `-
 
 官网指针只包含安装包信息，不含客户端的增量条目，也不能覆盖 Windows 更新 ZIP 清单或 Mac appcast。无需为更换下载版本重新构建网站。
 
-保存本次已发布 GitHub Release 的 JSON 后，可单独准备两份指针，再在部署后验证线上结果：
+保存本次已发布 GitHub Release 的 JSON 后，可单独准备四份指针，再在部署后验证线上结果：
 
 ```sh
 gh api repos/ECNU/EduWork-ECNU/releases/tags/v0.4.6 > release.json
 node edition/release/website-pointers.mjs prepare --release release.json --output /path/to/new-website-pointers
-# 获得 OSS 部署授权并完成原安装包校验后，上传上述两份指针。
+# 获得 OSS 部署授权并完成原安装包校验后，上传上述四份指针。
 node edition/release/website-pointers.mjs verify --release release.json
 ```
 
-该入口不上传文件、不携带部署凭据。`verify` 检查两个平台的完整指针内容、缓存与 CORS、安装包可访问性和大小、SHA-256 校验文件；原安装包的完整字节哈希仍须按前述部署步骤验证。域名可通过 `--origin https://downloads.example.org` 指定，路径保持站点约定。校验失败时不要将正式版交付标记为完成。
+该入口不上传文件、不携带部署凭据。`verify` 检查四份完整指针及 EXE 的 ZIP 备用下载、缓存与 CORS、安装包可访问性和大小、SHA-256 校验文件；原安装包的完整字节哈希与 Windows Authenticode 仍须按前述部署步骤验证。域名可通过 `--origin https://downloads.example.org` 指定，路径保持站点约定。带版本号的 EXE/ZIP/DMG 保持不可变，不用同名 latest.exe 覆盖历史文件。校验失败时不要将正式版交付标记为完成。

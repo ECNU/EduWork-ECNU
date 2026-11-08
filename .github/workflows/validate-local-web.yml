@@ -47,6 +47,8 @@ jobs:
           node --test core/tests/eduwork-assembly-policy.test.mjs core/scripts/test/npm-runtime.test.mjs core/tests/eduwork-source-reproducibility.test.mjs core/tests/eduwork-upstream-lock.test.mjs core/tests/eduwork-profile-links.test.mjs core/tests/eduwork-web-acceptance-contract.test.mjs
           if ($LASTEXITCODE) { throw 'Core source checks failed' }
           $env:EDUWORK_CORE_ROOT = (Resolve-Path core).Path
+          node --test institution/edition/test/candidate-failure-evidence.test.mjs
+          if ($LASTEXITCODE) { throw 'Candidate failure evidence checks failed' }
           node --test institution/edition/test/enterprise-config.test.mjs
           if ($LASTEXITCODE) { throw 'Institution configuration checks failed' }
           node --test institution/edition/plugins/chatecnu-active-heartbeat/test/scheduler.test.mjs institution/edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs

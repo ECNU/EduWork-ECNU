@@ -1,0 +1,41 @@
+name: Validate ECNU Windows signing
+on:
+  pull_request:
+    paths: ['edition/release/windows-signing/**', 'edition/windows-signing.json', 'edition/test/windows-signing*.test.mjs', '.github/workflows/*windows*.yml', '.github/workflows/publish-desktop-candidate.yml']
+  push:
+    branches: [main, feat/ecnu-windows-signing-20261106]
+    paths: ['edition/release/windows-signing/**', 'edition/windows-signing.json', 'edition/test/windows-signing*.test.mjs', '.github/workflows/*windows*.yml', '.github/workflows/publish-desktop-candidate.yml']
+permissions:
+  contents: read
+jobs:
+  contracts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-26]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: institution
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - id: pin
+        shell: pwsh
+        run: |
+          $lock = Get-Content institution/core.lock.json -Raw | ConvertFrom-Json
+          if ($lock.repository.ToLowerInvariant() -ne 'https://github.com/ecnu/eduwork.git' -or $lock.commit -cnotmatch '^[a-f0-9]{40}$') { throw 'Invalid core pin' }
+          "commit=$($lock.commit)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: ${{ steps.pin.outputs.commit }}
+          path: core
+          persist-credentials: false
+      - name: Protocol, provenance, publication and payload rejection tests
+        shell: pwsh
+        env:
+          EDUWORK_CORE_ROOT: ${{ github.workspace }}/core
+        run: node --test institution/edition/test/windows-signing.test.mjs institution/edition/test/windows-signing-artifact.test.mjs institution/edition/test/windows-signing-publication.test.mjs

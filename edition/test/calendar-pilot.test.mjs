@@ -33,7 +33,12 @@ test('edition packaging reuses the public Skill and binds only local calendar re
       assert.equal(generic.skills.filter(row => row.name === replacement.name).length, 1,
         `Skill replacement must select one core skill: ${replacement.name}`)
     }
-    const skill = edition.skills.find(row => row.name === 'calendar-management')
+    const development = JSON.parse(await readFile(new URL('../calendar/development.json', import.meta.url), 'utf8'))
+    const skill = development.skills.find(row => row.name === 'calendar-management')
+    assert.ok(!edition.skills.some(row => row.sourcePackage === '@eduwork/dsh-calendar'),
+      'the default product must not project a skill from its unassembled calendar package')
+    assert.ok(!edition.plugins.some(row => row.id === 'ecnu-calendar'),
+      'unpublished education dependencies belong to the separate development assembly')
     const result = await copyDshBundledSkills({ repository: resolve(core), packageRoot: modules, skillRoot: join(product, 'skills'), skills: [skill] })
     assert.deepEqual(result, ['calendar-management'])
     for (const resource of edition.resources.filter(row => row.target.startsWith('calendar/'))) {

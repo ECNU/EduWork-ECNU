@@ -1,0 +1,29 @@
+{
+  "plugins": [
+    {
+      "root": "edition",
+      "source": "edition/plugins/ecnu-calendar",
+      "id": "ecnu-calendar",
+      "name": "@chatecnu-work/dsh-ecnu-calendar",
+      "config": {}
+    }
+  ],
+  "skills": [
+    {
+      "name": "calendar-management",
+      "sourcePackage": "@eduwork/dsh-calendar",
+      "sourcePath": "skills/calendar-management",
+      "defaultEnabled": true,
+      "references": [
+        {
+          "title": "ECNU 校历使用说明",
+          "path": "../../resources/calendar/guide.md"
+        },
+        {
+          "title": "2026–2027 校历数据",
+          "path": "../../resources/calendar/2026-2027.json"
+        }
+      ]
+    }
+  ]
+}

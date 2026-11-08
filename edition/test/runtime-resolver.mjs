@@ -3,9 +3,15 @@
 import { registerHooks } from 'node:module'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { existsSync } from 'node:fs'
 if (!process.env.EDUWORK_TEST_RUNTIME) throw Error('Set EDUWORK_TEST_RUNTIME to the assembled product d directory')
 const runtime = pathToFileURL(resolve(process.env.EDUWORK_TEST_RUNTIME, 'package.json')).href
 registerHooks({ resolve(specifier, context, next) {
+  if (specifier.startsWith('@eduwork/dsh-academic-calendar') && process.env.EDUWORK_CORE_ROOT) {
+    const name = specifier === '@eduwork/dsh-academic-calendar' ? 'index' : specifier.split('/').pop()
+    const source = resolve(process.env.EDUWORK_CORE_ROOT, 'packages/dsh-academic-calendar/lib', name + '.js')
+    if (existsSync(source)) return { url: pathToFileURL(source).href, shortCircuit: true }
+  }
   if (specifier.startsWith('@deepseek-ai/') || specifier.startsWith('@eduwork/') || specifier === 'zod') return next(specifier, { ...context, parentURL: runtime })
   return next(specifier, context)
 } })

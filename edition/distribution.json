@@ -158,6 +158,16 @@
     },
     {
       "root": "edition",
+      "source": "edition/calendar/guide.md",
+      "target": "calendar/guide.md"
+    },
+    {
+      "root": "edition",
+      "source": "edition/plugins/ecnu-calendar/data/2026-2027.json",
+      "target": "calendar/2026-2027.json"
+    },
+    {
+      "root": "edition",
       "source": "LICENSE",
       "target": "licenses/EduWork-ECNU/LICENSE"
     },

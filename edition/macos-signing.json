@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "repository": "ECNU/EduWork-ECNU",
+  "environment": "macos-signing",
+  "teamId": "9TM4966M82",
+  "identity": "Developer ID Application: East China Normal University (9TM4966M82)",
+  "certificateSHA256": "485fd8a0480b0a214b78fb605d8c9c7630617939b5eadbb4a381d8d8aeec3349",
+  "probeBundleId": "cn.edu.ecnu.eduwork.signing-probe"
+}

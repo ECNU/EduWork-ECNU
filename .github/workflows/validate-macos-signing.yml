@@ -1,0 +1,20 @@
+name: Validate ECNU macOS signing
+on:
+  pull_request:
+    paths: ['edition/release/macos-signing/**', 'edition/macos-signing.json', 'edition/test/macos-signing*.test.mjs', '.github/workflows/*macos-signing*.yml']
+  push:
+    branches: [main, feat/macos-github-signing-20261113]
+    paths: ['edition/release/macos-signing/**', 'edition/macos-signing.json', 'edition/test/macos-signing*.test.mjs', '.github/workflows/*macos-signing*.yml']
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - run: node --test edition/test/macos-signing.test.mjs

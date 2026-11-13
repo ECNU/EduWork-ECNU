@@ -1,0 +1,52 @@
+name: Qualify ECNU macOS signing credentials
+on:
+  workflow_dispatch:
+    inputs:
+      notarize_probe:
+        description: 'Submit a minimal synthetic app to Apple and verify the stapled ZIP'
+        type: boolean
+        default: true
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: ecnu-macos-signing-preflight
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: github.repository == 'ECNU/EduWork-ECNU' && github.ref == 'refs/heads/main'
+    environment: macos-signing
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-26, macos-26-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - name: Sign and optionally notarize a synthetic application
+        env:
+          ECNU_MACOS_CERTIFICATE_P12: ${{ secrets.ECNU_MACOS_CERTIFICATE_P12 }}
+          ECNU_MACOS_CERTIFICATE_PASSWORD: ${{ secrets.ECNU_MACOS_CERTIFICATE_PASSWORD }}
+          ECNU_APPLE_ID: ${{ secrets.ECNU_APPLE_ID }}
+          ECNU_APPLE_APP_PASSWORD: ${{ secrets.ECNU_APPLE_APP_PASSWORD }}
+          NOTARIZE_PROBE: ${{ inputs.notarize_probe }}
+        run: node edition/release/macos-signing/preflight.mjs
+      - name: Remove temporary credentials even after cancellation
+        if: always()
+        shell: bash
+        run: |
+          security delete-keychain "$RUNNER_TEMP/ecnu-macos-signing-private/signing.keychain-db" >/dev/null 2>&1 || true
+          rm -rf -- "$RUNNER_TEMP/ecnu-macos-signing-private"
+      - name: Retain public qualification results only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-signing-preflight-${{ matrix.os }}
+          path: ${{ runner.temp }}/ecnu-macos-signing-report/preflight.json
+          if-no-files-found: warn
+          retention-days: 30

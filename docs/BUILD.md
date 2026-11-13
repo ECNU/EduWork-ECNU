@@ -12,6 +12,8 @@
 
 ## 桌面源码候选
 
+macOS 的学校 Developer ID 凭据可先通过独立的[签名与公证验收](MACOS-SIGNING.md)工作流检查；该工作流的合成测试程序不作为桌面候选或发布附件。
+
 桌面构建使用 `core.lock.json` 锁定的公版，以及公版 `config/desktop-build.json` 指定的 DSH 与编译依赖锁。学校 `edition/desktop-build.json` 声明平台签名配置目录和机构验证脚本，工作流不复制公版构建实现。
 
 构建与发布使用 Node.js 24.22.1，与公版随包运行时一致。旧的 Windows 单平台 PowerShell 发布工作流已退役；请使用下面的三平台候选及独立发布流程。

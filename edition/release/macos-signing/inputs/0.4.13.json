@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "repository": "ECNU/EduWork-ECNU",
+  "version": "0.4.13",
+  "releaseId": 437471087,
+  "tag": "v0.4.13",
+  "editionCommit": "141abe47b230a0b83188d4e92a35b8c1a46b5ca2",
+  "coreCommit": "6edcb3e507c36576f6352824af4e343fdc741120",
+  "bodySHA256": "738393b47522da15f83907b742f794bcb21e1af5a6d5c6a7d26e0d136e7e7d0f",
+  "assets": [
+    {
+      "id": 720239216,
+      "name": "EduWork-ECNU-0.4.13-macos-arm64-electron.dmg",
+      "size": 588862043,
+      "digest": "sha256:677ee00a77289ca1219ba4b640a343058febb4e8a697c8290ed82adf78bbc1d6"
+    },
+    {
+      "id": 720239854,
+      "name": "EduWork-ECNU-0.4.13-macos-arm64-electron.dmg.sha256",
+      "size": 111,
+      "digest": "sha256:f88b39d2bd01cc06c133fb2d77f061a942f08a85a23cb5806c14bb76c3054d87"
+    },
+    {
+      "id": 720238356,
+      "name": "EduWork-ECNU-0.4.13-macos-arm64-electron.zip",
+      "size": 550834714,
+      "digest": "sha256:5a7c09448d512f4d10c93fdf4bac188451c76c7acee253b8c3d130a3cd000161"
+    },
+    {
+      "id": 720239166,
+      "name": "EduWork-ECNU-0.4.13-macos-arm64-electron.zip.sha256",
+      "size": 111,
+      "digest": "sha256:8fd5576adb0516c6ba7dd1b17623d253b8f10013d79ec189462427d4251616ca"
+    },
+    {
+      "id": 720240581,
+      "name": "EduWork-ECNU-0.4.13-macos-x64-electron.dmg",
+      "size": 621435743,
+      "digest": "sha256:aa423b73129d174c34302fdd00650be6bc1261fd3818f5a721ee894a148ef0a5"
+    },
+    {
+      "id": 720241362,
+      "name": "EduWork-ECNU-0.4.13-macos-x64-electron.dmg.sha256",
+      "size": 109,
+      "digest": "sha256:86f2e878f179cf4a539bd0689144d09100428058010533ce6511c91f558718bd"
+    },
+    {
+      "id": 720239928,
+      "name": "EduWork-ECNU-0.4.13-macos-x64-electron.zip",
+      "size": 577638801,
+      "digest": "sha256:9128022ef2669782dffda887ede5af871a45188f90ac7b40cad297b9125e35e6"
+    },
+    {
+      "id": 720240541,
+      "name": "EduWork-ECNU-0.4.13-macos-x64-electron.zip.sha256",
+      "size": 109,
+      "digest": "sha256:31e48098ee664152cf162988bc5d7e46436b73e21735ef0a7f8bd0379e6ae877"
+    },
+    {
+      "id": 720237658,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-electron-from-0.4.10.zip",
+      "size": 274924530,
+      "digest": "sha256:c18335789376e6a0420ba27d5185f8bb64d5df6ab805eaac2f9ee09442243cfb"
+    },
+    {
+      "id": 720237929,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-electron-from-0.4.10.zip.sha256",
+      "size": 123,
+      "digest": "sha256:2ddc6fc3089ea41ce781eb23d7509d102ca12b1bdcb82e0520d8038b85b0911a"
+    },
+    {
+      "id": 720237967,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-electron-from-0.4.11.zip",
+      "size": 114991250,
+      "digest": "sha256:d30e627979ec664f2ddc00051dbd6a10d2c56f048003cef327b03a905bdd75ba"
+    },
+    {
+      "id": 720238123,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-electron-from-0.4.11.zip.sha256",
+      "size": 123,
+      "digest": "sha256:f467b1c46ecb40d343581c6dc3bdc6226c8d95320ec51c435fff121db670693f"
+    },
+    {
+      "id": 720238150,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-electron-from-0.4.12.zip",
+      "size": 114977650,
+      "digest": "sha256:43388848a5d24c01db7e6af2a1a1c3a493fa2ea82f49788bd247a30d67476b76"
+    },
+    {
+      "id": 720238289,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-electron-from-0.4.12.zip.sha256",
+      "size": 123,
+      "digest": "sha256:279fa9dccca0156e651a2b363fa66914ee582e9fa9ae369d0f8e4d36b6682d87"
+    },
+    {
+      "id": 720235965,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-electron.zip",
+      "size": 624022443,
+      "digest": "sha256:01e4e3607db2c54b2e480b45d087183659fd97869f4c91cfd46a4e75fd058ad2"
+    },
+    {
+      "id": 720236400,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-electron.zip.sha256",
+      "size": 111,
+      "digest": "sha256:c4c57eaf59d0789bdcd287faa5705af8a4ed6103133a6026c0aba702352b74ad"
+    },
+    {
+      "id": 720237068,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-setup.exe",
+      "size": 627752376,
+      "digest": "sha256:04a5bf4efb8ad0f1173e8a4f1a1a00f2a3a985425850eae9f7bbcf531f1b18aa"
+    },
+    {
+      "id": 720237632,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-setup.exe.sha256",
+      "size": 108,
+      "digest": "sha256:e10184be84eac91d9ad7cfb0572b52ad23360db432b6edd9dc3379a4721c1928"
+    },
+    {
+      "id": 720236440,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-setup.zip",
+      "size": 617414003,
+      "digest": "sha256:4f196d875215bceb6f66384bea5c635106f34c9cc03fc1b624c5dc8d7156b2cf"
+    },
+    {
+      "id": 720238304,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-setup.zip.json",
+      "size": 1057,
+      "digest": "sha256:0e8f3549389d1e7d332b8634e6019d560c4614e35ef40106a20c33951e525b81"
+    },
+    {
+      "id": 720237034,
+      "name": "EduWork-ECNU-0.4.13-windows-x64-setup.zip.sha256",
+      "size": 108,
+      "digest": "sha256:631d898ca3812537fb891b6727e63b6f933169858d9b677516c433028536015f"
+    },
+    {
+      "id": 720239889,
+      "name": "macos-release-receipt.json",
+      "size": 2987,
+      "digest": "sha256:469fc46decfde8dade4d24509240b1a8a96c2adde0fa68230f512cab9d4f94cd"
+    },
+    {
+      "id": 720241387,
+      "name": "macos-x64-release-receipt.json",
+      "size": 2981,
+      "digest": "sha256:4a269d5486eb122b2a877429b1956d8a7ceb07fd88d27b8037c356a192d1a7bd"
+    },
+    {
+      "id": 720241426,
+      "name": "RELEASE-NOTES.md",
+      "size": 552,
+      "digest": "sha256:738393b47522da15f83907b742f794bcb21e1af5a6d5c6a7d26e0d136e7e7d0f"
+    },
+    {
+      "id": 720238298,
+      "name": "update-windows-amd64.json",
+      "size": 2216,
+      "digest": "sha256:7339742401a40adf75633799341a1d0eef3dae395040b34be5e3edcf0f65976a"
+    },
+    {
+      "id": 720238324,
+      "name": "windows-release-receipt.json",
+      "size": 76788,
+      "digest": "sha256:1f326feffd1e681a36f56030dade6b8431eb150b00655290fc0d72d56d02e92b"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { randomBytes, createHash } from 'node:crypto'
+import { randomBytes, createHash, X509Certificate } from 'node:crypto'
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { validateContext, validateCertificate, validateSignedDetails, validateNotaryResult } from './policy.mjs'
@@ -56,7 +56,22 @@ try {
   await rm(p12)
   delete env.ECNU_MACOS_CERTIFICATE_P12
   delete env.ECNU_MACOS_CERTIFICATE_PASSWORD
-  const valid = await command('check trusted signing identity', '/usr/bin/security', ['find-identity', '-v', '-p', 'codesigning', keychain])
+  let valid = await command('check trusted signing identity', '/usr/bin/security', ['find-identity', '-v', '-p', 'codesigning', keychain])
+  if (!valid.stdout.includes(identity)) {
+    // A P12 produced outside macOS may contain only the leaf. Add its actual
+    // Apple-issued intermediate without changing system trust or adding a root.
+    stage = 'retrieve Apple Developer ID intermediate'
+    const response = await fetch('https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer', {redirect: 'error'})
+    assert(response.ok, 'Apple intermediate download failed')
+    const der = Buffer.from(await response.arrayBuffer())
+    assert(der.length < 65536, 'Unexpected intermediate size')
+    const intermediate = new X509Certificate(der), leaf = new X509Certificate(pem)
+    assert(intermediate.ca && leaf.checkIssued(intermediate) && leaf.verify(intermediate.publicKey), 'Intermediate does not authenticate the pinned certificate')
+    const ca = join(work, 'DeveloperIDG2CA.cer')
+    await writeFile(ca, der, {mode: 0o600})
+    await command('import Apple intermediate', '/usr/bin/security', ['import', ca, '-k', keychain])
+    valid = await command('check completed signing chain', '/usr/bin/security', ['find-identity', '-v', '-p', 'codesigning', keychain])
+  }
   assert(valid.stdout.includes(identity), 'Identity is not trusted for code signing on macOS')
   report.checks.macOSCodeSigningTrust = 'passed'
   const app = join(work, 'EduWork Signing Probe.app')

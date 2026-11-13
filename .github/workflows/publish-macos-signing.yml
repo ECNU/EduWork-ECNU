@@ -1,0 +1,43 @@
+name: Publish signed ECNU macOS release assets
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Existing release to replace with qualified signed Mac assets'
+        required: true
+        type: choice
+        options: ['0.4.13']
+      source_run_id:
+        description: 'Successful Sign existing ECNU macOS release run'
+        required: true
+        type: string
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: ecnu-macos-signing-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'ECNU/EduWork-ECNU' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - name: Verify both architectures and replace only Mac assets
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+        run: node edition/release/macos-signing/publish-existing.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-signing-publication
+          path: ${{ runner.temp }}/macos-signing-publication/publication-verification.json
+          if-no-files-found: error
+          retention-days: 30

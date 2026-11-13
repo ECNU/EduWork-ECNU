@@ -1,0 +1,121 @@
+name: Sign existing ECNU macOS release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Existing release version with reviewed signing inputs'
+        required: true
+        type: choice
+        options: ['0.4.13']
+permissions:
+  contents: read
+concurrency:
+  group: ecnu-macos-signing-release
+  cancel-in-progress: false
+jobs:
+  sign:
+    if: github.repository == 'ECNU/EduWork-ECNU' && github.ref == 'refs/heads/main'
+    environment: macos-signing
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-26
+            arch: arm64
+          - os: macos-26-intel
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: institution
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - name: Resolve reviewed original core
+        id: source
+        working-directory: institution
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: node -e 'const fs=require("fs"); const v=process.env.RELEASE_VERSION; if(!/^\d+\.\d+\.\d+$/.test(v)) throw Error("version"); const p=require("./edition/release/macos-signing/inputs/"+v+".json"); fs.appendFileSync(process.env.GITHUB_OUTPUT,"core="+p.coreCommit+"\n")'
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: ${{ steps.source.outputs.core }}
+          path: core
+          persist-credentials: false
+      - name: Sign, notarize and accept the existing application
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          EDUWORK_CORE_ROOT: ${{ github.workspace }}/core
+          ECNU_MACOS_CERTIFICATE_P12: ${{ secrets.ECNU_MACOS_CERTIFICATE_P12 }}
+          ECNU_MACOS_CERTIFICATE_PASSWORD: ${{ secrets.ECNU_MACOS_CERTIFICATE_PASSWORD }}
+          ECNU_APPLE_ID: ${{ secrets.ECNU_APPLE_ID }}
+          ECNU_APPLE_APP_PASSWORD: ${{ secrets.ECNU_APPLE_APP_PASSWORD }}
+        run: node institution/edition/release/macos-signing/sign-existing.mjs
+      - name: Remove temporary signing credentials
+        if: always()
+        shell: bash
+        run: |
+          security delete-keychain "$RUNNER_TEMP/ecnu-macos-signing-private/signing.keychain-db" >/dev/null 2>&1 || true
+          rm -rf -- "$RUNNER_TEMP/ecnu-macos-signing-private"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signed-macos-${{ matrix.arch }}
+          path: ${{ runner.temp }}/ecnu-macos-resign/output/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: signed-macos-evidence-${{ matrix.arch }}
+          path: |
+            ${{ runner.temp }}/ecnu-macos-resign/evidence/
+            ${{ runner.temp }}/ecnu-macos-resign/acceptance/evidence-public/
+            ${{ runner.temp }}/ecnu-macos-resign/acceptance/gui/*.log
+          if-no-files-found: warn
+          retention-days: 14
+  minimum-os:
+    needs: sign
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+          - os: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: institution
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - uses: actions/checkout@v4
+        with:
+          repository: ECNU/EduWork
+          ref: 6edcb3e507c36576f6352824af4e343fdc741120
+          path: core
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: signed-macos-${{ matrix.arch }}
+          path: candidate
+      - name: Verify tickets and run minimum-system acceptance
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          EDUWORK_CORE_ROOT: ${{ github.workspace }}/core
+        run: node institution/edition/release/macos-signing/accept-signed.mjs candidate "$RUNNER_TEMP/macos15-acceptance"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: signed-macos15-${{ matrix.arch }}
+          path: ${{ runner.temp }}/macos15-acceptance/evidence-public/
+          if-no-files-found: error
+          retention-days: 14

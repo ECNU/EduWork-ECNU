@@ -1,0 +1,26 @@
+name: Test 0.4.12 to signed 0.4.13 with Sparkle
+on:
+  push:
+    branches: [qa/macos-0413-sparkle-migration-20261114]
+permissions:
+  contents: read
+jobs:
+  upgrade:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: sparkle-project/Sparkle
+          ref: eef1a539a373c1f1a320624b1130fc5de7b2e100
+          path: sparkle-src
+          persist-credentials: false
+      - name: Install the published release through Sparkle
+        run: python3 edition/test/qa-sparkle-0413.py

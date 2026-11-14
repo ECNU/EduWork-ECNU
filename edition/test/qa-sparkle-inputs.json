@@ -1,0 +1,34 @@
+{
+  "arm64": {
+    "base": {
+      "url": "https://github.com/ECNU/EduWork-ECNU/releases/download/v0.4.12/EduWork-ECNU-0.4.12-macos-arm64-electron.zip",
+      "sha256": "9b819b67bd9d1f36e2047de841c3d9779da65b9493057f74b24ce6bb5705c49c"
+    },
+    "target": {
+      "name": "EduWork-ECNU-0.4.13-macos-arm64-electron.zip",
+      "url": "https://github.com/ECNU/EduWork-ECNU/releases/download/v0.4.13/EduWork-ECNU-0.4.13-macos-arm64-electron.zip",
+      "sha256": "92365c49ef628b63cf7348f9583b603d8decf9407d10c316bf945b966dfbad3e",
+      "size": 549215357,
+      "edSignature": "EleYNOSWD2yD3w91Bn8U3KphQge9q8SzjAbCCy+7U35TG4LGwQS2FVvcxqrJk0fRaxN25fo7lxBITNRplPs4BQ=="
+    },
+    "wrongBaseDelta": {
+      "url": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases-bridge/stable/0.4.13/EduWork-ECNU-0.4.13-macos-arm64-electron-from-0.4.11.delta",
+      "sha256": "d5f5bc56b0e79a7dd3d7f949cf74508604ea8620d91c39564f46811e99a30a35",
+      "edSignature": "zGpIBncnylScOUlncdBITv8yffMG1prO2ND0INYzK1b7NwMjc2YdLvRCvgOo5ERqrkIJl3McX+p6k++74GaEAw==",
+      "size": 17618
+    }
+  },
+  "x64": {
+    "base": {
+      "url": "https://github.com/ECNU/EduWork-ECNU/releases/download/v0.4.12/EduWork-ECNU-0.4.12-macos-x64-electron.zip",
+      "sha256": "000612e041fed9b02be65e17b351df4c4d6b6c72f512434697d112028eebd2fb"
+    },
+    "target": {
+      "name": "EduWork-ECNU-0.4.13-macos-x64-electron.zip",
+      "url": "https://github.com/ECNU/EduWork-ECNU/releases/download/v0.4.13/EduWork-ECNU-0.4.13-macos-x64-electron.zip",
+      "sha256": "fd78d19d24f9ba09a0c37c91ee49c57b85624b5932df411861e2293ae17f1b22",
+      "size": 578842498,
+      "edSignature": "7A/WDo2ib7dcUQT2ri/xNL/iQiQC8Jg69izJOF8Ed9ORDRysnKiv7sk/Ziz981+h5Ym63rOgs3ZTzmAzNHm0Bg=="
+    }
+  }
+}

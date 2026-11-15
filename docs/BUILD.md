@@ -6,6 +6,10 @@
 
 学校版默认采用红色配色，并复用锁定公版的红色应用图标（Windows ICO、macOS ICNS 和窗口／托盘 PNG），不另存一份学校图标。用户主动保存的蓝色或红色界面偏好继续保留；应用图标始终使用统一的红色。品牌资源说明见公版 `assets/eduwork/README.md`。
 
+## 教程与引导
+
+桌面菜单「应用 → 使用教程」的学校内容维护在[学校使用指南](USER_GUIDE.md)。在支持发行版教程的公版核心上，装配会自动用这份 Markdown 生成离线首页，通用教程一同随包提供。首次启动引导的学校用语在[发行配置](../edition/distribution.json)中 `eduwork-user-guide` 的 `config.copy` 下按语言和步骤维护。当前仅覆盖最后一步，其余文案继承公版。
+
 ## 锁定公共核心
 
 [core.lock.json](../core.lock.json) 锁定公版的精确提交与源码文件集合。CI 检出该提交并调用共用构建流程，不跟随 `main`，也不从相邻开发工作区装配。新导出的公版提交必须先推送，托管 CI 才能获取；仅保存在本机的快照不能被远端 CI 读取。
@@ -86,7 +90,7 @@ GitHub 桌面发行使用 CI 产物。先合并已审核的源码、证书策略
 
 运行 `Publish ECNU desktop candidate` 时，同时填写成功原构建的 `source_run_id`、最终签名运行的 `windows_signing_run_id`、相同版本、已确认的说明路径及 `notes_approved=true`。先以 `publish=false` 验证，获得发布授权后，在 `main` 以同一对运行 ID 设置 `publish=true`。学校[发布脚本](../edition/release/windows-signing/publish.mjs)复用锁定公版的校验模块，检查三平台回执、macOS 15 兼容验收、完整签名来源链与文件哈希，再直接上传已有 CI 文件。上传失败复用同一最终 artifact 重试，不重新打包或从本机转传。预发布不设 Latest，正式版标记 Latest；发布 GitHub Release 不自动部署 OSS 或修改配置源。只有远端附件、标签和适用的 Latest 状态核对完成，才算发布完成。
 
-`Build ECNU desktop release candidates` 工作流复用锁定公版的 Node `pinned-source` 构建入口，在 Windows x64、macOS arm64 和 macOS x64 上分别构建同版本候选，保留学校签名配置首次加载验证。默认 `publish=false`，仅生成供验收的 artifact；正式候选也必须提供已确认的 `docs/releases/<version>.md` 并设置 `notes_approved=true`。不需要发布说明的开发测试使用 `development=true` 和 `X.Y.Z-dev.YYYYMMDD.N` 版本号，不填写发布说明、不批准或发布 Release。维护者下载产物完成学校配置与登录验收后，由 CI 发布原包到 GitHub；部署 OSS 须另行授权，两处 ZIP 的 SHA-256 必须一致。Mac 支持 macOS 15+ 的 Apple Silicon 与 Intel。两种架构复用公版目标选择器，在 macOS 26、Xcode 26.6 环境原生构建，并将同一 ZIP 送到相应架构的 macOS 15 runner 验收。Mac 包只有 ad-hoc 签名，尚未 Apple 公证；常规 Mac 包使用公版 Sparkle 更新实现，用户确认后下载、替换和重启。`edition/desktop/mac-updates.json` 固定 Mac 双渠道和 Ed25519 公钥；Intel 通过 `feedsByArch.x64` 使用独立的 `releases/macos/x64/` 更新目录，Apple Silicon 保持原地址。候选构建不会上传或更新这些 OSS 清单。私钥留在仓库外，按公版 [Mac 更新指南](https://github.com/ECNU/EduWork/blob/main/docs/MACOS_UPDATES.md) 对 CI 原包生成签名 appcast。不得把 Windows 更新包配置到 Mac 渠道。旧 Mac 客户端首次仍需手动替换到支持 Sparkle 的包。
+`Build ECNU desktop release candidates` 工作流复用锁定公版的 Node `pinned-source` 构建入口，在 Windows x64、macOS arm64 和 macOS x64 上分别构建同版本候选，保留学校签名配置首次加载验证。默认 `publish=false`，仅生成供验收的 artifact；正式候选也必须提供已确认的 `docs/releases/<version>.md` 并设置 `notes_approved=true`。不需要发布说明的开发测试使用 `development=true` 和 `X.Y.Z-dev.YYYYMMDD.N` 版本号，不填写发布说明、不批准或发布 Release。维护者下载产物完成学校配置与登录验收后，由 CI 发布原包到 GitHub；部署 OSS 须另行授权，两处 ZIP 的 SHA-256 必须一致。Mac 支持 macOS 15+ 的 Apple Silicon 与 Intel。两种架构复用公版目标选择器，在 macOS 26、Xcode 26.6 环境原生构建，并将同一 ZIP 送到相应架构的 macOS 15 runner 验收。基础候选带 ad-hoc 签名，对外提供的签名 DMG 另经学校 Developer ID 签名、Apple 公证和装订。常规 Mac 包使用公版 Sparkle 更新实现，用户确认后下载、替换和重启。`edition/desktop/mac-updates.json` 固定 Mac 双渠道和 Ed25519 公钥；Intel 通过 `feedsByArch.x64` 使用独立的 `releases/macos/x64/` 更新目录，Apple Silicon 保持原地址。候选构建不会上传或更新这些 OSS 清单。私钥留在仓库外，按公版 [Mac 更新指南](https://github.com/ECNU/EduWork/blob/main/docs/MACOS_UPDATES.md) 对 CI 原包生成签名 appcast。不得把 Windows 更新包配置到 Mac 渠道。旧 Mac 客户端首次仍需手动替换到支持 Sparkle 的包。
 
 本地分发与验收直接下载 GitHub CI 的 ZIP，校验 SHA-256 后即可使用。`edition/desktop/configuration-policy.json` 声明发行方管理配置，引导文件内置软件与内容更新源、验签公钥（0.4.0 使用 `edition/desktop-020/publisher-bootstrap.json` 及其 macOS 对应文件）；不包含实际 Client ID、模型目录或个人凭据。默认配置的机构列表为空，首次启动下载签名学校配置。无需在 Windows 本机重新装配，也无需为 Mac 另做配置 PKG。完整格式见公版 [首次启动获取配置](https://github.com/ecnu/EduWork/blob/main/docs/PUBLISHER_BOOTSTRAP.md)。
 

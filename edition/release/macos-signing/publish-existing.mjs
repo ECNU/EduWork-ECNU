@@ -4,13 +4,13 @@ import {resolve,join} from 'node:path'
 import {execFileSync} from 'node:child_process'
 import {signingGitHub} from '../windows-signing/io.mjs'
 import {identity} from './files.mjs'
-import {releaseAPI} from './github.mjs'
+import {readReviewedRelease, releaseAPI} from './github.mjs'
 import {validateSourceRun,validateQualification,replaceMacAssets} from './publication.mjs'
 const env=process.env,version=env.RELEASE_VERSION,runId=env.SOURCE_RUN_ID
 assert.equal(env.GITHUB_REPOSITORY,'ECNU/EduWork-ECNU');assert.equal(env.GITHUB_REF,'refs/heads/main');assert.equal(env.GITHUB_EVENT_NAME,'workflow_dispatch')
-assert.match(version??'',/^\d+\.\d+\.\d+$/);assert.match(runId??'',/^[1-9][0-9]*$/)
+assert.match(runId??'',/^[1-9][0-9]*$/)
 const planPath=`edition/release/macos-signing/inputs/${version}.json`
-const plan=JSON.parse(await readFile(planPath)),policy=JSON.parse(await readFile('edition/macos-signing.json'))
+const plan=await readReviewedRelease(version),policy=JSON.parse(await readFile('edition/macos-signing.json'))
 const github=signingGitHub(env.GITHUB_REPOSITORY,env.GITHUB_TOKEN),api=releaseAPI(),run=await github.request(`/actions/runs/${runId}`)
 validateSourceRun(run)
 execFileSync('git',['merge-base','--is-ancestor',run.head_sha,env.GITHUB_SHA])

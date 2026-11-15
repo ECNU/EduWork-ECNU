@@ -7,10 +7,10 @@ import { promisify } from 'node:util'
 import { signingSession } from './session.mjs'
 import { inventory, signingOrder, entitlementsFor, validateContentPreserved, validateReleaseMetadata, identity, digest } from './files.mjs'
 import { validateSignedDetails, validateNotaryResult } from './policy.mjs'
-import { releaseAPI, validateRelease } from './github.mjs'
+import { readReviewedRelease, releaseAPI, validateRelease } from './github.mjs'
 const exec=promisify(execFile),env=process.env
-const version=env.RELEASE_VERSION;assert.match(version??'',/^\d+\.\d+\.\d+$/)
-const plan=JSON.parse(await readFile(new URL(`./inputs/${version}.json`,import.meta.url)))
+const version=env.RELEASE_VERSION
+const plan=await readReviewedRelease(version)
 const policy=JSON.parse(await readFile(new URL('../../macos-signing.json',import.meta.url)))
 assert.equal(env.GITHUB_REPOSITORY,plan.repository);assert.equal(env.GITHUB_REF,'refs/heads/main')
 assert.equal(process.platform,'darwin');assert(['arm64','x64'].includes(process.arch))

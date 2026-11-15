@@ -6,7 +6,7 @@ on:
         description: 'Existing release version with reviewed signing inputs'
         required: true
         type: choice
-        options: ['0.4.13']
+        options: ['0.4.13', '0.4.14-dev.20261115.1']
 permissions:
   contents: read
 concurrency:
@@ -16,6 +16,8 @@ jobs:
   sign:
     if: github.repository == 'ECNU/EduWork-ECNU' && github.ref == 'refs/heads/main'
     environment: macos-signing
+    outputs:
+      core: ${{ steps.source.outputs.core }}
     strategy:
       fail-fast: false
       matrix:
@@ -38,7 +40,13 @@ jobs:
         working-directory: institution
         env:
           RELEASE_VERSION: ${{ inputs.version }}
-        run: node -e 'const fs=require("fs"); const v=process.env.RELEASE_VERSION; if(!/^\d+\.\d+\.\d+$/.test(v)) throw Error("version"); const p=require("./edition/release/macos-signing/inputs/"+v+".json"); fs.appendFileSync(process.env.GITHUB_OUTPUT,"core="+p.coreCommit+"\n")'
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs'
+          import { readReviewedRelease } from './edition/release/macos-signing/github.mjs'
+          const plan = await readReviewedRelease(process.env.RELEASE_VERSION)
+          appendFileSync(process.env.GITHUB_OUTPUT, 'core=' + plan.coreCommit + '\n')
+          NODE
       - uses: actions/checkout@v4
         with:
           repository: ECNU/EduWork
@@ -100,7 +108,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: ECNU/EduWork
-          ref: 6edcb3e507c36576f6352824af4e343fdc741120
+          ref: ${{ needs.sign.outputs.core }}
           path: core
           persist-credentials: false
       - uses: actions/download-artifact@v4

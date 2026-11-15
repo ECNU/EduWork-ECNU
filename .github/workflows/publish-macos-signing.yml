@@ -6,7 +6,7 @@ on:
         description: 'Existing release to replace with qualified signed Mac assets'
         required: true
         type: choice
-        options: ['0.4.13']
+        options: ['0.4.13', '0.4.14-dev.20261115.1']
       source_run_id:
         description: 'Successful Sign existing ECNU macOS release run'
         required: true

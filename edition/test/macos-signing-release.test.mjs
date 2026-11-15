@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFile} from 'node:fs/promises'
 import {entitlementsFor,signingOrder,machoMagic,validateContentPreserved} from '../release/macos-signing/files.mjs'
-import {validateRelease} from '../release/macos-signing/github.mjs'
+import {readReviewedRelease, validateRelease} from '../release/macos-signing/github.mjs'
 import {validateSourceRun,validateQualification,validatePublicationState,replaceMacAssets} from '../release/macos-signing/publication.mjs'
 const plan=JSON.parse(await readFile(new URL('../release/macos-signing/inputs/0.4.13.json',import.meta.url)))
 const policy=JSON.parse(await readFile(new URL('../macos-signing.json',import.meta.url)))
@@ -28,11 +28,20 @@ test('signing source rejects a modified or missing original release asset',()=>{
   // The production manifest binds the actual release body hash; this fixture
   // supplies an independent known body so its mutation check is exercised.
   const fixture={...plan,bodySHA256:'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}
-  const release={id:plan.releaseId,tag_name:plan.tag,target_commitish:plan.editionCommit,draft:false,immutable:false,body:'',assets:clone(plan.assets)}
+  const release={id:plan.releaseId,tag_name:plan.tag,target_commitish:plan.editionCommit,draft:false,prerelease:false,immutable:false,body:'',assets:clone(plan.assets)}
   validateRelease(release,fixture)
+  const devPlan={...fixture,version:'0.4.14-dev.20261115.1',tag:'v0.4.14-dev.20261115.1'}
+  const devRelease={...release,tag_name:devPlan.tag,prerelease:true}
+  validateRelease(devRelease,devPlan)
+  assert.throws(()=>validateRelease({...devRelease,prerelease:false},devPlan))
   for(const alter of [s=>s.assets[0].digest='sha256:bad',s=>s.assets.pop(),s=>s.body='different',s=>s.target_commitish='main']) {
     const bad=clone(release);alter(bad);assert.throws(()=>validateRelease(bad,fixture))
   }
+})
+test('Mac signing loads only explicitly reviewed release versions',async()=>{
+  assert.deepEqual(await readReviewedRelease(plan.version),plan)
+  await assert.rejects(readReviewedRelease('0.4.14-dev.20261115.0'),{code:'ERR_ASSERTION'})
+  await assert.rejects(readReviewedRelease('0.4.14-dev.20261115.1/draft'),{code:'ERR_ASSERTION'})
 })
 const sourceRun={id:123,repository:{full_name:'ECNU/EduWork-ECNU'},path:'.github/workflows/macos-signing-release.yml',event:'workflow_dispatch',head_branch:'main',status:'completed',conclusion:'success',head_sha:'a'.repeat(40)}
 test('publication accepts only completed main signing workflow runs',()=>{
@@ -58,7 +67,7 @@ function fixture(){
   const assets=plan.assets.filter(a=>/macos.*(?:\.zip|\.dmg|\.sha256|receipt\.json)$/.test(a.name))
   assert.equal(assets.length,10)
   const items=assets.map((a,i)=>({name:a.name,file:a.name,expected:{bytes:100+i,sha256:String(i).repeat(64)}}))
-  const release={id:p.releaseId,tag_name:p.tag,target_commitish:p.editionCommit,body:'',draft:false,immutable:false,assets:clone(p.assets)}
+  const release={id:p.releaseId,tag_name:p.tag,target_commitish:p.editionCommit,body:'',draft:false,prerelease:false,immutable:false,assets:clone(p.assets)}
   let id=900000000,mutations=0,failAt=Infinity
   const api={
     async upload(releaseId,file,name,expected){assert.equal(releaseId,p.releaseId);release.assets.push({id:id++,name,size:expected.bytes,digest:'sha256:'+expected.sha256})},
@@ -88,4 +97,14 @@ test('unexpected replacement bytes or changed Windows asset abort before mutatio
   assert.throws(()=>validatePublicationState(f.release,f.p,f.items,'123'))
   const g=fixture();g.release.assets.find(a=>a.name.includes('windows')).size++
   assert.throws(()=>validatePublicationState(g.release,g.p,g.items,'123'))
+})
+test('changing a development release to stable aborts Mac asset replacement',()=>{
+  const {release,p,items}=fixture()
+  p.version='0.4.14-dev.20261115.1'
+  p.tag='v'+p.version
+  release.tag_name=p.tag
+  release.prerelease=true
+  validatePublicationState(release,p,items,'123')
+  release.prerelease=false
+  assert.throws(()=>validatePublicationState(release,p,items,'123'))
 })

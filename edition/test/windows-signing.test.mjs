@@ -302,7 +302,7 @@ test('publisher rejects an unsigned request before any network or file input',as
 
 test('actual signed updater survives the pinned packer manifest check byte-for-byte', {skip:!process.env.EDUWORK_SIGNED_UPDATER_FIXTURE},async t=>{
   const root=await mkdtemp(join(tmpdir(),'ecnu-signed-packer-'));t.after(()=>rm(root,{recursive:true,force:true}))
-  const fixture=process.env.EDUWORK_SIGNED_UPDATER_FIXTURE,output=join(root,'EduWork-ECNU-0.4.11-windows-x64-electron.zip')
+  const fixture=process.env.EDUWORK_SIGNED_UPDATER_FIXTURE
   const {signingTool}=await import('../release/windows-signing/operations.mjs')
   const realPolicy=JSON.parse(await readFile(new URL('../windows-signing.json',import.meta.url),'utf8'))
   await signingTool('verify',{file:fixture,policy:realPolicy,output:join(root,'verification.json')},join(root,'verify'))
@@ -315,15 +315,20 @@ test('actual signed updater survives the pinned packer manifest check byte-for-b
     const root=${JSON.stringify(root)},fixture=${JSON.stringify(fixture)},candidate=join(root,'candidate');
     const before=await sha256File(fixture);await mkdir(join(candidate,'resources/update'),{recursive:true});await mkdir(join(candidate,'resources/app'),{recursive:true});
     await copyFile(fixture,join(candidate,'resources/update/EduWork-Updater.exe'));
-    await writeFile(join(candidate,'resources/app/eduwork.desktop.json'),JSON.stringify({productVersion:'0.4.11',shell:'electron',distribution:'eduwork-chatecnu'}));
     for(const name of ['ChatECNU-Work.exe','EduWork.exe','EduWork-Electron.exe'])await writeFile(join(candidate,name),'non-executed launcher fixture');
-    await packSignedInner(candidate,${JSON.stringify(output)});
-    assert.equal(await sha256File(fixture),before);assert.equal(await sha256File(join(candidate,'resources/update/EduWork-Updater.exe')),before);
-    const {ZipReader}=await coreModule('scripts/lib/zip.mjs'),zip=await ZipReader.open(${JSON.stringify(output)});
-    const delivered=zip.read(zip.entries.find(e=>e.name.endsWith('/resources/update/EduWork-Updater.exe')));
-    assert(delivered.equals(await readFile(fixture)));
-    const manifest=JSON.parse(zip.read(zip.entries.find(e=>e.name.endsWith('/RELEASE-MANIFEST.json'))));
-    assert.equal(manifest.files.find(f=>f.path==='resources/update/EduWork-Updater.exe').sha256,before);`
+    const {ZipReader}=await coreModule('scripts/lib/zip.mjs');
+    for(const version of ['0.4.11','0.4.14-dev.20261115.1']){
+      await writeFile(join(candidate,'resources/app/eduwork.desktop.json'),JSON.stringify({productVersion:version,shell:'electron',distribution:'eduwork-chatecnu'}));
+      const output=join(root,'EduWork-ECNU-'+version+'-windows-x64-electron.zip');
+      await packSignedInner(candidate,output,version);
+      assert.equal(await sha256File(fixture),before);assert.equal(await sha256File(join(candidate,'resources/update/EduWork-Updater.exe')),before);
+      const zip=await ZipReader.open(output);
+      const delivered=zip.read(zip.entries.find(e=>e.name.endsWith('/resources/update/EduWork-Updater.exe')));
+      assert(delivered.equals(await readFile(fixture)));
+      const manifest=JSON.parse(zip.read(zip.entries.find(e=>e.name.endsWith('/RELEASE-MANIFEST.json'))));
+      assert.equal(manifest.version,version);
+      assert.equal(manifest.files.find(f=>f.path==='resources/update/EduWork-Updater.exe').sha256,before);
+    }`
   await promisify(execFile)(process.execPath,['--input-type=module','-e',script],{windowsHide:true})
 })
 

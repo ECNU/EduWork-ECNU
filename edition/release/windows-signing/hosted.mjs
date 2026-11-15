@@ -83,7 +83,7 @@ try {
       }
       await rm(join(payload,'RELEASE-MANIFEST.json'))
       const signedArchive=join(stateRoot,'signed',receipt.asset.name)
-      await packSignedInner(payload,signedArchive)
+      await packSignedInner(payload,signedArchive,receipt.version)
       const {ZipReader}=await coreModule('scripts/lib/zip.mjs'),archiveReader=await ZipReader.open(signedArchive)
       const deliveredManifest=JSON.parse(archiveReader.read(archiveReader.entries.find(e=>e.name===receipt.edition+'/RELEASE-MANIFEST.json')).toString('utf8'))
       compareManifests(state.originalManifest,deliveredManifest)

@@ -37,6 +37,7 @@ export function sameBytes(asset,expected) {return asset?.size===expected.bytes&&
 export function validatePublicationState(release,plan,items,runId) {
   assert.equal(release.id,plan.releaseId);assert.equal(release.tag_name,plan.tag)
   assert.equal(release.target_commitish,plan.editionCommit);assert.equal(release.draft,false);assert.equal(release.immutable,false)
+  assert.equal(release.prerelease,plan.version.includes('-dev.'))
   assert.equal(textHash(release.body),plan.bodySHA256)
   const byName=new Map(release.assets.map(a=>[a.name,a]));assert.equal(byName.size,release.assets.length)
   const names=new Set(items.map(item=>item.name));assert.equal(names.size,10)

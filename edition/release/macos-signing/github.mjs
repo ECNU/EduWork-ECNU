@@ -3,15 +3,23 @@ import { createReadStream, createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
 import { Readable } from 'node:stream'
 import { createHash } from 'node:crypto'
-import { mkdir } from 'node:fs/promises'
+import { mkdir, readFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { identity } from './files.mjs'
 
 export const textHash = value => createHash('sha256').update(value).digest('hex')
+export async function readReviewedRelease(version) {
+  assert.match(version ?? '', /^\d+\.\d+\.\d+(?:-dev\.\d{8}\.[1-9]\d*)?$/)
+  const plan = JSON.parse(await readFile(new URL(`./inputs/${version}.json`, import.meta.url), 'utf8'))
+  assert.equal(plan.version, version)
+  assert.equal(plan.tag, 'v' + version)
+  return plan
+}
 export function validateRelease(release, plan, {allowExtra = false} = {}) {
   assert.equal(release.id, plan.releaseId);assert.equal(release.tag_name, plan.tag)
   assert.equal(release.target_commitish, plan.editionCommit)
   assert.equal(release.draft,false);assert.equal(release.immutable,false)
+  assert.equal(release.prerelease, plan.version.includes('-dev.'))
   assert.equal(textHash(release.body),plan.bodySHA256)
   if(!allowExtra)assert.equal(release.assets.length,plan.assets.length)
   for(const asset of plan.assets) {

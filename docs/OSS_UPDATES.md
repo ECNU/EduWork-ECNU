@@ -31,8 +31,15 @@ node edition/release/oss-deltas.mjs --core ../EduWork \
 5. Windows 清单必须保留完整 artifact，同时带上 `deltas`；不能复制 GitHub 的原清单覆盖掉 OSS 新增的差分条目。
 6. Mac 使用派生的 `macos-signing-receipt.json` 和同目录原 ZIP，通过公版 `scripts/macos-update-feed.mjs sign` 签署完整包与每个差分，独立验签后更新 appcast。更新已有版本时替换该版本的整个 item，保留其他版本 item；不要重复插入同版本条目。
 7. 回读线上清单，验证匹配基线选择增量、不匹配基线回退全量，以及 stable/development 隔离。开发版发包不得覆盖 stable 清单；发布正式版时，development 的 Mac appcast 也应包含该正式版，以便开发用户正常转入正式版。
-8. **正式版还必须同步官网指针。** `website-pointers.mjs prepare` 从已发布 Release 生成 Windows EXE、兼容 Windows ZIP、Mac Apple Silicon、Mac Intel 共四份指针。网站主下载读取 `latest-windows-amd64-exe.json`、`latest-macos-arm64.json`、`latest-macos-x64.json`；EXE 指针的 `fallbackArtifact` 同时提供相同版本的 ZIP 备用下载。旧 `latest-windows-amd64.json` 保持只含 ZIP，使已部署的旧网页继续工作。只引用 CI 原文件，安装包、签名和校验文件回读验证后才上传指针，设置 `Cache-Control: no-cache` 并保留 CORS。开发版不更新官网指针。
+8. 官网按渠道读取 `releases-bridge/<channel>/website/` 中的安装包指针。稳定版使用 `stable`，日期格式的开发预览版使用 `development`。Windows 主下载读取 `latest-windows-amd64-exe.json`，其 `fallbackArtifact` 是同版本的备用 ZIP。兼容旧网页的 `latest-windows-amd64.json` 仍提供 ZIP。Mac 两种架构分别读取 `latest-macos-arm64.json` 和 `latest-macos-x64.json`。验证发布原包的签名、字节数和 SHA-256 后，先上传安装包与校验文件，回读一致后再上传对应渠道的指针。指针设置 `Cache-Control: no-cache`，保留旧网页所需的 CORS。
 9. 发布完成前运行下述官网线上校验。六份客户端渠道清单（Windows 和 Mac 双架构各 stable/development）及四份官网指针都必须验证；版本、链接、大小或 SHA-256 不一致时，不能标记为完成。新增 EXE 下载的网页兼容改动需要部署一次，以后发版继续只更新指针；未部署前旧网页仍提供对应版本的 ZIP。
+
+给官网下载页增加开发预览版时，使用已公开的学校版 GitHub Prerelease JSON。命令会检查版本标签、渠道和每个安装文件的 GitHub 摘要。把准备好的四份 JSON 放到 `chatecnu-work/releases-bridge/development/website/`。开发预览入口可在首次发布前显示「暂无开发预览版」。
+
+```sh
+node edition/release/website-pointers.mjs prepare --channel development --release preview-release.json --output new-preview-pointers
+node edition/release/website-pointers.mjs verify --channel development --release preview-release.json
+```
 
 Windows 清单输入示例（`base-url` 是完整版本目录）：
 

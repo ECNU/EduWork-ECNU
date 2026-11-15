@@ -4,8 +4,8 @@
   "edition": "ecnu",
   "version": "0.4.13",
   "sourceState": "local-development-snapshot",
-  "createdAt": "2026-11-07T06:12:30.762Z",
-  "fileSetSHA256": "8608d8bce1d56fb786cae6bc737e87af0f813402147cecec361b907a571ac007",
+  "createdAt": "2026-11-15T02:27:39.678Z",
+  "fileSetSHA256": "c5593a499753fb9b6f3890b9991d82d674d854dc9dbeaacf2f51746c1304d530",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,15 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "cdef8ea342b89590d054d1499ba21953db2dfdd31aedc61f8ac804bb6b2bb2d4"
+      "sha256": "a1c954fd2a02cbc0c0c4819360c070a5f4559459738d555560006a8feb4cc2bb"
+    },
+    {
+      "path": ".github/workflows/macos-signing-preflight.yml",
+      "sha256": "51936c8de1b434de47404e010c2ec35a42eae4738be532c0000a80a4ec1e6af1"
+    },
+    {
+      "path": ".github/workflows/macos-signing-release.yml",
+      "sha256": "666b3adc0f297d9b92f20522d9d342112434a25b0bbd73a92e52b11598044174"
     },
     {
       "path": ".github/workflows/oss-deltas.yml",
@@ -24,8 +32,16 @@
       "sha256": "0608fdc7a137ca5f632d4c27abd4a8066a971423ff23acdc6e2f692e6965c25c"
     },
     {
+      "path": ".github/workflows/publish-macos-signing.yml",
+      "sha256": "414840d45007fc6309df2ffa9687bf7aa4fd10dffab32e4228f9d77c8ce4f869"
+    },
+    {
       "path": ".github/workflows/validate-local-web.yml",
       "sha256": "ff086bcade8b43851341ac045455f82100134cd162d2832d656aab3882f569d3"
+    },
+    {
+      "path": ".github/workflows/validate-macos-signing.yml",
+      "sha256": "c49c2eaab3f82c7310c67f1d082622d3de4334d0f2731056cabbefadadbddbc0"
     },
     {
       "path": ".github/workflows/validate-windows-signing.yml",
@@ -49,11 +65,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "3c9ba809bc128c90247ee8899377b3bd2209140f60fd9cddec7b29bb9a640968"
+      "sha256": "6074705534e44de181780e5bd8935fd521570ae5fac716a856dd4e5810f2fea7"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "750522a621e6c29aadd0e9251f90b84c503ef118e148704a255da177adc296fe"
+      "sha256": "e8071a4179ecd8d3324b9b5ce67aac195914fbe51af6831557455c35d13a0741"
     },
     {
       "path": "docs/DECISION_EN.md",
@@ -98,6 +114,10 @@
     {
       "path": "docs/images/workspace.png",
       "sha256": "294783088c45fdce11ed6125557b9291e019b39d9e1977c4de4296cb95229866"
+    },
+    {
+      "path": "docs/MACOS-SIGNING.md",
+      "sha256": "d8df1ab8a9ef2bbe12c3692e026ec48f842bb3122b5ac68e1fbff2e7dbd4a3d4"
     },
     {
       "path": "docs/MUSIC.md",
@@ -228,6 +248,22 @@
       "sha256": "d35b1a49878ca364add4e647dbc0d09496fa67a3f6e10fc0c61aa44a38d67e2b"
     },
     {
+      "path": "edition/calendar/development.json",
+      "sha256": "f4513b375f623fd416908e268bbef0c880958b4c5ea6e433c7cc91bdd8877ed3"
+    },
+    {
+      "path": "edition/calendar/guide.md",
+      "sha256": "19a4c4b9f36d5c0700f5e076d3fe3d82caa128d11f4d339ea5103ede724fc88a"
+    },
+    {
+      "path": "edition/calendar/stage-development.mjs",
+      "sha256": "c1b79fc5a12f86f97299a3985b51c836c02dbe69209bb1f93abb9e8ca2cfc638"
+    },
+    {
+      "path": "edition/calendar/verify-development.mjs",
+      "sha256": "059aa43c8bfef97fe626d73f7ffb3b4056c070bc864789e678bde6bc2a175d90"
+    },
+    {
       "path": "edition/desktop-020/publisher-bootstrap.darwin.json",
       "sha256": "60e1de8c3048daa8acf44ef074245a30c2cd9bab9bdb5be159c305b5713982d3"
     },
@@ -297,7 +333,11 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "4bfd569a56c502529de50d76b9511117d647669e01dffb2204a632c18daaeb47"
+      "sha256": "5c96a3cb7287082b956aa681ab9fd5543e8f42d679b90a031fb4295d2758dc9f"
+    },
+    {
+      "path": "edition/macos-signing.json",
+      "sha256": "3f8922a6f6836dc02742fc9ae46006ec354dd8a4d6bd8a5a80cd5365ce2ac4a5"
     },
     {
       "path": "edition/plugins/chatecnu-active-heartbeat/lib/client.js",
@@ -466,6 +506,26 @@
     {
       "path": "edition/plugins/ecnu-account-resources/tsdown.config.ts",
       "sha256": "06fa7ef870200895a616cb959913c1c8f07e35aaab6eb230b981f69d1a9a7387"
+    },
+    {
+      "path": "edition/plugins/ecnu-calendar/data/2026-2027.json",
+      "sha256": "725f8ff00d3b5dc4c223ddaba0950236022bff47b265b3a277e2e1c7efe10f3d"
+    },
+    {
+      "path": "edition/plugins/ecnu-calendar/lib/index.js",
+      "sha256": "23904dc07caeb9bf5e38d18e98c4304e967fa04f257e8667bff70911bf472c15"
+    },
+    {
+      "path": "edition/plugins/ecnu-calendar/package.json",
+      "sha256": "a9784f1633bc7a3677c3f966e3f370feebb457616e43e77ec944a60898ec64fb"
+    },
+    {
+      "path": "edition/plugins/ecnu-calendar/README_EN.md",
+      "sha256": "9d6ce57dea894ae47ea17302b8199e6ce2775c4570032ae9c837490fac132bc5"
+    },
+    {
+      "path": "edition/plugins/ecnu-calendar/README.md",
+      "sha256": "feb27b9fd3a6ec61a853824d6e7abc50eacd0baa09ac4a077abb08ec5ddd822e"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/lib/evidence-store.js",
@@ -1064,6 +1124,46 @@
       "sha256": "03828e795806be0105f8b7e4e4a339ecfee41f04bfc0a81e8607e1e4a92d6e54"
     },
     {
+      "path": "edition/release/macos-signing/accept-signed.mjs",
+      "sha256": "80159b7488344594690daee7e430636dfda057e108bdf06b2ff405ccb18f19ac"
+    },
+    {
+      "path": "edition/release/macos-signing/files.mjs",
+      "sha256": "a42f5026762de42886279b21c672a1aaf5abb04102dab4350a525e05089d8e8f"
+    },
+    {
+      "path": "edition/release/macos-signing/github.mjs",
+      "sha256": "1fd41d275dad1f82676696c64ad616d737d0a09379ba8b942465669dcb57de4f"
+    },
+    {
+      "path": "edition/release/macos-signing/inputs/0.4.13.json",
+      "sha256": "10c7d4e9e67f333b9f815ee70739331c1672e0fa2b9267135aea8c435bca5afe"
+    },
+    {
+      "path": "edition/release/macos-signing/policy.mjs",
+      "sha256": "5b17d31acaa8ad2d0cb67e8978ea948a7a861dcdaa17ea08ec22f6a2a097dc32"
+    },
+    {
+      "path": "edition/release/macos-signing/preflight.mjs",
+      "sha256": "beaf0ac4adbffae97e4e5b606a121cae34ace7d32b8a5cda2ebe37932b36f214"
+    },
+    {
+      "path": "edition/release/macos-signing/publication.mjs",
+      "sha256": "b8d99d39f38f093af5d015086db6f21c66065e41b85c6179f5fcdb5c94ce35cd"
+    },
+    {
+      "path": "edition/release/macos-signing/publish-existing.mjs",
+      "sha256": "78bde3100cc14adac88fad952191cb2d3f6f15faa9dd011713b0be0c0c506480"
+    },
+    {
+      "path": "edition/release/macos-signing/session.mjs",
+      "sha256": "fe9e7986fb2ed5d31fb1ab3da6a7d8ad2b9ff89a9d42970d31c7ca3e83fa7275"
+    },
+    {
+      "path": "edition/release/macos-signing/sign-existing.mjs",
+      "sha256": "5bd0635dbe5ea816edac45c5f271fe1426b25cde00678e926724ea77cdacacfc"
+    },
+    {
       "path": "edition/release/oss-deltas.mjs",
       "sha256": "ae368f2486a722891a0d9f361e298dc19ed5cc2b8567f42245f7aaa1df3ad1a4"
     },
@@ -1196,6 +1296,14 @@
       "sha256": "f279157c920628ad4f0e3b921889fa1006d8d874196100fdad5714006b53c150"
     },
     {
+      "path": "edition/test/calendar-browser-registration.test.mjs",
+      "sha256": "e11e84add77686c8a4aecbd11214f6af84cdf211031c7e0646be1cb7f665fa27"
+    },
+    {
+      "path": "edition/test/calendar-pilot.test.mjs",
+      "sha256": "aca2b42756898b18e6ab5d1237421184a004d8b4d25f309cee210c67189f37df"
+    },
+    {
       "path": "edition/test/candidate-failure-evidence.test.mjs",
       "sha256": "22ca59432e07a3d7ab572d6e8f86a0e4a3138d69a6c8500564c091933eb47f51"
     },
@@ -1216,6 +1324,14 @@
       "sha256": "9aec79c1735fcfc1858140d7ac3552dc30df9062a0f5930ac174e88622b0dd8b"
     },
     {
+      "path": "edition/test/macos-signing-release.test.mjs",
+      "sha256": "83914694855a2a69f1565acffa1134295b5204f5b76d26588ff252d41b348450"
+    },
+    {
+      "path": "edition/test/macos-signing.test.mjs",
+      "sha256": "d5b93d25d76a375cdb492303f76c82cb0e47a82a491512ac0c035b69bdc7d6d1"
+    },
+    {
       "path": "edition/test/optional-packaging.test.mjs",
       "sha256": "f9ca45dfcdb1d1ff1ba3ad6b3806c8c86e4fcca2da3446377426b3c8e7dda7ef"
     },
@@ -1229,7 +1345,7 @@
     },
     {
       "path": "edition/test/runtime-resolver.mjs",
-      "sha256": "36e1ae3c94bad083c06c17282fa4c5cca5252d947b12ecf27299318b55ccd5ea"
+      "sha256": "56a9a4062a831848c18d85e1f846e4ea7500392e8efa847e37f09d684f15d5ab"
     },
     {
       "path": "edition/test/test-desktop-candidate.ps1",

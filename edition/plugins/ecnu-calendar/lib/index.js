@@ -33,7 +33,7 @@ export default class EcnuCalendar extends Service {
         if (gone) return
         handle = await inner.academicCalendar.registerDataset({
           id: `ecnu-academic-calendar:${this.dataset.academicYear}`,
-          label: `ECNU ${this.dataset.academicYear} 本科校历`,
+          label: `华东师范大学 ${this.dataset.academicYear} 学年校历`,
           dataset: this.dataset,
           source: { provider: 'ecnu-calendar', account: 'institution', feed: `academic-calendar-${this.dataset.academicYear}` },
         })

@@ -24,6 +24,18 @@
           "path": "../../resources/calendar/2026-2027.json"
         }
       ]
+    },
+    {
+      "name": "calendar-subscriptions",
+      "sourcePackage": "@eduwork/dsh-calendar-subscriptions",
+      "sourcePath": "skills/calendar-subscriptions",
+      "defaultEnabled": true
+    },
+    {
+      "name": "academic-calendar",
+      "sourcePackage": "@eduwork/dsh-academic-calendar",
+      "sourcePath": "skills/academic-calendar",
+      "defaultEnabled": true
     }
   ]
 }

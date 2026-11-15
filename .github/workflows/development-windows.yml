@@ -135,6 +135,12 @@ jobs:
         with:
           go-version: '1.26.6'
           cache: false
+      - name: Stage the calendar development edition from the pinned core
+        if: inputs.development
+        shell: bash
+        run: |
+          git -C institution worktree add --detach "$RUNNER_TEMP/ew-calendar-edition" HEAD
+          node institution/edition/calendar/stage-development.mjs ./core "$RUNNER_TEMP/ew-calendar-edition"
       - name: Build and validate the exact desktop archive
         id: desktop
         shell: bash
@@ -147,7 +153,9 @@ jobs:
           SELECTED_PLATFORMS: ${{ inputs.platform }}
         run: |
           set -euo pipefail
-          args=(--core-root ./core --edition-root ./institution
+          edition_root=./institution
+          if [[ "$DEVELOPMENT_BUILD" == true ]]; then edition_root="$RUNNER_TEMP/ew-calendar-edition"; fi
+          args=(--core-root ./core --edition-root "$edition_root"
             --distribution-config edition/distribution.json
             --recipe pinned-source
             --version "$RELEASE_VERSION"
@@ -163,6 +171,10 @@ jobs:
             if [[ "$RELEASE_NOTES_APPROVED" == true ]]; then args+=(--release-notes-approved); fi
           fi
           node core/scripts/ci-eduwork-${{ matrix.script }}-release.mjs "${args[@]}"
+      - name: Verify the assembled development calendar
+        if: inputs.development
+        shell: bash
+        run: node institution/edition/calendar/verify-development.mjs "$RUNNER_TEMP/ew-candidate/product"
       - name: Validate institution plugins with the assembled Runtime
         shell: pwsh
         run: ./institution/edition/test/test-desktop-candidate.ps1 -CoreRoot (Resolve-Path ./core).Path -EditionRoot (Resolve-Path ./institution).Path -Product "$env:RUNNER_TEMP/ew-candidate/product"

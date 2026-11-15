@@ -260,7 +260,7 @@ academicTest('with the public calendar present, the plugin registers annotations
     // flips to ready only when the whole batch has landed.
     const started = Date.now()
     let own
-    while (!(own = ctx.calendar.sourceStatuses().find(status => status.label === 'ECNU 2026-2027 本科校历')) || own.state !== 'ready') {
+    while (!(own = ctx.calendar.sourceStatuses().find(status => status.label === '华东师范大学 2026-2027 学年校历')) || own.state !== 'ready') {
       if (Date.now() - started > 3000) throw new Error('the academic calendar source never became ready')
       await new Promise(resolve => setTimeout(resolve, 25))
     }

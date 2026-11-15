@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "repository": "ECNU/EduWork-ECNU",
+  "version": "0.4.14-dev.20261115.1",
+  "releaseId": 445866382,
+  "tag": "v0.4.14-dev.20261115.1",
+  "editionCommit": "afa5c43098cb73f8809b4c43dd18fb7ea29d1ac0",
+  "coreCommit": "2487f97ac379324d5cf757f117f0a202c539ae71",
+  "bodySHA256": "44371ab73d057a4ce83461f8b455fe06abc6630ececd38e0c9cbb6a2feda7531",
+  "assets": [
+    {
+      "id": 750116257,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-macos-arm64-electron.dmg",
+      "size": 610543427,
+      "digest": "sha256:77ac9f0b93993f4694221c959c633deb55c507c1dfb80a8efe5ff12ee222845a"
+    },
+    {
+      "id": 750116830,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-macos-arm64-electron.dmg.sha256",
+      "size": 126,
+      "digest": "sha256:02022555573b0e0018d447dab44a49a6ec1455f9b5beb71fc96731f0a0302a0a"
+    },
+    {
+      "id": 750115800,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-macos-arm64-electron.zip",
+      "size": 572910166,
+      "digest": "sha256:c4b2f701f1248614ddff4c5d8765a043c7763c7d71a828f7e6886c935b79ef34"
+    },
+    {
+      "id": 750116229,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-macos-arm64-electron.zip.sha256",
+      "size": 126,
+      "digest": "sha256:3d087b75a700fb98a41d88079e928b8ec8856dc3669879e48b7fc90f3f00ea12"
+    },
+    {
+      "id": 750117693,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-macos-x64-electron.dmg",
+      "size": 643500668,
+      "digest": "sha256:0c61523b7e4f344175b4edbe6f0e744fed497195c82b9600954eab7eea1314ba"
+    },
+    {
+      "id": 750118581,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-macos-x64-electron.dmg.sha256",
+      "size": 124,
+      "digest": "sha256:8caeba96f27bcadfe0196bb8e95ca003dcc023bf24de6ab6598e389e3f14f9b6"
+    },
+    {
+      "id": 750116893,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-macos-x64-electron.zip",
+      "size": 599324164,
+      "digest": "sha256:a0a50c68ddf510e7b94f706ec6418672a2802d8b54edd886fca21bba38e17753"
+    },
+    {
+      "id": 750117645,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-macos-x64-electron.zip.sha256",
+      "size": 124,
+      "digest": "sha256:eb32c7897b9aeac6cc0323677753081309a29d9504d20a917a88790427b13b91"
+    },
+    {
+      "id": 750113405,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-windows-x64-electron.zip",
+      "size": 644034878,
+      "digest": "sha256:f5a867080cb719a04cd5d193da427934eb1f8fc4bfd36dc62078427e8de81108"
+    },
+    {
+      "id": 750114158,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-windows-x64-electron.zip.sha256",
+      "size": 126,
+      "digest": "sha256:6a659b819ad6b95bfeb1047e36fc7aad3ec07a69f7134e92b68d07a03504503d"
+    },
+    {
+      "id": 750114993,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-windows-x64-setup.exe",
+      "size": 647764808,
+      "digest": "sha256:a28682e5e563528fdb92dbc2b897ce62af619bc23045cba65d9baa2920e1ad9e"
+    },
+    {
+      "id": 750115702,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-windows-x64-setup.exe.sha256",
+      "size": 123,
+      "digest": "sha256:7a0efa856400f3c42d911dc804bebb6a0936aecac69c0cba08d4f97eed0751f0"
+    },
+    {
+      "id": 750114227,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-windows-x64-setup.zip",
+      "size": 636472610,
+      "digest": "sha256:9f4c940736d849cf4fd7c00768cfa4e055e7c443ee4dc9c26194b05fbbdb5992"
+    },
+    {
+      "id": 750115741,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-windows-x64-setup.zip.json",
+      "size": 1102,
+      "digest": "sha256:45c72bb9f44eae9c9bdc6b9772c594d6e35d184b7dddb2d31a689578c6f76026"
+    },
+    {
+      "id": 750114935,
+      "name": "EduWork-ECNU-0.4.14-dev.20261115.1-windows-x64-setup.zip.sha256",
+      "size": 123,
+      "digest": "sha256:e374b63b78c655356160a3045a14b879c0c92a5e012aa8db7c8cd1fcaeb12364"
+    },
+    {
+      "id": 750118619,
+      "name": "RELEASE-NOTES.md",
+      "size": 2109,
+      "digest": "sha256:44371ab73d057a4ce83461f8b455fe06abc6630ececd38e0c9cbb6a2feda7531"
+    },
+    {
+      "id": 750116856,
+      "name": "macos-release-receipt.json",
+      "size": 3060,
+      "digest": "sha256:3b32431ed1f756b619ada1f2ff64e357c90c6439f6be155e0f4e601a3a43eb4c"
+    },
+    {
+      "id": 750118598,
+      "name": "macos-x64-release-receipt.json",
+      "size": 3054,
+      "digest": "sha256:ac24d33aa60df0ea142f0a9eda4cc21c7106194be81750c22b8b552e3adbe4e9"
+    },
+    {
+      "id": 750115720,
+      "name": "update-windows-amd64.json",
+      "size": 662,
+      "digest": "sha256:21dd567b8ba1f6f677a105e506ba0a4ab7bf62bd4d1488a1e0bf5f31dc9ec13d"
+    },
+    {
+      "id": 750115760,
+      "name": "windows-release-receipt.json",
+      "size": 76555,
+      "digest": "sha256:1f75ab2e7225874b9572d0ad6bffc28ebfd472c6ffe054ec4f31c46cd0264c94"
+    }
+  ]
+}

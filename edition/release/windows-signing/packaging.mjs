@@ -35,9 +35,10 @@ registerHooks({resolve(specifier,context,next){
   return source?{url:'data:text/javascript,'+encodeURIComponent(source),shortCircuit:true}:result
 }})
 
-export async function packSignedInner(candidate,output) {
+export async function packSignedInner(candidate,output,version) {
+  const {desktopVersion}=await coreModule('scripts/desktop-build-plan.mjs')
   const {packWindowsRelease}=await coreModule('scripts/pack-windows-release.mjs')
-  return packWindowsRelease({candidate,output,forUpdate:true})
+  return packWindowsRelease({candidate,output,development:desktopVersion(version).prerelease,forUpdate:true})
 }
 export async function buildSetup(archive,outputDirectory) {
   await verifyCheckout(toolsRoot(),toolsLock.commit)

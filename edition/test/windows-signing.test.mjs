@@ -359,3 +359,21 @@ test('retry of an existing public stable release checks Latest without issuing w
   await assert.rejects(publishPrepared(prepared,env),/Latest/)
   latest=10;assert.equal(await publishPrepared(prepared,env),release.html_url)
 })
+
+test('a development preview can be fully staged for Mac signing without becoming public',async t=>{
+  const {publishPrepared}=await import('../release/windows-signing/publish.mjs')
+  const version='0.4.14-dev.20261116.1',commit='b'.repeat(40)
+  const file={name:'synthetic.zip',bytes:5,sha256:'a'.repeat(64)}
+  const release={id:10,draft:true,tag_name:'v'+version,target_commitish:commit,name:'Preview',body:'notes',prerelease:true,assets:[{name:file.name,size:file.bytes,digest:'sha256:'+file.sha256,state:'uploaded'}],html_url:'https://example.invalid/draft'}
+  t.mock.method(globalThis,'fetch',async(url,options)=>{
+    assert.equal(options.method,'GET','A complete draft must stay private')
+    const path=new URL(url).pathname
+    if(path.includes('/git/ref/'))return new Response(null,{status:404})
+    return Response.json(path.endsWith('/releases')?[release]:release)
+  })
+  const prepared={repository:'ECNU/EduWork-ECNU',version,editionCommit:commit,title:release.name,notes:release.body,files:[file]}
+  const env={PUBLISH_RELEASE:'true',STAGE_DRAFT:'true',GITHUB_REF:'refs/heads/main',GITHUB_TOKEN:'synthetic-test-only'}
+  assert.equal(await publishPrepared(prepared,env),release.html_url)
+  release.draft=false
+  await assert.rejects(publishPrepared(prepared,env),/already public/)
+})

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.13",
+  "version": "0.4.14-dev.20261116.1",
   "sourceState": "local-development-snapshot",
-  "createdAt": "2026-11-15T02:27:39.678Z",
-  "fileSetSHA256": "c5593a499753fb9b6f3890b9991d82d674d854dc9dbeaacf2f51746c1304d530",
+  "createdAt": "2026-11-16T06:09:38.085Z",
+  "fileSetSHA256": "1eb2d273ba08c84ecd800ba675a536d498fd8d8cf3bfb53809de1a0a12adc7a7",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "a1c954fd2a02cbc0c0c4819360c070a5f4559459738d555560006a8feb4cc2bb"
+      "sha256": "ea725982a5d3a4f51a5ff2534c4845dee10bfe6a61e0e1041f6b883418aa1ce2"
     },
     {
       "path": ".github/workflows/macos-signing-preflight.yml",
@@ -21,7 +21,7 @@
     },
     {
       "path": ".github/workflows/macos-signing-release.yml",
-      "sha256": "666b3adc0f297d9b92f20522d9d342112434a25b0bbd73a92e52b11598044174"
+      "sha256": "535b9fd0da94740a76c811a01e76d855020ebdadf2cf64ff5f16d2b037bac140"
     },
     {
       "path": ".github/workflows/oss-deltas.yml",
@@ -33,7 +33,7 @@
     },
     {
       "path": ".github/workflows/publish-macos-signing.yml",
-      "sha256": "414840d45007fc6309df2ffa9687bf7aa4fd10dffab32e4228f9d77c8ce4f869"
+      "sha256": "84c2fe8f3fdf4f40c0ac9b475e00c49a2f21a697b2aa6746845e9ffe49a45f0d"
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
@@ -65,11 +65,11 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "6074705534e44de181780e5bd8935fd521570ae5fac716a856dd4e5810f2fea7"
+      "sha256": "ae79ce980fe58ec0aa8abcd6fd0800a7abb14e397271f65b72e0186b7e6aaa84"
     },
     {
       "path": "docs/BUILD.md",
-      "sha256": "e8071a4179ecd8d3324b9b5ce67aac195914fbe51af6831557455c35d13a0741"
+      "sha256": "4ce255ffb4d2d24e813ab89f83cbf0d38d558c8c831bd5c8f59d48484c3a8159"
     },
     {
       "path": "docs/DECISION_EN.md",
@@ -196,6 +196,14 @@
       "sha256": "738393b47522da15f83907b742f794bcb21e1af5a6d5c6a7d26e0d136e7e7d0f"
     },
     {
+      "path": "docs/releases/0.4.14-dev.20261115.1.md",
+      "sha256": "44371ab73d057a4ce83461f8b455fe06abc6630ececd38e0c9cbb6a2feda7531"
+    },
+    {
+      "path": "docs/releases/0.4.14-dev.20261116.1.md",
+      "sha256": "4817b8dbdc8d882afa49ad57d55370f82975bb7462e768fcb1b157b474476f38"
+    },
+    {
       "path": "docs/releases/0.4.2.md",
       "sha256": "acce4644954f121500052c9a531dcf26e8c34dc9bdcbbe1409df5aee4d8a5ec5"
     },
@@ -241,7 +249,7 @@
     },
     {
       "path": "docs/USER_GUIDE.md",
-      "sha256": "218736c2cb8b940bd8759f719a9642407492c591856d81c1e4ef6289c93913ba"
+      "sha256": "eacfec64e45071b0c3cd0e29f74e1aa57c5c9a0f66ad647a19bbc2d41f87117b"
     },
     {
       "path": "docs/WINDOWS-SIGNING.md",
@@ -333,7 +341,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "5c96a3cb7287082b956aa681ab9fd5543e8f42d679b90a031fb4295d2758dc9f"
+      "sha256": "e7612d92349bbf9693ce20426493087771507e0aa96152405f2f77e81a7b3912"
     },
     {
       "path": "edition/macos-signing.json",
@@ -1133,11 +1141,15 @@
     },
     {
       "path": "edition/release/macos-signing/github.mjs",
-      "sha256": "1fd41d275dad1f82676696c64ad616d737d0a09379ba8b942465669dcb57de4f"
+      "sha256": "c544213e3e047b4aee4a2df10327a7e94590610eaf3c0bc77fc3eb65038767af"
     },
     {
       "path": "edition/release/macos-signing/inputs/0.4.13.json",
       "sha256": "10c7d4e9e67f333b9f815ee70739331c1672e0fa2b9267135aea8c435bca5afe"
+    },
+    {
+      "path": "edition/release/macos-signing/inputs/0.4.14-dev.20261115.1.json",
+      "sha256": "3cd99537e2aed4829fbf92b681f14e56194c624d1be1a426c00289b7f16b0db3"
     },
     {
       "path": "edition/release/macos-signing/policy.mjs",
@@ -1149,11 +1161,11 @@
     },
     {
       "path": "edition/release/macos-signing/publication.mjs",
-      "sha256": "b8d99d39f38f093af5d015086db6f21c66065e41b85c6179f5fcdb5c94ce35cd"
+      "sha256": "6bb6094d9ec86976d107476e27ffb002976d9982d0257d6716eb3b2e87e67646"
     },
     {
       "path": "edition/release/macos-signing/publish-existing.mjs",
-      "sha256": "78bde3100cc14adac88fad952191cb2d3f6f15faa9dd011713b0be0c0c506480"
+      "sha256": "3b788f520b9ea9fb40351fd1086cd714b119020d2628c0d1bc2f87534a39470a"
     },
     {
       "path": "edition/release/macos-signing/session.mjs",
@@ -1161,7 +1173,7 @@
     },
     {
       "path": "edition/release/macos-signing/sign-existing.mjs",
-      "sha256": "5bd0635dbe5ea816edac45c5f271fe1426b25cde00678e926724ea77cdacacfc"
+      "sha256": "44a1e3ae0f207f8491b70d2dcef90f344facb30fddd58c349f6b3b8fcf58e442"
     },
     {
       "path": "edition/release/oss-deltas.mjs",
@@ -1189,7 +1201,7 @@
     },
     {
       "path": "edition/release/windows-signing/hosted.mjs",
-      "sha256": "07e7118cb4bef2b07e7290c88d194c35857fa55a54dae28d4ec19be3cd224f02"
+      "sha256": "7739fab8f234b4647f55ef6f65d446aeebe280dd0481c1070fac8a14a051f3cf"
     },
     {
       "path": "edition/release/windows-signing/io.mjs",
@@ -1201,7 +1213,7 @@
     },
     {
       "path": "edition/release/windows-signing/packaging.mjs",
-      "sha256": "e282682238f9ccc9418e9656853f6f3da49b496381dbebacd7bd1321870baefc"
+      "sha256": "7c2f0e1f566fabc16db175de7e3f120b2df760afc08595090974dd6f594d8881"
     },
     {
       "path": "edition/release/windows-signing/pe.ps1",
@@ -1325,7 +1337,7 @@
     },
     {
       "path": "edition/test/macos-signing-release.test.mjs",
-      "sha256": "83914694855a2a69f1565acffa1134295b5204f5b76d26588ff252d41b348450"
+      "sha256": "e933c9192ceed8f48a87c1e1270d06affe6e8c9550a19010f212911a6c1d9a73"
     },
     {
       "path": "edition/test/macos-signing.test.mjs",
@@ -1369,7 +1381,7 @@
     },
     {
       "path": "edition/test/windows-signing.test.mjs",
-      "sha256": "29b49b848350a340feaf389f57ef98d4b1370f0dd3aea566ba5b37b01b68e61e"
+      "sha256": "7030601a67383ca8bc4861f395bbf17005dfdd6feb4290b1b6011d380c5820d1"
     },
     {
       "path": "edition/windows-signing.json",

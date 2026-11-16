@@ -18,7 +18,7 @@ export async function readReviewedRelease(version) {
 export function validateRelease(release, plan, {allowExtra = false} = {}) {
   assert.equal(release.id, plan.releaseId);assert.equal(release.tag_name, plan.tag)
   assert.equal(release.target_commitish, plan.editionCommit)
-  assert.equal(release.draft,false);assert.equal(release.immutable,false)
+  validateSigningVisibility(release,plan);assert.equal(release.immutable,false)
   assert.equal(release.prerelease, plan.version.includes('-dev.'))
   assert.equal(textHash(release.body),plan.bodySHA256)
   if(!allowExtra)assert.equal(release.assets.length,plan.assets.length)
@@ -27,6 +27,10 @@ export function validateRelease(release, plan, {allowExtra = false} = {}) {
     assert.equal(found.length,1,`Missing source asset ${asset.name}`)
     for(const key of ['id','size','digest'])assert.equal(found[0][key],asset[key],`Changed source asset ${asset.name}: ${key}`)
   }
+}
+export function validateSigningVisibility(release,plan) {
+  if(plan.draft===true)assert(plan.version.includes('-dev.'),'Only a development preview may be signed from a draft')
+  assert.equal(release.draft,plan.draft===true)
 }
 export function releaseAPI(token=process.env.GITHUB_TOKEN) {
   assert(token)

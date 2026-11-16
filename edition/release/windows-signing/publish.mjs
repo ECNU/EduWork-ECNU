@@ -86,6 +86,11 @@ export async function publishPrepared(prepared,env=process.env) {
   const releases=await request('/releases?per_page=100'),matches=releases.filter(r=>r.tag_name===tag)
   assert(matches.length<=1);let release=matches[0]
   const prerelease=desktopVersion(version).prerelease
+  const stageDraft=env.STAGE_DRAFT==='true'
+  if(stageDraft) {
+    assert(prerelease && version.includes('-dev.'),'Draft signing is only available for development previews')
+    assert(!release || release.draft,'This preview is already public')
+  }
   const checkLatest=async r=>{if(!prerelease){const latest=await request('/releases/latest');assert.equal(latest?.id,r.id,'Stable release is not GitHub Latest')}}
   const checkRelease=r=>{assert.equal(r.tag_name,tag);assert.equal(r.target_commitish,editionCommit);assert.equal(r.name,title);assert.equal(r.body.trimEnd(),notes.trimEnd());assert.equal(r.prerelease,prerelease)}
   if(release) checkRelease(release)
@@ -104,6 +109,7 @@ export async function publishPrepared(prepared,env=process.env) {
   }
   release=await request('/releases/'+release.id);checkRelease(release);verifyRemoteAssets(release.assets,files)
   checkRef(await request('/git/ref/tags/'+tag))
+  if(stageDraft){assert.equal(release.draft,true);return release.html_url}
   await request('/releases/'+release.id,'PATCH',{draft:false,prerelease,make_latest:prerelease?'false':'true'})
   release=await request('/releases/'+release.id);checkRelease(release);assert.equal(release.draft,false);verifyRemoteAssets(release.assets,files)
   const ref=await request('/git/ref/tags/'+tag);assert(ref);checkRef(ref)
@@ -114,6 +120,7 @@ export async function main(env=process.env) {
   const prepared=await preparePublication(env)
   const url=env.PUBLISH_RELEASE==='true'?await publishPrepared(prepared,env):undefined
   const {root,files,notes,title,...identity}=prepared
-  await writeJSON(join(root,'publication-verification.json'),{...identity,verified:true,published:Boolean(url),...(url?{url}:{}),files:files.map(({path,...f})=>f)})
+  const staged=Boolean(url)&&env.STAGE_DRAFT==='true'
+  await writeJSON(join(root,'publication-verification.json'),{...identity,verified:true,published:Boolean(url)&&!staged,...(staged?{staged:true}:{}),...(url?{url}:{}),files:files.map(({path,...f})=>f)})
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href) await main()

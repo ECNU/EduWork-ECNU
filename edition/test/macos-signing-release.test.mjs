@@ -33,6 +33,11 @@ test('signing source rejects a modified or missing original release asset',()=>{
   const devPlan={...fixture,version:'0.4.14-dev.20261115.1',tag:'v0.4.14-dev.20261115.1'}
   const devRelease={...release,tag_name:devPlan.tag,prerelease:true}
   validateRelease(devRelease,devPlan)
+  const draftPlan={...devPlan,draft:true}
+  validateRelease({...devRelease,draft:true},draftPlan)
+  assert.throws(()=>validateRelease(devRelease,draftPlan))
+  assert.throws(()=>validateRelease({...devRelease,draft:true},devPlan))
+  assert.throws(()=>validateRelease({...release,draft:true},{...fixture,draft:true}))
   assert.throws(()=>validateRelease({...devRelease,prerelease:false},devPlan))
   for(const alter of [s=>s.assets[0].digest='sha256:bad',s=>s.assets.pop(),s=>s.body='different',s=>s.target_commitish='main']) {
     const bad=clone(release);alter(bad);assert.throws(()=>validateRelease(bad,fixture))
@@ -105,6 +110,8 @@ test('changing a development release to stable aborts Mac asset replacement',()=
   release.tag_name=p.tag
   release.prerelease=true
   validatePublicationState(release,p,items,'123')
+  validatePublicationState({...release,draft:true},{...p,draft:true},items,'123')
+  assert.throws(()=>validatePublicationState(release,{...p,draft:true},items,'123'))
   release.prerelease=false
   assert.throws(()=>validatePublicationState(release,p,items,'123'))
 })

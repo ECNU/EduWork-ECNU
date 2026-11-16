@@ -44,6 +44,8 @@ Apple 专用密码可在 [Apple 账户](https://account.apple.com/) 的“登录
 
 ## 正式分发约束
 
+开发预览可以先完成签名再公开下载。在 **Publish ECNU desktop candidate** 中同时选择 `publish=true` 和 `stage_draft=true`，通过校验的三平台附件会留在 GitHub 草稿中。在该版本的签名输入清单中记录草稿 ID、原包摘要和 `draft: true`，再运行双架构签名、公证和附件替换。核验替换回执、Windows 附件和两个 Mac 的最低系统测试后，将同一草稿公开为预发布，保留现有正式版为 Latest。
+
 应用完成学校签名及公证后，先装订 `.app` 的票据，再生成最终 ZIP；从同一应用生成 DMG，并完成 DMG 的签名、公证和装订。最终哈希、大小、发布回执和 Sparkle Ed25519 签名必须基于最终文件重新计算。
 
 现有 Sparkle 公钥和双架构更新源继续保留。完整包与差分升级均需用真实旧版验证；本工作流不修改更新机制或渠道。

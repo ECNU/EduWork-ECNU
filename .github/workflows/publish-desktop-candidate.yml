@@ -28,6 +28,10 @@ on:
         required: true
         default: false
         type: boolean
+      stage_draft:
+        description: 'Upload a development preview as a draft for Mac signing before publication'
+        default: false
+        type: boolean
   workflow_call:
     inputs:
       windows_signing_run_id:
@@ -48,6 +52,9 @@ on:
         type: boolean
       publish:
         required: true
+        default: false
+        type: boolean
+      stage_draft:
         default: false
         type: boolean
 permissions:
@@ -92,6 +99,7 @@ jobs:
           RELEASE_NOTES: ${{ inputs.release_notes }}
           RELEASE_NOTES_APPROVED: ${{ inputs.notes_approved }}
           PUBLISH_RELEASE: ${{ inputs.publish }}
+          STAGE_DRAFT: ${{ inputs.stage_draft }}
           EDITION_ROOT: institution
           HAS_CORE_LOCK: 'true'
           RELEASE_PRODUCT: EduWork-ECNU

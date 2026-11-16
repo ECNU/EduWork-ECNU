@@ -184,6 +184,30 @@
   ],
   "patches": [
     {
+      "id": "eduwork-user-guide",
+      "name": "@eduwork/dsh-user-guide",
+      "config": {
+        "guideUrl": "https://developer.ecnu.edu.cn/eduwork/guide.html",
+        "productName": "EduWork@ECNU",
+        "copy": {
+          "zh-CN": {
+            "steps": {
+              "guide": {
+                "body": "从「应用」菜单打开《使用教程》，可以查看学校账号登录、配额和校园服务的说明，也可以切换到通用教程。"
+              }
+            }
+          },
+          "en": {
+            "steps": {
+              "guide": {
+                "body": "Open User Guide in the application menu for help with your university account, quota and campus services. You can also switch to the common EduWork guide."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "id": "eduwork-browser",
       "disabled": true
     },

@@ -1,0 +1,61 @@
+name: Prepare Windows signing request after candidate acceptance
+on:
+  push:
+    branches: [ci/prepare-43873398077]
+    paths: [.github/workflows/prepare-signing-request.yml]
+permissions: {}
+concurrency:
+  group: prepare-windows-request-43873398077
+  cancel-in-progress: false
+env:
+  REPO: ECNU/EduWork-ECNU
+  SOURCE_RUN: '43873398077'
+  SOURCE_SHA: 6637aa96fe3425491390ba03a1f7149c80e28e5c
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      actions: read
+    steps:
+      - name: Wait for this candidate and its macOS acceptance jobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          while true; do
+            run=$(gh api "repos/$REPO/actions/runs/$SOURCE_RUN")
+            jq -e --arg sha "$SOURCE_SHA" --arg repo "$REPO" '
+              .repository.full_name == $repo and .head_sha == $sha and
+              .path == ".github/workflows/development-windows.yml" and
+              .event == "workflow_dispatch" and .head_branch == "main" and .run_attempt == 2
+            ' <<< "$run" > /dev/null
+            if [[ $(jq -r .status <<< "$run") == completed ]]; then
+              jq -e '.conclusion == "success"' <<< "$run"
+              break
+            fi
+            sleep 120
+          done
+  prepare-request:
+    needs: acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Queue the hosted request for the verified Windows build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          main=$(gh api "repos/$REPO/git/ref/heads/main" --jq .object.sha)
+          test "$main" = "$SOURCE_SHA"
+          endpoint="repos/$REPO/actions/workflows/windows-signing.yml"
+          count=$(gh api "$endpoint/runs?branch=main&event=workflow_dispatch&head_sha=$SOURCE_SHA&per_page=1" --jq .total_count)
+          test "$count" = 0
+          id=$(jq -n --arg run "$SOURCE_RUN" '{ref:"main",return_run_details:true,inputs:{stage:"inner-request",source_run_id:$run}}' |
+            gh api -X POST "$endpoint/dispatches" --input - --jq '.workflow_run_id // .id')
+          [[ "$id" =~ ^[0-9]+$ ]]
+          echo "Windows signing request run: $id"
+          echo "[Windows signing request](https://github.com/$REPO/actions/runs/$id)" >> "$GITHUB_STEP_SUMMARY"

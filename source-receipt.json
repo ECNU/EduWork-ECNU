@@ -5,7 +5,7 @@
   "version": "0.4.14-dev.20261116.1",
   "sourceState": "local-development-snapshot",
   "createdAt": "2026-11-16T06:09:38.085Z",
-  "fileSetSHA256": "1eb2d273ba08c84ecd800ba675a536d498fd8d8cf3bfb53809de1a0a12adc7a7",
+  "fileSetSHA256": "f8ebcf8360e7f0f8945a25b1899df3c4d9c688abb03ba3edd0298080962061a1",
   "files": [
     {
       "path": ".gitattributes",
@@ -37,7 +37,7 @@
     },
     {
       "path": ".github/workflows/validate-local-web.yml",
-      "sha256": "ff086bcade8b43851341ac045455f82100134cd162d2832d656aab3882f569d3"
+      "sha256": "c1a5c5c3f99945e3a64ea7159a40e92644558c7ffa9b2dbc219af5ea1b1d8568"
     },
     {
       "path": ".github/workflows/validate-macos-signing.yml",
@@ -65,7 +65,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "ae79ce980fe58ec0aa8abcd6fd0800a7abb14e397271f65b72e0186b7e6aaa84"
+      "sha256": "8c468e87c6064f354eaebca3ddd5a460731dd9d0be99ccd3722b48bf7253d04a"
     },
     {
       "path": "docs/BUILD.md",

@@ -40,6 +40,11 @@ jobs:
       - name: Verify source build and local profile coordination
         shell: pwsh
         run: |
+          $lock = Get-Content institution/core.lock.json -Raw | ConvertFrom-Json
+          $receipt = Get-Content core/source-receipt.json -Raw | ConvertFrom-Json
+          if ($lock.version -ne $receipt.version -or $lock.sourceFileSetSHA256 -ne $receipt.fileSetSHA256) {
+            throw 'Institution core.lock.json must match the pinned core source receipt version and SHA-256.'
+          }
           node core/scripts/check-source-docs.mjs core
           if ($LASTEXITCODE) { throw 'Core documentation links failed' }
           node core/scripts/check-source-docs.mjs institution

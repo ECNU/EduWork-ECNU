@@ -2,10 +2,6 @@
   "schemaVersion": 1,
   "id": "eduwork-chatecnu",
   "coreBase": "config/distributions/generic.json",
-  "userGuide": {
-    "source": "docs/USER_GUIDE.md",
-    "sourceUrl": "https://github.com/ECNU/EduWork-ECNU/blob/main/docs/USER_GUIDE.md"
-  },
   "brand": {
     "product": {
       "name": "EduWork@ECNU"
@@ -191,6 +187,7 @@
       "id": "eduwork-user-guide",
       "name": "@eduwork/dsh-user-guide",
       "config": {
+        "guideUrl": "https://developer.ecnu.edu.cn/eduwork/guide.html",
         "productName": "EduWork@ECNU",
         "copy": {
           "zh-CN": {

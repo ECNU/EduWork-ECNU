@@ -8,7 +8,7 @@
 
 ## 教程与引导
 
-桌面菜单「应用 → 使用教程」的学校内容维护在[学校使用指南](USER_GUIDE.md)。在支持发行版教程的公版核心上，装配会自动用这份 Markdown 生成离线首页，通用教程一同随包提供。首次启动引导的学校用语在[发行配置](../edition/distribution.json)中 `eduwork-user-guide` 的 `config.copy` 下按语言和步骤维护。当前仅覆盖最后一步，其余文案继承公版。
+桌面菜单「应用 → 使用教程」从[学校官网](https://developer.ecnu.edu.cn/eduwork/guide.html)加载正文，网址由[发行配置](../edition/distribution.json)里 `eduwork-user-guide` 的 `config.guideUrl` 指定。官网更新后，用户下次打开面板即可阅读。面板也提供随包的公版快速入门。首次启动引导在本机运行，`config.copy` 按语言和步骤覆盖学校用语，其余文案继承公版。
 
 ## 锁定公共核心
 

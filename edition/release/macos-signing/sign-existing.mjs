@@ -7,7 +7,7 @@ import { promisify } from 'node:util'
 import { signingSession } from './session.mjs'
 import { inventory, signingOrder, entitlementsFor, validateContentPreserved, validateReleaseMetadata, identity, digest } from './files.mjs'
 import { validateSignedDetails, validateNotaryResult } from './policy.mjs'
-import { readReviewedRelease, releaseAPI, validateRelease } from './github.mjs'
+import { copyReviewedCandidate, readReviewedRelease, releaseAPI, validateRelease } from './github.mjs'
 const exec=promisify(execFile),env=process.env
 const version=env.RELEASE_VERSION
 const plan=await readReviewedRelease(version)
@@ -22,16 +22,22 @@ async function json(path,value){await writeFile(path,JSON.stringify(value,null,2
 try {
   await mkdir(root,{recursive:false});await mkdir(output);await mkdir(evidence)
   const head=(await exec('git',['-C',core,'rev-parse','HEAD'])).stdout.trim();assert.equal(head,plan.coreCommit)
-  const api=releaseAPI(),release=await api.request(`/releases/${plan.releaseId}`)
-  validateRelease(release,plan)
   const receiptAsset=plan.assets.find(a=>a.name===platform+'-release-receipt.json')
   const zipAsset=plan.assets.find(a=>a.name===`EduWork-ECNU-${version}-macos-${process.arch}-electron.zip`)
-  await api.download(receiptAsset,join(root,'original-receipt.json'))
+  if (plan.draft === true) {
+    const candidate = join(env.RUNNER_TEMP, 'original-candidate')
+    await copyReviewedCandidate(join(candidate, 'release-receipt.json'), join(root, 'original-receipt.json'), receiptAsset)
+    await copyReviewedCandidate(join(candidate, zipAsset.name), join(root, 'original.zip'), zipAsset)
+  } else {
+    const api = releaseAPI()
+    validateRelease(await api.request(`/releases/${plan.releaseId}`), plan)
+    await api.download(receiptAsset, join(root, 'original-receipt.json'))
+    await api.download(zipAsset, join(root, 'original.zip'))
+  }
   const original=JSON.parse(await readFile(join(root,'original-receipt.json')))
   assert.equal(original.version,version);assert.equal(original.editionCommit,plan.editionCommit);assert.equal(original.coreCommit,plan.coreCommit)
   assert.equal('sha256:'+original.asset.sha256,zipAsset.digest)
   assert.equal(original.asset.bytes,zipAsset.size);assert.equal(original.passed,true);assert.equal(original.applicationName,appName)
-  await api.download(zipAsset,join(root,'original.zip'))
   const {verifyMacOSAppArchive,createMacOSAppArchive}=await import(pathToFileURL(join(core,'dsh-electron/scripts/create-macos-archive.mjs')))
   await verifyMacOSAppArchive(join(root,'original.zip'),appName)
   await exec('/usr/bin/ditto',['-x','-k',join(root,'original.zip'),join(root,'unpacked')])

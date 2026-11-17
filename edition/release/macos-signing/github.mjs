@@ -3,7 +3,7 @@ import { createReadStream, createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
 import { Readable } from 'node:stream'
 import { createHash } from 'node:crypto'
-import { mkdir, readFile } from 'node:fs/promises'
+import { copyFile, lstat, mkdir, readFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { identity } from './files.mjs'
 
@@ -13,7 +13,15 @@ export async function readReviewedRelease(version) {
   const plan = JSON.parse(await readFile(new URL(`./inputs/${version}.json`, import.meta.url), 'utf8'))
   assert.equal(plan.version, version)
   assert.equal(plan.tag, 'v' + version)
+  if (plan.draft === true) assert.match(plan.sourceRun ?? '', /^[1-9]\d*$/)
   return plan
+}
+export async function copyReviewedCandidate(source, destination, asset) {
+  assert((await lstat(source)).isFile(), 'Expected a regular candidate file')
+  await copyFile(source, destination)
+  const actual = await identity(destination)
+  assert.equal(actual.bytes, asset.size, 'Candidate size differs from reviewed release asset')
+  assert.equal('sha256:' + actual.sha256, asset.digest, 'Candidate digest differs from reviewed release asset')
 }
 export function validateRelease(release, plan, {allowExtra = false} = {}) {
   assert.equal(release.id, plan.releaseId);assert.equal(release.tag_name, plan.tag)

@@ -1,12 +1,27 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {readFile} from 'node:fs/promises'
+import {mkdtemp, readFile, rm, writeFile} from 'node:fs/promises'
+import {join} from 'node:path'
+import {tmpdir} from 'node:os'
 import {entitlementsFor,signingOrder,machoMagic,validateContentPreserved} from '../release/macos-signing/files.mjs'
-import {readReviewedRelease, validateRelease} from '../release/macos-signing/github.mjs'
+import {copyReviewedCandidate, readReviewedRelease, textHash, validateRelease} from '../release/macos-signing/github.mjs'
 import {validateSourceRun,validateQualification,validatePublicationState,replaceMacAssets} from '../release/macos-signing/publication.mjs'
 const plan=JSON.parse(await readFile(new URL('../release/macos-signing/inputs/0.4.13.json',import.meta.url)))
 const policy=JSON.parse(await readFile(new URL('../macos-signing.json',import.meta.url)))
 const clone=value=>structuredClone(value)
+test('draft signing requires the same bytes as the reviewed release asset', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'ecnu-mac-candidate-'))
+  t.after(() => rm(dir, {recursive:true, force:true}))
+  const source = join(dir, 'candidate.zip'), destination = join(dir, 'original.zip')
+  const asset = {size:4, digest:'sha256:' + textHash('good')}
+  await writeFile(source, 'good')
+  await copyReviewedCandidate(source, destination, asset)
+  assert.equal(await readFile(destination, 'utf8'), 'good')
+  await writeFile(source, 'evil')
+  await assert.rejects(copyReviewedCandidate(source, destination, asset), /digest differs/)
+  await writeFile(source, 'longer')
+  await assert.rejects(copyReviewedCandidate(source, destination, asset), /size differs/)
+})
 test('content verification rejects JavaScript, config, symlink and native-file-set changes',()=>{
   const before={entries:{'main.js':{type:'file',macho:false,sha256:'a'},'node':{type:'file',macho:true,sha256:'b'},link:{type:'link',target:'node'}},binaries:['node']}
   const after=clone(before);after.entries.node.sha256='signed';after.entries['_CodeSignature/CodeResources']={type:'file',sha256:'signature'}

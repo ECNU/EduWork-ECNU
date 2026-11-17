@@ -18,10 +18,6 @@
         {
           "title": "ECNU 校历使用说明",
           "path": "../../resources/calendar/guide.md"
-        },
-        {
-          "title": "2026–2027 校历数据",
-          "path": "../../resources/calendar/2026-2027.json"
         }
       ]
     },

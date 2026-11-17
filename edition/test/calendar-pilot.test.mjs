@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, rm, readFile, mkdir, cp } from 'node:fs/promises'
+import { mkdtemp, rm, readFile, mkdir, cp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { resolve, join, basename, sep, dirname } from 'node:path'
 import { createRequire } from 'node:module'
@@ -50,6 +50,7 @@ test('edition packaging reuses the public Skill and binds only local calendar re
     const original = await readFile(resolve(core, 'dsh-plugins/calendar/skills/calendar-management/SKILL.md'), 'utf8')
     assert.ok(content.startsWith(original.trimEnd()))
     assert.ok(content.includes('## 发行版参考资料'))
+    assert.doesNotMatch(content, /resources\/calendar\/\d{4}-\d{4}\.json/u)
     for (const ref of skill.references) {
       assert.ok(content.includes(ref.path), 'Agent-readable body must carry the actual reference link')
       assert.ok((await readFile(resolve(product, 'skills/calendar-management', ref.path))).length)
@@ -277,4 +278,55 @@ academicTest('with the public calendar present, the plugin registers annotations
     assert.ok(target.startsWith(resolve(tmpdir()) + sep) && basename(target).startsWith('ecnu-calendar-annotations-'))
     await rm(target, { recursive: true, force: true })
   }
+})
+
+academicTest('configuration corrects a holiday and adds a selectable year on the same installation', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'ecnu-calendar-update-'))
+  t.after(() => rm(root, {recursive: true, force: true}))
+  const file = join(root, 'published.json')
+  const key = 'EDUWORK_ACADEMIC_CALENDARS_FILE', previous = process.env[key]
+  t.after(() => { if (previous === undefined) delete process.env[key]; else process.env[key] = previous })
+  const [{ Context }, hub, json, domain, calendar, education, school] = await Promise.all([
+    load('@deepseek-ai/cordis'), load('@deepseek-ai/dsh-storage'), load('@deepseek-ai/dsh-storage-json'),
+    load('@deepseek-ai/dsh-storage-domain'), import(pathToFileURL(resolve(core, 'dsh-plugins/calendar/lib/index.js'))),
+    import('@eduwork/dsh-academic-calendar'), import('../plugins/ecnu-calendar/lib/index.js'),
+  ])
+  async function boot(check) {
+    const ctx = new Context()
+    try {
+      await ctx.plugin(hub.default ?? hub)
+      await ctx.plugin(json, { root: join(root, 'storage') })
+      await ctx.plugin(domain, { backend: 'json' })
+      await ctx.plugin(calendar.CalendarService)
+      await ctx.plugin(education.default)
+      await ctx.plugin(school.default)
+      await ctx.ecnuCalendar.ready
+      await ctx.ecnuCalendar.integration
+      await check(ctx)
+    } finally { await ctx.fiber.dispose() }
+  }
+  const group = 'academic-calendar', oldId = 'ecnu-academic-calendar:' + dataset.academicYear
+  delete process.env[key]
+  await boot(async ctx => { await ctx.calendar.selectAnnotations({group, id: oldId}) })
+  const corrected = structuredClone(dataset)
+  corrected.revision++
+  const holiday = corrected.events.find(event => event.uid === 'national-day-2026')
+  holiday.lastDay = '2026-10-03'
+  const next = {schemaVersion: 2, academicYear: '2027-2028', revision: 1,
+    terms: [{id: 'autumn', name: 'Test term', firstDay: '2027-09-13', lastDay: '2027-09-19', weekCount: 1,
+      phases: [{kind: 'teaching', name: 'Teaching', firstDay: '2027-09-13', lastDay: '2027-09-19'}]}]}
+  await writeFile(file, JSON.stringify([next, corrected]))
+  process.env[key] = file
+  await boot(async ctx => {
+    assert.equal(ctx.calendar.annotationChoices().find(choice => choice.selected).id, oldId)
+    const events = ctx.calendar.snapshot().events.filter(event => event.uid === holiday.uid)
+    assert.deepEqual(events.map(event => event.end), ['2026-10-03'])
+    await ctx.calendar.selectAnnotations({group, id: 'ecnu-academic-calendar:2027-2028'})
+    const day = ctx.ecnuCalendar.describeDate('2027-09-13')
+    assert.equal(day.week, 1)
+    assert.deepEqual(ctx.academicCalendar.query({from: day.date}).days, [day])
+    assert.match((await ctx.calendar.annotationsFor({from: day.date, to: day.date})).spans[0].text, /Test term/)
+    await ctx.calendar.selectAnnotations({group, id: null})
+  })
+  await boot(async ctx => { assert.ok(ctx.calendar.annotationChoices().every(choice => !choice.selected)) })
 })

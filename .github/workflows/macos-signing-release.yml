@@ -15,6 +15,9 @@ concurrency:
 jobs:
   sign:
     if: github.repository == 'ECNU/EduWork-ECNU' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      actions: read
     environment: macos-signing
     outputs:
       core: ${{ steps.source.outputs.core }}
@@ -24,8 +27,10 @@ jobs:
         include:
           - os: macos-26
             arch: arm64
+            candidate: macos-release
           - os: macos-26-intel
             arch: x64
+            candidate: macos-x64-release
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -46,7 +51,16 @@ jobs:
           import { readReviewedRelease } from './edition/release/macos-signing/github.mjs'
           const plan = await readReviewedRelease(process.env.RELEASE_VERSION)
           appendFileSync(process.env.GITHUB_OUTPUT, 'core=' + plan.coreCommit + '\n')
+          if (plan.draft === true) appendFileSync(process.env.GITHUB_OUTPUT, 'candidate_run=' + plan.sourceRun + '\n')
           NODE
+      - name: Download the reviewed candidate for a draft release
+        if: steps.source.outputs.candidate_run != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.candidate }}
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.source.outputs.candidate_run }}
+          path: ${{ runner.temp }}/original-candidate
       - uses: actions/checkout@v4
         with:
           repository: ECNU/EduWork

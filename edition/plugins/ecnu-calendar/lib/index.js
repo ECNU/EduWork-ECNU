@@ -17,37 +17,63 @@ import { readFile } from 'node:fs/promises'
 import { validateDataset, describeDate } from '@eduwork/dsh-academic-calendar/model'
 export { validateDataset, weekOf, describeDate, annotationsForDataset, eventsForDataset } from '@eduwork/dsh-academic-calendar/model'
 
+async function loadDatasets(published) {
+  const baseline = validateDataset(JSON.parse(await readFile(new URL('../data/2026-2027.json', import.meta.url), 'utf8')))
+  if (!published) return [baseline]
+  const values = JSON.parse(await readFile(published, 'utf8'))
+  if (!Array.isArray(values) || !values.length) throw new Error('ECNU 校历配置缺少学年')
+  return values.map(value => {
+    const dataset = validateDataset(value)
+    // The bundled year's revision may already have been recorded by an older installation.
+    return dataset.academicYear === baseline.academicYear && dataset.revision <= baseline.revision ? baseline : dataset
+  })
+}
+
 export default class EcnuCalendar extends Service {
   constructor(ctx) {
     super(ctx, 'ecnuCalendar')
-    this.dataset = null
-    this.ready = readFile(new URL('../data/2026-2027.json', import.meta.url), 'utf8').then(text => {
-      this.dataset = validateDataset(JSON.parse(text))
+    this.ready = loadDatasets(process.env.EDUWORK_ACADEMIC_CALENDARS_FILE).then(datasets => {
+      this.datasets = datasets
     })
     // Data stays institution-owned; the public education plugin owns semantics,
     // selection, query tools and the projection into ordinary calendar entries.
     ctx.inject(['academicCalendar'], inner => {
-      let handle
+      const handles = []
       let gone = false
       this.integration = this.ready.then(async () => {
-        if (gone) return
-        handle = await inner.academicCalendar.registerDataset({
-          id: `ecnu-academic-calendar:${this.dataset.academicYear}`,
-          label: `华东师范大学 ${this.dataset.academicYear} 学年校历`,
-          dataset: this.dataset,
-          source: { provider: 'ecnu-calendar', account: 'institution', feed: `academic-calendar-${this.dataset.academicYear}` },
-        })
-        if (gone) handle.dispose()
+        for (const [index, dataset] of this.datasets.entries()) {
+          if (gone) return
+          const year = dataset.academicYear
+          const handle = await inner.academicCalendar.registerDataset({
+            id: `ecnu-academic-calendar:${year}`,
+            label: `华东师范大学 ${year} 学年校历`,
+            dataset,
+            retainLastAccepted: true,
+            source: { provider: 'ecnu-calendar', account: 'institution', feed: `academic-calendar-${year}` },
+          })
+          if (gone) handle.dispose()
+          else {
+            handles.push(handle)
+            // Earlier public cores return only a disposable handle.
+            if (handle.dataset) this.datasets[index] = handle.dataset
+          }
+        }
       })
       // Keep load/integration errors observable to callers without an unhandled
       // promise rejection if an optional panel has not started reading yet.
       this.integration.catch(error => { this.integrationError = String(error.message ?? error) })
-      return () => { gone = true; handle?.dispose() }
+      return () => {
+        gone = true
+        for (const handle of handles) handle.dispose()
+      }
     })
   }
 
+  get dataset() { return this.datasets?.[0] }
+
   describeDate(date) {
     if (!this.dataset) throw new Error('ECNU 校历数据尚未加载完成')
-    return describeDate(this.dataset, date)
+    const answers = this.datasets.map(dataset => describeDate(dataset, date))
+    return answers.find(answer => answer.status !== 'unspecified') ?? answers[0]
   }
 }

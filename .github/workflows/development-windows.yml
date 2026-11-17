@@ -135,13 +135,6 @@ jobs:
         with:
           go-version: '1.26.6'
           cache: false
-      - name: Stage the calendar development edition from the pinned core
-        if: contains(needs.policy.outputs.version, '-dev.')
-        shell: bash
-        run: |
-          git -C institution worktree add --detach "$RUNNER_TEMP/ew-calendar-edition" HEAD
-          node institution/edition/calendar/stage-development.mjs ./core "$RUNNER_TEMP/ew-calendar-edition"
-          echo "ECNU_CALENDAR_EDITION=$RUNNER_TEMP/ew-calendar-edition" >> "$GITHUB_ENV"
       - name: Build and validate the exact desktop archive
         id: desktop
         shell: bash
@@ -154,8 +147,7 @@ jobs:
           SELECTED_PLATFORMS: ${{ inputs.platform }}
         run: |
           set -euo pipefail
-          edition_root="${ECNU_CALENDAR_EDITION:-./institution}"
-          args=(--core-root ./core --edition-root "$edition_root"
+          args=(--core-root ./core --edition-root ./institution
             --distribution-config edition/distribution.json
             --recipe pinned-source
             --version "$RELEASE_VERSION"
@@ -171,10 +163,9 @@ jobs:
             if [[ "$RELEASE_NOTES_APPROVED" == true ]]; then args+=(--release-notes-approved); fi
           fi
           node core/scripts/ci-eduwork-${{ matrix.script }}-release.mjs "${args[@]}"
-      - name: Verify the assembled development calendar
-        if: contains(needs.policy.outputs.version, '-dev.')
+      - name: Verify the assembled school calendar
         shell: bash
-        run: node institution/edition/calendar/verify-development.mjs "$RUNNER_TEMP/ew-candidate/product"
+        run: node institution/edition/calendar/verify-assembly.mjs "$RUNNER_TEMP/ew-candidate/product" ./core
       - name: Validate institution plugins with the assembled Runtime
         shell: pwsh
         run: ./institution/edition/test/test-desktop-candidate.ps1 -CoreRoot (Resolve-Path ./core).Path -EditionRoot (Resolve-Path ./institution).Path -Product "$env:RUNNER_TEMP/ew-candidate/product"

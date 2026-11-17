@@ -86,6 +86,13 @@
         "endpoint": "/user/active",
         "productName": "EduWork@ECNU"
       }
+    },
+    {
+      "root": "edition",
+      "source": "edition/plugins/ecnu-calendar",
+      "id": "ecnu-calendar",
+      "name": "@chatecnu-work/dsh-ecnu-calendar",
+      "config": {}
     }
   ],
   "skills": [
@@ -107,6 +114,19 @@
       "name": "artifact-images",
       "source": "edition/skills/artifact-images",
       "defaultEnabled": true,
+      "replace": true
+    },
+    {
+      "name": "calendar-management",
+      "sourcePackage": "@eduwork/dsh-calendar",
+      "sourcePath": "skills/calendar-management",
+      "defaultEnabled": true,
+      "references": [
+        {
+          "title": "ECNU 校历使用说明",
+          "path": "../../resources/calendar/guide.md"
+        }
+      ],
       "replace": true
     }
   ],

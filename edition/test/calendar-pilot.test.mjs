@@ -28,17 +28,14 @@ test('edition packaging reuses the public Skill and binds only local calendar re
     await mkdir(modules, { recursive: true })
     await copyDshPackagePayload(resolve(core, 'dsh-plugins/calendar'), join(modules, '@eduwork/dsh-calendar'))
     const edition = JSON.parse(await readFile(new URL('../distribution.json', import.meta.url), 'utf8'))
-    const generic = JSON.parse(await readFile(resolve(core, 'config/distributions/generic.json'), 'utf8'))
+    const { pinnedDistribution } = await import(pathToFileURL(join(core, 'scripts/pinned-distribution.mjs')))
+    const generic = pinnedDistribution(JSON.parse(await readFile(resolve(core, 'config/distributions/generic.json'), 'utf8')))
     for (const replacement of edition.skills.filter(row => row.replace === true)) {
-      assert.equal(generic.skills.filter(row => row.name === replacement.name).length, 1,
-        `Skill replacement must select one core skill: ${replacement.name}`)
+      assert.equal(generic.skills.filter(row => row.name === replacement.name).length, 1)
     }
-    const development = JSON.parse(await readFile(new URL('../calendar/development.json', import.meta.url), 'utf8'))
-    const skill = development.skills.find(row => row.name === 'calendar-management')
-    assert.ok(!edition.skills.some(row => row.sourcePackage === '@eduwork/dsh-calendar'),
-      'the default product must not project a skill from its unassembled calendar package')
-    assert.ok(!edition.plugins.some(row => row.id === 'ecnu-calendar'),
-      'unpublished education dependencies belong to the separate development assembly')
+    const skill = edition.skills.find(row => row.name === 'calendar-management')
+    assert.equal(skill.replace, true)
+    assert.equal(edition.plugins.filter(row => row.id === 'ecnu-calendar').length, 1)
     const result = await copyDshBundledSkills({ repository: resolve(core), packageRoot: modules, skillRoot: join(product, 'skills'), skills: [skill] })
     assert.deepEqual(result, ['calendar-management'])
     for (const resource of edition.resources.filter(row => row.target.startsWith('calendar/'))) {

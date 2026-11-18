@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "kind": "eduwork-public-source-snapshot",
   "edition": "ecnu",
-  "version": "0.4.14-dev.20261116.2",
+  "version": "0.4.14",
   "sourceState": "local-development-snapshot",
-  "createdAt": "2026-11-17T14:25:12.837Z",
-  "fileSetSHA256": "57e97ccdab12763a7f48749209e15d72539543cd7b63dd85c60bdf259314f549",
+  "createdAt": "2026-11-18T00:55:30.014Z",
+  "fileSetSHA256": "d4b1a4c552a285f7c87ee966985a82c042cd93df06fff21bfefd16ad2adfb0a8",
   "files": [
     {
       "path": ".gitattributes",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/development-windows.yml",
-      "sha256": "ea725982a5d3a4f51a5ff2534c4845dee10bfe6a61e0e1041f6b883418aa1ce2"
+      "sha256": "bfe16c1067d0f9efcfe5726a40231d3c93a054a4a15c2b6ab1c937b489ed5199"
     },
     {
       "path": ".github/workflows/macos-signing-preflight.yml",
@@ -65,7 +65,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "62b01d2b4e10cf1da50ba69f17997c0e31bacc70c7556b8b77c0ada0a8cc3602"
+      "sha256": "34906f4a2d5fbc5094c871f4c8500020e118652ad47b4e68b6370db3837019b6"
     },
     {
       "path": "docs/BUILD.md",
@@ -208,6 +208,10 @@
       "sha256": "c0fa679292e59e7cc40bdf7d3d220730241c37a727057a39ee74ee1c84aae1ea"
     },
     {
+      "path": "docs/releases/0.4.14.md",
+      "sha256": "e9fe64753c55b8059479cc63da634935a689d88470458b2d86d55ab56dc13c06"
+    },
+    {
       "path": "docs/releases/0.4.2.md",
       "sha256": "acce4644954f121500052c9a531dcf26e8c34dc9bdcbbe1409df5aee4d8a5ec5"
     },
@@ -270,6 +274,10 @@
     {
       "path": "edition/calendar/stage-development.mjs",
       "sha256": "c1b79fc5a12f86f97299a3985b51c836c02dbe69209bb1f93abb9e8ca2cfc638"
+    },
+    {
+      "path": "edition/calendar/verify-assembly.mjs",
+      "sha256": "a56652d8e6c4bbfd0923f5ca0a8733614720d814e851773581d4ebe6e26cf383"
     },
     {
       "path": "edition/calendar/verify-development.mjs",
@@ -345,7 +353,7 @@
     },
     {
       "path": "edition/distribution.json",
-      "sha256": "273b773b12f967fab51dd81201f283550d359202786448b458b49fcb21672f1c"
+      "sha256": "462f223f2b6ae4f7dd78bf14576ac7f9b3a565010bc9c8c57af69538fa82aa70"
     },
     {
       "path": "edition/macos-signing.json",
@@ -533,11 +541,11 @@
     },
     {
       "path": "edition/plugins/ecnu-calendar/README_EN.md",
-      "sha256": "2be13a3582e469d7ea039eb7859e5fff486c98f97c14cc712e52a711f42eedfc"
+      "sha256": "8410110bf681b9a98ee92e25ce2361c626737f4dfed7e00171b17691dcdce9d7"
     },
     {
       "path": "edition/plugins/ecnu-calendar/README.md",
-      "sha256": "9f18a8a58d9c59005025ee565e86ce61d0b9d0c5d1acf05b7bcbdf3b2ce168fc"
+      "sha256": "4d324735fceefba2fa62e0332cd30b6f2a869c896690cb5132dd5fe0cb830fab"
     },
     {
       "path": "edition/plugins/provider-vision-fallback/lib/evidence-store.js",
@@ -1321,7 +1329,7 @@
     },
     {
       "path": "edition/test/calendar-pilot.test.mjs",
-      "sha256": "30256dc45e52ebe4f70ff336564823b8f235c54993526065ebd0fb78c11a66c7"
+      "sha256": "7adb3bfe9ca2398f8f0210be4eabd56afbf1d9e88eac46b677426925febc0d89"
     },
     {
       "path": "edition/test/candidate-failure-evidence.test.mjs",

@@ -29,7 +29,7 @@ on:
         default: false
         type: boolean
       stage_draft:
-        description: 'Upload a development preview as a draft for Mac signing before publication'
+        description: 'Stage a preview or reviewed formal candidate as a draft for Mac signing'
         default: false
         type: boolean
   workflow_call:

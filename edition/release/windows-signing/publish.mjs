@@ -12,6 +12,7 @@ import { validateSignedFiles } from './files.mjs'
 import { fileIdentity } from './operations.mjs'
 import { writeJSON, sha256File } from './util.mjs'
 import { validatePublicationSource } from './publication-source.mjs'
+import { requiresSignedDraft, validateDraftSource } from '../macos-signing/github.mjs'
 
 export async function preparePublication(env=process.env) {
   const repository=env.GITHUB_REPOSITORY,workflow=candidateWorkflow(repository)
@@ -87,9 +88,12 @@ export async function publishPrepared(prepared,env=process.env) {
   assert(matches.length<=1);let release=matches[0]
   const prerelease=desktopVersion(version).prerelease
   const stageDraft=env.STAGE_DRAFT==='true'
+  if (requiresSignedDraft(version) && (!release || release.draft)) {
+    assert(stageDraft, 'Stage this formal candidate for Mac signing before publication')
+  }
   if(stageDraft) {
-    assert(prerelease && version.includes('-dev.'),'Draft signing is only available for development previews')
-    assert(!release || release.draft,'This preview is already public')
+    validateDraftSource(prepared)
+    assert(!release || release.draft,'This release is already public')
   }
   const checkLatest=async r=>{if(!prerelease){const latest=await request('/releases/latest');assert.equal(latest?.id,r.id,'Stable release is not GitHub Latest')}}
   const checkRelease=r=>{assert.equal(r.tag_name,tag);assert.equal(r.target_commitish,editionCommit);assert.equal(r.name,title);assert.equal(r.body.trimEnd(),notes.trimEnd());assert.equal(r.prerelease,prerelease)}

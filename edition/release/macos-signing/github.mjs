@@ -6,14 +6,29 @@ import { createHash } from 'node:crypto'
 import { copyFile, lstat, mkdir, readFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { identity } from './files.mjs'
+import formalDrafts from './formal-drafts.json' with { type: 'json' }
 
 export const textHash = value => createHash('sha256').update(value).digest('hex')
+export function requiresSignedDraft(version) {
+  return Object.hasOwn(formalDrafts, version)
+}
+export function validateDraftSource(plan) {
+  if (plan.version.includes('-dev.')) return
+  assert(requiresSignedDraft(plan.version), 'Unreviewed formal draft')
+  const expected = formalDrafts[plan.version]
+  for (const key of ['sourceRun', 'editionCommit', 'coreCommit']) {
+    assert.equal(plan[key], expected[key], `Formal draft source differs: ${key}`)
+  }
+}
 export async function readReviewedRelease(version) {
   assert.match(version ?? '', /^\d+\.\d+\.\d+(?:-dev\.\d{8}\.[1-9]\d*)?$/)
   const plan = JSON.parse(await readFile(new URL(`./inputs/${version}.json`, import.meta.url), 'utf8'))
   assert.equal(plan.version, version)
   assert.equal(plan.tag, 'v' + version)
-  if (plan.draft === true) assert.match(plan.sourceRun ?? '', /^[1-9]\d*$/)
+  if (plan.draft === true) {
+    assert.match(plan.sourceRun ?? '', /^[1-9]\d*$/)
+    validateDraftSource(plan)
+  }
   return plan
 }
 export async function copyReviewedCandidate(source, destination, asset) {
@@ -37,7 +52,7 @@ export function validateRelease(release, plan, {allowExtra = false} = {}) {
   }
 }
 export function validateSigningVisibility(release,plan) {
-  if(plan.draft===true)assert(plan.version.includes('-dev.'),'Only a development preview may be signed from a draft')
+  if(plan.draft===true)validateDraftSource(plan)
   assert.equal(release.draft,plan.draft===true)
 }
 export function releaseAPI(token=process.env.GITHUB_TOKEN) {

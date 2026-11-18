@@ -44,6 +44,8 @@ Apple 专用密码可在 [Apple 账户](https://account.apple.com/) 的“登录
 
 ## 正式分发约束
 
+正式版 0.4.14 也先在草稿中签名。学校仓在 `edition/release/macos-signing/formal-drafts.json` 登记可用的正式候选，锁定原构建运行、学校提交和公版提交。Windows 两轮签名验收通过后，使用同一组运行 ID 暂存三平台原件。在签名输入中核对草稿 ID、附件 ID 和 SHA-256，随后沿用双架构签名、公证、macOS 15 验收及附件替换流程。最终检查签名附件、Windows 来源和标签后，将同一草稿发布为正式版并设为 Latest。
+
 开发预览可以先完成签名再公开下载。在 **Publish ECNU desktop candidate** 中同时选择 `publish=true` 和 `stage_draft=true`，通过校验的三平台附件会留在 GitHub 草稿中。在该版本的签名输入清单中记录草稿 ID、原包摘要和 `draft: true`，再运行双架构签名、公证和附件替换。核验替换回执、Windows 附件和两个 Mac 的最低系统测试后，将同一草稿公开为预发布，保留现有正式版为 Latest。
 
 应用完成学校签名及公证后，先装订 `.app` 的票据，再生成最终 ZIP；从同一应用生成 DMG，并完成 DMG 的签名、公证和装订。最终哈希、大小、发布回执和 Sparkle Ed25519 签名必须基于最终文件重新计算。

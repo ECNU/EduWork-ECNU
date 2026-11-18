@@ -377,3 +377,22 @@ test('a development preview can be fully staged for Mac signing without becoming
   release.draft=false
   await assert.rejects(publishPrepared(prepared,env),/already public/)
 })
+
+test('formal draft staging is restricted to the reviewed run and cannot publish unsigned Mac files',async t=>{
+  const {publishPrepared}=await import('../release/windows-signing/publish.mjs')
+  const { '0.4.14': pins }=JSON.parse(await readFile(new URL('../release/macos-signing/formal-drafts.json',import.meta.url)))
+  const file={name:'synthetic.zip',bytes:5,sha256:'a'.repeat(64)}
+  const release={id:10,draft:true,tag_name:'v0.4.14',target_commitish:pins.editionCommit,name:'Approved',body:'notes',prerelease:false,assets:[{name:file.name,size:file.bytes,digest:'sha256:'+file.sha256,state:'uploaded'}],html_url:'https://example.invalid/draft'}
+  t.mock.method(globalThis,'fetch',async(url,options)=>{
+    assert.equal(options.method,'GET','A verified draft must remain private')
+    const path=new URL(url).pathname
+    if(path.includes('/git/ref/'))return new Response(null,{status:404})
+    return Response.json(path.endsWith('/releases')?[release]:release)
+  })
+  const prepared={...pins,repository:'ECNU/EduWork-ECNU',version:'0.4.14',title:release.name,notes:release.body,files:[file]}
+  const env={PUBLISH_RELEASE:'true',STAGE_DRAFT:'true',GITHUB_REF:'refs/heads/main',GITHUB_TOKEN:'synthetic-test-only'}
+  assert.equal(await publishPrepared(prepared,env),release.html_url)
+  await assert.rejects(publishPrepared(prepared,{...env,STAGE_DRAFT:'false'}),/Stage this formal candidate/)
+  await assert.rejects(publishPrepared({...prepared,sourceRun:'123'},env),/sourceRun/)
+  await assert.rejects(publishPrepared({...prepared,version:'0.4.15'},env),/Unreviewed formal draft/)
+})

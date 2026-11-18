@@ -63,6 +63,19 @@ test('Mac signing loads only explicitly reviewed release versions',async()=>{
   await assert.rejects(readReviewedRelease('0.4.14-dev.20261115.0'),{code:'ERR_ASSERTION'})
   await assert.rejects(readReviewedRelease('0.4.14-dev.20261115.1/draft'),{code:'ERR_ASSERTION'})
 })
+
+test('stable draft signing binds the origin run and both commits to the reviewed candidate',async()=>{
+  const { '0.4.14': pins }=JSON.parse(await readFile(new URL('../release/macos-signing/formal-drafts.json',import.meta.url)))
+  const approved={...plan,...pins,version:'0.4.14',tag:'v0.4.14',draft:true,bodySHA256:textHash('approved')}
+  const release={id:approved.releaseId,tag_name:approved.tag,target_commitish:pins.editionCommit,draft:true,prerelease:false,immutable:false,body:'approved',assets:clone(approved.assets)}
+  validateRelease(release,approved)
+  for (const key of ['editionCommit','coreCommit','sourceRun']) {
+    const changed={...approved,[key]:key==='sourceRun'?'123':'a'.repeat(40)}
+    assert.throws(()=>validateRelease({...release,target_commitish:changed.editionCommit},changed),/Formal draft source differs/)
+  }
+  assert.throws(()=>validateRelease({...release,draft:false},approved))
+  assert.throws(()=>validateRelease({...release,prerelease:true},approved))
+})
 const sourceRun={id:123,repository:{full_name:'ECNU/EduWork-ECNU'},path:'.github/workflows/macos-signing-release.yml',event:'workflow_dispatch',head_branch:'main',status:'completed',conclusion:'success',head_sha:'a'.repeat(40)}
 test('publication accepts only completed main signing workflow runs',()=>{
   validateSourceRun(sourceRun)

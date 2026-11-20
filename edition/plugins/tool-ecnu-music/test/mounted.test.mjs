@@ -52,7 +52,10 @@ test('real DSH defineTool registers music tools and uses only Host authorization
   assert.equal(mounted.tools.get('ecnu_music_job').timeoutMs, 125000, 'ordinary requests remain bounded')
   const call = async (name, args = {}) => result(await mounted.tools.get(name).execute(args, exec))
   assert.deepEqual((await call('ecnu_music_capabilities')).operations, ['generate', 'cover', 'transcribe', 'plan'])
-  const submitted = await call('ecnu_music_submit', { operation: 'generate', style: 'orchestra', lyrics: '希望', n: 2 })
+  const generation = { operation: 'generate', style: 'orchestra', lyrics: '希望' }
+  await assert.rejects(call('ecnu_music_submit', { ...generation, n: 2 }), /"n" must be one of \[1\]/)
+  assert.equal(calls.filter(c => c.method === 'POST').length, 0)
+  const submitted = await call('ecnu_music_submit', { ...generation, n: 1 })
   assert.equal(submitted.submission, 'accepted')
   assert.equal((await call('ecnu_music_job', { job_id: 'host-job' })).status, 'succeeded')
   await call('ecnu_music_artifacts', { job_id: 'host-job' })

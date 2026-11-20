@@ -54,7 +54,7 @@ jobs:
           $env:EDUWORK_CORE_ROOT = (Resolve-Path core).Path
           node --test institution/edition/test/candidate-failure-evidence.test.mjs
           if ($LASTEXITCODE) { throw 'Candidate failure evidence checks failed' }
-          node --test institution/edition/test/enterprise-config.test.mjs
+          node --test institution/edition/test/enterprise-config.test.mjs institution/edition/test/remote-configuration.test.mjs institution/edition/test/skills-snapshot.test.mjs
           if ($LASTEXITCODE) { throw 'Institution configuration checks failed' }
           node --test institution/edition/plugins/chatecnu-active-heartbeat/test/scheduler.test.mjs institution/edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs
           if ($LASTEXITCODE) { throw 'Heartbeat contract checks failed' }

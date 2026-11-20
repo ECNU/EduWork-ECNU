@@ -9,17 +9,19 @@ test('remote configuration feed migrates known origins without changing program 
   const {parseUserConfig}=await import(pathToFileURL(join(process.env.EDUWORK_CORE_ROOT,'dsh-host/user-config.mjs')))
   for(const [name,directory] of [['publisher-bootstrap.json','windows'],['publisher-bootstrap.darwin.json','macos']]){
     const file=new URL('../desktop-020/'+name,import.meta.url),value=JSON.parse(await readFile(file,'utf8'))
-    const old=value.contentUpdates.baseURL.replace('/core-021-remote/','/core-020/')
+    const old=value.contentUpdates.baseURL.replace('/school-skills-v1/','/core-021-remote/')
     assert.notEqual(old,value.contentUpdates.baseURL)
     assert.ok(value.migrateFrom.includes(old))
+    assert.ok(value.configurationOnlySources.includes(old))
+    assert.ok(value.configurationOnlySources.every(url=>value.migrateFrom.includes(url) && !url.includes('token-v1')))
     assert.ok(value.contentUpdates.baseURL.endsWith('/'+directory))
     assert.equal(value.contentUpdates.configuration,true)
-    assert.equal(value.contentUpdates.skills,false)
+    assert.equal(value.contentUpdates.skills,true)
     assert.equal(value.contentUpdates.bundled.configuration,0)
-    const {migrateFrom,...configuration}=value
+    const {migrateFrom,configurationOnlySources,...configuration}=value
     const parsed=parseUserConfig(file.pathname,JSON.stringify(configuration))
     assert.equal(parsed.contentUpdates.publicKey,value.contentUpdates.publicKey)
-    assert.ok(!JSON.stringify(value.updates).includes('core-021-remote'))
+    assert.ok(!JSON.stringify(value.updates).includes('school-skills-v1'))
   }
 })
 

@@ -6,19 +6,25 @@
   },
   "contentUpdates": {
     "publisher": "eduwork-ecnu",
-    "baseURL": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/core-021-remote/windows",
+    "baseURL": "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/school-skills-v1/windows",
     "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAPgLiUb1AKe1MifCo+QV4Z+828bOFRtflDRmmsDaVbRk=\n-----END PUBLIC KEY-----\n",
     "configuration": true,
-    "skills": false,
+    "skills": true,
     "bundled": {
       "configuration": 0,
       "skills": 0
     }
   },
   "migrateFrom": [
+    "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/core-021-remote/windows",
     "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/core-020/windows",
     "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/rc2-alpha-20260927/windows",
     "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/token-v1/windows",
     "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates"
+  ],
+  "configurationOnlySources": [
+    "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/core-021-remote/windows",
+    "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/core-020/windows",
+    "https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/content-updates/rc2-alpha-20260927/windows"
   ]
 }

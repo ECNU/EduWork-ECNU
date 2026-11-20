@@ -128,15 +128,15 @@ export function apply(ctx, rawConfig = {}) {
     for (const key of ['audio_path', 'abc_path', 'timeline_path']) if (args[key]) args[key] = ctx.fs.processPath(await ctx.fs.resolve(args[key], { cwd, signal: exec.signal }))
     return exportMusicSong({ root, args, signal: exec.signal })
   })
-  register('ecnu_music_capabilities', 'Read current school music service capabilities. Authentication stays in the Host; no tokens are returned. Use before choosing a music operation.', {},
+  register('ecnu_music_capabilities', 'Read current school music service capabilities. Authentication stays in the Host; no tokens are returned. Use before choosing a music operation. This client submits single-candidate jobs only, even if the service advertises more.', {},
     (_, exec, authorization) => musicRequest(config, authorization, 'capabilities', { signal: exec.signal }))
-  register('ecnu_music_submit', 'Submit ONE asynchronous music request: generate (n=1 or 2), plan, cover or transcribe. Returns a task id and local receipt; does not wait for inference. Preserve request_id and job ids. Reusing a receipt queries an accepted job or refuses an uncertain POST; never blindly create another request after a timeout. No duration or voice-cloning parameter. Omitted seed is random.', {
+  register('ecnu_music_submit', 'Submit ONE asynchronous music request: generate or plan (single candidate), cover or transcribe. Returns a task id and local receipt; does not wait for inference. Preserve request_id and job ids. Reusing a receipt queries an accepted job or refuses an uncertain POST; never blindly create another request after a timeout. No duration or voice-cloning parameter. Omitted seed is random.', {
     operation: { type: 'string', enum: ['generate', 'plan', 'cover', 'transcribe'], required: true },
     title: { type: 'string', description: 'Optional local work title, at most 120 characters; not sent to the model.' },
     parent_request_id: { type: 'string', description: 'Optional local parent request UUID v4 for a new version; always submit a new request_id.' },
     style: { type: 'string', description: 'Required except transcribe; 1–2000 characters.' },
     lyrics: { type: 'string', description: 'Required except transcribe; preserve user lyrics; 1–16000 characters.' },
-    n: { type: 'integer', description: 'generate: 1 or 2; plan: 1 only. Omit for cover/transcribe.' },
+    n: { type: 'integer', enum: [1], description: 'Optional for generate and plan; the only supported value is 1. Omit for cover/transcribe.' },
     cot: { type: 'string', enum: ['full', 'melody', 'off'], description: 'generate or plan only; plan cannot use off.' },
     seed: { type: 'integer', description: 'Optional nonnegative safe integer, at most 9007199254740991. Omit for random; zero is valid. Not for transcribe.' },
     abc: { type: 'string', description: 'Optional ABC score, generate/plan only, at most 64000 characters.' },
@@ -152,7 +152,7 @@ export function apply(ctx, rawConfig = {}) {
     }
     return submitMusic({ config, authorization, root, args, signal: exec.signal })
   })
-  register('ecnu_music_job', 'Read a music job using its original calling identity. queued/running means still in progress; truncated/partial_failed must be disclosed. For n=2 inspect each candidate. Do not submit another task to poll.', jobParameters,
+  register('ecnu_music_job', 'Read a music job using its original calling identity. queued/running means still in progress; truncated/partial_failed must be disclosed. For historical group jobs inspect each candidate. Do not submit another task to poll.', jobParameters,
     (args, exec, authorization) => musicRequest(config, authorization, `jobs/${segment(args.job_id)}`, { signal: exec.signal }))
   register('ecnu_music_artifacts', 'List actual music job artifacts before downloading. A group may require individual candidate ids. Returned names and formats are authoritative; a score can be ABC rather than PDF.', jobParameters,
     (args, exec, authorization) => musicRequest(config, authorization, `jobs/${segment(args.job_id)}/artifacts`, { signal: exec.signal }))

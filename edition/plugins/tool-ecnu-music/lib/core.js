@@ -63,7 +63,7 @@ export function normalizeSubmission(args) {
   if (operation === 'generate' || operation === 'plan') {
     body.n = args.n ?? 1
     body.cot = args.cot ?? 'full'
-    if (![1, 2].includes(body.n) || operation === 'plan' && body.n !== 1) throw Error('generate supports n=1 or 2; plan requires n=1')
+    if (body.n !== 1) throw Error(`${operation} requires n=1`)
     if (!(operation === 'plan' ? ['full', 'melody'] : ['full', 'melody', 'off']).includes(body.cot)) throw Error('Unsupported cot for this operation')
     if (args.abc !== undefined) body.abc = text(args.abc, 'abc', 64000)
   }

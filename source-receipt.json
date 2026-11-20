@@ -5,7 +5,7 @@
   "version": "0.4.14",
   "sourceState": "local-development-snapshot",
   "createdAt": "2026-11-18T00:55:30.014Z",
-  "fileSetSHA256": "e3cd1ac9b4fd437d9b38b073d49abda0e89bcef3ad0683388a874310e07c9858",
+  "fileSetSHA256": "33b79e080fbb6e6efe3faf4824bb1c5e95e68741e0320c06a51023e1518493a8",
   "files": [
     {
       "path": ".gitattributes",
@@ -65,7 +65,7 @@
     },
     {
       "path": "core.lock.json",
-      "sha256": "6a781cc27e02268a44bd93ef977c4d5a69230f1668065471b637f334cab78c7d"
+      "sha256": "0c5fbbbbaca75f10b092a1225b5bfe56d4baec148b1d30138f91ab47d766bc99"
     },
     {
       "path": "docs/BUILD.md",
@@ -121,7 +121,7 @@
     },
     {
       "path": "docs/MUSIC.md",
-      "sha256": "2cc32a8b7603a012eb9519240e71194c6447bdb9f4055bfd23c2992ce3c34218"
+      "sha256": "1510716df3ed032ba6d62dd329355b382cc165abe040c1e2f2382c371898b1a5"
     },
     {
       "path": "docs/OSS_UPDATES.md",
@@ -1373,7 +1373,7 @@
     },
     {
       "path": "edition/test/optional-packaging.test.mjs",
-      "sha256": "f9ca45dfcdb1d1ff1ba3ad6b3806c8c86e4fcca2da3446377426b3c8e7dda7ef"
+      "sha256": "412b81e1295f37f54c37ddc7045cdcd8ce182a3f061feed5236bd1f2105487fb"
     },
     {
       "path": "edition/test/oss-deltas.test.mjs",

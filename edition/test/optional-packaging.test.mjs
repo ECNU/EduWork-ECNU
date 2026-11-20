@@ -9,7 +9,7 @@ test('school distribution inherits the public optional remote bundle', async () 
   assert.ok(!distribution.retiredPluginIds.includes('eduwork-remote-access'), 'Do not prohibit user installation')
 })
 
-test('music tools are assembled while the unreleased music skill stays in source', async () => {
+test('music tools are assembled and the school feed supplies the music skill', async () => {
   const distribution=JSON.parse(await readFile(new URL('../distribution.json',import.meta.url),'utf8'))
   assert.ok(distribution.plugins.some(row=>row.id==='chatecnu-music' && row.name==='@chatecnu-work/dsh-tool-ecnu-music'))
   assert.ok(!distribution.skills.some(row=>row.name==='ecnu-music'))

@@ -17,7 +17,8 @@ export class HeartbeatScheduler {
 
   presence(input) {
     if (this.disposed) return
-    if (!this.clients.has(input.id) && this.clients.size >= 8) this.clients.delete(this.clients.keys().next().value)
+    // Only a new foreground lease needs room; an inactive page never evicts one.
+    if (input.active && !this.clients.has(input.id) && this.clients.size >= 8) this.clients.delete(this.clients.keys().next().value)
     if (input.active) this.clients.set(input.id, { ...input, expires: this.now() + 75000 })
     else this.clients.delete(input.id)
     if (input.recovered && this.failures && this.now() - (this.lastSent ?? 0) >= 5000) this.next = 0

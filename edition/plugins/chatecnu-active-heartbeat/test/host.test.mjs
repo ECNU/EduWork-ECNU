@@ -116,6 +116,13 @@ for (const inFlight of [false, true]) test(`same-state reauthorization resets ${
   } finally { finish?.(); await ctx.fiber.dispose() }
 })
 
+test('presence requests require a string page id', () => {
+  for (const id of [undefined, null, 42, '', 'tab 1', 'x'.repeat(65)]) {
+    assert.throws(() => heartbeat.parsePresence(JSON.stringify({ id, active: true })), /invalid client presence/)
+  }
+  assert.equal(heartbeat.parsePresence(presence('tab-1', true)).id, 'tab-1')
+})
+
 test('disabled Web configuration exposes harmless presence without requiring OIDC or a target', async () => {
   for (const config of [{ backend: 'web', enabled: false }, { backend: 'web' }]) {
   const ctx = new Context()

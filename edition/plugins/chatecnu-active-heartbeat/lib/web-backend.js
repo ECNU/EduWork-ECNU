@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { mkdir, open, readFile } from 'node:fs/promises'
+import { link, mkdir, open, readFile, rename, rm } from 'node:fs/promises'
 import { isAbsolute, join } from 'node:path'
 
 const installationPattern = /^inst_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
@@ -44,26 +44,38 @@ async function runtimeConfig(config, environment) {
     channel: identity.version.includes('-') ? 'dev' : 'stable' }
 }
 
+async function storedInstallationID(path) {
+  try { return (await readFile(path, 'utf8')).trim() }
+  catch (error) { if (error.code !== 'ENOENT') throw error }
+}
+
 // The per-data-root UUID moves with the user's data. Never derive a device ID
 // from hardware, account names, workspace paths or browser fingerprints.
 export async function installationID(stateDirectory) {
   const path = join(stateDirectory, 'installation-id')
-  try {
-    const value = (await readFile(path, 'utf8')).trim()
-    if (!installationPattern.test(value)) throw new Error('invalid stored heartbeat installation ID')
-    return value
-  } catch (error) { if (error.code !== 'ENOENT') throw error }
+  const stored = await storedInstallationID(path)
+  if (stored) {
+    if (!installationPattern.test(stored)) throw new Error('invalid stored heartbeat installation ID')
+    return stored
+  }
+  // Missing, or left empty by an interrupted write: there is no identity to keep.
   await mkdir(stateDirectory, { recursive: true, mode: 0o700 })
   const value = `inst_${randomUUID()}`
-  let file
-  try { file = await open(path, 'wx', 0o600) }
-  catch (error) {
-    if (error.code === 'EEXIST') return installationID(stateDirectory)
-    throw error
-  }
-  try { await file.writeFile(`${value}\n`); await file.sync() }
-  finally { await file.close() }
-  return value
+  const temporary = `${path}.${randomUUID()}.tmp`
+  try {
+    const file = await open(temporary, 'wx', 0o600)
+    try { await file.writeFile(`${value}\n`); await file.sync() }
+    finally { await file.close() }
+    // Publish complete content only. A hard link claims a missing file without
+    // replacing a concurrent writer's ID; rename replaces the empty leftover and
+    // covers filesystems without hard links.
+    if (stored === undefined) {
+      try { await link(temporary, path); return value }
+      catch (error) { if (error.code === 'EEXIST') return installationID(stateDirectory) }
+    }
+    await rename(temporary, path)
+    return value
+  } finally { await rm(temporary, { force: true }) }
 }
 
 export function heartbeatPayload(config, installation, input, system = process) {

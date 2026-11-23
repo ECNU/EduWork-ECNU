@@ -7,7 +7,7 @@ const initializers = []
 
 export function parsePresence(request) {
   const input = JSON.parse(request)
-  if (!input || !/^[a-zA-Z0-9-]{1,64}$/.test(input.id) || typeof input.active !== 'boolean'
+  if (!input || typeof input.id !== 'string' || !/^[a-zA-Z0-9-]{1,64}$/.test(input.id) || typeof input.active !== 'boolean'
     || (input.locale !== undefined && (typeof input.locale !== 'string' || input.locale.length > 20))
     || (input.timezone !== undefined && (typeof input.timezone !== 'string' || input.timezone.length > 64))
     || (input.recovered !== undefined && typeof input.recovered !== 'boolean')) throw new Error('invalid client presence')

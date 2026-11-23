@@ -1,13 +1,15 @@
 import { Service } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { CONSOLE_URL, READ_OPERATIONS } from './operations.js'
-import { createAccountReader } from './reader.js'
+import { createAccountReader, resolveConfig } from './reader.js'
 
 export const name = 'ecnu-aiconsole'
 export class EcnuAiconsole extends Service {
   static inject = ['oidcAccounts', 'tools']
   constructor(ctx, config) {
     super(ctx, 'ecnuAiconsole')
+    // Host-only identity binding for UI consumers of the same reader.
+    this.profileID = resolveConfig(config).oidcProfileId
     this.reader = createAccountReader(ctx, config)
     for (const [operation, spec] of Object.entries(READ_OPERATIONS)) {
       ctx.tools.register(defineTool({

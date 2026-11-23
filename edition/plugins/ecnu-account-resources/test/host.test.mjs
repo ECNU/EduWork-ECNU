@@ -116,7 +116,7 @@ test('quota wire validation failure does not break identity or managed models', 
 })
 
 test('wire descriptors are isolated: public has no quota field or Host credential transport invocation', () => {
-  assert.deepEqual(TYPERT.invocations.map(v => v.method), ['configuration', 'quota'])
+  assert.deepEqual(TYPERT.invocations.map(v => v.method), ['configuration', 'quota', 'points', 'invitation'])
   assert.equal(publicTypes.invocations.some(v => ['quota', 'modelResourceFetch', 'authorizedFetch'].includes(v.method)), false)
   const resources = publicTypes.invocations.find(v => v.method === 'resources')
   assert.equal(resources.result.schema.safeParse({ profileID: 'ecnu', modelSource: 'profile', models: [], issues: [], quota: {} }).success, false)

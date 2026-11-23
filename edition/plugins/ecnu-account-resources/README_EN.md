@@ -12,4 +12,21 @@ The menu preserves actual window balances, progress, reset time, and resource-pa
 
 See `quota.openapi.yaml` for interface fields. These are ECNU protocol fields, not OIDC standards or mandatory public resource capabilities. The shared OIDC module owns identity, Token sessions, and model catalogs. This extension does not migrate or overwrite saved identities, personal Keys, or user model choices.
 
-Build against the locked, consistent DSH `0.1.5-rc.1` dependency tree and run `npm run test`. Point `DSH_OIDC_PACKAGE_ROOT` to the compiled public OIDC package. `test/check-browser.mjs` covers public/extension client integration, not a production IdP. Package with `npm pack --ignore-scripts`.
+An optional entry near the avatar displays points and invitations. Balance uses the shared read-only `ecnuAiconsole.read('account_get_points')` implementation. Opening the dialog never creates an invitation: the user must click to request invitation consent and obtain a link. No invitation Agent tool is registered. ChatECNU decides eligibility and rewards. Business timestamps without a timezone use Beijing time, and unknown balances never become zero.
+
+Enable only with an `ecnu-aiconsole` service for the same Profile and an OIDC client supporting `optionalScopes`, explicit consent and `oidc.account.footer.details`. Points are disabled by default; missing capabilities leave existing quota functionality intact. Once compatible components are available, the edition can configure:
+
+```json
+{
+  "profileIDs": ["school"],
+  "points": {
+    "profileID": "school",
+    "modelBaseURL": "https://example.org/open/api/v1",
+    "workerBaseURL": "https://example.org/api/worker/v1"
+  }
+}
+```
+
+The OIDC Profile provides `points.read` and `invitations.write` separately through `auth.optionalScopes`, without making them mandatory at sign-in. Additional RPC methods `points(profileID)` and `invitation(profileID)` return limited display fields and accept no arbitrary URL or method. The model base must match the signed-in school service; Worker and model services must share an origin. Invitation URLs must use that origin, preserving the returned environment, route and code. Account changes and disposal discard pending results.
+
+Build against the pinned DSH `0.2.2-rc.3` Runtime and run `npm run test`. Point `DSH_OIDC_PACKAGE_ROOT` to the compiled public OIDC package. `test/check-browser.mjs` checks existing quota; `test/check-points-browser.mjs` uses a public package with the above extensions to check points, invitation, consent and account changes. Both use synthetic data, not a production IdP. Package with `npm pack --ignore-scripts`.

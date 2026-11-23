@@ -11,7 +11,7 @@ function FeedbackActions({ sessionId, messageId, api, accounts, configuration, u
   const [preview, setPreview] = useState<any>(null), [current, setCurrent] = useState<any>(null)
   const [selected, setSelected] = useState(1), [open, setOpen] = useState(false), [busy, setBusy] = useState(false), [notice, setNotice] = useState('')
   const [desc, setDesc] = useState(''), [reason, setReason] = useState('')
-  const dialog = useRef<HTMLDialogElement>(null), generation = useRef(0), pending = useRef(false), authorization = useRef<AbortController | null>(null), opener = useRef<HTMLButtonElement | null>(null)
+  const dialog = useRef<HTMLDialogElement>(null), generation = useRef(0), readVersion = useRef(0), pending = useRef(false), authorization = useRef<AbortController | null>(null), opener = useRef<HTMLButtonElement | null>(null)
   const close = () => { authorization.current?.abort(); setOpen(false); opener.current?.focus() }
   useEffect(() => {
     const stamp = ++generation.current
@@ -25,13 +25,14 @@ function FeedbackActions({ sessionId, messageId, api, accounts, configuration, u
   }, [sessionId, messageId, api, accounts, configuration.profileID])
   useEffect(() => { if (open && dialog.current && !dialog.current.open) dialog.current.showModal(); else if (!open && dialog.current?.open) dialog.current.close() }, [open])
   const read = async () => {
-    const stamp = generation.current
+    const stamp = generation.current, version = ++readVersion.current
     const value = await api.read(sessionId, messageId)
-    if (stamp === generation.current) setCurrent(value)
+    if (stamp === generation.current && version === readVersion.current) setCurrent(value)
     return value
   }
   const seed = () => { if (current || pending.current) return; void read().catch(() => {}) }
   const save = async (favorite: number, value = current) => {
+    readVersion.current++
     const stamp = generation.current
     const result = await api.submit(sessionId, messageId, { favorite, accountID: value.accountID, digest: preview.digest, confirmed: true, reason: favorite === 0 || !reason ? [] : [reason], desc: favorite === 0 ? '' : desc })
     if (stamp !== generation.current) return

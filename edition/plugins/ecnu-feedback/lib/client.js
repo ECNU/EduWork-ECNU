@@ -5061,7 +5061,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			const [preview, setPreview] = (0, react.useState)(null), [current, setCurrent] = (0, react.useState)(null);
 			const [selected, setSelected] = (0, react.useState)(1), [open, setOpen] = (0, react.useState)(false), [busy, setBusy] = (0, react.useState)(false), [notice, setNotice] = (0, react.useState)("");
 			const [desc, setDesc] = (0, react.useState)(""), [reason, setReason] = (0, react.useState)("");
-			const dialog = (0, react.useRef)(null), generation = (0, react.useRef)(0), pending = (0, react.useRef)(false), authorization = (0, react.useRef)(null), opener = (0, react.useRef)(null);
+			const dialog = (0, react.useRef)(null), generation = (0, react.useRef)(0), readVersion = (0, react.useRef)(0), pending = (0, react.useRef)(false), authorization = (0, react.useRef)(null), opener = (0, react.useRef)(null);
 			const close = () => {
 				authorization.current?.abort();
 				setOpen(false);
@@ -5104,9 +5104,9 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				else if (!open && dialog.current?.open) dialog.current.close();
 			}, [open]);
 			const read = async () => {
-				const stamp = generation.current;
+				const stamp = generation.current, version = ++readVersion.current;
 				const value = await api.read(sessionId, messageId);
-				if (stamp === generation.current) setCurrent(value);
+				if (stamp === generation.current && version === readVersion.current) setCurrent(value);
 				return value;
 			};
 			const seed = () => {
@@ -5114,6 +5114,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				read().catch(() => {});
 			};
 			const save = async (favorite, value = current) => {
+				readVersion.current++;
 				const stamp = generation.current;
 				const result = await api.submit(sessionId, messageId, {
 					favorite,

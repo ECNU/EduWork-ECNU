@@ -1,0 +1,17 @@
+{
+  "name": "@chatecnu-work/dsh-ecnu-aiconsole",
+  "version": "0.1.0-dev",
+  "private": true,
+  "description": "Read-only AIConsole account tools using the school OIDC host",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": { ".": "./lib/index.js", "./reader": "./lib/reader.js" },
+  "files": ["lib/**/*.js", "README.md", "README_EN.md", "LICENSE"],
+  "scripts": { "test": "node --test test/*.test.mjs" },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-tools": ">=0.2.2-rc.3 <0.2.3-0",
+    "@eduwork/dsh-oidc": "^0.3.4"
+  },
+  "license": "MulanPSL-2.0"
+}

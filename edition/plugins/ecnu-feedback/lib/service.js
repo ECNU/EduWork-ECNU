@@ -52,8 +52,12 @@ export function createFeedbackService(ctx, raw) {
       let body
       if (action) {
         if (action.confirmed !== true || action.digest !== preview.digest || action.accountID !== binding.accountID || ![0, 1, -1].includes(action.favorite) || typeof action.desc !== 'string' || action.desc.length > 1000 || !Array.isArray(action.reason) || action.reason.some(value => !config.reasons.includes(value))) return state('preview_changed')
-        body = { conversation_id: sessionID, favorite: action.favorite, reason: [...new Set(action.reason)], desc: action.desc,
-          ...(action.favorite === 0 ? {} : { question_content: preview.question, answer_content: preview.answer }) }
+        body = { conversation_id: sessionID, favorite: action.favorite,
+          ...(action.favorite === 0 ? {} : {
+            ...(action.reason.length ? { reason: [...new Set(action.reason)] } : {}),
+            ...(action.desc.trim() ? { desc: action.desc } : {}),
+            question_content: preview.question, answer_content: preview.answer,
+          }) }
       } else endpoint.searchParams.set('conversation_id', sessionID)
       const response = await accounts.authorizedFetch(config.profileID, endpoint.href, { method: action ? 'POST' : 'GET', headers: { accept: 'application/json', ...(action ? { 'content-type': 'application/json' } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}), redirect: 'error', signal }, action ? { issuerServicePath: endpoint.pathname } : { serviceURL: endpoint.href })
       try {

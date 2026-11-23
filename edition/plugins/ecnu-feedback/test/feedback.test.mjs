@@ -75,7 +75,7 @@ test('preview stays local; read and explicit submit use stable IDs and host-owne
 test('retraction sends zero and does not reupload question or answer', async () => {
   const f = fixture()
   assert.equal((await f.service.submit('session-1', f.messageID, await f.action(0))).favorite, 0)
-  assert.deepEqual(JSON.parse(f.requests[0][2].body), { conversation_id: 'session-1', favorite: 0, reason: [], desc: '' })
+  assert.deepEqual(JSON.parse(f.requests[0][2].body), { conversation_id: 'session-1', favorite: 0 })
 })
 test('unconfirmed, changed-account, changed-preview and unconfigured-category writes are rejected', async () => {
   for (const change of [{ confirmed: false }, { digest: '0'.repeat(64) }, { accountID: 'other' }, { reason: ['unconfigured'] }]) {

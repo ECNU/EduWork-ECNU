@@ -12,6 +12,7 @@ const quota = () => ({ state: 'available', providerID: 'fixture-ai', unit: 'cred
   { id: '2', name: '补充资源包', total: null, used: null, remaining: 55, expiresAt: null, status: '' },
 ], consoleURL: 'https://example.org/allowance' })
 const ctx = {
+  provide: (name, value) => { ctx[name] = value },
   locale: { dictionaries: new Map(), register(namespace, values) { this.dictionaries.set(namespace, values); return () => {} }, bind(namespace) { return key => this.dictionaries.get(namespace)?.zh[key] ?? key } },
   remote: { $mount: async () => () => {}, $on: (name, listener) => { events.set(name, listener); return () => events.delete(name) },
     oidcAccounts: {

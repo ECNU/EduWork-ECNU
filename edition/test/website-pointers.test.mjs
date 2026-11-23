@@ -2,19 +2,19 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {websiteManifest,verifyWebsiteRelease,websitePlatforms} from '../release/website-pointers.mjs'
 
-function fixture(){
- const version='0.4.6',root='https://github.com/ECNU/EduWork-ECNU/releases'
+function fixture(version='0.4.6'){
+ const root='https://github.com/ECNU/EduWork-ECNU/releases'
  const assets=Object.values(websitePlatforms).map(spec=>{
   const name=`EduWork-ECNU-${version}-${spec.suffix}`
   return {name,size:123,digest:'sha256:'+'a'.repeat(64),browser_download_url:`${root}/download/v${version}/${name}`}
  })
- return {tag_name:'v'+version,html_url:`${root}/tag/v${version}`,draft:false,prerelease:false,published_at:'2026-10-18T14:13:22Z',assets}
+ return {tag_name:'v'+version,html_url:`${root}/tag/v${version}`,draft:false,prerelease:version.includes('-'),published_at:'2026-10-18T14:13:22Z',assets}
 }
-function server(release,mutate=()=>{}){
+function server(release,mutate=()=>{},channel='stable'){
  const replies=new Map()
  for(const [platform,spec] of Object.entries(websitePlatforms)){
-  const manifest=websiteManifest(release,platform),asset=manifest.artifacts[0]
-  replies.set('https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases-bridge/stable/website/'+spec.pointer,{body:manifest,headers:{'Cache-Control':'no-cache','Access-Control-Allow-Origin':'*'}})
+  const manifest=websiteManifest(release,platform,undefined,channel),asset=manifest.artifacts[0]
+  replies.set('https://ecnunic-data-cdn.oss-cn-shanghai.aliyuncs.com/chatecnu-work/releases-bridge/'+channel+'/website/'+spec.pointer,{body:manifest,headers:{'Cache-Control':'no-cache','Access-Control-Allow-Origin':'*'}})
   replies.set(asset.url,{body:null,headers:{'Content-Length':String(asset.bytes)}})
   replies.set(asset.sha256Url,{body:asset.sha256+'  '+asset.fileName+'\n'})
  }
@@ -42,6 +42,39 @@ for(const [name,mutate] of [
 test('delivery verification accepts both current installer pointers',async()=>{
  const release=fixture(),result=await verifyWebsiteRelease(release,{fetcher:server(release)})
  assert.equal(result.websiteVerified,true);assert.equal(result.platforms.length,4)
+})
+
+test('preview pointers require a published dated school dev release and use a separate OSS path',async()=>{
+ const version='0.4.14-dev.20261115.1',release=fixture(version)
+ assert.throws(()=>websiteManifest(release,'windows-exe'))
+ for(const invalid of [fixture(),fixture('0.4.14-beta.1'),{...release,draft:true},{...release,prerelease:false}]){
+  assert.throws(()=>websiteManifest(invalid,'windows-exe',undefined,'development'))
+ }
+ const exe=websiteManifest(release,'windows-exe',undefined,'development')
+ assert.equal(exe.channel,'development')
+ assert.equal(exe.release.schoolReleaseUrl,release.html_url)
+ assert.equal(exe.release.publicReleaseUrl,undefined)
+ for(const item of [exe.artifacts[0],exe.fallbackArtifact])assert.ok(item.url.includes('/development/'+version+'/'))
+ const result=await verifyWebsiteRelease(release,{channel:'development',fetcher:server(release,()=>{},'development')})
+ assert.equal(result.platforms.length,4)
+ assert.ok(result.platforms.every(p=>p.pointerURL.includes('/development/website/')))
+})
+
+test('Mac verification accepts only a signed object bound to the GitHub digest',async()=>{
+ const release=fixture()
+ function signedMac(replies,matching){
+  for(const row of [...replies.values()]){
+   const asset=row.body?.artifacts?.[0]
+   if(asset?.format!=='dmg')continue
+   const old=asset.url
+   asset.url=old.replace('/'+asset.fileName,'/signed/'+(matching?asset.sha256:'b'.repeat(64))+'/'+asset.fileName)
+   asset.sha256Url=asset.url+'.sha256'
+   replies.set(asset.url,replies.get(old))
+   replies.set(asset.sha256Url,replies.get(old+'.sha256'))
+  }
+ }
+ await verifyWebsiteRelease(release,{fetcher:server(release,r=>signedMac(r,true))})
+ await assert.rejects(verifyWebsiteRelease(release,{fetcher:server(release,r=>signedMac(r,false))}))
 })
 
 test('EXE promotion requires both the exact EXE and the backup ZIP',()=>{

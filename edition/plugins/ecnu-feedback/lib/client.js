@@ -4940,7 +4940,6 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"unavailable",
 			"not_connected",
 			"permission_denied",
-			"authorization_required",
 			"preview_changed"
 		]);
 		const preview = codec("Preview", object({
@@ -4956,7 +4955,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				literal(0),
 				literal(1)
 			]).optional(),
-			accountID: string().max(128).optional()
+			accountBinding: string().uuid().optional()
 		}).strict());
 		const action = codec("Action", object({
 			favorite: union([
@@ -4966,7 +4965,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			]),
 			confirmed: literal(true),
 			digest: string().length(64),
-			accountID: string().min(1).max(128),
+			accountBinding: string().uuid(),
 			reason: array(string().max(80)).max(20),
 			desc: string().max(1e3)
 		}).strict());
@@ -5037,9 +5036,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			cursor: "pointer"
 		};
 		const messages = {
-			authorization_required: "请先授权读取和提交反馈。",
 			not_connected: "学校登录已变化，请重新打开反馈。",
-			permission_denied: "当前账户没有反馈权限或资格。",
+			permission_denied: "当前账户暂时无法使用反馈功能，请稍后重试或联系管理员。",
 			unavailable: "反馈服务暂不可用，请稍后重试。",
 			preview_changed: "问答或学校账号已变化，请重新打开反馈。",
 			too_large: "这轮问答超过反馈接口的长度限制。"
@@ -5056,14 +5054,13 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				style: down ? { transform: "rotate(180deg)" } : {}
 			}, h("path", { d: "M7 10v11H3V10h4Zm0 0 5-8c3 0 3 3 2 7h5c2 0 2 2 1 4l-2 7H7" }));
 		}
-		function FeedbackActions({ sessionId, messageId, api, accounts, configuration, useAccess }) {
+		function FeedbackActions({ sessionId, messageId, api, subscribeAccountChanges, configuration, useAccess }) {
 			const allowed = !useAccess || useAccess("ecnuFeedback/submit");
 			const [preview, setPreview] = (0, react.useState)(null), [current, setCurrent] = (0, react.useState)(null);
 			const [selected, setSelected] = (0, react.useState)(1), [open, setOpen] = (0, react.useState)(false), [busy, setBusy] = (0, react.useState)(false), [notice, setNotice] = (0, react.useState)("");
 			const [desc, setDesc] = (0, react.useState)(""), [reason, setReason] = (0, react.useState)("");
-			const dialog = (0, react.useRef)(null), generation = (0, react.useRef)(0), readVersion = (0, react.useRef)(0), pending = (0, react.useRef)(false), authorization = (0, react.useRef)(null), opener = (0, react.useRef)(null);
+			const dialog = (0, react.useRef)(null), generation = (0, react.useRef)(0), readVersion = (0, react.useRef)(0), pending = (0, react.useRef)(false), opener = (0, react.useRef)(null);
 			const close = () => {
-				authorization.current?.abort();
 				setOpen(false);
 				opener.current?.focus();
 			};
@@ -5077,11 +5074,9 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				api.preview(sessionId, messageId).then((value) => {
 					if (stamp === generation.current) setPreview(value);
 				}).catch(() => {});
-				const unsubscribe = accounts.subscribeAccounts((id) => {
-					if (id !== configuration.profileID) return;
+				const unsubscribe = subscribeAccountChanges(() => {
 					generation.current++;
 					pending.current = false;
-					authorization.current?.abort();
 					setCurrent(null);
 					setOpen(false);
 					setBusy(false);
@@ -5089,15 +5084,13 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				});
 				return () => {
 					generation.current++;
-					authorization.current?.abort();
 					unsubscribe();
 				};
 			}, [
 				sessionId,
 				messageId,
 				api,
-				accounts,
-				configuration.profileID
+				subscribeAccountChanges
 			]);
 			(0, react.useEffect)(() => {
 				if (open && dialog.current && !dialog.current.open) dialog.current.showModal();
@@ -5118,7 +5111,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				const stamp = generation.current;
 				const result = await api.submit(sessionId, messageId, {
 					favorite,
-					accountID: value.accountID,
+					accountBinding: value.accountBinding,
 					digest: preview.digest,
 					confirmed: true,
 					reason: favorite === 0 || !reason ? [] : [reason],
@@ -5154,16 +5147,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				opener.current = event.currentTarget;
 				run(async () => {
 					const stamp = generation.current;
-					let value = await read();
-					const grant = await accounts.authorization(configuration.profileID);
+					const value = await read();
 					if (stamp !== generation.current) return;
-					if (!grant.granted.includes("feedback.write")) {
-						value = {
-							...value,
-							state: "authorization_required"
-						};
-						setCurrent(value);
-					}
 					if (value.state === "available" && value.favorite === favorite) {
 						await save(0, value);
 						return;
@@ -5175,22 +5160,6 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					if (value.state !== "available") setNotice(messages[value.state] || messages.unavailable);
 				});
 			};
-			const authorize = () => void run(async () => {
-				const stamp = generation.current, grant = await accounts.authorization(configuration.profileID);
-				const needed = ["feedback.read", "feedback.write"].filter((scope) => !grant.granted.includes(scope));
-				if (needed.some((scope) => !grant.available.includes(scope))) {
-					setNotice("服务尚未开放反馈授权，请稍后再试。");
-					return;
-				}
-				if (needed.length) {
-					const controller = new AbortController();
-					authorization.current = controller;
-					await accounts.requestAuthorization(configuration.profileID, needed, { signal: controller.signal });
-				}
-				if (stamp !== generation.current) return;
-				const value = await read();
-				if (value.state !== "available") setNotice(messages[value.state] || messages.unavailable);
-			});
 			if (!allowed || !preview || preview.state === "ineligible" || preview.state === "unavailable") return null;
 			if (preview.state === "too_large") return h("span", { style: { fontSize: 12 } }, messages.too_large);
 			return h(react.default.Fragment, null, ...[1, -1].map((favorite) => h("button", {
@@ -5292,12 +5261,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				type: "button",
 				style: button,
 				onClick: close
-			}, "取消"), current?.state === "authorization_required" ? h("button", {
-				type: "button",
-				style: button,
-				disabled: busy,
-				onClick: authorize
-			}, "授权反馈功能") : h("button", {
+			}, "取消"), h("button", {
 				type: "button",
 				style: button,
 				disabled: busy || current?.state !== "available",
@@ -5307,7 +5271,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const inject = ["slots", "remote"];
 		async function apply(ctx) {
 			const unmount = await ctx.remote.$mount(typert_remote_client_default);
-			ctx.inject(["remote.ecnuFeedback", "oidcClientAccounts"], (inner) => {
+			ctx.inject(["remote.ecnuFeedback"], (inner) => {
 				const unwrap = async (value) => {
 					const response = await value;
 					if (response.ok) return response.value;
@@ -5318,6 +5282,14 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					"read",
 					"submit"
 				].map((method) => [method, (...args) => unwrap(inner.remote.ecnuFeedback[method](...args))]));
+				const subscribeAccountChanges = (listener) => {
+					const stopCredentials = inner.remote.$on("credentials/reference-updated", listener);
+					const stopConnection = inner.on("connection/reset", listener);
+					return () => {
+						stopCredentials();
+						stopConnection();
+					};
+				};
 				let disposed = false, unregister = () => {};
 				unwrap(inner.remote.ecnuFeedback.configuration()).then((configuration) => {
 					if (disposed) return;
@@ -5328,7 +5300,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						inject: (sessionId) => ({
 							sessionId,
 							api,
-							accounts: inner.oidcClientAccounts,
+							subscribeAccountChanges,
 							configuration
 						})
 					}, FeedbackActions));

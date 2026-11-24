@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path'
 import { readFile, mkdir, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 const require = createRequire(import.meta.url), { chromium } = require('playwright-core')
-if (!process.env.DSH_OIDC_PACKAGE_ROOT) throw Error('Select a built public package with shared optional consent')
+if (!process.env.DSH_OIDC_PACKAGE_ROOT) throw Error('Select a built public OIDC package')
 const assets = new Map([
   ['/react.js', await readFile(join(dirname(require.resolve('react/package.json')), 'umd/react.development.js'))],
   ['/react-dom.js', await readFile(join(dirname(require.resolve('react-dom/package.json')), 'umd/react-dom.development.js'))],
@@ -60,15 +60,16 @@ try {
   await school.getByRole('button', { name: '撤回点赞' }).click(); await school.getByRole('button', { name: '点赞', exact: true }).waitFor()
   assert.deepEqual((await page.evaluate(() => window.fixture.state())).posts.map(value => value.action.favorite), [-1, 1, 0, 1, 0])
   checks.push('a delayed hover read cannot overwrite a later submitted rating')
-  await page.evaluate(() => { window.fixture.setScopes(['feedback.read']); window.fixture.remount() })
+  await page.evaluate(() => { window.fixture.deny(true); window.fixture.remount() })
   await school.getByRole('button', { name: '点赞', exact: true }).click()
-  await dialog.getByRole('button', { name: '授权反馈功能' }).click()
-  await dialog.getByRole('button', { name: '提交反馈' }).waitFor()
-  assert.deepEqual((await page.evaluate(() => window.fixture.state())).consents, [['feedback.write']])
+  await dialog.getByText('当前账户暂时无法使用反馈功能，请稍后重试或联系管理员。').waitFor()
+  assert.equal(await dialog.getByRole('button', { name: '提交反馈' }).isDisabled(), true)
+  assert.equal(await dialog.getByRole('button', { name: /授权|申请/ }).count(), 0)
   assert.equal((await page.evaluate(() => window.fixture.state())).posts.length, 5)
   await page.keyboard.press('Escape'); await dialog.waitFor({ state: 'hidden' })
   assert.equal(await school.getByRole('button', { name: '点赞', exact: true }).evaluate(node => node === document.activeElement), true)
-  checks.push('read-only prior grant requests only missing write scope; consent does not submit; Escape restores focus')
+  checks.push('server denial shows an error without authorization prompts or submissions; Escape restores focus')
+  await page.evaluate(() => window.fixture.deny(false))
   await page.evaluate(() => window.fixture.delay())
   await school.getByRole('button', { name: '点赞', exact: true }).click(); await dialog.getByRole('button', { name: '提交反馈' }).click()
   await page.waitForFunction(() => window.fixture.state().posts.length === 6)

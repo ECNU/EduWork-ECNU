@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import { readFeedbackTarget, validID } from './context.js'
 const state = state => ({ state })
 export function resolveConfig(raw) {
@@ -27,8 +28,10 @@ async function readRating(response, signal, messageID) {
 }
 export function createFeedbackService(ctx, raw) {
   const config = resolveConfig(raw), pending = new Map()
-  let lifetime = new AbortController(), disposed = false
-  const invalidate = () => { lifetime.abort(); lifetime = new AbortController() }
+  let lifetime = new AbortController(), disposed = false, accountBinding = randomUUID()
+  // An opaque revision binds a UI draft to this Host's current account session.
+  // Existing credential/account events rotate it; no new OIDC identity API is needed.
+  const invalidate = () => { lifetime.abort(); lifetime = new AbortController(); accountBinding = randomUUID() }
   ctx.on('oidc/accounts-changed', event => { if (event.profileID === config.profileID) invalidate() })
   ctx.on('credentials/reference-updated', invalidate)
   ctx.effect(() => () => { disposed = true; lifetime.abort() })
@@ -43,15 +46,14 @@ export function createFeedbackService(ctx, raw) {
       const preview = await target(sessionID, messageID)
       if (preview.state !== 'available') return preview
       signal.throwIfAborted()
-      const accounts = ctx.oidcAccounts, grant = await accounts.authorization?.(config.profileID)
-      if (!grant?.granted?.includes('feedback.read') || action && !grant.granted.includes('feedback.write')) return state('authorization_required')
+      const accounts = ctx.oidcAccounts
       if (!await accounts.modelAuthorization(config.profileID, config.modelBaseURL)) return state('not_connected')
-      const binding = await accounts.identityScope(config.profileID)
       signal.throwIfAborted()
+      const binding = accountBinding
       const endpoint = new URL(`${config.workerBaseURL}/feedback/${messageID}`)
       let body
       if (action) {
-        if (action.confirmed !== true || action.digest !== preview.digest || action.accountID !== binding.accountID || ![0, 1, -1].includes(action.favorite) || typeof action.desc !== 'string' || action.desc.length > 1000 || !Array.isArray(action.reason) || action.reason.some(value => !config.reasons.includes(value))) return state('preview_changed')
+        if (action.confirmed !== true || action.digest !== preview.digest || action.accountBinding !== binding || ![0, 1, -1].includes(action.favorite) || typeof action.desc !== 'string' || action.desc.length > 1000 || !Array.isArray(action.reason) || action.reason.some(value => !config.reasons.includes(value))) return state('preview_changed')
         body = { conversation_id: sessionID, favorite: action.favorite,
           ...(action.favorite === 0 ? {} : {
             ...(action.reason.length ? { reason: [...new Set(action.reason)] } : {}),
@@ -64,9 +66,8 @@ export function createFeedbackService(ctx, raw) {
         if (!response.ok) return state(response.status === 401 ? 'not_connected' : response.status === 403 ? 'permission_denied' : 'unavailable')
         const result = await readRating(response, signal, messageID)
         signal.throwIfAborted()
-        if ((await accounts.identityScope(config.profileID)).accountID !== binding.accountID) return state('not_connected')
-        signal.throwIfAborted()
-        return { ...result, accountID: binding.accountID }
+        if (accountBinding !== binding) return state('not_connected')
+        return { ...result, accountBinding: binding }
       } finally { await response.body?.cancel().catch(() => {}) }
     } catch { return state(signal.aborted ? 'not_connected' : 'unavailable') }
   }

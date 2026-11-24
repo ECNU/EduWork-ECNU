@@ -3,6 +3,9 @@ import assert from 'node:assert/strict'
 import { createAssistantMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
 import { Session, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
 import { Context, Service } from '@deepseek-ai/cordis'
+import LlmRuntime from '@deepseek-ai/dsh-llm'
+import Oidc from '@eduwork/dsh-oidc'
+import { fixture as oidcFixture } from '../../ecnu-account-resources/test/helpers/oidc-http-fixture.mjs'
 import Feedback from '../lib/index.js'
 import { feedbackTarget, readFeedbackTarget } from '../lib/context.js'
 import { createFeedbackService, resolveConfig } from '../lib/service.js'
@@ -21,17 +24,15 @@ function conversation(provider = 'school-ai', end = 'completed') {
 }
 function fixture(options = {}) {
   const conv = conversation(), requests = [], events = new Map(), effects = []
-  let accountID = 'account-1'
   const ctx = {
     sessions: { get: () => conv.session }, sessionPersistence: { stat: async () => undefined },
     on: (name, listener) => events.set(name, listener), effect: fn => effects.push(fn()),
-    oidcAccounts: { authorization: async () => ({ granted: ['feedback.read', 'feedback.write'] }), modelAuthorization: async () => true,
-      identityScope: async () => ({ profileID: 'school', accountID }),
+    oidcAccounts: { modelAuthorization: async () => true,
       authorizedFetch: async (...args) => { requests.push(args); return Response.json({ message_id: conv.messageID, favorite: args[2].body ? JSON.parse(args[2].body).favorite : 0 }) }, ...options },
   }
   const service = createFeedbackService(ctx, config)
-  return { ...conv, ctx, service, requests, events, effects, switchAccount: () => { accountID = 'account-2'; events.get('oidc/accounts-changed')({ profileID: 'school', state: 'connected' }) },
-    async action(favorite = 1) { const preview = await service.preview('session-1', conv.messageID); return { favorite, digest: preview.digest, accountID, confirmed: true, reason: [], desc: '' } },
+  return { ...conv, ctx, service, requests, events, effects, switchAccount: () => { events.get('oidc/accounts-changed')({ profileID: 'school', state: 'connected' }) },
+    async action(favorite = 1) { const preview = await service.preview('session-1', conv.messageID), current = await service.read('session-1', conv.messageID); return { favorite, digest: preview.digest, accountBinding: current.accountBinding, confirmed: true, reason: [], desc: '' } },
   }
 }
 test('official DSH append-origin transcript supplies only the visible human question and final answer', () => {
@@ -60,10 +61,11 @@ test('cold history opens read-only and closes the handle', async () => {
   assert.equal(access, 'read'); assert.equal(closed, true)
 })
 test('preview stays local; read and explicit submit use stable IDs and host-owned text', async () => {
-  const f = fixture(), action = await f.action(-1)
+  const f = fixture(), preview = await f.service.preview('session-1', f.messageID)
   assert.equal(f.requests.length, 0)
   const current = await f.service.read('session-1', f.messageID)
-  assert.equal(current.favorite, 0); assert.equal(current.accountID, 'account-1')
+  assert.equal(current.favorite, 0); assert.match(current.accountBinding, /^[a-f0-9-]{36}$/)
+  const action = { favorite: -1, digest: preview.digest, accountBinding: current.accountBinding, confirmed: true, reason: [], desc: '' }
   assert.equal(new URL(f.requests[0][1]).searchParams.get('conversation_id'), 'session-1')
   assert.equal((await f.service.submit('session-1', f.messageID, { ...action, reason: ['回答不准确'], desc: 'Details' })).favorite, -1)
   const [, endpoint, request, authorization] = f.requests[1]
@@ -75,28 +77,31 @@ test('preview stays local; read and explicit submit use stable IDs and host-owne
 test('retraction sends zero and does not reupload question or answer', async () => {
   const f = fixture()
   assert.equal((await f.service.submit('session-1', f.messageID, await f.action(0))).favorite, 0)
-  assert.deepEqual(JSON.parse(f.requests[0][2].body), { conversation_id: 'session-1', favorite: 0 })
+  assert.deepEqual(JSON.parse(f.requests.find(request => request[2].method === 'POST')[2].body), { conversation_id: 'session-1', favorite: 0 })
 })
 test('unconfirmed, changed-account, changed-preview and unconfigured-category writes are rejected', async () => {
-  for (const change of [{ confirmed: false }, { digest: '0'.repeat(64) }, { accountID: 'other' }, { reason: ['unconfigured'] }]) {
+  for (const change of [{ confirmed: false }, { digest: '0'.repeat(64) }, { accountBinding: 'other' }, { reason: ['unconfigured'] }]) {
     const f = fixture()
     assert.equal((await f.service.submit('session-1', f.messageID, { ...await f.action(), ...change })).state, 'preview_changed')
-    assert.equal(f.requests.length, 0)
+    assert.equal(f.requests.filter(request => request[2].method === 'POST').length, 0)
   }
 })
-test('missing write consent never sends a mutation; server failures do not claim success', async () => {
-  const f = fixture({ authorization: async () => ({ granted: ['feedback.read'] }) })
-  assert.equal((await f.service.submit('session-1', f.messageID, await f.action())).state, 'authorization_required'); assert.equal(f.requests.length, 0)
-  for (const response of [new Response('', { status: 500 }), Response.json({ favorite: 2 }), Response.json({ favorite: 1, message_id: 'wrong' })]) {
-    const f = fixture({ authorizedFetch: async () => response })
-    assert.equal((await f.service.submit('session-1', f.messageID, await f.action())).state, 'unavailable')
+test('existing login transport is enough; server denial and failures do not claim success', async () => {
+  for (const [response, state] of [[new Response('', { status: 403 }), 'permission_denied'], [new Response('', { status: 500 }), 'unavailable'], [Response.json({ favorite: 2 }), 'unavailable'], [Response.json({ favorite: 1, message_id: 'wrong' }), 'unavailable']]) {
+    const f = fixture(), action = await f.action()
+    f.ctx.oidcAccounts.authorizedFetch = async () => response
+    assert.equal((await f.service.submit('session-1', f.messageID, action)).state, state)
   }
+  const f = fixture({ modelAuthorization: async () => false })
+  assert.equal((await f.service.read('session-1', f.messageID)).state, 'not_connected')
+  assert.equal(f.requests.length, 0)
 })
 test('account changes discard delayed responses and block queued writes for the old account', async () => {
   let entered, release
   const started = new Promise(resolve => { entered = resolve }), pending = new Promise(resolve => { release = resolve })
-  const f = fixture({ authorizedFetch: async () => { entered(); await pending; return Response.json({ favorite: 1 }) } })
-  const action = await f.action(), first = f.service.submit('session-1', f.messageID, action), second = f.service.submit('session-1', f.messageID, action)
+  const f = fixture(), action = await f.action()
+  f.ctx.oidcAccounts.authorizedFetch = async () => { entered(); await pending; return Response.json({ favorite: 1 }) }
+  const first = f.service.submit('session-1', f.messageID, action), second = f.service.submit('session-1', f.messageID, action)
   await started; f.switchAccount(); release()
   assert.equal((await first).state, 'not_connected'); assert.equal((await second).state, 'preview_changed')
 })
@@ -104,7 +109,54 @@ test('configuration and RPC contract have no tool or arbitrary transport surface
   assert.throws(() => resolveConfig({ ...config, workerBaseURL: 'https://evil.example/api' }))
   assert.deepEqual(descriptors.map(value => value.method), ['configuration', 'preview', 'read', 'submit'])
   const action = descriptors.find(value => value.method === 'submit').parameters.at(-1).codec.schema
-  assert.equal(action.safeParse({ favorite: 1, digest: 'a'.repeat(64), accountID: 'a', reason: [], desc: '', confirmed: true, question_content: 'spoofed' }).success, false)
+  const valid = { favorite: 1, digest: 'a'.repeat(64), accountBinding: 'b2275353-c236-42cb-babb-3dbe2647b40a', reason: [], desc: '', confirmed: true }
+  assert.equal(action.safeParse(valid).success, true)
+  assert.equal(action.safeParse({ ...valid, question_content: 'spoofed' }).success, false)
+})
+
+test('credential replacement and Host restart invalidate an existing feedback draft', async () => {
+  const f = fixture(), action = await f.action()
+  f.events.get('credentials/reference-updated')({ ref: 'synthetic' })
+  assert.equal((await f.service.submit('session-1', f.messageID, action)).state, 'preview_changed')
+  const restarted = createFeedbackService(f.ctx, config)
+  assert.equal((await restarted.submit('session-1', f.messageID, action)).state, 'preview_changed')
+  assert.equal(f.requests.filter(request => request[2].method === 'POST').length, 0)
+})
+
+test('published OIDC sign-in transport supports feedback without new consent or identity APIs', async t => {
+  const conv = conversation('fixture-ai'), writes = []
+  const f = await oidcFixture(t, { resources: true, scopes: ['feedback.read', 'feedback.write'], resourceHandler: async (req, res, url) => {
+    if (!url.pathname.startsWith('/v1/feedback/')) return false
+    let favorite = 0
+    if (req.method === 'POST') { const chunks = []; for await (const chunk of req) chunks.push(chunk); const body = JSON.parse(Buffer.concat(chunks).toString()); writes.push(body); favorite = body.favorite }
+    res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ message_id: conv.messageID, favorite })); return true
+  } })
+  f.rawProfile.auth.additionalScopes = ['feedback.read', 'feedback.write']
+  const ctx = new Context(), fibers = [], records = new Map(), opened = []
+  t.after(async () => { for (const fiber of fibers.reverse()) await fiber.dispose() })
+  class Credentials extends Service {
+    constructor(ctx) { super(ctx, 'credentials') }
+    resolve(ref) { return Promise.resolve(records.has(ref) ? { value: records.get(ref) } : undefined) }
+    set(ref, value) { records.set(ref, value); this.ctx.emit('credentials/reference-updated', { ref }); return Promise.resolve() }
+    unset(ref) { records.delete(ref); this.ctx.emit('credentials/reference-updated', { ref }); return Promise.resolve() }
+  }
+  for (const plugin of [LlmRuntime, Credentials]) fibers.push(await ctx.plugin(plugin))
+  for (const [name, methods] of [['desktopServices', { openExternal: async url => { opened.push(url) } }], ['sessions', { get: () => conv.session }], ['sessionPersistence', { stat: async () => undefined }]]) {
+    fibers.push(await ctx.plugin(class extends Service { constructor(ctx) { super(ctx, name); Object.assign(this, methods) } }))
+  }
+  fibers.push(await ctx.plugin(Oidc, { backend: 'desktop', profile: f.rawProfile }))
+  fibers.push(await ctx.plugin(Feedback, { ...config, profileID: 'desktop-test', providerID: 'fixture-ai', modelBaseURL: `${f.origin}/v1`, workerBaseURL: `${f.origin}/v1`, allowInsecureDevelopment: true }))
+  await ctx.oidcAccounts.begin('desktop-test')
+  assert.equal((await fetch(opened.at(-1))).status, 200)
+  assert.equal((await ctx.oidcAccounts.status('desktop-test')).credentialReady, true)
+  const preview = await ctx.ecnuFeedback.preview('session-1', conv.messageID), current = await ctx.ecnuFeedback.read('session-1', conv.messageID)
+  assert.equal(current.state, 'available')
+  const action = { favorite: 1, digest: preview.digest, accountBinding: current.accountBinding, confirmed: true, reason: [], desc: '' }
+  assert.equal((await ctx.ecnuFeedback.submit('session-1', conv.messageID, action)).favorite, 1)
+  assert.equal(writes.length, 1); assert.equal(writes[0].answer_content, 'Visible answer')
+  await ctx.oidcAccounts.logout('desktop-test')
+  assert.equal((await ctx.ecnuFeedback.submit('session-1', conv.messageID, action)).state, 'not_connected')
+  assert.equal(writes.length, 1)
 })
 test('actual Cordis host mounts the separate feedback service against the pinned DSH runtime', async t => {
   const f = fixture(), ctx = new Context(), fibers = []

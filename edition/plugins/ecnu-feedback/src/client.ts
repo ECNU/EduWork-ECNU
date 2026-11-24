@@ -2,27 +2,26 @@ import React, { useEffect, useRef, useState } from 'react'
 import remote from '../lib/typert.remote-client.js'
 const h = React.createElement
 const button = { border: '1px solid var(--dsw-alias-border-l2, #dedee8)', borderRadius: 8, background: 'var(--dsw-alias-bg-layer-2, #f5f5fa)', color: 'inherit', font: 'inherit', padding: '8px 12px', cursor: 'pointer' }
-const messages: Record<string, string> = { authorization_required: '请先授权读取和提交反馈。', not_connected: '学校登录已变化，请重新打开反馈。', permission_denied: '当前账户没有反馈权限或资格。', unavailable: '反馈服务暂不可用，请稍后重试。', preview_changed: '问答或学校账号已变化，请重新打开反馈。', too_large: '这轮问答超过反馈接口的长度限制。' }
+const messages: Record<string, string> = { not_connected: '学校登录已变化，请重新打开反馈。', permission_denied: '当前账户暂时无法使用反馈功能，请稍后重试或联系管理员。', unavailable: '反馈服务暂不可用，请稍后重试。', preview_changed: '问答或学校账号已变化，请重新打开反馈。', too_large: '这轮问答超过反馈接口的长度限制。' }
 function thumb(down: boolean, active: boolean) {
   return h('svg', { width: 16, height: 16, viewBox: '0 0 24 24', 'aria-hidden': true, fill: active ? 'currentColor' : 'none', stroke: 'currentColor', strokeWidth: 1.6, style: down ? { transform: 'rotate(180deg)' } : {} }, h('path', { d: 'M7 10v11H3V10h4Zm0 0 5-8c3 0 3 3 2 7h5c2 0 2 2 1 4l-2 7H7' }))
 }
-function FeedbackActions({ sessionId, messageId, api, accounts, configuration, useAccess }: any) {
+function FeedbackActions({ sessionId, messageId, api, subscribeAccountChanges, configuration, useAccess }: any) {
   const allowed = !useAccess || useAccess('ecnuFeedback/submit')
   const [preview, setPreview] = useState<any>(null), [current, setCurrent] = useState<any>(null)
   const [selected, setSelected] = useState(1), [open, setOpen] = useState(false), [busy, setBusy] = useState(false), [notice, setNotice] = useState('')
   const [desc, setDesc] = useState(''), [reason, setReason] = useState('')
-  const dialog = useRef<HTMLDialogElement>(null), generation = useRef(0), readVersion = useRef(0), pending = useRef(false), authorization = useRef<AbortController | null>(null), opener = useRef<HTMLButtonElement | null>(null)
-  const close = () => { authorization.current?.abort(); setOpen(false); opener.current?.focus() }
+  const dialog = useRef<HTMLDialogElement>(null), generation = useRef(0), readVersion = useRef(0), pending = useRef(false), opener = useRef<HTMLButtonElement | null>(null)
+  const close = () => { setOpen(false); opener.current?.focus() }
   useEffect(() => {
     const stamp = ++generation.current
     setPreview(null); setCurrent(null); setOpen(false); setBusy(false); pending.current = false
     void api.preview(sessionId, messageId).then((value: any) => { if (stamp === generation.current) setPreview(value) }).catch(() => {})
-    const unsubscribe = accounts.subscribeAccounts((id: string) => {
-      if (id !== configuration.profileID) return
-      generation.current++; pending.current = false; authorization.current?.abort(); setCurrent(null); setOpen(false); setBusy(false); setNotice('')
+    const unsubscribe = subscribeAccountChanges(() => {
+      generation.current++; pending.current = false; setCurrent(null); setOpen(false); setBusy(false); setNotice('')
     })
-    return () => { generation.current++; authorization.current?.abort(); unsubscribe() }
-  }, [sessionId, messageId, api, accounts, configuration.profileID])
+    return () => { generation.current++; unsubscribe() }
+  }, [sessionId, messageId, api, subscribeAccountChanges])
   useEffect(() => { if (open && dialog.current && !dialog.current.open) dialog.current.showModal(); else if (!open && dialog.current?.open) dialog.current.close() }, [open])
   const read = async () => {
     const stamp = generation.current, version = ++readVersion.current
@@ -34,7 +33,7 @@ function FeedbackActions({ sessionId, messageId, api, accounts, configuration, u
   const save = async (favorite: number, value = current) => {
     readVersion.current++
     const stamp = generation.current
-    const result = await api.submit(sessionId, messageId, { favorite, accountID: value.accountID, digest: preview.digest, confirmed: true, reason: favorite === 0 || !reason ? [] : [reason], desc: favorite === 0 ? '' : desc })
+    const result = await api.submit(sessionId, messageId, { favorite, accountBinding: value.accountBinding, digest: preview.digest, confirmed: true, reason: favorite === 0 || !reason ? [] : [reason], desc: favorite === 0 ? '' : desc })
     if (stamp !== generation.current) return
     if (result.state !== 'available') { setNotice(messages[result.state] || messages.unavailable); return }
     setCurrent(result); setNotice(favorite === 0 ? '反馈已撤回。' : '感谢反馈。'); setOpen(false)
@@ -49,23 +48,13 @@ function FeedbackActions({ sessionId, messageId, api, accounts, configuration, u
     opener.current = event.currentTarget
     void run(async () => {
       const stamp = generation.current
-      let value = await read()
-      const grant = await accounts.authorization(configuration.profileID)
+      const value = await read()
       if (stamp !== generation.current) return
-      if (!grant.granted.includes('feedback.write')) { value = { ...value, state: 'authorization_required' }; setCurrent(value) }
       if (value.state === 'available' && value.favorite === favorite) { await save(0, value); return }
       setSelected(favorite); setDesc(''); setReason(''); setOpen(true)
       if (value.state !== 'available') setNotice(messages[value.state] || messages.unavailable)
     })
   }
-  const authorize = () => void run(async () => {
-    const stamp = generation.current, grant = await accounts.authorization(configuration.profileID)
-    const needed = ['feedback.read', 'feedback.write'].filter(scope => !grant.granted.includes(scope))
-    if (needed.some(scope => !grant.available.includes(scope))) { setNotice('服务尚未开放反馈授权，请稍后再试。'); return }
-    if (needed.length) { const controller = new AbortController(); authorization.current = controller; await accounts.requestAuthorization(configuration.profileID, needed, { signal: controller.signal }) }
-    if (stamp !== generation.current) return
-    const value = await read(); if (value.state !== 'available') setNotice(messages[value.state] || messages.unavailable)
-  })
   if (!allowed || !preview || preview.state === 'ineligible' || preview.state === 'unavailable') return null
   if (preview.state === 'too_large') return h('span', { style: { fontSize: 12 } }, messages.too_large)
   return h(React.Fragment, null,
@@ -80,19 +69,24 @@ function FeedbackActions({ sessionId, messageId, api, accounts, configuration, u
       h('label', { style: { display: 'block', marginTop: 16 } }, '补充说明（选填）', h('textarea', { value: desc, maxLength: 1000, rows: 3, onChange: (event: any) => setDesc(event.target.value), style: { ...button, display: 'block', width: '100%', boxSizing: 'border-box', resize: 'vertical' } })),
       h('p', { role: 'status', 'aria-live': 'polite' }, notice || (busy ? '正在处理…' : '')),
       h('div', { style: { display: 'flex', justifyContent: 'flex-end', gap: 8 } }, h('button', { type: 'button', style: button, onClick: close }, '取消'),
-        current?.state === 'authorization_required' ? h('button', { type: 'button', style: button, disabled: busy, onClick: authorize }, '授权反馈功能') : h('button', { type: 'button', style: button, disabled: busy || current?.state !== 'available', onClick: () => void run(() => save(selected)) }, '提交反馈'))))
+        h('button', { type: 'button', style: button, disabled: busy || current?.state !== 'available', onClick: () => void run(() => save(selected)) }, '提交反馈'))))
 }
 export const inject = ['slots', 'remote']
 export async function apply(ctx: any) {
   const unmount = await ctx.remote.$mount(remote)
-  ctx.inject(['remote.ecnuFeedback', 'oidcClientAccounts'], (inner: any) => {
+  ctx.inject(['remote.ecnuFeedback'], (inner: any) => {
     const unwrap = async (value: any) => { const response = await value; if (response.ok) return response.value; throw Error('Feedback request failed') }
     const api = Object.fromEntries(['preview', 'read', 'submit'].map(method => [method, (...args: any[]) => unwrap(inner.remote.ecnuFeedback[method](...args))]))
+    const subscribeAccountChanges = (listener: () => void) => {
+      const stopCredentials = inner.remote.$on('credentials/reference-updated', listener)
+      const stopConnection = inner.on('connection/reset', listener)
+      return () => { stopCredentials(); stopConnection() }
+    }
     let disposed = false, unregister = () => {}
     void unwrap(inner.remote.ecnuFeedback.configuration()).then(configuration => {
       if (disposed) return
       unregister = inner.slots.inject('conversation.chat.assistant-actions', () => inner.slots.register({ name: 'conversation.chat.assistant-actions', id: 'ecnu-feedback', order: 10,
-        inject: (sessionId: string) => ({ sessionId, api, accounts: inner.oidcClientAccounts, configuration }) }, FeedbackActions))
+        inject: (sessionId: string) => ({ sessionId, api, subscribeAccountChanges, configuration }) }, FeedbackActions))
     }).catch(() => {})
     inner.effect(() => () => { disposed = true; unregister() })
   })

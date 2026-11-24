@@ -9,8 +9,8 @@ const protocolError = () => new AccountReadError('invalid_response', '账户服�
 export function resolveConfig(raw) {
   if (!raw || typeof raw.oidcProfileId !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(raw.oidcProfileId)) throw Error('Configure an explicit oidcProfileId')
   const url = new URL(raw.baseURL)
-  const loopback = raw.allowInsecureDevelopment === true && url.protocol === 'http:' && ['127.0.0.1', '[::1]'].includes(url.hostname)
-  if ((url.protocol !== 'https:' && !loopback) || url.username || url.password || url.search || url.hash) throw Error('Configure an HTTPS Open API base URL without credentials, query or fragment')
+  const development = raw.allowInsecureDevelopment === true && url.protocol === 'http:'
+  if ((url.protocol !== 'https:' && !development) || url.username || url.password || url.search || url.hash) throw Error('Configure an HTTPS Open API base URL; HTTP requires explicit development configuration')
   const requestTimeoutMs = raw.requestTimeoutMs ?? 20_000
   if (!Number.isSafeInteger(requestTimeoutMs) || requestTimeoutMs < 100 || requestTimeoutMs > 120_000) throw Error('requestTimeoutMs must be 100–120000')
   return Object.freeze({ oidcProfileId: raw.oidcProfileId, baseURL: url.href.replace(/\/$/, ''), requestTimeoutMs })
@@ -65,7 +65,7 @@ async function jsonResponse(response, signal) {
 }
 function responseError(status, scope) {
   if (status === 401) return new AccountReadError('sign_in_required', '学校登录已失效，请重新登录后查询。')
-  if (status === 403) return new AccountReadError('permission_denied', `当前账户权限或凭据资格不足（需要 ${scope}）。请检查功能授权，或自行前往 ${CONSOLE_URL} 查询。`)
+  if (status === 403) return new AccountReadError('permission_denied', `当前学校登录暂时无法使用此查询（接口要求 ${scope}）。请联系管理员核查服务配置与账户资格，或自行前往 ${CONSOLE_URL} 查询。`)
   if (status === 404 || status === 501) return new AccountReadError('unavailable', '该查询暂不可用，或记录不存在/无权访问。')
   if (status === 429) return new AccountReadError('rate_limited', '账户查询过于频繁，请稍后重试。')
   return new AccountReadError('service_error', '账户查询失败，请稍后重试。')

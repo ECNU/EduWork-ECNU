@@ -18,9 +18,11 @@ Explicitly mount the plugin with an existing OIDC profile and its matching model
 }
 ```
 
-The host supplies credentials; tool arguments cannot change the destination or HTTP method. Redirects are rejected. Account changes, logout and disposal cancel pending reads. Responses and credentials are not persisted. Each operation needs its corresponding read scope; missing permissions do not trigger automatic authorization expansion.
+The host supplies credentials; tool arguments cannot change the destination or HTTP method. Redirects are rejected. Account changes, logout and disposal cancel pending reads. Responses and credentials are not persisted. The server still enforces read scopes; publishers verify the existing login scope and account eligibility before assembly. There is no per-feature consent entry. Missing permissions return an error with a console link.
 
-Tools such as `ecnu_account_get_profile` and `ecnu_account_get_usage` describe their parameters. Results include `operation`, `dataJSON`, `parametersJSON`, `coverage` and `timezone`. Pagination starts at 1; account `page_size` and conversation-list `limit` default to 20, maximum 100. `coverage: page` means one page only. Dates use Asia/Shanghai; missing values remain unknown. Read all pages before reporting complete totals.
+Tools such as `ecnu_account_get_profile` and `ecnu_account_get_usage` describe their parameters. Results include `operation`, `dataJSON`, `parametersJSON`, `coverage` and `timezone`. Pagination starts at 1; account `page_size` and conversation/message `limit` default to 20, maximum 100. `coverage: page` means one page only. Message reads also require pagination; the first page is not the entire conversation. Dates use Asia/Shanghai; missing values remain unknown. Read all pages before reporting complete totals.
+
+For development testing only, explicitly set `allowInsecureDevelopment: true` to use an HTTP API. The corresponding school profile must allow HTTP and match that test environment. HTTPS is required by default, and credentials from another environment are not reused.
 
 The accompanying [account query Skill](../../skills/ecnu-aiconsole/SKILL.md) explains data interpretation and redirects account changes. This source does not change the default distribution. Explicitly assemble the plugin and Skill together. The runtime baseline is DSH 0.2.2-rc.3.
 

@@ -72,6 +72,23 @@ test('rejects invalid dates, unsafe path IDs, unknown fields and out-of-range pa
   assert.throws(() => readRequest(config.baseURL, 'account_get_messages'), { code: 'invalid_arguments' })
 })
 
+test('message pages remain selectable and never claim to contain the entire conversation', async t => {
+  const f = fixture(t, (_id, url) => {
+    const page = Number(new URL(url).searchParams.get('page'))
+    return success('account_get_messages', { conversation_id: 'example-123', items: [{ id: 'message-' + page, role: 'user', content: 'Example' }], page, page_size: 1, total: 2 })
+  })
+  const first = await f.reader.read('account_get_messages', { conversation_id: 'example-123', page: 1, limit: 1 })
+  const second = await f.reader.read('account_get_messages', { conversation_id: 'example-123', page: 2, limit: 1 })
+  assert.equal(first.coverage, 'page'); assert.equal(second.coverage, 'page')
+  assert.equal(second.data.page, 2); assert.equal(second.data.total, 2)
+  assert.notEqual(first.data.items[0].id, second.data.items[0].id)
+  assert.deepEqual(second.parameters, { page: 2, limit: 1, conversation_id: 'example-123' })
+  for (const args of [{ page: 0 }, { limit: 101 }, { page_size: 1 }]) {
+    await assert.rejects(f.reader.read('account_get_messages', { conversation_id: 'example-123', ...args }), { code: 'invalid_arguments' })
+  }
+  assert.equal(f.calls.length, 2)
+})
+
 test('keys project only safe metadata and unknown nested credential fields never reach the caller', async t => {
   const f = fixture(t, () => success('account_list_keys', { page: 1, total: 1, api_key: 'top-secret', unknown: { token: 'nested-secret' }, items: [{ id: 4, credential_id: 'key-4', name: 'Research', masked_key: 'sk-***', is_primary: false, quota_subject: 'account', api_key: 'key-secret', token: 'token-secret', future: { secret: 'future-secret' } }] }))
   const result = await f.reader.read('account_list_keys')
@@ -137,11 +154,13 @@ test('unrelated account events do not cancel and a caller cancellation is propag
   assert.equal(f.calls.length, 1)
 })
 
-test('configuration requires explicit HTTPS and allows only opt-in loopback HTTP for development', () => {
+test('HTTP requires explicit development configuration and retains the existing profile binding', () => {
   for (const baseURL of ['http://internal.example/v1', 'https://user:password@example.org/v1', 'https://example.org/v1?token=x', 'https://example.org/v1#x']) assert.throws(() => resolveConfig({ ...config, baseURL }))
   assert.throws(() => resolveConfig({ ...config, oidcProfileId: '' }))
   assert.throws(() => resolveConfig({ ...config, requestTimeoutMs: 0 }))
   assert.equal(resolveConfig({ ...config, baseURL: 'http://127.0.0.1:3000/v1', allowInsecureDevelopment: true }).baseURL, 'http://127.0.0.1:3000/v1')
+  assert.equal(resolveConfig({ ...config, baseURL: 'http://192.0.2.10/open/api/v1', allowInsecureDevelopment: true }).baseURL, 'http://192.0.2.10/open/api/v1')
+  for (const baseURL of ['ftp://192.0.2.10/v1', 'http://user:password@192.0.2.10/v1', 'http://192.0.2.10/v1?token=x']) assert.throws(() => resolveConfig({ ...config, baseURL, allowInsecureDevelopment: true }))
 })
 
 test('a response that stalls after headers times out and releases its stream', async t => {

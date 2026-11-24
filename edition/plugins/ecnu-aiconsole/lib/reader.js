@@ -9,8 +9,8 @@ const protocolError = () => new AccountReadError('invalid_response', '账户服�
 export function resolveConfig(raw) {
   if (!raw || typeof raw.oidcProfileId !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(raw.oidcProfileId)) throw Error('Configure an explicit oidcProfileId')
   const url = new URL(raw.baseURL)
-  const loopback = raw.allowInsecureDevelopment === true && url.protocol === 'http:' && ['127.0.0.1', '[::1]'].includes(url.hostname)
-  if ((url.protocol !== 'https:' && !loopback) || url.username || url.password || url.search || url.hash) throw Error('Configure an HTTPS Open API base URL without credentials, query or fragment')
+  const development = raw.allowInsecureDevelopment === true && url.protocol === 'http:'
+  if ((url.protocol !== 'https:' && !development) || url.username || url.password || url.search || url.hash) throw Error('Configure an HTTPS Open API base URL; HTTP requires explicit development configuration')
   const requestTimeoutMs = raw.requestTimeoutMs ?? 20_000
   if (!Number.isSafeInteger(requestTimeoutMs) || requestTimeoutMs < 100 || requestTimeoutMs > 120_000) throw Error('requestTimeoutMs must be 100–120000')
   return Object.freeze({ oidcProfileId: raw.oidcProfileId, baseURL: url.href.replace(/\/$/, ''), requestTimeoutMs })

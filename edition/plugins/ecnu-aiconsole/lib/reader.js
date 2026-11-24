@@ -65,7 +65,7 @@ async function jsonResponse(response, signal) {
 }
 function responseError(status, scope) {
   if (status === 401) return new AccountReadError('sign_in_required', '学校登录已失效，请重新登录后查询。')
-  if (status === 403) return new AccountReadError('permission_denied', `当前账户权限或凭据资格不足（需要 ${scope}）。请检查功能授权，或自行前往 ${CONSOLE_URL} 查询。`)
+  if (status === 403) return new AccountReadError('permission_denied', `当前学校登录暂时无法使用此查询（接口要求 ${scope}）。请联系管理员核查服务配置与账户资格，或自行前往 ${CONSOLE_URL} 查询。`)
   if (status === 404 || status === 501) return new AccountReadError('unavailable', '该查询暂不可用，或记录不存在/无权访问。')
   if (status === 429) return new AccountReadError('rate_limited', '账户查询过于频繁，请稍后重试。')
   return new AccountReadError('service_error', '账户查询失败，请稍后重试。')

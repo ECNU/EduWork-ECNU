@@ -11,7 +11,7 @@ const publicRoot = resolve(process.env.DSH_OIDC_PACKAGE_ROOT || dirname(require.
 const extensionRoot = resolve(process.env.ECNU_ACCOUNT_PACKAGE_ROOT || fileURLToPath(new URL('../', import.meta.url)))
 const { default: EcnuResources } = await import(pathToFileURL(resolve(extensionRoot, 'lib/index.js')))
 const { normalizeQuota } = await import(pathToFileURL(resolve(extensionRoot, 'lib/quota.js')))
-const { quotaResult } = await import(pathToFileURL(resolve(extensionRoot, 'lib/typert-schemas.js')))
+const { quotaResult, configurationResult } = await import(pathToFileURL(resolve(extensionRoot, 'lib/typert-schemas.js')))
 const { default: TYPERT } = await import(pathToFileURL(resolve(extensionRoot, 'lib/typert.host.js')))
 const { default: Oidc } = await import(pathToFileURL(resolve(publicRoot, 'lib/index.js')))
 const { TYPERT: publicTypes } = await import(pathToFileURL(resolve(publicRoot, 'lib/typert.host.js')))
@@ -23,7 +23,7 @@ const raw = { provider_id: 'fixture-ai', unit: 'credits', windows: [
   { id: 2, name: 'Supplement', remaining_credits: 55 },
 ], ops_console_url: 'https://example.org/allowance' }
 
-async function host(t, options = {}, profileIDs = ['desktop-test']) {
+async function host(t, options = {}, profileIDs = ['desktop-test'], extra = {}) {
   const f = await fixture(t, { resources: true, quota: raw, ...options })
   const opened = [], records = new Map([['PERSONAL_API_KEY', 'personal-test-key']])
   class Credentials extends Service {
@@ -40,7 +40,7 @@ async function host(t, options = {}, profileIDs = ['desktop-test']) {
   t.after(async () => { for (const fiber of fibers.reverse()) await fiber.dispose() })
   for (const plugin of [LlmRuntime, Credentials, DesktopServices]) fibers.push(await ctx.plugin(plugin))
   fibers.push(await ctx.plugin(Oidc, { backend: 'desktop', profile: f.rawProfile }))
-  fibers.push(await ctx.plugin(EcnuResources, { profileIDs }))
+  fibers.push(await ctx.plugin(EcnuResources, { profileIDs, ...extra }))
   return { ...f, ctx, records, async login() {
     await ctx.oidcAccounts.begin('desktop-test')
     const callback = await fetch(opened.at(-1))
@@ -60,6 +60,13 @@ test('normalization preserves windows, dates and pack details; missing totals st
   assert.equal(normalizeQuota({ ...raw, ops_console_url: 'javascript:alert(1)' }, 'fixture-ai').consoleURL, undefined)
   assert.throws(() => normalizeQuota(raw, 'other-provider'), /mismatch/)
   assert.throws(() => normalizeQuota({ ...raw, windows: [{ remaining: -1 }] }, 'fixture-ai'))
+})
+
+test('query consent entry is opt-in and bound to a configured school profile', async t => {
+  const f = await host(t, {}, ['desktop-test'], { queryAccessProfileID: 'desktop-test' })
+  assert.deepEqual(configurationResult.schema.parse(await f.ctx.ecnuAccountResources.configuration()), { profileIDs: ['desktop-test'], queryAccessProfileID: 'desktop-test' })
+  assert.equal(f.requests.length, 0)
+  await assert.rejects(host(t, {}, ['desktop-test'], { queryAccessProfileID: 'third-party' }), /queryAccessProfileID must belong/)
 })
 
 test('real RC Host: no implicit public quota; explicit ECNU request uses the authorized access token', async t => {

@@ -25,7 +25,8 @@
   "scripts": {
     "build": "tsdown",
     "test": "node --test test/*.test.mjs",
-    "check:browser": "node test/check-browser.mjs"
+    "check:browser": "node test/check-browser.mjs",
+    "check:query-access": "node test/check-query-access-browser.mjs"
   },
   "dsh": {
     "client": {

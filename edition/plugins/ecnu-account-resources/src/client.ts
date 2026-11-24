@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import remote from '../lib/typert.remote-client.js'
 import { quotaSummary } from '../lib/summary.js'
+import { QueryAccess } from './query-access.js'
 const h = React.createElement
 const zh = typeof navigator !== 'undefined' && navigator.language.toLowerCase().startsWith('zh')
 const copy = zh ? { quota: '模型额度', loading: '正在读取额度…', unavailable: '暂时无法读取额度，可稍后刷新。', unknown: '未提供', remaining: '剩余', resets: '重置于', refresh: '刷新配额', processing: '正在刷新…', packs: '资源包', details: '配额详情', used: '已用', total: '总量', expires: '到期', status: '状态' }
@@ -49,6 +50,11 @@ function QuotaDetails({ profile, status, busy, run, refreshAccount, defaultConte
       style: { width: '100%', textAlign: 'left', border: 0, borderRadius: 7, padding: '9px 10px', marginTop: 10, font: 'inherit', cursor: 'pointer', background: 'var(--dsw-alias-bg-layer-2, #f5f6f8)', color: 'inherit' } }, busy ? copy.processing : copy.refresh))
 }
 export const inject = ['slots', 'remote']
+function AccountDetails(props: any) {
+  return h(React.Fragment, null, h(QuotaDetails, props),
+    props.profile.id === props.queryAccessProfileID && props.status?.credentialReady && props.accounts?.authorization && props.accounts?.requestAuthorization
+      ? h(QueryAccess, { profile: props.profile, status: props.status, accounts: props.accounts }) : null)
+}
 export async function apply(ctx: any) {
   const unmount = await ctx.remote.$mount(remote)
   ctx.inject(['remote.ecnuAccountResources'], (inner: any) => {
@@ -58,7 +64,7 @@ export async function apply(ctx: any) {
     void unwrap(inner.remote.ecnuAccountResources.configuration()).then(configuration => {
       if (disposed) return
       unregister = inner.slots.inject('oidc.account.menu.details', () => inner.slots.register({ name: 'oidc.account.menu.details', id: 'ecnu-account-resources', priority: -100,
-        inject: () => ({ readQuota, profileIDs: configuration.profileIDs }) }, QuotaDetails))
+        inject: () => ({ readQuota, profileIDs: configuration.profileIDs, queryAccessProfileID: configuration.queryAccessProfileID, accounts: inner.get?.('oidcClientAccounts') }) }, AccountDetails))
     }).catch(() => { /* Keep the public refresh action if extension configuration is unavailable. */ })
     inner.effect(() => () => { disposed = true; unregister() }, 'ecnu-account-resources: account details')
   })

@@ -12,4 +12,10 @@ RPC 是本包的 `ecnuAccountResources.configuration()` 和 `quota(profileID)`�
 
 接口字段见 `quota.openapi.yaml`。这些字段是 ECNU 机构协议，既不是 OIDC 标准，也不是公共 EduWork 资源必选能力。机构身份、Token 会话与模型目录仍由公共 OIDC 模块管理，本扩展不迁移或覆盖已存身份、个人 Key 和用户模型选择。
 
-本地检查：使用锁定的 DSH 0.1.5-rc.1 一致依赖树构建，运行 `npm run test`；设置 `DSH_OIDC_PACKAGE_ROOT` 指向公版 OIDC 编译包根目录。公共与扩展编译浏览器联验见 `test/check-browser.mjs`，不宣称为生产 IdP 测试。打包用 `npm pack --ignore-scripts`。
+可选的“AIConsole 查询权限”入口复用此账号菜单。发行方显式设置 `queryAccessProfileID`，其值必须在 `profileIDs` 中，并与 AIConsole 只读插件的账号一致；省略时不显示入口。它依赖公版 `oidcClientAccounts.authorization/requestAuthorization` 能力。旧 Host 缺少该能力时仍保留配额功能；本源码不修改发行锁、默认装配或用户配置。
+
+用户在入口选择需要的查询用途，默认不勾选新权限；已授权项保留为只读状态。候选仅限个人资料、用量配额、积分流水、权益目录、订单、Key 元数据、运行请求、云端会话这八组读权限，并与服务端开放范围取交集。发行方还需在 OIDC Profile 的 `auth.optionalScopes` 中配置允许申请的候选；这不会自动授予权限，也不应加入首次登录的必选权限。功能入口不会申请 Key 修改、停止请求、反馈或邀请权限。
+
+点击“授权所选查询”才复用学校 OAuth 登录进行补授权，提交前重新读取权限状态；原有授权由公共账号层保留。取消、关闭或账号身份变化会取消待完成的客户端流程，旧登录继续可用。授权成功后请重新发起查询，不自动重放 Agent 调用。此窗口不支持撤销已有授权；账号写操作由用户在 AIConsole 办理。云端会话读权限也不代表已经实现本地导入或同步。
+
+本地检查：以发行锁中的 DSH 依赖树为准，使用 `build-client.ps1` 编译，运行 `npm run test`；设置 `DSH_OIDC_PACKAGE_ROOT` 指向公版 OIDC 编译包根目录。`npm run check:browser` 检查既有配额，`npm run check:query-access` 检查含补授权能力的公版与扩展编译产物。浏览器使用合成账号，不代表生产 IdP 已联调。打包用 `npm pack --ignore-scripts`。

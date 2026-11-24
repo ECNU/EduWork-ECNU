@@ -31,7 +31,7 @@ const trigger = page.getByRole('button', { name: /账户菜单/ })
 try {
   await page.goto(`http://127.0.0.1:${server.address().port}`)
   await trigger.click(); await menu.getByRole('menuitem', { name: '配额详情' }).waitFor()
-  assert.deepEqual(await page.evaluate(() => window.fixture.declarations()), { 'oidc.account.menu.details': { kind: 'single', scope: 'root' } })
+  assert.deepEqual(await page.evaluate(() => window.fixture.declarations()['oidc.account.menu.details']), { kind: 'single', scope: 'root' })
   assert.equal(await menu.getByRole('progressbar').count(), 1)
   assert.equal(await menu.getByRole('progressbar').getAttribute('value'), '90')
   assert.ok((await menu.innerText()).includes('使用情况'))

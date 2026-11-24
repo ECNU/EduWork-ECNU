@@ -3,7 +3,7 @@ const pkg = '@chatecnu-work/dsh-ecnu-account-resources'
 const nullableNumber = z.number().nonnegative().nullable()
 // Keep schema for 0.1.5 and provide the codec factory required by 0.1.7.
 const strict = (name, schema) => ({ mode: 'strict', typeSymbol: `${pkg}#${name}`, schema, create: () => schema })
-export const configurationResult = strict('Configuration', z.object({ profileIDs: z.array(z.string().max(64)).max(64) }).strict())
+export const configurationResult = strict('Configuration', z.object({ profileIDs: z.array(z.string().max(64)).max(64), queryAccessProfileID: z.string().max(64).optional() }).strict())
 export const quotaResult = strict('Quota', z.object({
   state: z.enum(['available', 'unavailable', 'not_connected', 'not_configured']),
   providerID: z.string().optional(), unit: z.string().optional(), consoleURL: z.string().url().optional(),

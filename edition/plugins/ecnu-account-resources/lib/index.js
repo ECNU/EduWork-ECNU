@@ -11,13 +11,15 @@ export class EcnuAccountResources extends TypertRemoteService {
     const ids = config.profileIDs ?? ['ecnu']
     if (!Array.isArray(ids) || ids.length > 64 || ids.some(id => typeof id !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(id))) throw new Error('ECNU account resources requires explicit profile IDs')
     this.profileIDs = [...new Set(ids)]
+    this.queryAccessProfileID = config.queryAccessProfileID
+    if (this.queryAccessProfileID !== undefined && !this.profileIDs.includes(this.queryAccessProfileID)) throw Error('queryAccessProfileID must belong to profileIDs')
     this.version = 0
     this.abort = new AbortController()
     ctx.on('credentials/reference-updated', () => { this.version++ })
     ctx.on('oidc/accounts-changed', () => { this.version++ })
     ctx.effect(() => () => { this.version++; this.abort.abort() }, 'ecnu-account-resources: stop pending requests')
   }
-  configuration() { return Promise.resolve({ profileIDs: this.profileIDs }) }
+  configuration() { return Promise.resolve({ profileIDs: this.profileIDs, ...(this.queryAccessProfileID ? { queryAccessProfileID: this.queryAccessProfileID } : {}) }) }
   async quota(profileID) {
     if (!this.profileIDs.includes(profileID)) return { state: 'not_configured' }
     const configuration = await this.ctx.oidcAccounts.configuration()

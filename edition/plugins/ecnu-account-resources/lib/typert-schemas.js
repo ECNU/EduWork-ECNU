@@ -4,7 +4,7 @@ const nullableNumber = z.number().nonnegative().nullable()
 // Keep schema for 0.1.5 and provide the codec factory required by 0.1.7.
 const strict = (name, schema) => ({ mode: 'strict', typeSymbol: `${pkg}#${name}`, schema, create: () => schema })
 export const configurationResult = strict('Configuration', z.object({ profileIDs: z.array(z.string().max(64)).max(64), pointsProfileID: z.string().max(64).nullable().optional() }).strict())
-const serviceState = z.enum(['available', 'unavailable', 'not_connected', 'not_configured', 'authorization_required', 'permission_denied', 'expired'])
+const serviceState = z.enum(['available', 'unavailable', 'not_connected', 'not_configured', 'permission_denied', 'expired'])
 export const pointsResult = strict('Points', z.object({ state: serviceState, currentPoints: z.number().nonnegative().optional(), nextExpiryAt: z.string().nullable().optional(), nextExpiryPoints: nullableNumber.optional(), expiryNotice: z.string().max(2000).optional() }).strict())
 export const invitationResult = strict('Invitation', z.object({ state: serviceState, referralCode: z.string().max(256).optional(), expiresAt: z.string().optional(), inviteURL: z.string().url().max(4096).optional() }).strict())
 export const quotaResult = strict('Quota', z.object({

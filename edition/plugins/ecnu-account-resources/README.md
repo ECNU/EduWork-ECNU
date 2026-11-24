@@ -12,9 +12,9 @@ RPC 是本包的 `ecnuAccountResources.configuration()` 和 `quota(profileID)`�
 
 接口字段见 `quota.openapi.yaml`。这些字段是 ECNU 机构协议，既不是 OIDC 标准，也不是公共 EduWork 资源必选能力。机构身份、Token 会话与模型目录仍由公共 OIDC 模块管理，本扩展不迁移或覆盖已存身份、个人 Key 和用户模型选择。
 
-头像附近可选显示积分与邀请入口。余额通过 `ecnuAiconsole.read('account_get_points')` 共用只读账户实现；打开弹窗不创建邀请码，用户点击“获取邀请链接”后才请求邀请权限并获取链接。邀请不注册为 Agent 工具。奖励与资格由 ChatECNU 决定；无时区的业务日期按北京时间解释，未知余额不显示为零。
+头像附近可选显示积分与邀请入口。余额通过 `ecnuAiconsole.read('account_get_points')` 共用只读账户实现；打开弹窗不创建邀请码，用户点击“获取邀请链接”后使用现有学校登录获取链接，不增加逐项授权步骤。邀请不注册为 Agent 工具。奖励与资格由 ChatECNU 决定；无时区的业务日期按北京时间解释，未知余额不显示为零。
 
-启用时需要同一 Profile 的 `ecnu-aiconsole` 服务，以及支持 `optionalScopes`、按需授权和 `oidc.account.footer.details` 的 OIDC 客户端。缺少能力时保持现有配额功能；积分默认关闭。发行方在确认对应组件可用后设置本插件的配置：
+启用时需要同一 Profile 的 `ecnu-aiconsole` 服务，以及支持 `oidc.account.footer.details` 的 OIDC 客户端，不依赖可选补授权机制。缺少插槽时保持现有配额功能；积分默认关闭。发行方在确认对应组件可用后设置本插件的配置：
 
 ```json
 {
@@ -27,6 +27,6 @@ RPC 是本包的 `ecnuAccountResources.configuration()` 和 `quota(profileID)`�
 }
 ```
 
-OIDC Profile 的 `auth.optionalScopes` 分别提供 `points.read` 和 `invitations.write`；不加入普通登录必选范围。额外 RPC `points(profileID)` 和 `invitation(profileID)` 只回传有限的显示字段，不接受任意地址或方法。模型服务基址必须匹配当前学校登录，Worker 与模型服务必须同源。邀请链接只允许该服务同源地址，保留返回的环境、路由与邀请码。账号变化与卸载丢弃在途结果。
+接口仍由服务端校验 `points.read` 和 `invitations.write`。发行方在启用前核实学校客户端注册、现有登录范围与旧登录兼容，沿用已有鉴权配置；UI 不申请或扩大 scope，拒绝访问时显示不可用。额外 RPC `points(profileID)` 和 `invitation(profileID)` 只回传有限的显示字段，不接受任意地址或方法。模型服务基址必须匹配当前学校登录，Worker 与模型服务必须同源。邀请链接只允许该服务同源地址，保留返回的环境、路由与邀请码。账号变化与卸载丢弃在途结果。
 
-本地检查使用锁定的 DSH 0.2.2-rc.3 Runtime，运行 `npm run test`；设置 `DSH_OIDC_PACKAGE_ROOT` 指向公版 OIDC 编译包根目录。`test/check-browser.mjs` 验证现有配额，`test/check-points-browser.mjs` 使用具备上述扩展的公共包验证积分、邀请、补授权与账号切换；均使用合成数据，不代表生产 IdP 验收。打包用 `npm pack --ignore-scripts`。
+本地检查使用锁定的 DSH 0.2.2-rc.3 Runtime，运行 `npm run test`；设置 `DSH_OIDC_PACKAGE_ROOT` 指向公版 OIDC 编译包根目录。`test/check-browser.mjs` 验证现有配额，`test/check-points-browser.mjs` 使用具备上述插槽的公共包验证积分、邀请、服务拒绝与账号切换；均使用合成数据，不代表生产 IdP 验收。打包用 `npm pack --ignore-scripts`。

@@ -5193,7 +5193,6 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"unavailable",
 			"not_connected",
 			"not_configured",
-			"authorization_required",
 			"permission_denied",
 			"expired"
 		]);
@@ -5325,8 +5324,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			unavailable: "服务暂不可用，请稍后重试。",
 			not_configured: "此功能尚未启用。",
 			not_connected: "请重新登录学校账户。",
-			authorization_required: "使用此功能需要你的授权。",
-			permission_denied: "当前账户未获得访问资格，请到 ChatECNU 查看。",
+			permission_denied: "当前账户暂时无法使用此功能，请到 ChatECNU 查看或联系管理员。",
 			expired: "邀请链接已过期，请重新获取。"
 		};
 		const gift = h$1("svg", {
@@ -5338,11 +5336,11 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			strokeWidth: 1.6,
 			"aria-hidden": true
 		}, h$1("path", { d: "M4 10h16v11H4zM3 6h18v4H3zM12 6v15M12 6H8a2.5 2.5 0 1 1 2.5-2.5L12 6Zm0 0h4a2.5 2.5 0 1 0-2.5-2.5L12 6Z" }));
-		function PointsFooter({ profile, status, service, wide, pointsProfileID, readPoints, getInvitation }) {
+		function PointsFooter({ profile, status, wide, pointsProfileID, readPoints, getInvitation }) {
 			const enabled = profile.id === pointsProfileID && status?.credentialReady;
 			const [points, setPoints] = (0, react.useState)(null), [invite, setInvite] = (0, react.useState)(null);
 			const [open, setOpen] = (0, react.useState)(false), [busy, setBusy] = (0, react.useState)(false), [notice, setNotice] = (0, react.useState)("");
-			const dialog = (0, react.useRef)(null), generation = (0, react.useRef)(0), authorization = (0, react.useRef)(null), trigger = (0, react.useRef)(null);
+			const dialog = (0, react.useRef)(null), generation = (0, react.useRef)(0), trigger = (0, react.useRef)(null);
 			const read = async () => {
 				const stamp = generation.current;
 				try {
@@ -5362,7 +5360,6 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				if (enabled) read();
 				return () => {
 					generation.current++;
-					authorization.current?.abort();
 				};
 			}, [
 				profile.id,
@@ -5374,24 +5371,12 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				if (open && dialog.current && !dialog.current.open) dialog.current.showModal();
 				else if (!open && dialog.current?.open) dialog.current.close();
 			}, [open]);
-			const grant = async (scope) => {
-				if (!service.authorization || !service.requestAuthorization) throw Error("授权功能尚未启用，请更新客户端或前往 ChatECNU。");
-				const state = await service.authorization(profile.id);
-				if (state.granted.includes(scope)) return;
-				if (!state.available.includes(scope)) throw Error("服务尚未开放此功能的授权，请稍后再试。");
-				const controller = new AbortController();
-				authorization.current = controller;
-				await service.requestAuthorization(profile.id, [scope], { signal: controller.signal });
-				if (controller.signal.aborted || !(await service.authorization(profile.id)).granted.includes(scope)) throw Error("授权未完成，可以稍后重试。");
-			};
 			const act = async (kind) => {
 				if (busy) return;
 				const stamp = generation.current;
 				setBusy(true);
 				setNotice("");
 				try {
-					await grant(kind === "points" ? "points.read" : "invitations.write");
-					if (stamp !== generation.current) return;
 					if (kind === "points") await read();
 					else {
 						const value = await getInvitation(profile.id);
@@ -5404,7 +5389,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				}
 			};
 			const close = () => {
-				authorization.current?.abort();
+				generation.current++;
+				setBusy(false);
 				setOpen(false);
 				trigger.current?.focus();
 			};
@@ -5421,7 +5407,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				}
 			};
 			if (!enabled) return null;
-			const balance = points?.state === "available" ? `${points.currentPoints.toLocaleString()} 积分` : points?.state === "authorization_required" ? "授权查看积分" : points ? "积分暂不可用" : "积分读取中…";
+			const balance = points?.state === "available" ? `${points.currentPoints.toLocaleString()} 积分` : points ? "积分暂不可用" : "积分读取中…";
 			return h$1("div", { style: {
 				display: "flex",
 				alignItems: "center",
@@ -5497,7 +5483,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				disabled: busy,
 				onClick: () => void act("points"),
 				style: button
-			}, points?.state === "authorization_required" ? "授权查看积分" : "刷新积分"), h$1("hr", { style: {
+			}, "刷新积分"), h$1("hr", { style: {
 				margin: "20px 0",
 				border: 0,
 				borderTop: "1px solid var(--dsw-alias-border-l2, #dedee8)"
@@ -5525,7 +5511,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			}, busy ? "正在处理…" : "获取邀请链接")), h$1("p", {
 				role: "status",
 				"aria-live": "polite"
-			}, notice || (busy ? "请在授权窗口完成操作。" : ""))));
+			}, notice || (busy ? "正在读取…" : ""))));
 		}
 		//#endregion
 		//#region src/client.ts

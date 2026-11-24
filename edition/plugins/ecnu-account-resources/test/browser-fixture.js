@@ -4,7 +4,7 @@ const configuration = { uiMode: 'standard', profiles: [ecnu], manageProductBrand
 const connected = profileID => ({ profileID, state: 'connected', credentialReady: true, userName: profileID === 'ecnu' ? 'ECNU synthetic user' : 'Other synthetic user' })
 let account = connected('ecnu'), reads = 0, calls = [], pending = false, release, remaining = 90
 const pointsEnabled = new URLSearchParams(location.search).has('points')
-let pointReads = 0, invitationCalls = 0, scopes = ['points.read', 'invitations.write'], consentCalls = [], delayInvitation = false, releaseInvitation
+let pointReads = 0, invitationCalls = 0, denied = false, delayInvitation = false, releaseInvitation
 const registrations = [], events = new Map(), loaded = []
 const ok = value => Promise.resolve({ ok: true, value })
 const quota = () => ({ state: 'available', providerID: 'fixture-ai', unit: 'credits', windows: [{ type: 'fixed_168h', limit: 100, used: 10, remaining, resetAt: '2026-09-17T00:00:00Z' }], resourcePacks: [
@@ -20,12 +20,10 @@ const ctx = {
       resources: () => ok({ profileID: account.profileID, models: [], modelSource: 'profile', issues: [] }),
       logout: () => { account = { profileID: account.profileID, state: 'signed_out', credentialReady: false }; return ok(account) },
       begin: () => ok({ mode: 'external', loginID: 'test' }), loginStatus: () => ok({ state: 'completed', status: account }), cancelLogin: () => ok({ state: 'cancelled' }),
-      authorization: () => ok({ profileID: account.profileID, supported: true, required: [], optional: ['points.read', 'invitations.write'], available: ['points.read', 'invitations.write'], granted: [...scopes] }),
-      beginAuthorization: (_id, selected) => { consentCalls.push(selected); scopes = [...new Set([...scopes, ...selected])]; return ok({ mode: 'completed', status: { ...account } }) },
     },
     ecnuAccountResources: { configuration: () => ok({ profileIDs: ['ecnu'], ...(pointsEnabled ? { pointsProfileID: 'ecnu' } : {}) }),
-      points: () => { pointReads++; return ok(scopes.includes('points.read') ? { state: 'available', currentPoints: 156, nextExpiryAt: '2099-05-01T00:00:00Z', nextExpiryPoints: 42, expiryNotice: '最近到期信息由平台提供。' } : { state: 'authorization_required' }) },
-      invitation: async () => { invitationCalls++; if (delayInvitation) await new Promise(resolve => { releaseInvitation = resolve }); return ok({ state: 'available', referralCode: 'SYNTHETIC', inviteURL: 'https://example.org/html/#/invite/SYNTHETIC', expiresAt: '2099-11-24T12:00:00Z' }) },
+      points: () => { pointReads++; return ok(denied ? { state: 'permission_denied' } : { state: 'available', currentPoints: 156, nextExpiryAt: '2099-05-01T00:00:00Z', nextExpiryPoints: 42, expiryNotice: '最近到期信息由平台提供。' }) },
+      invitation: async () => { invitationCalls++; if (delayInvitation) await new Promise(resolve => { releaseInvitation = resolve }); return ok(denied ? { state: 'permission_denied' } : { state: 'available', referralCode: 'SYNTHETIC', inviteURL: 'https://example.org/html/#/invite/SYNTHETIC', expiresAt: '2099-11-24T12:00:00Z' }) },
       quota: async id => {
       reads++; calls.push(id); const snapshot = quota()
       if (pending) await new Promise(resolve => { release = resolve })
@@ -59,8 +57,8 @@ window.mountFixture = async () => {
     React.createElement('button', { id: 'outside', style: { position: 'fixed', top: 20, right: 20 } }, 'Outside')))
   window.fixture = {
     reads: () => reads, calls: () => calls,
-    points: () => ({ pointReads, invitationCalls, consentCalls }),
-    setScopes: value => { scopes = value },
+    points: () => ({ pointReads, invitationCalls }),
+    deny: () => { denied = true },
     collapse: () => { wide = false; render() },
     delayInvite: () => { delayInvitation = true }, releaseInvite: () => { delayInvitation = false; releaseInvitation?.() },
     declarations: () => footer.children,

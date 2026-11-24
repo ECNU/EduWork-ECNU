@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path'
 import { readFile, mkdir, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 const require = createRequire(import.meta.url), { chromium } = require('playwright-core')
-if (!process.env.DSH_OIDC_PACKAGE_ROOT) throw Error('Use a built OIDC package with optional consent and footer slot support')
+if (!process.env.DSH_OIDC_PACKAGE_ROOT) throw Error('Use a built OIDC package with footer slot support')
 const assets = new Map([
   ['/react.js', await readFile(join(dirname(require.resolve('react/package.json')), 'umd/react.development.js'))],
   ['/react-dom.js', await readFile(join(dirname(require.resolve('react-dom/package.json')), 'umd/react-dom.development.js'))],
@@ -56,17 +56,25 @@ try {
   checks.push('other providers do not display points or call school services')
   await page.goto(url)
   await page.getByRole('button', { name: '156 积分' }).waitFor()
-  await page.evaluate(() => { window.fixture.setScopes(['points.read']); window.fixture.delayInvite() })
+  await page.evaluate(() => window.fixture.delayInvite())
   await page.getByRole('button', { name: '积分与邀请', exact: true }).click()
   await dialog.getByRole('button', { name: '获取邀请链接' }).click()
-  await page.waitForFunction(() => window.fixture.points().consentCalls.length === 1)
-  assert.deepEqual((await page.evaluate(() => window.fixture.points())).consentCalls, [['invitations.write']])
   await page.waitForFunction(() => window.fixture.points().invitationCalls === 1)
   await page.evaluate(() => window.fixture.switch('third-party'))
   await page.evaluate(() => window.fixture.releaseInvite())
   await dialog.waitFor({ state: 'hidden' })
   assert.equal(await page.getByText('SYNTHETIC', { exact: true }).count(), 0)
-  checks.push('only invitation permission is requested; changed identity drops late invitation results')
+  checks.push('existing login is sufficient; changed identity drops late invitation results')
+  await page.goto(url); await page.getByRole('button', { name: '156 积分' }).waitFor()
+  await page.evaluate(() => window.fixture.deny())
+  await page.getByRole('button', { name: '积分与邀请', exact: true }).click()
+  await dialog.getByRole('button', { name: '刷新积分' }).click()
+  await dialog.getByText('积分暂不可用', { exact: true }).waitFor()
+  await dialog.getByRole('button', { name: '获取邀请链接' }).click()
+  await dialog.getByText('当前账户暂时无法使用此功能，请到 ChatECNU 查看或联系管理员。').waitFor()
+  assert.equal(await dialog.getByRole('button', { name: /授权|申请/ }).count(), 0)
+  assert.equal((await page.evaluate(() => window.fixture.points())).invitationCalls, 1)
+  checks.push('server denial remains a service error without permission prompts or automatic retries')
   assert.deepEqual(errors, [])
   await writeFile(new URL('points-result.json', output), JSON.stringify({ passed: true, checks, errors }, null, 2))
   console.log(`${checks.length} compiled points/invitation browser checks passed`)

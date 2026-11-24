@@ -54,14 +54,12 @@ export function createPointsService(ctx, raw) {
   ctx.on('oidc/accounts-changed', event => { if (event.profileID === config?.profileID) invalidate() })
   ctx.on('credentials/reference-updated', invalidate)
   ctx.effect(() => () => { disposed = true; lifetime.abort() })
-  const run = async (profileID, scope, action) => {
+  const run = async (profileID, action) => {
     if (!config || profileID !== config.profileID || ctx.ecnuAiconsole?.profileID !== profileID) return fail('not_configured')
     const signal = AbortSignal.any([lifetime.signal, AbortSignal.timeout(20000)])
     try {
       if (disposed) return fail('not_connected')
       if (!(await ctx.oidcAccounts.status(profileID)).credentialReady) return fail('not_connected')
-      const grant = await ctx.oidcAccounts.authorization?.(profileID)
-      if (!grant?.granted?.includes(scope)) return fail('authorization_required')
       signal.throwIfAborted()
       const result = await action(signal)
       signal.throwIfAborted()
@@ -72,8 +70,8 @@ export function createPointsService(ctx, raw) {
   }
   return {
     profileID: config?.profileID ?? null,
-    points: profileID => run(profileID, 'points.read', async signal => normalizePoints((await ctx.ecnuAiconsole.read('account_get_points', {}, { signal })).data)),
-    invitation: profileID => run(profileID, 'invitations.write', async signal => {
+    points: profileID => run(profileID, async signal => normalizePoints((await ctx.ecnuAiconsole.read('account_get_points', {}, { signal })).data)),
+    invitation: profileID => run(profileID, async signal => {
       if (!await ctx.oidcAccounts.modelAuthorization(profileID, config.modelBaseURL)) return fail('not_connected')
       signal.throwIfAborted()
       const endpoint = `${config.workerBaseURL}/points/invitation`

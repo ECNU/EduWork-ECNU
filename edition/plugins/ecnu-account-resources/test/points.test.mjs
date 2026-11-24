@@ -7,7 +7,7 @@ function fixture(overrides = {}) {
   const events = new Map(), effects = [], requests = [], reads = []
   const ctx = {
     on: (name, listener) => events.set(name, listener), effect: effect => effects.push(effect()),
-    oidcAccounts: { status: async () => ({ credentialReady: true }), authorization: async () => ({ granted: ['points.read', 'invitations.write'] }), modelAuthorization: async () => true,
+    oidcAccounts: { status: async () => ({ credentialReady: true }), modelAuthorization: async () => true,
       authorizedFetch: async (...args) => { requests.push(args); return Response.json(invitation) } },
     ecnuAiconsole: { profileID: 'school', read: async (...args) => { reads.push(args); return { data: { currentPoints: 156 } } } },
   }
@@ -31,12 +31,13 @@ test('points share the read-only account implementation; invitation is never fet
   f.ctx.ecnuAiconsole.profileID = 'other'
   assert.deepEqual(await f.service.points('school'), { state: 'not_configured' })
 })
-test('missing authorization and legacy host cannot generate invitations', async () => {
-  for (const authorization of [undefined, async () => ({ granted: ['points.read'] })]) {
-    const f = fixture({ authorization })
-    assert.deepEqual(await f.service.invitation('school'), { state: 'authorization_required' })
+test('signed-out users cannot request invitations; existing account transport is sufficient', async () => {
+  for (const overrides of [{ status: async () => ({ credentialReady: false }) }, { modelAuthorization: async () => false }]) {
+    const f = fixture(overrides)
+    assert.deepEqual(await f.service.invitation('school'), { state: 'not_connected' })
     assert.equal(f.requests.length, 0)
   }
+  assert.equal((await fixture().service.invitation('school')).state, 'available')
 })
 test('invitation uses one fixed authorized GET; no credentials enter the response', async () => {
   const f = fixture()

@@ -2891,7 +2891,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region ../../../../../dsh-022-rc3-20261115/runtime-final/node_modules/zod/v4/locales/en.js
-		const error = () => {
+		const error$1 = () => {
 			const Sizable = {
 				string: {
 					unit: "characters",
@@ -2995,7 +2995,7 @@ window.__ModuleLoader__.load({
 			};
 		};
 		function en_default() {
-			return { localeError: error() };
+			return { localeError: error$1() };
 		}
 		//#endregion
 		//#region ../../../../../dsh-022-rc3-20261115/runtime-final/node_modules/zod/v4/core/registries.js
@@ -5256,6 +5256,23 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			importable: boolean().optional(),
 			total: number().int().optional()
 		}).strict());
+		const importInput = codec("ImportInput", object({
+			lease: string().uuid(),
+			conversationID: id,
+			workspaceID: id.optional(),
+			snapshot: string().length(64).optional(),
+			rememberProject: boolean().optional()
+		}).strict());
+		const importResult = codec("ImportResult", object({
+			state: string().max(64),
+			bindingState: string().max(64).optional(),
+			sessionID: id.optional(),
+			workspaceID: id.optional(),
+			pending: boolean().optional(),
+			rememberProject: boolean().optional(),
+			projectID: id.nullable().optional(),
+			reused: boolean().optional()
+		}).strict());
 		//#endregion
 		//#region lib/typert.remote-client.js
 		var typert_remote_client_default = {
@@ -5263,20 +5280,23 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			descriptors: [
 				"cloudState",
 				"cloudList",
-				"cloudPreview"
+				"cloudPreview",
+				"cloudDestination",
+				"cloudImport"
 			].map((method) => ({
 				id: `${pkg}#ecnuCloud/${method}`,
 				service: "ecnuCloud",
 				namespace: "ecnuCloud",
 				method,
 				invocation: { kind: "direct" },
+				...method === "cloudImport" ? { cancellation: { parameter: "signal" } } : {},
 				parameters: method === "cloudState" ? [] : [{
 					name: "input",
 					wire: "input",
 					source: "json",
-					codec: input
+					codec: ["cloudDestination", "cloudImport"].includes(method) ? importInput : input
 				}],
-				result,
+				result: ["cloudDestination", "cloudImport"].includes(method) ? importResult : method === "cloudPreview" ? codec("Preview", result.schema.extend({ snapshot: string().length(64).optional() })) : result,
 				sourceLocation: {
 					file: "lib/index.js",
 					line: 1,
@@ -5284,6 +5304,183 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				}
 			}))
 		};
+		/**
+		* The text one Workspace is labeled with. A Workspace still carrying the
+		* automatic first-use title reads as the caller's localized default name; every
+		* other title reads verbatim in every language. A title the user typed as
+		* exactly {@link DEFAULT_WORKSPACE_DIRECTORY} is labeled as the default too;
+		* nothing else depends on the distinction.
+		* @param title - stored Workspace title.
+		* @param localizedDefault - the default Workspace name in the active language.
+		* @returns the title to display.
+		*/
+		function workspaceDisplayTitle(title, localizedDefault) {
+			return title === "default-workspace" ? localizedDefault : title;
+		}
+		//#endregion
+		//#region src/continuation.tsx
+		const messages = {
+			history_changed: "云端历史已变化，请关闭窗口并重新预览后再导入。",
+			unsupported_history: "这段历史尚不能完整导入。首期支持以用户消息开始的纯文本会话。",
+			missing_workspace: "原工作区已移除，请先恢复工作区。",
+			missing_directory: "工作区目录已不存在，请先恢复目录。",
+			missing_or_moved_session: "已导入的会话不在原工作区，请先恢复其位置。",
+			binding_needs_repair: "已有本地导入记录需要检查，未创建重复会话。",
+			workspace_changed: "未完成的导入属于原工作区，请恢复后重试。",
+			account_changed: "登录状态已变化，请重新预览会话。"
+		};
+		const error = (state) => messages[state] ?? "导入未完成。已写入的历史会保留，重试将继续原来的导入。";
+		function Continuation({ preview, api, openSession, renderFactorySlot, useWorkspaces }) {
+			const workspaces = useWorkspaces((state) => state.items);
+			const [destination, setDestination] = (0, react.useState)(null), [open, setOpen] = (0, react.useState)(false), [busy, setBusy] = (0, react.useState)(false);
+			const [workspaceID, setWorkspaceID] = (0, react.useState)(), [remember, setRemember] = (0, react.useState)(false);
+			const [picker, setPicker] = (0, react.useState)(false), [failure, setFailure] = (0, react.useState)("");
+			const anchor = (0, react.useRef)(null), active = (0, react.useRef)(true), request = (0, react.useRef)(null);
+			const input = {
+				lease: preview.lease,
+				conversationID: preview.summary.conversationID
+			};
+			(0, react.useEffect)(() => {
+				active.current = true;
+				api("cloudDestination", input).then((value) => {
+					if (!active.current) return;
+					setDestination(value);
+					setWorkspaceID(value.workspaceID);
+					if (value.pending) setRemember(value.rememberProject);
+					if (value.state !== "available") setFailure(error(value.state));
+				}).catch(() => {
+					if (active.current) setFailure(error("unavailable"));
+				});
+				return () => {
+					active.current = false;
+					request.current?.abort();
+				};
+			}, []);
+			const existing = destination?.bindingState === "available";
+			const invalid = destination?.bindingState && !["available", "unbound"].includes(destination.bindingState);
+			const selected = workspaces.find((item) => item.workspaceId === workspaceID);
+			async function submit() {
+				setBusy(true);
+				setFailure("");
+				const controller = new AbortController();
+				request.current = controller;
+				try {
+					const result = await api("cloudImport", {
+						...input,
+						workspaceID,
+						snapshot: preview.snapshot,
+						rememberProject: remember
+					}, controller.signal);
+					if (!active.current) return;
+					if (result.state !== "available") {
+						setFailure(error(result.state));
+						const next = await api("cloudDestination", input);
+						if (active.current && next.state === "available") {
+							setDestination(next);
+							if (next.workspaceID) setWorkspaceID(next.workspaceID);
+							if (next.pending) setRemember(next.rememberProject);
+						}
+						return;
+					}
+					await openSession(result.sessionID, () => active.current);
+				} catch {
+					if (active.current) setFailure(error("unavailable"));
+				} finally {
+					if (active.current) setBusy(false);
+				}
+			}
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				style: { margin: "16px 0" },
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+						variant: "primary",
+						disabled: busy || !destination || destination.state !== "available" || invalid || !existing && (!preview.importable || !preview.messages.length),
+						onClick: () => existing ? void submit() : setOpen(true),
+						children: existing ? "打开本地续聊" : "在 EduWork 继续"
+					}),
+					invalid && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						role: "alert",
+						children: error(destination.bindingState)
+					}),
+					!open && failure && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						role: "alert",
+						children: failure
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(_deepseek_ai_dsh_client_ui_primitives.Modal, {
+						open,
+						onClose: () => {
+							if (!busy) setOpen(false);
+						},
+						title: "在 EduWork 继续",
+						closeLabel: "关闭",
+						description: "历史消息将复制到所选工作区。后续对话保存在 EduWork，不同步回 ChatECNU。",
+						footer: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+							variant: "ghost",
+							disabled: busy,
+							onClick: () => setOpen(false),
+							children: "取消"
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+							variant: "primary",
+							disabled: busy || !selected,
+							onClick: () => void submit(),
+							children: busy ? "正在导入…" : destination?.pending ? "继续上次导入" : "导入并打开"
+						})] }),
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("p", { children: [
+								preview.summary.title,
+								" · ",
+								preview.total,
+								" 条消息"
+							] }),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+								style: { margin: "18px 0" },
+								children: [
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: "保存到工作区" }),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+										ref: anchor,
+										variant: "outline",
+										"data-modal-autofocus": true,
+										disabled: busy || destination?.pending,
+										"aria-haspopup": "menu",
+										"aria-expanded": picker,
+										onClick: () => setPicker(true),
+										children: selected ? workspaceDisplayTitle(selected.title, "默认工作区") : "选择或新建工作区"
+									}),
+									selected && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+										style: {
+											fontSize: 12,
+											overflowWrap: "anywhere"
+										},
+										children: selected.path
+									}),
+									renderFactorySlot("workspace.picker", {
+										open: picker,
+										anchorRef: anchor,
+										selectedId: workspaceID,
+										onPick: (id) => {
+											setWorkspaceID(id);
+											setPicker(false);
+										},
+										onClose: () => setPicker(false)
+									})
+								]
+							}),
+							preview.summary.projectID && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+								type: "checkbox",
+								checked: remember,
+								disabled: busy || destination?.pending,
+								onChange: (event) => setRemember(event.target.checked)
+							}), "记住此项目的默认工作区（仅影响以后的导入）"] }),
+							destination?.pending && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: "将恢复上次未完成的导入，保存位置保持不变。" }),
+							failure && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								role: "alert",
+								children: failure
+							})
+						]
+					})
+				]
+			});
+		}
 		//#endregion
 		//#region src/client.tsx
 		const errors = {
@@ -5300,7 +5497,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const errorText = (state) => errors[state] ?? "暂时无法读取云端会话，请稍后重试。";
 		const muted = "var(--dsw-alias-label-secondary, #777)";
 		const border = "1px solid var(--dsw-alias-border-l2, #ddd)";
-		function CloudPage({ api, watch, continuation }) {
+		function CloudPage({ api, watch, openSession, renderFactorySlot, useWorkspaces }) {
 			const [list, setList] = (0, react.useState)(null), [preview, setPreview] = (0, react.useState)(null);
 			const [busy, setBusy] = (0, react.useState)(false), [previewBusy, setPreviewBusy] = (0, react.useState)(false);
 			const [selected, setSelected] = (0, react.useState)(null), [error, setError] = (0, react.useState)("");
@@ -5561,7 +5758,13 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 										role: "status",
 										children: "包含尚不支持的消息，暂不能导入续聊。"
 									}),
-									continuation?.(preview),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(Continuation, {
+										preview,
+										api,
+										openSession,
+										renderFactorySlot,
+										useWorkspaces
+									}, preview.lease + ":" + preview.summary.conversationID + ":" + preview.snapshot),
 									preview.messages.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: "这段会话还没有消息。" }),
 									preview.messages.map((message) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
 										style: {
@@ -5594,13 +5797,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const inject = [
 			"slots",
 			"remote",
-			"layout"
+			"layout",
+			"sessions",
+			"uiWorkspace"
 		];
 		async function apply(ctx) {
 			const unmount = await ctx.remote.$mount(typert_remote_client_default);
 			const ui = ctx.inject(["remote.ecnuCloud"], (inner) => {
-				const api = async (method, input) => {
-					const result = await inner.remote.ecnuCloud[method](...input ? [input] : []);
+				const api = async (method, input, signal) => {
+					const result = await inner.remote.ecnuCloud[method](...input ? [input] : [], ...signal ? [signal] : []);
 					if (!result.ok) throw Error("Cloud request failed");
 					return result.value;
 				};
@@ -5612,12 +5817,17 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						reset();
 					};
 				};
+				const openSession = async (sessionID, current) => {
+					await inner.sessions.refresh();
+					if (current()) inner.uiWorkspace.openSession(sessionID);
+				};
 				inner.slots.inject("main", () => inner.slots.register({
 					name: "main",
 					key: "ecnu-cloud",
 					inject: () => ({
 						api,
-						watch
+						watch,
+						openSession
 					})
 				}, CloudPage));
 				inner.slots.inject("sidebar.panellist", () => inner.slots.register({

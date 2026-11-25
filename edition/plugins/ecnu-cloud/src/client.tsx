@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, IconNewChatOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
 import contribution from '../lib/typert.remote-client.js'
+import { Continuation } from './continuation.js'
 
 const errors: Record<string, string> = {
   not_connected: '请先在左下角登录学校账号。', sign_in_required: '请先在左下角登录学校账号。',
@@ -14,7 +15,7 @@ export const errorText = (state: string) => errors[state] ?? '暂时无法读取
 const muted = 'var(--dsw-alias-label-secondary, #777)'
 const border = '1px solid var(--dsw-alias-border-l2, #ddd)'
 
-export function CloudPage({ api, watch, continuation }: any) {
+export function CloudPage({ api, watch, openSession, renderFactorySlot, useWorkspaces }: any) {
   const [list, setList] = useState<any>(null), [preview, setPreview] = useState<any>(null)
   const [busy, setBusy] = useState(false), [previewBusy, setPreviewBusy] = useState(false)
   const [selected, setSelected] = useState<string | null>(null), [error, setError] = useState('')
@@ -87,7 +88,7 @@ export function CloudPage({ api, watch, continuation }: any) {
           <h2 style={{ fontSize: 18, overflowWrap: 'anywhere' }}>{preview.summary.title}</h2>
           <p style={{ color: muted, fontSize: 12 }}>{preview.total} 条消息 · 云端只读预览</p>
           {!preview.importable && <p role="status">包含尚不支持的消息，暂不能导入续聊。</p>}
-          {continuation?.(preview)}
+          <Continuation key={preview.lease + ':' + preview.summary.conversationID + ':' + preview.snapshot} {...{ preview, api, openSession, renderFactorySlot, useWorkspaces }} />
           {preview.messages.length === 0 && <p>这段会话还没有消息。</p>}
           {preview.messages.map((message: any) => <article key={message.messageID} style={{ borderTop: border, padding: '16px 0' }}>
             <strong style={{ fontSize: 12, color: muted }}>{message.role === 'user' ? '你' : message.role === 'assistant' ? 'ChatECNU' : '其他消息'}</strong>
@@ -98,17 +99,18 @@ export function CloudPage({ api, watch, continuation }: any) {
     </div>
   </section>
 }
-export const inject = ['slots', 'remote', 'layout']
+export const inject = ['slots', 'remote', 'layout', 'sessions', 'uiWorkspace']
 export async function apply(ctx: any) {
   const unmount = await ctx.remote.$mount(contribution)
   const ui = ctx.inject(['remote.ecnuCloud'], (inner: any) => {
-    const api = async (method: string, input?: any) => { const result = await inner.remote.ecnuCloud[method](...(input ? [input] : [])); if (!result.ok) throw Error('Cloud request failed'); return result.value }
+    const api = async (method: string, input?: any, signal?: AbortSignal) => { const result = await inner.remote.ecnuCloud[method](...(input ? [input] : []), ...(signal ? [signal] : [])); if (!result.ok) throw Error('Cloud request failed'); return result.value }
     const watch = (callback: any) => {
       const off = inner.remote.$on('credentials/reference-updated', () => callback(false))
       const reset = inner.on('connection/reset', () => callback(true))
       return () => { off(); reset() }
     }
-    inner.slots.inject('main', () => inner.slots.register({ name: 'main', key: 'ecnu-cloud', inject: () => ({ api, watch }) }, CloudPage))
+    const openSession = async (sessionID: string, current: () => boolean) => { await inner.sessions.refresh(); if (current()) inner.uiWorkspace.openSession(sessionID) }
+    inner.slots.inject('main', () => inner.slots.register({ name: 'main', key: 'ecnu-cloud', inject: () => ({ api, watch, openSession }) }, CloudPage))
     inner.slots.inject('sidebar.panellist', () => inner.slots.register({ name: 'sidebar.panellist', id: 'ecnu-cloud', order: 10, label: () => 'ChatECNU 云端' }, ({ size }: any) => <IconNewChatOutlineRegular size={size} />))
   })
   return async () => { await ui.dispose(); await unmount() }

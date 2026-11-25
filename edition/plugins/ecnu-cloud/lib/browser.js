@@ -1,12 +1,13 @@
 import { randomUUID } from 'node:crypto'
 import { principalOf } from '@deepseek-ai/dsh-typert-protocol'
 import { z } from 'zod'
+import { historyDigest } from './importer.js'
 
 const id = z.string().min(1).max(256).regex(/^[\p{L}\p{N}_-]+$/u)
 const page = z.number().int().min(1).max(10000)
 const inputSchema = z.object({ lease: z.string().uuid(), page: page.optional(), conversationID: id.optional() }).strict()
 const fail = code => { throw Object.assign(new Error(code), { code }) }
-const safeCodes = new Set(['not_connected', 'identity_unavailable', 'account_changed', 'not_configured', 'permission_denied', 'sign_in_required', 'rate_limited', 'unsupported_history', 'history_changed', 'too_large', 'invalid_response'])
+const safeCodes = new Set(['not_connected', 'identity_unavailable', 'account_changed', 'not_configured', 'permission_denied', 'sign_in_required', 'rate_limited', 'unsupported_history', 'history_changed', 'too_large', 'invalid_response', 'missing_workspace', 'missing_directory', 'missing_or_moved_session', 'binding_needs_repair', 'workspace_changed'])
 export function normalizeConversations(data, requestedPage, limit) {
   if (!data || !Array.isArray(data.items) || data.items.length > limit || data.page !== requestedPage || data.page_size !== limit || typeof data.has_more !== 'boolean') fail('invalid_response')
   const seen = new Set()
@@ -37,9 +38,9 @@ export function createBrowser(service) {
   async function context(lease) {
     owner()
     const account = await service.account()
-    if (!active || active.scope !== account.scope || active.epoch !== account.epoch) active = { ...account, lease: randomUUID(), summaries: new Map() }
+    if (!active || active.scope !== account.scope || active.epoch !== account.epoch) active = { ...account, lease: randomUUID(), summaries: new Map(), pages: new Map() }
     if (lease && lease !== active.lease) fail('account_changed')
-    return { ...account, lease: active.lease, summaries: active.summaries }
+    return { ...account, lease: active.lease, summaries: active.summaries, pages: active.pages }
   }
   async function current(c) {
     service.guard(c)
@@ -50,7 +51,7 @@ export function createBrowser(service) {
     await current(c)
     const reader = service.ctx.get('ecnuAiconsole')
     if (!reader || reader.profileID !== service.config.profileID) fail('not_configured')
-    const result = await reader.read(operation, args, { signal: AbortSignal.timeout(25000) })
+    const result = await reader.read(operation, args, { signal: AbortSignal.any([AbortSignal.timeout(25000), ...(c.signal ? [c.signal] : [])]) })
     await current(c)
     return result.data
   }
@@ -79,18 +80,26 @@ export function createBrowser(service) {
     fail('too_large')
   }
   return { context, current, history, run,
+    async verifySummary(c, conversationID) {
+      const number = c.pages.get(conversationID)
+      if (!number) fail('history_changed')
+      const result = normalizeConversations(await read(c, 'account_list_conversations', { page: number, limit: 20 }), number, 20)
+      const latest = result.items.find(row => row.conversationID === conversationID)
+      if (!latest || JSON.stringify(latest) !== JSON.stringify(c.summaries.get(conversationID))) fail('history_changed')
+    },
     state: () => run(async () => ({ lease: (await context()).lease })),
     list: input => run(async () => {
       const parsed = inputSchema.parse(input), c = await context(parsed.lease), number = parsed.page ?? 1
       const result = normalizeConversations(await read(c, 'account_list_conversations', { page: number, limit: 20 }), number, 20)
-      for (const row of result.items) c.summaries.set(row.conversationID, row)
+      for (const row of result.items) { c.summaries.set(row.conversationID, row); c.pages.set(row.conversationID, number) }
       // Bounded owner-only selection cache, never persist cloud content during browsing.
-      while (c.summaries.size > 2000) c.summaries.delete(c.summaries.keys().next().value)
+      while (c.summaries.size > 2000) { const oldest = c.summaries.keys().next().value; c.summaries.delete(oldest); c.pages.delete(oldest) }
       return { lease: c.lease, ...result }
     }),
     preview: input => run(async () => {
       const parsed = inputSchema.parse(input), c = await context(parsed.lease)
-      return { lease: c.lease, ...await history(c, id.parse(parsed.conversationID)) }
+      const value = await history(c, id.parse(parsed.conversationID))
+      return { lease: c.lease, ...value, snapshot: historyDigest(value) }
     }),
   }
 }

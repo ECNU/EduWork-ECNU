@@ -51,17 +51,23 @@ export function createPointsService(ctx, raw) {
   const config = configure(raw)
   let lifetime = new AbortController(), disposed = false
   const invalidate = () => { lifetime.abort(); lifetime = new AbortController() }
+  let accountReader
+  if (config) ctx.inject(['ecnuAiconsole'], readerContext => {
+    accountReader = readerContext.ecnuAiconsole
+    readerContext.effect(() => () => { accountReader = undefined; invalidate() })
+  })
   ctx.on('oidc/accounts-changed', event => { if (event.profileID === config?.profileID) invalidate() })
   ctx.on('credentials/reference-updated', invalidate)
   ctx.effect(() => () => { disposed = true; lifetime.abort() })
   const run = async (profileID, action) => {
-    if (!config || profileID !== config.profileID || ctx.ecnuAiconsole?.profileID !== profileID) return fail('not_configured')
+    const reader = accountReader
+    if (!config || profileID !== config.profileID || reader?.profileID !== profileID) return fail('not_configured')
     const signal = AbortSignal.any([lifetime.signal, AbortSignal.timeout(20000)])
     try {
       if (disposed) return fail('not_connected')
       if (!(await ctx.oidcAccounts.status(profileID)).credentialReady) return fail('not_connected')
       signal.throwIfAborted()
-      const result = await action(signal)
+      const result = await action(signal, reader)
       signal.throwIfAborted()
       return result
     } catch (error) {
@@ -70,7 +76,7 @@ export function createPointsService(ctx, raw) {
   }
   return {
     profileID: config?.profileID ?? null,
-    points: profileID => run(profileID, async signal => normalizePoints((await ctx.ecnuAiconsole.read('account_get_points', {}, { signal })).data)),
+    points: profileID => run(profileID, async (signal, reader) => normalizePoints((await reader.read('account_get_points', {}, { signal })).data)),
     invitation: profileID => run(profileID, async signal => {
       if (!await ctx.oidcAccounts.modelAuthorization(profileID, config.modelBaseURL)) return fail('not_connected')
       signal.throwIfAborted()

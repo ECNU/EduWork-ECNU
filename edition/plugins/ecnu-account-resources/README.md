@@ -14,6 +14,8 @@ RPC 是本包的 `ecnuAccountResources.configuration()` 和 `quota(profileID)`�
 
 头像附近可选显示积分与邀请入口。余额通过 `ecnuAiconsole.read('account_get_points')` 共用只读账户实现；打开弹窗不创建邀请码，用户点击“获取邀请链接”后使用现有学校登录获取链接，不增加逐项授权步骤。邀请不注册为 Agent 工具。奖励与资格由 ChatECNU 决定；无时区的业务日期按北京时间解释，未知余额不显示为零。
 
+账户读取服务通过可选依赖装载；缺少或卸载该服务时，积分和邀请返回未配置，既有配额仍可使用。依赖卸载也会取消在途积分和邀请结果，重新装载后可恢复。
+
 启用时需要同一 Profile 的 `ecnu-aiconsole` 服务，以及支持 `oidc.account.footer.details` 的 OIDC 客户端，不依赖可选补授权机制。缺少插槽时保持现有配额功能；积分默认关闭。发行方在确认对应组件可用后设置本插件的配置：
 
 ```json

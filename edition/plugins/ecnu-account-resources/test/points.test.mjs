@@ -11,6 +11,7 @@ function fixture(overrides = {}) {
       authorizedFetch: async (...args) => { requests.push(args); return Response.json(invitation) } },
     ecnuAiconsole: { profileID: 'school', read: async (...args) => { reads.push(args); return { data: { currentPoints: 156 } } } },
   }
+  ctx.inject = (_dependencies, apply) => apply(ctx)
   Object.assign(ctx.oidcAccounts, overrides)
   return { ctx, events, effects, requests, reads, service: createPointsService(ctx, config) }
 }

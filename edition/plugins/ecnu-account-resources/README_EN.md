@@ -14,6 +14,8 @@ See `quota.openapi.yaml` for interface fields. These are ECNU protocol fields, n
 
 An optional entry near the avatar displays points and invitations. Balance uses the shared read-only `ecnuAiconsole.read('account_get_points')` implementation. Opening the dialog never creates an invitation: users explicitly request a link using their existing school login, with no per-feature consent step. No invitation Agent tool is registered. ChatECNU decides eligibility and rewards. Business timestamps without a timezone use Beijing time, and unknown balances never become zero.
 
+The account reader is an optional dependency. When absent or unloaded, points and invitations report not configured while existing quota remains available. Unloading the reader also discards pending points and invitation results; reloading restores access.
+
 Enable only with an `ecnu-aiconsole` service for the same Profile and an OIDC client supporting `oidc.account.footer.details`. Optional consent is not required. Points are disabled by default; missing slots leave existing quota functionality intact. Once compatible components are available, the edition can configure:
 
 ```json

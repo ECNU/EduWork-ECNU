@@ -19,7 +19,7 @@ export function CloudPage({ api, watch, continuation }: any) {
   const [busy, setBusy] = useState(false), [previewBusy, setPreviewBusy] = useState(false)
   const [selected, setSelected] = useState<string | null>(null), [error, setError] = useState('')
   const generation = useRef(0), selection = useRef(0), lease = useRef<string | null>(null)
-  const clear = () => { ++generation.current; ++selection.current; lease.current = null; setList(null); setPreview(null); setSelected(null); setPreviewBusy(false) }
+  const clear = () => { ++generation.current; ++selection.current; lease.current = null; setList(null); setPreview(null); setSelected(null); setPreviewBusy(false); setBusy(false) }
   async function load(page = 1) {
     const g = ++generation.current; ++selection.current; setBusy(true); setPreview(null); setSelected(null); setPreviewBusy(false); setError('')
     try {
@@ -33,7 +33,7 @@ export function CloudPage({ api, watch, continuation }: any) {
       if (value.state !== 'available') { setList(null); setError(errorText(value.state)); return }
       setList(value)
     } catch { if (g === generation.current) { setList(null); setError(errorText('unavailable')) } }
-    finally { if (g === generation.current || lease.current === null) setBusy(false) }
+    finally { if (g === generation.current) setBusy(false) }
   }
   async function select(id: string) {
     const s = ++selection.current, g = generation.current
@@ -63,7 +63,7 @@ export function CloudPage({ api, watch, continuation }: any) {
   return <section aria-label="ChatECNU 云端" style={{ height: '100%', display: 'flex', flexDirection: 'column', minWidth: 0, padding: '20px 24px', boxSizing: 'border-box' }}>
     <header style={{ display: 'flex', alignItems: 'center', gap: 16, paddingLeft: 'var(--dsh-frame-leading-clearance, 0px)' }}>
       <h1 style={{ fontSize: 20, margin: '0 auto 0 0' }}>ChatECNU 云端</h1>
-      <Button variant="secondary" size="sm" disabled={busy} onClick={() => void load()}>刷新</Button>
+      <Button variant="outline" size="sm" disabled={busy} onClick={() => void load()}>刷新</Button>
     </header>
     <p style={{ color: muted, fontSize: 12 }}>查看学校账号的云端会话。导入后在本地继续，新的消息保存在 EduWork。</p>
     {error && <p role="alert">{error}</p>}
@@ -76,8 +76,8 @@ export function CloudPage({ api, watch, continuation }: any) {
           <div>{row.title}</div><div style={{ fontSize: 11, color: muted, marginTop: 5 }}>{new Date(row.updatedAt).toLocaleDateString()}{row.projectID ? ' · 项目会话' : ''}</div>
         </button>)}
         {list && <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 12 }}>
-          <Button variant="secondary" size="sm" disabled={busy || list.page === 1} onClick={() => void load(list.page - 1)}>上一页</Button>
-          <span>{list.page}</span><Button variant="secondary" size="sm" disabled={busy || !list.hasMore} onClick={() => void load(list.page + 1)}>下一页</Button>
+          <Button variant="outline" size="sm" disabled={busy || list.page === 1} onClick={() => void load(list.page - 1)}>上一页</Button>
+          <span>{list.page}</span><Button variant="outline" size="sm" disabled={busy || !list.hasMore} onClick={() => void load(list.page + 1)}>下一页</Button>
         </div>}
       </nav>
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto' }} aria-label="云端会话预览">

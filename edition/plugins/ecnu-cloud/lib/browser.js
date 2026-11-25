@@ -28,7 +28,7 @@ export function normalizeMessages(data, conversationID, requestedPage, limit) {
     const supported = ['user', 'assistant'].includes(row.role) && typeof row.content === 'string' && row.streaming === false
       && !['attachments', 'files', 'images', 'tool_calls', 'function_call'].some(key => row[key] != null && (!Array.isArray(row[key]) || row[key].length > 0))
     return { messageID, role: row.role === 'user' ? 'user' : row.role === 'assistant' ? 'assistant' : 'unsupported',
-      text: typeof row.content === 'string' ? row.content : '[此消息包含尚不支持的内容]', at, supported }
+      text: ['user', 'assistant'].includes(row.role) && typeof row.content === 'string' ? row.content : '[此消息包含尚不支持的内容]', at, supported }
   }) }
 }
 export function createBrowser(service) {

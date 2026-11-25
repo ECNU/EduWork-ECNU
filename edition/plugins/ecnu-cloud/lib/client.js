@@ -5313,6 +5313,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				setPreview(null);
 				setSelected(null);
 				setPreviewBusy(false);
+				setBusy(false);
 			};
 			async function load(page = 1) {
 				const g = ++generation.current;
@@ -5349,7 +5350,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						setError(errorText("unavailable"));
 					}
 				} finally {
-					if (g === generation.current || lease.current === null) setBusy(false);
+					if (g === generation.current) setBusy(false);
 				}
 			}
 			async function select(id) {
@@ -5431,7 +5432,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							},
 							children: "ChatECNU 云端"
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-							variant: "secondary",
+							variant: "outline",
 							size: "sm",
 							disabled: busy,
 							onClick: () => void load(),
@@ -5508,7 +5509,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 									},
 									children: [
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-											variant: "secondary",
+											variant: "outline",
 											size: "sm",
 											disabled: busy || list.page === 1,
 											onClick: () => void load(list.page - 1),
@@ -5516,7 +5517,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: list.page }),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-											variant: "secondary",
+											variant: "outline",
 											size: "sm",
 											disabled: busy || !list.hasMore,
 											onClick: () => void load(list.page + 1),

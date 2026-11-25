@@ -48,6 +48,21 @@ async function fixture(t, options = {}) {
     async session(workspace, id) { headers.set(id, { id, cwd: workspace.path }); await workspace.attachSession(id); return id },
   }
 }
+test('browser RPC denies delegated principals before exposing an owner lease', async t => {
+  const f = await fixture(t)
+  const guest = f.ctx.extend({ invocation: { peer: { principal: { kind: 'agent', id: 'guest' } } } })
+  for (const method of ['cloudState', 'cloudList', 'cloudPreview', ...('cloudImport' in guest.ecnuCloud ? ['cloudDestination', 'cloudImport'] : [])]) {
+    assert.deepEqual(await guest.ecnuCloud[method]({}), { state: 'permission_denied' })
+  }
+  assert.equal((await f.ctx.ecnuCloud.cloudState()).state, 'available')
+})
+test('normal credential renewal preserves selection while completed login invalidates it', async t => {
+  const f = await fixture(t), before = await f.ctx.ecnuCloud.cloudState()
+  f.ctx.emit('credentials/reference-updated', {})
+  assert.deepEqual(await f.ctx.ecnuCloud.cloudState(), before)
+  f.ctx.emit('oidc/accounts-changed', { profileID: 'school', state: 'connected', authorizationChanged: true })
+  assert.notEqual((await f.ctx.ecnuCloud.cloudState()).lease, before.lease)
+})
 test('official storage/workspace keep stable mappings across rename and Host restart', async t => {
   const f = await fixture(t), workspace = await f.workspace('space')
   await f.session(workspace, 'session-1')

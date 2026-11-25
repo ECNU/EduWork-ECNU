@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
+import { principalOf, Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import { createBrowser } from './browser.js'
 import { defineDomain, domainTable } from '@deepseek-ai/dsh-storage-domain'
 import { z } from 'zod'
@@ -74,9 +74,9 @@ export default class EcnuCloud extends TypertRemoteService {
     if (this.closed) fail('closed')
     if (account.epoch !== this.epoch) fail('account_changed')
   }
-  cloudState() { return this.browser.state() }
-  cloudList(input) { return this.browser.list(input) }
-  cloudPreview(input) { return this.browser.preview(input) }
+  cloudState() { return principalOf(this.ctx.invocation) === undefined ? this.browser.state() : Promise.resolve({ state: 'permission_denied' }) }
+  cloudList(input) { return principalOf(this.ctx.invocation) === undefined ? this.browser.list(input) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudPreview(input) { return principalOf(this.ctx.invocation) === undefined ? this.browser.preview(input) : Promise.resolve({ state: 'permission_denied' }) }
   operation(work) {
     // Capture the initiating identity before queuing. A queued operation must
     // not silently execute for a newly signed-in account.

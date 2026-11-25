@@ -58,12 +58,23 @@ export async function apply(ctx: any) {
     const readQuota = (id: string) => unwrap(inner.remote.ecnuAccountResources.quota(id))
     const readPoints = (id: string) => unwrap(inner.remote.ecnuAccountResources.points(id))
     const getInvitation = (id: string) => unwrap(inner.remote.ecnuAccountResources.invitation(id))
+    const watchAccount = (id: string, changed: (state: any) => void) => {
+      let version = 0, active = true
+      const refresh = async () => {
+        const current = ++version; changed(null)
+        try { const state = await unwrap(inner.remote.ecnuAccountResources.accountState(id)); if (active && version === current) changed(state) }
+        catch { if (active && version === current) changed({ state: 'unavailable' }) }
+      }
+      const dispose = inner.remote.$on?.('credentials/reference-updated', refresh)
+      const disposeConnection = inner.on?.('connection/reset', refresh)
+      return () => { active = false; dispose?.(); disposeConnection?.() }
+    }
     void unwrap(inner.remote.ecnuAccountResources.configuration()).then(configuration => {
       if (disposed) return
       unregister = inner.slots.inject('oidc.account.menu.details', () => inner.slots.register({ name: 'oidc.account.menu.details', id: 'ecnu-account-resources', priority: -100,
         inject: () => ({ readQuota, profileIDs: configuration.profileIDs }) }, QuotaDetails))
       if (configuration.pointsProfileID) unregisterPoints = inner.slots.inject('oidc.account.footer.details', () => inner.slots.register({ name: 'oidc.account.footer.details', id: 'ecnu-account-points', priority: -100,
-        inject: () => ({ readPoints, getInvitation, pointsProfileID: configuration.pointsProfileID }) }, PointsFooter))
+        inject: () => ({ readPoints, getInvitation, watchAccount, pointsProfileID: configuration.pointsProfileID }) }, PointsFooter))
     }).catch(() => { /* Keep the public refresh action if extension configuration is unavailable. */ })
     inner.effect(() => () => { disposed = true; unregister(); unregisterPoints() }, 'ecnu-account-resources: account details')
   })

@@ -5196,8 +5196,14 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"permission_denied",
 			"expired"
 		]);
+		const accountRevision = string().uuid().optional();
+		const accountStateResult = strict("AccountState", object({
+			state: serviceState,
+			accountRevision
+		}).strict());
 		const pointsResult = strict("Points", object({
 			state: serviceState,
+			accountRevision,
 			currentPoints: number().nonnegative().optional(),
 			nextExpiryAt: string().nullable().optional(),
 			nextExpiryPoints: nullableNumber.optional(),
@@ -5205,6 +5211,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		}).strict());
 		const invitationResult = strict("Invitation", object({
 			state: serviceState,
+			accountRevision,
 			referralCode: string().max(256).optional(),
 			expiresAt: string().optional(),
 			inviteURL: string().url().max(4096).optional()
@@ -5256,7 +5263,11 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					}],
 					quotaResult
 				],
-				...[["points", pointsResult], ["invitation", invitationResult]].map(([method, result]) => [
+				...[
+					["points", pointsResult],
+					["invitation", invitationResult],
+					["accountState", accountStateResult]
+				].map(([method, result]) => [
 					method,
 					[{
 						name: "profileID",
@@ -5336,65 +5347,148 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			strokeWidth: 1.6,
 			"aria-hidden": true
 		}, h$1("path", { d: "M4 10h16v11H4zM3 6h18v4H3zM12 6v15M12 6H8a2.5 2.5 0 1 1 2.5-2.5L12 6Zm0 0h4a2.5 2.5 0 1 0-2.5-2.5L12 6Z" }));
-		function PointsFooter({ profile, status, wide, pointsProfileID, readPoints, getInvitation }) {
+		function PointsFooter({ profile, status, wide, pointsProfileID, readPoints, getInvitation, watchAccount }) {
 			const enabled = profile.id === pointsProfileID && status?.credentialReady;
 			const [points, setPoints] = (0, react.useState)(null), [invite, setInvite] = (0, react.useState)(null);
 			const [open, setOpen] = (0, react.useState)(false), [busy, setBusy] = (0, react.useState)(false), [notice, setNotice] = (0, react.useState)("");
-			const dialog = (0, react.useRef)(null), generation = (0, react.useRef)(0), trigger = (0, react.useRef)(null);
-			const read = async () => {
-				const stamp = generation.current;
-				try {
-					const value = await readPoints(profile.id);
-					if (stamp === generation.current) setPoints(value);
-				} catch {
-					if (stamp === generation.current) setPoints({ state: "unavailable" });
-				}
-			};
-			(0, react.useEffect)(() => {
+			const [checking, setChecking] = (0, react.useState)(false), [accountReady, setAccountReady] = (0, react.useState)(false);
+			const [identityChecking, setIdentityChecking] = (0, react.useState)(false);
+			const dialog = (0, react.useRef)(null), generation = (0, react.useRef)(0), dialogGeneration = (0, react.useRef)(0), readVersion = (0, react.useRef)(0);
+			const pending = (0, react.useRef)(false), restoreFocus = (0, react.useRef)(false), opener = (0, react.useRef)(null);
+			const accountRevision = (0, react.useRef)(void 0), previousProfile = (0, react.useRef)(""), previousStatus = (0, react.useRef)(null);
+			const identitySupport = (0, react.useRef)(null);
+			const reset = () => {
 				generation.current++;
-				setPoints(null);
+				dialogGeneration.current++;
+				pending.current = false;
 				setInvite(null);
 				setNotice("");
 				setBusy(false);
 				setOpen(false);
+				setAccountReady(false);
+			};
+			const read = async () => {
+				const stamp = generation.current, version = ++readVersion.current;
+				const current = () => stamp === generation.current && version === readVersion.current;
+				setChecking(true);
+				setAccountReady(false);
+				try {
+					const value = await readPoints(profile.id);
+					if (!current()) return;
+					if (accountRevision.current && value.accountRevision !== accountRevision.current) reset();
+					accountRevision.current = value.accountRevision;
+					identitySupport.current = Boolean(value.accountRevision);
+					setPoints(value);
+					setAccountReady(Boolean(value.accountRevision) || value.state === "available");
+				} catch {
+					if (current()) setPoints({ state: "unavailable" });
+				} finally {
+					if (version === readVersion.current) setChecking(false);
+				}
+			};
+			(0, react.useEffect)(() => {
+				const changed = previousProfile.current !== profile.id || !enabled;
+				const legacyStatusChange = previousStatus.current && previousStatus.current !== status && identitySupport.current === false;
+				if (changed || legacyStatusChange) {
+					reset();
+					accountRevision.current = void 0;
+					identitySupport.current = null;
+					setPoints(null);
+				}
+				previousProfile.current = profile.id;
+				previousStatus.current = status;
 				if (enabled) read();
-				return () => {
-					generation.current++;
-				};
 			}, [
 				profile.id,
 				status,
 				enabled,
 				readPoints
 			]);
+			(0, react.useEffect)(() => () => {
+				generation.current++;
+				readVersion.current++;
+			}, []);
+			(0, react.useEffect)(() => watchAccount?.(profile.id, (state) => {
+				if (!state) {
+					setIdentityChecking(true);
+					return;
+				}
+				setIdentityChecking(false);
+				if (state.state !== "available") {
+					setAccountReady(false);
+					if (state.state === "not_connected") {
+						reset();
+						accountRevision.current = void 0;
+						setPoints(null);
+					}
+					return;
+				}
+				if (!state.accountRevision || accountRevision.current && state.accountRevision !== accountRevision.current) {
+					reset();
+					accountRevision.current = state.accountRevision;
+					identitySupport.current = Boolean(state.accountRevision);
+					setPoints(null);
+					if (enabled) read();
+				} else {
+					accountRevision.current = state.accountRevision;
+					identitySupport.current = true;
+					setAccountReady(true);
+				}
+			}), [
+				profile.id,
+				enabled,
+				readPoints,
+				watchAccount
+			]);
 			(0, react.useEffect)(() => {
 				if (open && dialog.current && !dialog.current.open) dialog.current.showModal();
 				else if (!open && dialog.current?.open) dialog.current.close();
+				if (!open && restoreFocus.current) {
+					restoreFocus.current = false;
+					opener.current?.focus();
+				}
 			}, [open]);
 			const act = async (kind) => {
-				if (busy) return;
-				const stamp = generation.current;
+				if (pending.current || checking || identityChecking || kind === "invite" && !accountReady) return;
+				const stamp = generation.current, dialogStamp = dialogGeneration.current;
+				const current = () => stamp === generation.current && dialogStamp === dialogGeneration.current;
+				pending.current = true;
 				setBusy(true);
 				setNotice("");
 				try {
 					if (kind === "points") await read();
 					else {
 						const value = await getInvitation(profile.id);
-						if (stamp === generation.current) setInvite(value);
+						if (current()) {
+							if (accountRevision.current && value.accountRevision !== accountRevision.current) {
+								reset();
+								read();
+							} else setInvite(value);
+						}
 					}
 				} catch (error) {
-					if (stamp === generation.current) setNotice(error?.message || "操作未完成，请稍后重试。");
+					if (current()) setNotice(error?.message || "操作未完成，请稍后重试。");
 				} finally {
-					if (stamp === generation.current) setBusy(false);
+					if (current()) {
+						pending.current = false;
+						setBusy(false);
+					}
 				}
 			};
+			const show = (event) => {
+				opener.current = event.currentTarget;
+				setOpen(true);
+			};
 			const close = () => {
-				generation.current++;
+				dialogGeneration.current++;
+				pending.current = false;
+				restoreFocus.current = true;
 				setBusy(false);
 				setOpen(false);
-				trigger.current?.focus();
+				dialog.current?.close();
 			};
 			const copy = async () => {
+				if (checking || identityChecking || !accountReady) return;
 				if (!invite?.inviteURL || Date.parse(invite.expiresAt) <= Date.now()) {
 					setInvite({ state: "expired" });
 					return;
@@ -5418,7 +5512,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				type: "button",
 				disabled: busy,
 				title: points?.expiryNotice || "查看积分与邀请",
-				onClick: () => setOpen(true),
+				onClick: show,
 				style: {
 					...button,
 					padding: "6px 8px",
@@ -5426,11 +5520,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					textAlign: "left"
 				}
 			}, balance), h$1("button", {
-				ref: trigger,
 				type: "button",
 				"aria-label": "积分与邀请",
 				title: wide ? "邀请有礼" : balance,
-				onClick: () => setOpen(true),
+				onClick: show,
 				style: {
 					...button,
 					display: "grid",
@@ -5480,7 +5573,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				fontWeight: 600
 			} }, balance), points?.expiryNotice && h$1("p", null, points.expiryNotice), points?.nextExpiryAt && h$1("p", null, `${points.nextExpiryPoints ?? "部分"} 积分到期：${date(points.nextExpiryAt)}`), h$1("button", {
 				type: "button",
-				disabled: busy,
+				disabled: busy || checking || identityChecking,
 				onClick: () => void act("points"),
 				style: button
 			}, "刷新积分"), h$1("hr", { style: {
@@ -5502,16 +5595,17 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			}), h$1("button", {
 				type: "button",
 				style: button,
+				disabled: checking || identityChecking || !accountReady,
 				onClick: () => void copy()
 			}, "复制链接"), h$1("p", null, `邀请码 ${invite.referralCode}`), h$1("p", null, `有效期至 ${date(invite.expiresAt)}`)) : h$1(react.default.Fragment, null, invite && h$1("p", { role: "status" }, messages[invite.state] || messages.unavailable), h$1("button", {
 				type: "button",
 				style: button,
-				disabled: busy,
+				disabled: busy || checking || identityChecking || !accountReady,
 				onClick: () => void act("invite")
 			}, busy ? "正在处理…" : "获取邀请链接")), h$1("p", {
 				role: "status",
 				"aria-live": "polite"
-			}, notice || (busy ? "正在读取…" : ""))));
+			}, notice || (busy || checking || identityChecking ? "正在读取…" : ""))));
 		}
 		//#endregion
 		//#region src/client.ts
@@ -5683,6 +5777,26 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				const readQuota = (id) => unwrap(inner.remote.ecnuAccountResources.quota(id));
 				const readPoints = (id) => unwrap(inner.remote.ecnuAccountResources.points(id));
 				const getInvitation = (id) => unwrap(inner.remote.ecnuAccountResources.invitation(id));
+				const watchAccount = (id, changed) => {
+					let version = 0, active = true;
+					const refresh = async () => {
+						const current = ++version;
+						changed(null);
+						try {
+							const state = await unwrap(inner.remote.ecnuAccountResources.accountState(id));
+							if (active && version === current) changed(state);
+						} catch {
+							if (active && version === current) changed({ state: "unavailable" });
+						}
+					};
+					const dispose = inner.remote.$on?.("credentials/reference-updated", refresh);
+					const disposeConnection = inner.on?.("connection/reset", refresh);
+					return () => {
+						active = false;
+						dispose?.();
+						disposeConnection?.();
+					};
+				};
 				unwrap(inner.remote.ecnuAccountResources.configuration()).then((configuration) => {
 					if (disposed) return;
 					unregister = inner.slots.inject("oidc.account.menu.details", () => inner.slots.register({
@@ -5701,6 +5815,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						inject: () => ({
 							readPoints,
 							getInvitation,
+							watchAccount,
 							pointsProfileID: configuration.pointsProfileID
 						})
 					}, PointsFooter));

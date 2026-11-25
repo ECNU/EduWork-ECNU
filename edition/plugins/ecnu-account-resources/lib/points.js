@@ -1,3 +1,4 @@
+import { createAccountScope } from './account-scope.js'
 const fail = state => ({ state })
 const number = value => typeof value === 'number' && Number.isFinite(value) && value >= 0
 export function businessTime(value) {
@@ -49,37 +50,48 @@ async function readJSON(response, signal) {
 /** UI-only adapter: no tool registration and no caller-controlled route or method. */
 export function createPointsService(ctx, raw) {
   const config = configure(raw)
-  let lifetime = new AbortController(), disposed = false
-  const invalidate = () => { lifetime.abort(); lifetime = new AbortController() }
+  const accounts = createAccountScope(ctx, config ? [config.profileID] : [])
   let accountReader
   if (config) ctx.inject(['ecnuAiconsole'], readerContext => {
     accountReader = readerContext.ecnuAiconsole
-    readerContext.effect(() => () => { accountReader = undefined; invalidate() })
+    readerContext.effect(() => () => { accountReader = undefined; accounts.invalidate(config.profileID) })
   })
-  ctx.on('oidc/accounts-changed', event => { if (event.profileID === config?.profileID) invalidate() })
-  ctx.on('credentials/reference-updated', invalidate)
-  ctx.effect(() => () => { disposed = true; lifetime.abort() })
   const run = async (profileID, action) => {
     const reader = accountReader
     if (!config || profileID !== config.profileID || reader?.profileID !== profileID) return fail('not_configured')
-    const signal = AbortSignal.any([lifetime.signal, AbortSignal.timeout(20000)])
+    const account = accounts.begin(profileID), { signal } = account
     try {
-      if (disposed) return fail('not_connected')
+      if (!await account.current()) return fail(account.failureState())
       if (!(await ctx.oidcAccounts.status(profileID)).credentialReady) return fail('not_connected')
-      signal.throwIfAborted()
-      const result = await action(signal, reader)
-      signal.throwIfAborted()
-      return result
+      if (!await account.current()) return fail(account.failureState())
+      const result = await action(signal, reader, account)
+      if (!await account.current()) return fail(account.failureState())
+      return { ...result, ...(account.revision ? { accountRevision: account.revision } : {}) }
     } catch (error) {
-      return fail(signal.aborted ? 'not_connected' : error?.code === 'permission_denied' ? 'permission_denied' : 'unavailable')
+      if (signal.aborted) return fail(account.failureState())
+      const result = fail(error?.code === 'permission_denied' ? 'permission_denied' : 'unavailable')
+      try {
+        if (!await account.current()) return fail(account.failureState())
+        return { ...result, ...(account.revision ? { accountRevision: account.revision } : {}) }
+      } catch { return result }
     }
   }
   return {
     profileID: config?.profileID ?? null,
+    async accountState(profileID) {
+      if (!config || profileID !== config.profileID) return fail('not_configured')
+      const account = accounts.begin(profileID)
+      try {
+        if (!await account.current()) return fail(account.failureState())
+        if (!(await ctx.oidcAccounts.status(profileID)).credentialReady) return fail('not_connected')
+        if (!await account.current()) return fail(account.failureState())
+        return { state: 'available', ...(account.revision ? { accountRevision: account.revision } : {}) }
+      } catch { return fail(account.failureState()) }
+    },
     points: profileID => run(profileID, async (signal, reader) => normalizePoints((await reader.read('account_get_points', {}, { signal })).data)),
-    invitation: profileID => run(profileID, async signal => {
+    invitation: profileID => run(profileID, async (signal, _reader, account) => {
       if (!await ctx.oidcAccounts.modelAuthorization(profileID, config.modelBaseURL)) return fail('not_connected')
-      signal.throwIfAborted()
+      if (!await account.current()) return fail(account.failureState())
       const endpoint = `${config.workerBaseURL}/points/invitation`
       const response = await ctx.oidcAccounts.authorizedFetch(profileID, endpoint, { method: 'GET', headers: { accept: 'application/json' }, redirect: 'error', signal }, { serviceURL: endpoint })
       if (!response.ok) { await response.body?.cancel(); return fail(response.status === 403 ? 'permission_denied' : response.status === 401 ? 'not_connected' : 'unavailable') }

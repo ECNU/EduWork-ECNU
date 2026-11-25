@@ -4,8 +4,23 @@ const numberOrNull = value => value === null || value === undefined ? null
 const label = value => typeof value === 'string' ? value.slice(0, 256) : ''
 const dateOrNull = value => typeof value === 'string' && Number.isFinite(Date.parse(value)) ? value : null
 
-export function normalizeQuota(raw, providerID) {
-  if (raw?.provider_id !== providerID) throw new Error('quota provider mismatch')
+// Local model-route IDs may differ from the server's stable quota namespace.
+// Only an explicit, profile-scoped mapping may override the historical match.
+export function resolveQuotaProviderIDs(profileIDs, mapping = {}) {
+  if (!mapping || typeof mapping !== 'object' || Array.isArray(mapping)
+    || ![Object.prototype, null].includes(Object.getPrototypeOf(mapping))) throw new Error('quotaProviderIDs must be a profile-to-provider object')
+  const result = new Map()
+  for (const profileID of Reflect.ownKeys(mapping)) {
+    if (typeof profileID !== 'string' || ['__proto__', 'prototype', 'constructor'].includes(profileID) || !profileIDs.includes(profileID)) throw new Error('quotaProviderIDs must only name configured profiles')
+    const providerID = mapping[profileID]
+    if (typeof providerID !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(providerID)) throw new Error('quotaProviderIDs requires a non-empty server provider ID')
+    result.set(profileID, providerID)
+  }
+  return result
+}
+
+export function normalizeQuota(raw, providerID, expectedQuotaProviderID = providerID) {
+  if (raw?.provider_id !== expectedQuotaProviderID) throw new Error('quota provider mismatch')
   if (!Array.isArray(raw.windows) || raw.windows.length > 64) throw new Error('invalid quota windows')
   if (raw.resource_packs !== undefined && (!Array.isArray(raw.resource_packs) || raw.resource_packs.length > 256)) throw new Error('invalid quota resource packs')
   let consoleURL

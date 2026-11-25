@@ -52,7 +52,7 @@ components:
       type: object
       required: [provider_id, windows]
       properties:
-        provider_id: { type: string }
+        provider_id: { type: string, description: Stable server quota identifier. Compared with the explicit per-profile quotaProviderIDs mapping when configured, otherwise with the local Profile provider ID. }
         unit: { type: string, description: Display unit such as credits }
         windows:
           type: array

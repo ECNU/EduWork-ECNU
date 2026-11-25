@@ -4,7 +4,9 @@
 
 Adds a ChatECNU cloud sidebar entry with paginated conversations and complete visible-text previews. It shares the school account service's fixed read operations and existing authentication. Project defaults and conversation mappings remain Host-only.
 
-Previews render text without executing HTML, loading external images or replaying tools. Unsupported messages are identified. Each preview is limited to 1,000 messages and 1 MB of text. This version does not import local sessions, download project sources or write to the cloud.
+Previews render text without executing HTML, loading external images or replaying tools. Unsupported messages are identified. Each preview is limited to 1,000 messages and 1 MB of text.
+
+Choose a conversation, select Continue in EduWork, and use the existing workspace picker to choose or create a workspace. New messages stay local; reopening the same cloud conversation reuses its local continuation. Remembering a project's default affects future imports only, without moving sessions or downloading sources.
 
 Uses DSH storageDomain and workspaceRegistry. References use stable workspace IDs, so renaming does not break them. Missing directories or moved sessions return explicit states without creating directories, moving sessions or silently clearing bindings.
 
@@ -43,7 +45,9 @@ Only trusted Host adapters may call these methods. UI and Agent callers must not
 
 ## Boundaries and validation
 
-This component does not parse messages, create sessions or implement a complete import transaction. The importer must check for existing continuations before creation and recover failures between creation and registration. Bindings grant no project access: source requests must still be authenticated by the platform and check project membership. There is no downloading, synchronization or cloud mutation.
+Import uses official Session validation, sessionPersistence and workspaceRegistry without starting a model. After confirmation, a durable local journal reserves one session ID. Interrupted imports verify the existing prefix and append only its missing suffix; conflicting history is never overwritten. Leaving the page requests cancellation while preserving written data for recovery. Missing directories or moved sessions require repair rather than duplicate creation.
+
+The summary and messages are fetched again before import and checked against the preview snapshot. Project IDs are explicit per-conversation bindings, never inferred Notebook IDs. Imported history has a separate source marker and excludes cloud system prompts, tool execution, reasoning and billing. Bindings grant no source access; the platform must still authenticate each source request. There is no downloading, two-way synchronization or cloud mutation.
 
 Set EDUWORK_TEST_RUNTIME to the pinned DSH Runtime and run from the school repository:
 

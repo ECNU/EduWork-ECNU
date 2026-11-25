@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
+import { principalOf, Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import { createBrowser } from './browser.js'
+import { createImporter } from './importer.js'
 import { defineDomain, domainTable } from '@deepseek-ai/dsh-storage-domain'
 import { z } from 'zod'
 
@@ -46,6 +47,7 @@ export default class EcnuCloud extends TypertRemoteService {
     })
     ctx.on('credentials/reference-updated', () => { void verify().catch(() => {}) })
     this.browser = createBrowser(this)
+    this.importer = createImporter(this)
     this.ready = ctx.storageDomain.open(bindingsDomain).then(domain => { this.domain = domain })
     void this.ready.catch(() => ctx.logger.warn('Cloud bindings storage unavailable'))
     ctx.effect(() => async () => {
@@ -74,9 +76,11 @@ export default class EcnuCloud extends TypertRemoteService {
     if (this.closed) fail('closed')
     if (account.epoch !== this.epoch) fail('account_changed')
   }
-  cloudState() { return this.browser.state() }
-  cloudList(input) { return this.browser.list(input) }
-  cloudPreview(input) { return this.browser.preview(input) }
+  cloudState() { return principalOf(this.ctx.invocation) === undefined ? this.browser.state() : Promise.resolve({ state: 'permission_denied' }) }
+  cloudList(input) { return principalOf(this.ctx.invocation) === undefined ? this.browser.list(input) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudPreview(input) { return principalOf(this.ctx.invocation) === undefined ? this.browser.preview(input) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudDestination(input) { return principalOf(this.ctx.invocation) === undefined ? this.importer.destination(input) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudImport(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.importer.import(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
   operation(work) {
     // Capture the initiating identity before queuing. A queued operation must
     // not silently execute for a newly signed-in account.
@@ -167,6 +171,6 @@ export default class EcnuCloud extends TypertRemoteService {
     })
   }
 }
-for (const method of ['cloudState', 'cloudList', 'cloudPreview']) Remote(method)(EcnuCloud.prototype[method], {
+for (const method of ['cloudState', 'cloudList', 'cloudPreview', 'cloudDestination', 'cloudImport']) Remote(method)(EcnuCloud.prototype[method], {
   kind: 'method', name: method, static: false, private: false, addInitializer(initialize) { initializers.push(initialize) },
 })

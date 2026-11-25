@@ -27,11 +27,11 @@ function fixture(options = {}) {
   const ctx = {
     sessions: { get: () => conv.session }, sessionPersistence: { stat: async () => undefined },
     on: (name, listener) => events.set(name, listener), effect: fn => effects.push(fn()),
-    oidcAccounts: { modelAuthorization: async () => true,
+    oidcAccounts: { accountIdentity: async () => ({ profileID: 'school', accountID: 'synthetic-account' }), modelAuthorization: async () => true,
       authorizedFetch: async (...args) => { requests.push(args); return Response.json({ message_id: conv.messageID, favorite: args[2].body ? JSON.parse(args[2].body).favorite : 0 }) }, ...options },
   }
   const service = createFeedbackService(ctx, config)
-  return { ...conv, ctx, service, requests, events, effects, switchAccount: () => { events.get('oidc/accounts-changed')({ profileID: 'school', state: 'connected' }) },
+  return { ...conv, ctx, service, requests, events, effects, switchAccount: () => { events.get('oidc/accounts-changed')({ profileID: 'school', state: 'connected', authorizationChanged: true }) },
     async action(favorite = 1) { const preview = await service.preview('session-1', conv.messageID), current = await service.read('session-1', conv.messageID); return { favorite, digest: preview.digest, accountBinding: current.accountBinding, confirmed: true, reason: [], desc: '' } },
   }
 }
@@ -122,11 +122,55 @@ test('configuration and RPC contract have no tool or arbitrary transport surface
 
 test('credential replacement and Host restart invalidate an existing feedback draft', async () => {
   const f = fixture(), action = await f.action()
-  f.events.get('credentials/reference-updated')({ ref: 'synthetic' })
+  f.ctx.oidcAccounts.accountIdentity = async () => ({ profileID: 'school', accountID: 'replacement-account' })
   assert.equal((await f.service.submit('session-1', f.messageID, action)).state, 'preview_changed')
   const restarted = createFeedbackService(f.ctx, config)
   assert.equal((await restarted.submit('session-1', f.messageID, action)).state, 'preview_changed')
   assert.equal(f.requests.filter(request => request[2].method === 'POST').length, 0)
+})
+
+test('same-account credential renewal preserves reads and existing drafts', async () => {
+  const f = fixture(), action = await f.action()
+  const refreshed = () => f.events.get('credentials/reference-updated')?.({ ref: 'synthetic' })
+  f.ctx.oidcAccounts.modelAuthorization = async () => { refreshed(); f.events.get('oidc/accounts-changed')({profileID:'school',state:'connected'}); return true }
+  const fetch = f.ctx.oidcAccounts.authorizedFetch
+  f.ctx.oidcAccounts.authorizedFetch = async (...args) => { refreshed(); return fetch(...args) }
+  const current = await f.service.read('session-1', f.messageID)
+  assert.equal(current.state, 'available'); assert.equal(current.accountBinding, action.accountBinding)
+  assert.equal((await f.service.submit('session-1', f.messageID, action)).favorite, 1)
+})
+
+test('missing or changed identity fails closed before sending an old-account write', async () => {
+  for (const accountIdentity of [async () => null, async () => ({ profileID: 'other', accountID: 'synthetic-account' })]) {
+    const f = fixture(), action = await f.action(); f.ctx.oidcAccounts.accountIdentity = accountIdentity
+    assert.equal((await f.service.submit('session-1', f.messageID, action)).state, 'not_connected')
+    assert.equal(f.requests.filter(request => request[2].method === 'POST').length, 0)
+  }
+})
+
+test('temporary identity failure blocks writes but preserves the draft for recovery', async () => {
+  const f = fixture(), action = await f.action(), identity = f.ctx.oidcAccounts.accountIdentity
+  f.ctx.oidcAccounts.accountIdentity = async () => { throw Error('temporary refresh outage') }
+  f.events.get('credentials/reference-updated')({ref:'synthetic'})
+  assert.equal((await f.service.read('session-1', f.messageID)).state, 'unavailable')
+  assert.equal((await f.service.submit('session-1', f.messageID, action)).state, 'unavailable')
+  assert.equal(f.requests.filter(request => request[2].method === 'POST').length, 0)
+  f.ctx.oidcAccounts.accountIdentity = identity
+  const recovered = await f.service.read('session-1', f.messageID)
+  assert.equal(recovered.state, 'available'); assert.equal(recovered.accountBinding, action.accountBinding)
+  assert.equal((await f.service.submit('session-1', f.messageID, action)).favorite, 1)
+})
+
+test('network timeout is retryable and does not report an account change', async t => {
+  const f = fixture()
+  t.mock.method(AbortSignal, 'timeout', () => AbortSignal.abort(new DOMException('Timed out', 'TimeoutError')))
+  assert.equal((await f.service.read('session-1', f.messageID)).state, 'unavailable')
+})
+
+test('older OIDC without account identity keeps conservative credential invalidation', async () => {
+  const f = fixture({ accountIdentity: undefined }), action = await f.action()
+  f.events.get('credentials/reference-updated')({ ref: 'synthetic' })
+  assert.equal((await f.service.submit('session-1', f.messageID, action)).state, 'preview_changed')
 })
 
 test('published OIDC sign-in transport supports feedback without new consent or identity APIs', async t => {
@@ -157,6 +201,24 @@ test('published OIDC sign-in transport supports feedback without new consent or 
   assert.equal((await ctx.oidcAccounts.status('desktop-test')).credentialReady, true)
   const preview = await ctx.ecnuFeedback.preview('session-1', conv.messageID), current = await ctx.ecnuFeedback.read('session-1', conv.messageID)
   assert.equal(current.state, 'available')
+  // Run the real public OIDC refresh/persistence path inside modelAuthorization.
+  // Only the synthetic token endpoint response is substituted; no live credentials.
+  const fetchOriginal = ctx.oidcAccounts.backend.fetch, authorizationOriginal = ctx.oidcAccounts.modelAuthorization.bind(ctx.oidcAccounts)
+  let refreshes = 0, expireOnce = true
+  t.mock.method(ctx.oidcAccounts.backend, 'fetch', async (input, init) => {
+    if (String(input) === `${f.origin}/token` && String(init?.body).includes('grant_type=refresh_token')) {
+      refreshes++
+      const saved = [...records.values()].map(value => JSON.parse(value)).find(value => value.refreshToken)
+      return Response.json({ access_token: '<ACCESS_TOKEN>', refresh_token: 'synthetic-refreshed', token_type: 'Bearer', expires_in: 3600, scope: saved.scopes.join(' '), id_token: saved.idToken })
+    }
+    return fetchOriginal(input, init)
+  })
+  t.mock.method(ctx.oidcAccounts, 'modelAuthorization', async (...args) => {
+    if (expireOnce) { expireOnce = false; for (const [ref, raw] of records) { const value = JSON.parse(raw); if (value.refreshToken) records.set(ref, JSON.stringify({ ...value, expiresAt: 1, refreshAt: 1 })) } }
+    return authorizationOriginal(...args)
+  })
+  const renewed = await ctx.ecnuFeedback.read('session-1', conv.messageID)
+  assert.equal(renewed.state, 'available'); assert.equal(renewed.accountBinding, current.accountBinding); assert.equal(refreshes, 1)
   const action = { favorite: 1, digest: preview.digest, accountBinding: current.accountBinding, confirmed: true, reason: [], desc: '' }
   assert.equal((await ctx.ecnuFeedback.submit('session-1', conv.messageID, action)).favorite, 1)
   assert.equal(writes.length, 1); assert.equal(writes[0].answer_content, 'Visible answer')

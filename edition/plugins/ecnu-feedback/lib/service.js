@@ -28,26 +28,40 @@ async function readRating(response, signal, messageID) {
 }
 export function createFeedbackService(ctx, raw) {
   const config = resolveConfig(raw), pending = new Map()
-  let lifetime = new AbortController(), disposed = false, accountBinding = randomUUID()
+  let lifetime = new AbortController(), disposed = false, accountBinding = randomUUID(), knownIdentity
   // An opaque revision binds a UI draft to this Host's current account session.
-  // Existing credential/account events rotate it; no new OIDC identity API is needed.
+  // Same-account credential refresh must preserve drafts; only identity/session changes rotate it.
   const invalidate = () => { lifetime.abort(); lifetime = new AbortController(); accountBinding = randomUUID() }
-  ctx.on('oidc/accounts-changed', event => { if (event.profileID === config.profileID) invalidate() })
-  ctx.on('credentials/reference-updated', invalidate)
+  const hasIdentity = typeof ctx.oidcAccounts.accountIdentity === 'function'
+  ctx.on('oidc/accounts-changed', event => { if (event.profileID === config.profileID && (!hasIdentity || event.state !== 'connected' || event.authorizationChanged)) invalidate() })
+  const checkIdentity = async () => {
+    if (!hasIdentity) return true
+    // A failed refresh is unknown, not proof of logout. Preserve the binding
+    // while preventing this request from reaching the feedback endpoint.
+    const identity = await ctx.oidcAccounts.accountIdentity(config.profileID)
+    const id = identity?.profileID === config.profileID && typeof identity.accountID === 'string' && identity.accountID ? identity.accountID : null
+    if (knownIdentity !== undefined && id !== knownIdentity || id === null) invalidate()
+    knownIdentity = id
+    return id !== null
+  }
+  ctx.on('credentials/reference-updated', () => { if (!hasIdentity) invalidate(); else void checkIdentity().catch(() => {}) })
   ctx.effect(() => () => { disposed = true; lifetime.abort() })
   const target = async (sessionID, messageID) => {
     try { return await readFeedbackTarget(ctx, sessionID, messageID, config.providerID) }
     catch { return state('unavailable') }
   }
   const run = async (sessionID, messageID, action) => {
-    const signal = AbortSignal.any([lifetime.signal, AbortSignal.timeout(20000)])
+    let accountSignal
     try {
-      if (disposed) return state('not_connected')
+      if (disposed || !await checkIdentity()) return state('not_connected')
+      accountSignal = lifetime.signal
+      const signal = AbortSignal.any([accountSignal, AbortSignal.timeout(20000)])
       const preview = await target(sessionID, messageID)
       if (preview.state !== 'available') return preview
       signal.throwIfAborted()
       const accounts = ctx.oidcAccounts
       if (!await accounts.modelAuthorization(config.profileID, config.modelBaseURL)) return state('not_connected')
+      if (!await checkIdentity()) return state('not_connected')
       signal.throwIfAborted()
       const binding = accountBinding
       const endpoint = new URL(`${config.workerBaseURL}/feedback/${messageID}`)
@@ -65,11 +79,12 @@ export function createFeedbackService(ctx, raw) {
       try {
         if (!response.ok) return state(response.status === 401 ? 'not_connected' : response.status === 403 ? 'permission_denied' : 'unavailable')
         const result = await readRating(response, signal, messageID)
+        if (!await checkIdentity()) return state('not_connected')
         signal.throwIfAborted()
         if (accountBinding !== binding) return state('not_connected')
         return { ...result, accountBinding: binding }
       } finally { await response.body?.cancel().catch(() => {}) }
-    } catch { return state(signal.aborted ? 'not_connected' : 'unavailable') }
+    } catch { return state(accountSignal?.aborted ? 'not_connected' : 'unavailable') }
   }
   return {
     configuration: () => ({ profileID: config.profileID, reasons: config.reasons }), preview: target,

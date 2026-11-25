@@ -1,6 +1,6 @@
 import { defineConfig } from 'tsdown'
 
-const external = (specifier: string): boolean => ['react', 'react-dom'].includes(specifier) || specifier.startsWith('react/') || specifier.startsWith('react-dom/')
+const external = (specifier: string): boolean => ['react', 'react-dom', '@deepseek-ai/dsh-client-ui-primitives'].includes(specifier) || specifier.startsWith('react/') || specifier.startsWith('react-dom/')
 
 export default defineConfig({
   failOnWarn: true,

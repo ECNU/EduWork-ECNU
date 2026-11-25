@@ -4,7 +4,7 @@ const state = state => ({ state })
 export function resolveConfig(raw) {
   if (!raw || !validID(raw.profileID) || !validID(raw.providerID)) throw Error('Configure explicit school profile and provider IDs')
   const model = new URL(raw.modelBaseURL), worker = new URL(raw.workerBaseURL)
-  const development = raw.allowInsecureDevelopment === true && model.protocol === 'http:' && ['127.0.0.1', '[::1]'].includes(model.hostname)
+  const development = raw.allowInsecureDevelopment === true && model.protocol === 'http:'
   if (model.protocol !== 'https:' && !development || model.origin !== worker.origin || [model, worker].some(url => url.username || url.password || url.hash || url.search) || !/^\/(?:[A-Za-z0-9_-]+\/?)*$/.test(worker.pathname)) throw Error('Feedback requires same-origin HTTPS model and Worker services')
   const reasons = raw.reasons ?? []
   if (!Array.isArray(reasons) || reasons.length > 20 || reasons.some(value => typeof value !== 'string' || !value.trim() || value.length > 80)) throw Error('Invalid feedback reason list')

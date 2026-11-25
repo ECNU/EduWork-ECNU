@@ -107,6 +107,12 @@ test('account changes discard delayed responses and block queued writes for the 
 })
 test('configuration and RPC contract have no tool or arbitrary transport surface', () => {
   assert.throws(() => resolveConfig({ ...config, workerBaseURL: 'https://evil.example/api' }))
+  const development = { ...config, modelBaseURL: 'http://192.0.2.10/open/api/v1', workerBaseURL: 'http://192.0.2.10/api/worker/v1' }
+  assert.throws(() => resolveConfig(development))
+  assert.equal(resolveConfig({ ...development, allowInsecureDevelopment: true }).modelBaseURL, development.modelBaseURL)
+  for (const workerBaseURL of ['http://192.0.2.11/api', 'http://192.0.2.10:8080/api', 'https://192.0.2.10/api']) {
+    assert.throws(() => resolveConfig({ ...development, workerBaseURL, allowInsecureDevelopment: true }))
+  }
   assert.deepEqual(descriptors.map(value => value.method), ['configuration', 'preview', 'read', 'submit'])
   const action = descriptors.find(value => value.method === 'submit').parameters.at(-1).codec.schema
   const valid = { favorite: 1, digest: 'a'.repeat(64), accountBinding: 'b2275353-c236-42cb-babb-3dbe2647b40a', reason: [], desc: '', confirmed: true }

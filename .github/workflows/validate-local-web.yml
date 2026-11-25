@@ -58,6 +58,8 @@ jobs:
           if ($LASTEXITCODE) { throw 'Institution configuration checks failed' }
           node --test institution/edition/plugins/chatecnu-active-heartbeat/test/scheduler.test.mjs institution/edition/plugins/chatecnu-active-heartbeat/test/web-backend.test.mjs
           if ($LASTEXITCODE) { throw 'Heartbeat contract checks failed' }
+          node --test institution/edition/plugins/ecnu-aiconsole/test/reader.test.mjs
+          if ($LASTEXITCODE) { throw 'AIConsole read-only contract checks failed' }
       - name: Build the pinned desktop product with the public core implementation
         shell: pwsh
         run: node institution/edition/test/build-pinned-product.mjs --core ./core --edition ./institution --output "$env:RUNNER_TEMP/ecnu-pinned-product"

@@ -17,13 +17,13 @@ const specs = {
   account_list_entitlements: { path: '/entitlements', scope: 'entitlements.read', title: '查询账户权益', parameters: page },
   account_list_orders: { path: '/orders', scope: 'orders.read', title: '查询账户订单', parameters: page },
   account_get_catalog: { path: '/catalog', scope: 'entitlements.read', title: '查询可用资源目录' },
-  account_list_keys: { path: '/keys', scope: 'tokens.read', title: '查询 Key 掩码和状态', parameters: page },
+  account_list_keys: { path: '/keys', scope: 'tokens.read', title: '查询 Key 掩码和状态' },
   account_list_conversations: { path: '/conversations', scope: 'conversation.read', title: '查询云端会话', parameters: conversations },
   account_get_messages: { path: '/conversations/{conversation_id}/messages', scope: 'conversation.read', title: '读取云端会话消息', parameters: {
     ...conversations,
     conversation_id: { type: 'string', required: true, description: 'Exact conversation ID returned by the conversation list.' },
   } },
-  account_list_running_requests: { path: '/requests', scope: 'requests.read', title: '查询本人运行中的 Open LLM 请求', parameters: page },
+  account_list_running_requests: { path: '/requests', scope: 'requests.read', title: '查询本人运行中的 Open LLM 请求' },
 }
 function freeze(value) {
   for (const child of Object.values(value)) if (child && typeof child === 'object') freeze(child)

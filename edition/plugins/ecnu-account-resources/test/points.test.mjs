@@ -57,6 +57,12 @@ test('service configuration rejects cross-origin and insecure destinations', () 
   const f = fixture()
   for (const workerBaseURL of ['https://evil.example/api', 'https://secret@example.org/api', 'http://example.org/api']) assert.throws(() => createPointsService(f.ctx, { ...config, workerBaseURL }))
   assert.equal(createPointsService(f.ctx).profileID, null)
+  const development = { ...config, modelBaseURL: 'http://192.0.2.10/open/api/v1', workerBaseURL: 'http://192.0.2.10/api/worker/v1' }
+  assert.throws(() => createPointsService(f.ctx, development))
+  assert.equal(createPointsService(f.ctx, { ...development, allowInsecureDevelopment: true }).profileID, config.profileID)
+  for (const workerBaseURL of ['http://192.0.2.11/api/worker/v1', 'http://192.0.2.10:8080/api/worker/v1', 'https://192.0.2.10/api/worker/v1']) {
+    assert.throws(() => createPointsService(f.ctx, { ...development, allowInsecureDevelopment: true, workerBaseURL }))
+  }
 })
 test('permission failures and malformed or oversized responses do not become success', async () => {
   for (const [response, state] of [[new Response('', { status: 403 }), 'permission_denied'], [new Response('', { status: 404 }), 'unavailable'], [Response.json({}), 'unavailable'], [Response.json({ padding: 'x'.repeat(20000) }), 'unavailable']]) {

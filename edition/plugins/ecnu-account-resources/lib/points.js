@@ -24,7 +24,7 @@ function configure(raw) {
   if (raw === undefined) return null
   if (!raw || !/^[A-Za-z0-9_-]{1,64}$/.test(raw.profileID ?? '')) throw Error('points requires an explicit profileID')
   const model = new URL(raw.modelBaseURL), worker = new URL(raw.workerBaseURL)
-  const development = raw.allowInsecureDevelopment === true && model.protocol === 'http:' && ['127.0.0.1', '[::1]'].includes(model.hostname)
+  const development = raw.allowInsecureDevelopment === true && model.protocol === 'http:'
   if (model.protocol !== 'https:' && !development || [model, worker].some(url => url.username || url.password || url.search || url.hash) || model.origin !== worker.origin) throw Error('points requires same-origin HTTPS model and worker services')
   return Object.freeze({ profileID: raw.profileID, modelBaseURL: model.href.replace(/\/$/, ''), workerBaseURL: worker.href.replace(/\/$/, ''), origin: worker.origin })
 }

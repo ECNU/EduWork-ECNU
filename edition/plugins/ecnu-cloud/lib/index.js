@@ -19,7 +19,8 @@ const fail = code => { throw new CloudBindingError(code) }
 function configOf(raw) {
   checkID(raw?.profileID)
   const base = new URL(raw.modelBaseURL)
-  if (base.protocol !== 'https:' || base.username || base.password || base.search || base.hash) fail('invalid_environment')
+  const development = raw.allowInsecureDevelopment === true && base.protocol === 'http:'
+  if (base.protocol !== 'https:' && !development || base.username || base.password || base.search || base.hash) fail('invalid_environment')
   return { profileID: raw.profileID, modelBaseURL: base.href.replace(/\/$/, '') }
 }
 

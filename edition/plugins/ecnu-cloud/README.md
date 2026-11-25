@@ -21,6 +21,8 @@ Host 必须提供既有 OIDC 的 modelAuthorization 与 accountIdentity。后者
 
 账号标识、学校 profile 和环境基址共同形成存储分区，不持久化令牌。账号／凭据变化取消在途和排队操作；新账号不能读取旧账号映射。重启保留已提交的绑定。
 
+模型基址默认要求 HTTPS。隔离的 HTTP 联调须在本插件与学校登录 Profile 中显式设置 `allowInsecureDevelopment: true`；服务地址仍须通过 OIDC Host 校验。HTTP 与 HTTPS 基址形成不同存储分区，不能借此访问另一环境的绑定。
+
 ## Host 方法
 
 | 方法 | 用途 |

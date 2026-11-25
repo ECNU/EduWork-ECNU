@@ -21,6 +21,8 @@ The Host must provide the existing OIDC modelAuthorization and accountIdentity A
 
 Storage is partitioned by account identity, profile and environment. No tokens are persisted. Credential/account changes invalidate active and queued operations. A newly signed-in account cannot read the previous account's bindings. Committed mappings survive restart.
 
+The model base requires HTTPS by default. Isolated HTTP testing requires explicit `allowInsecureDevelopment: true` in this plugin and the school login Profile; the OIDC Host still validates the service address. HTTP and HTTPS bases use separate storage partitions and cannot access each other's bindings.
+
 ## Host methods
 
 | Method | Purpose |

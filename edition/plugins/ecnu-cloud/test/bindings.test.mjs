@@ -88,6 +88,17 @@ test('changing a project default never moves imported sessions or widens project
   await f.ctx.ecnuCloud.unbindProject('project-a')
   assert.equal((await f.ctx.ecnuCloud.projectForSession('chat-local-a')).projectID, 'project-a')
 })
+
+test('HTTP environment requires explicit testing configuration and remains separately partitioned', async t => {
+  const f = await fixture(t), w = await f.workspace('space')
+  await f.ctx.ecnuCloud.bindProject('project', w.id)
+  await assert.rejects(f.remount({ modelBaseURL: 'http://192.0.2.10/open/api/v1' }), { code: 'invalid_environment' })
+  await f.remount({ modelBaseURL: 'http://192.0.2.10/open/api/v1', allowInsecureDevelopment: true })
+  assert.deepEqual(await f.ctx.ecnuCloud.projectWorkspace('project'), { state: 'unbound' })
+  await f.ctx.ecnuCloud.bindProject('project', w.id)
+  await f.remount()
+  assert.equal((await f.ctx.ecnuCloud.projectWorkspace('project')).workspaceID, w.id)
+})
 test('parallel duplicate registrations are idempotent; conflicting sessions and sources are refused', async t => {
   const f = await fixture(t), w = await f.workspace('space')
   await f.session(w, 'one'); await f.session(w, 'two')

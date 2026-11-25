@@ -173,7 +173,7 @@ test('older OIDC without account identity keeps conservative credential invalida
   assert.equal((await f.service.submit('session-1', f.messageID, action)).state, 'preview_changed')
 })
 
-test('published OIDC sign-in transport supports feedback without new consent or identity APIs', async t => {
+test('installed OIDC sign-in and renewal enforce its identity-capability boundary', async t => {
   const conv = conversation('fixture-ai'), writes = []
   const f = await oidcFixture(t, { resources: true, scopes: ['feedback.read', 'feedback.write'], resourceHandler: async (req, res, url) => {
     if (!url.pathname.startsWith('/v1/feedback/')) return false
@@ -218,8 +218,21 @@ test('published OIDC sign-in transport supports feedback without new consent or 
     return authorizationOriginal(...args)
   })
   const renewed = await ctx.ecnuFeedback.read('session-1', conv.messageID)
-  assert.equal(renewed.state, 'available'); assert.equal(renewed.accountBinding, current.accountBinding); assert.equal(refreshes, 1)
-  const action = { favorite: 1, digest: preview.digest, accountBinding: current.accountBinding, confirmed: true, reason: [], desc: '' }
+  assert.equal(refreshes, 1)
+  const previousAction = { favorite: 1, digest: preview.digest, accountBinding: current.accountBinding, confirmed: true, reason: [], desc: '' }
+  let action = previousAction
+  if (typeof ctx.oidcAccounts.accountIdentity === 'function') {
+    t.diagnostic('Installed OIDC exposes accountIdentity: same-account renewal preserves the existing draft')
+    assert.equal(renewed.state, 'available'); assert.equal(renewed.accountBinding, current.accountBinding)
+  } else {
+    t.diagnostic('Installed OIDC has no accountIdentity: renewal invalidates the old draft, and a fresh read recovers')
+    assert.equal(renewed.state, 'not_connected')
+    const recovered = await ctx.ecnuFeedback.read('session-1', conv.messageID)
+    assert.equal(recovered.state, 'available'); assert.notEqual(recovered.accountBinding, current.accountBinding)
+    assert.equal((await ctx.ecnuFeedback.submit('session-1', conv.messageID, previousAction)).state, 'preview_changed')
+    assert.equal(writes.length, 0, 'The old draft must not write after a conservative credential invalidation')
+    action = { ...previousAction, accountBinding: recovered.accountBinding }
+  }
   assert.equal((await ctx.ecnuFeedback.submit('session-1', conv.messageID, action)).favorite, 1)
   assert.equal(writes.length, 1); assert.equal(writes[0].answer_content, 'Visible answer')
   await ctx.oidcAccounts.logout('desktop-test')

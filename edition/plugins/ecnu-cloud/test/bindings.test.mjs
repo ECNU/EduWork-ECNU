@@ -42,7 +42,7 @@ async function fixture(t, options = {}) {
   await mount(options.config)
   return { root, ctx, headers, stop,
     async remount(overrides = {}) { await cloud.dispose(); await mount(overrides) },
-    switchAccount(id) { account = id; ctx.emit('oidc/accounts-changed', { profileID: 'school', state: 'connected' }) },
+    switchAccount(id) { account = id; ctx.emit('oidc/accounts-changed', { profileID: 'school', state: 'connected', authorizationChanged: true }) },
     signOut() { connected = false; ctx.emit('oidc/accounts-changed', { profileID: 'school', state: 'signed_out' }) },
     async workspace(name) { const path = join(root, name); await mkdir(path, { recursive: true }); return ctx.workspaceRegistry.create(path) },
     async session(workspace, id) { headers.set(id, { id, cwd: workspace.path }); await workspace.attachSession(id); return id },

@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
-import { Service } from '@deepseek-ai/cordis'
+import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
+import { createBrowser } from './browser.js'
 import { defineDomain, domainTable } from '@deepseek-ai/dsh-storage-domain'
 import { z } from 'zod'
 
@@ -24,15 +25,27 @@ function configOf(raw) {
   return { profileID: raw.profileID, modelBaseURL: base.href.replace(/\/$/, '') }
 }
 
-/** Host-only local mappings. Never exposed as remote RPC or Agent tools. */
-export default class EcnuCloud extends Service {
+const initializers = []
+/** Local bindings stay Host-only. Only the fixed browser methods are Remote. */
+export default class EcnuCloud extends TypertRemoteService {
   static inject = ['storageDomain', 'workspaceRegistry', 'oidcAccounts']
   constructor(ctx, raw) {
     super(ctx, 'ecnuCloud')
+    for (const initialize of initializers) initialize.call(this)
     this.config = configOf(raw)
     this.epoch = 0; this.closed = false; this.tail = Promise.resolve()
-    ctx.on('oidc/accounts-changed', event => { if (event.profileID === this.config.profileID) this.epoch++ })
-    ctx.on('credentials/reference-updated', () => { this.epoch++ })
+    const verify = async () => {
+      const epoch = this.epoch
+      const identity = await ctx.oidcAccounts.accountIdentity?.(this.config.profileID)
+      if (epoch === this.epoch && this.identity && this.identity !== identity?.accountID) this.epoch++
+    }
+    ctx.on('oidc/accounts-changed', event => {
+      if (event.profileID !== this.config.profileID) return
+      if (event.state === 'connected' && !event.authorizationChanged) void verify().catch(() => {})
+      else { this.epoch++; this.identity = undefined }
+    })
+    ctx.on('credentials/reference-updated', () => { void verify().catch(() => {}) })
+    this.browser = createBrowser(this)
     this.ready = ctx.storageDomain.open(bindingsDomain).then(domain => { this.domain = domain })
     void this.ready.catch(() => ctx.logger.warn('Cloud bindings storage unavailable'))
     ctx.effect(() => async () => {
@@ -52,12 +65,18 @@ export default class EcnuCloud extends Service {
     const identity = await accounts.accountIdentity(config.profileID)
     if (this.closed || epoch !== this.epoch) fail('account_changed')
     if (identity?.profileID !== config.profileID || typeof identity.accountID !== 'string' || !identity.accountID) fail('not_connected')
+    if (this.identity && this.identity !== identity.accountID) this.epoch++
+    this.identity = identity.accountID
+    if (epoch !== this.epoch) fail('account_changed')
     return { epoch, scope: hash([config.modelBaseURL, config.profileID, identity.accountID]) }
   }
   guard(account) {
     if (this.closed) fail('closed')
     if (account.epoch !== this.epoch) fail('account_changed')
   }
+  cloudState() { return this.browser.state() }
+  cloudList(input) { return this.browser.list(input) }
+  cloudPreview(input) { return this.browser.preview(input) }
   operation(work) {
     // Capture the initiating identity before queuing. A queued operation must
     // not silently execute for a newly signed-in account.
@@ -148,3 +167,6 @@ export default class EcnuCloud extends Service {
     })
   }
 }
+for (const method of ['cloudState', 'cloudList', 'cloudPreview']) Remote(method)(EcnuCloud.prototype[method], {
+  kind: 'method', name: method, static: false, private: false, addInitializer(initialize) { initializers.push(initialize) },
+})

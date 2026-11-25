@@ -3,6 +3,7 @@ const other = { ...ecnu, id: 'third-party', displayName: '另一所学校', orga
 const configuration = { uiMode: 'standard', profiles: [ecnu], manageProductBrand: false }
 const connected = profileID => ({ profileID, state: 'connected', credentialReady: true, userName: profileID === 'ecnu' ? 'ECNU synthetic user' : 'Other synthetic user' })
 let account = connected('ecnu'), reads = 0, calls = [], pending = false, quotaReleases = [], remaining = 90, quotaFailure = null
+let quotaOverride = null
 const pointsEnabled = new URLSearchParams(location.search).has('points')
 let pointReads = 0, invitationCalls = 0, denied = false, delayInvitation = false, releaseInvitation
 let delayPoints = new URLSearchParams(location.search).has('slowPoints'), pointReleases = []
@@ -36,7 +37,7 @@ const ctx = {
       quota: async id => {
       reads++; calls.push(id)
       if (quotaFailure === 'rpc') throw new Error('Synthetic quota RPC failure')
-      const snapshot = quotaFailure === 'unavailable' ? { state: 'unavailable' } : quota()
+      const snapshot = quotaFailure === 'unavailable' ? { state: 'unavailable' } : quotaOverride ?? quota()
       if (pending) await new Promise(resolve => { quotaReleases.push(resolve) })
       return ok(snapshot)
     } },
@@ -78,6 +79,7 @@ window.mountFixture = async () => {
     delayPoints: () => { delayPoints = true }, releasePoints: () => { delayPoints = false; pointReleases.splice(0).forEach(resolve => resolve()) },
     declarations: () => footer.children,
     setRemaining: value => { remaining = value },
+    setQuota: value => { quotaOverride = value },
     failQuota: mode => { quotaFailure = mode },
     delay: () => { pending = true }, release: () => { pending = false; quotaReleases.splice(0).forEach(resolve => resolve()) },
     switch: async id => {

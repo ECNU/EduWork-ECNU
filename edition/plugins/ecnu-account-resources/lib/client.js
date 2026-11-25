@@ -5644,6 +5644,11 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		};
 		const secondary = "var(--dsw-alias-label-secondary, #69717f)";
 		const amount = (value) => typeof value === "number" && Number.isFinite(value) ? value.toLocaleString() : copy.unknown;
+		const label = (type) => ({
+			fixed_168h: zh ? "7 天额度" : "7-day allowance",
+			fixed_24h: zh ? "24 小时额度" : "24-hour allowance",
+			fixed_5h: zh ? "5 小时额度" : "5-hour allowance"
+		})[type] || type;
 		function QuotaDetails({ profile, status, busy, run, refreshAccount, defaultContent, readQuota, profileIDs }) {
 			const [expanded, setExpanded] = (0, react.useState)(false);
 			const [value, setValue] = (0, react.useState)(null), [reading, setReading] = (0, react.useState)(false);
@@ -5733,7 +5738,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				overflowY: "auto",
 				display: "grid",
 				gap: 10
-			} }, quota.resourcePacks?.length > 0 && h("strong", null, copy.packs), ...(quota.resourcePacks ?? []).map((pack, index) => h("div", {
+			} }, ...(quota.windows ?? []).map((period, index) => h("div", {
+				key: `window-${index}`,
+				style: { color: secondary }
+			}, h("strong", null, label(period.type)), h("div", null, `${amount(period.remaining)}${quota.unit ? ` ${quota.unit}` : ""} ${copy.remaining}`), h("div", { style: { fontSize: 11 } }, `${copy.used} ${amount(period.used)} · ${copy.total} ${amount(period.limit)}`), h("div", { style: { fontSize: 11 } }, `${copy.resets} ${period.resetAt ? new Date(period.resetAt).toLocaleString() : copy.unknown}`))), quota.resourcePacks?.length > 0 && h("strong", null, copy.packs), ...(quota.resourcePacks ?? []).map((pack, index) => h("div", {
 				key: `${pack.id}-${index}`,
 				style: { color: secondary }
 			}, h("div", null, pack.name || pack.id || copy.packs), h("div", null, `${amount(pack.remaining)}${quota.unit ? ` ${quota.unit}` : ""} ${copy.remaining}`), (pack.total !== null || pack.used !== null) && h("div", { style: { fontSize: 11 } }, `${copy.used} ${amount(pack.used)} · ${copy.total} ${amount(pack.total)}`), pack.expiresAt && h("div", { style: { fontSize: 11 } }, `${copy.expires} ${new Date(pack.expiresAt).toLocaleString()}`), pack.status && h("div", { style: { fontSize: 11 } }, `${copy.status} ${pack.status}`)))), quota.consoleURL && h("a", {

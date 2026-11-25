@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "main": "lib/index.js",
+  "exports": { ".": "./lib/index.js", "./client": "./lib/client.js", "./typert": "./lib/typert.host.js", "./package.json": "./package.json" },
+  "scripts": { "build": "tsdown", "test": "node --test test/*.test.mjs" },
+  "dsh": { "client": { "platform": "web", "immediately": true, "inject": ["@deepseek-ai/dsh-client-ui-renderer", "@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-client-ui-primitives", "@deepseek-ai/dsh-client-ui-layout", "@deepseek-ai/dsh-client-ui-sidebar"] } },
   "license": "MulanPSL-2.0",
   "files": [
     "lib",
@@ -12,7 +15,14 @@
     "LICENSE"
   ],
   "peerDependencies": {
-    "@deepseek-ai/cordis": "4.0.2",
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-api-remotes": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-client-ui-renderer": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-client-ui-primitives": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-client-ui-layout": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-client-ui-sidebar": "0.2.2-rc.3",
+    "react": "^18.2.0",
     "@deepseek-ai/dsh-storage-domain": "0.2.2-rc.3",
     "@deepseek-ai/dsh-workspace": "0.2.2-rc.3",
     "@eduwork/dsh-oidc": "*",

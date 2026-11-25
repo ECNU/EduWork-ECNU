@@ -1,8 +1,10 @@
-# ChatECNU cloud local bindings
+# ChatECNU cloud
 
 [简体中文](README.md)
 
-Records default local workspaces for cloud projects and existing local continuations for cloud conversations. This is a Host-only service for future browsing, import and source adapters. It registers no UI, RPC or Agent tools and makes no cloud requests.
+Adds a ChatECNU cloud sidebar entry with paginated conversations and complete visible-text previews. It shares the school account service's fixed read operations and existing authentication. Project defaults and conversation mappings remain Host-only.
+
+Previews render text without executing HTML, loading external images or replaying tools. Unsupported messages are identified. Each preview is limited to 1,000 messages and 1 MB of text. This version does not import local sessions, download project sources or write to the cloud.
 
 Uses DSH storageDomain and workspaceRegistry. References use stable workspace IDs, so renaming does not break them. Missing directories or moved sessions return explicit states without creating directories, moving sessions or silently clearing bindings.
 
@@ -19,7 +21,9 @@ Explicitly load the service with an existing school profile and model API base:
 
 The Host must provide the existing OIDC modelAuthorization and accountIdentity APIs. The latter supplies a verified stable identity. Missing support returns identity_unavailable rather than guessing from a display name or temporary ID. This is a component dependency, not a new OAuth scope or consent flow. Default assembly, release locks and user configuration are unchanged; integrate after the required public package is available.
 
-Storage is partitioned by account identity, profile and environment. No tokens are persisted. Credential/account changes invalidate active and queued operations. A newly signed-in account cannot read the previous account's bindings. Committed mappings survive restart.
+Storage is partitioned by account identity, profile and environment. No tokens are persisted. Normal token renewal preserves bindings; new sign-ins, account changes and sign-out invalidate previous selection leases. Committed mappings survive restart. Browser RPCs are owner-only.
+
+Browsing also requires the `ecnuAiconsole` read service for the same school profile. UI and Agent queries share one reader; there is no separate authentication or HTTP client. Missing services or read permissions have explicit states. The UI uses the DSH 0.2.2-rc.3 sidebar, main panel, buttons and icons.
 
 The model base requires HTTPS by default. Isolated HTTP testing requires explicit `allowInsecureDevelopment: true` in this plugin and the school login Profile; the OIDC Host still validates the service address. HTTP and HTTPS bases use separate storage partitions and cannot access each other's bindings.
 

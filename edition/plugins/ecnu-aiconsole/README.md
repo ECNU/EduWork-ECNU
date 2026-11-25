@@ -20,7 +20,7 @@
 
 地址由发行方配置，Agent 无法通过参数改变地址或方法。只在 Host 注入凭据，禁止重定向；退出、切换账户和卸载会取消在途读取。不保存账户响应或凭据。服务端仍校验对应读取权限，发行方在装配前核实已有登录范围及账户资格；客户端不新增逐项授权入口，权限不足时返回错误并提供网页入口。
 
-工具名为 `ecnu_account_get_profile`、`ecnu_account_get_usage` 等，具体参数由工具说明提供。结果包含 `operation`、`dataJSON`、`parametersJSON`、`coverage` 和 `timezone`。分页以 1 开始，账户 `page_size` 和会话列表／消息 `limit` 默认 20、最大 100；`coverage: page` 表示当前页。消息接口也需要逐页读取，不能将第一页当作完整会话。日期使用北京时间，缺失值保持未知。完整统计需要读取全部分页。
+工具名为 `ecnu_account_get_profile`、`ecnu_account_get_usage` 等，具体参数由工具说明提供。结果包含 `operation`、`dataJSON`、`parametersJSON`、`coverage` 和 `timezone`。分页以 1 开始，账户 `page_size` 和会话列表／消息 `limit` 默认 20、最大 100；`coverage: page` 表示当前页。消息接口也需要逐页读取，不能将第一页当作完整会话。Key 列表和运行请求返回一次查询的快照，不接受分页参数。日期使用北京时间，缺失值保持未知。完整统计需要读取全部分页。
 
 仅开发联调可以显式设置 `allowInsecureDevelopment: true` 使用 HTTP API；对应学校 profile 也必须配置同一测试环境并允许 HTTP。不启用此选项时只接受 HTTPS，不复用其他环境的登录凭据。
 

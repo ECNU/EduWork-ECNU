@@ -89,6 +89,22 @@ test('message pages remain selectable and never claim to contain the entire conv
   assert.equal(f.calls.length, 2)
 })
 
+test('Key and running-request snapshots do not send unsupported pagination arguments', async t => {
+  let operation
+  const f = fixture(t, (_id, endpoint) => new URL(endpoint).search
+    ? Response.json({ error: { code: 'invalid_arguments' } }, { status: 422 })
+    : success(operation, { items: [] }))
+  for (operation of ['account_list_keys', 'account_list_running_requests']) {
+    const result = await f.reader.read(operation)
+    assert.equal(result.coverage, 'response')
+    assert.deepEqual(result.parameters, {})
+    for (const args of [{ page: 1 }, { page_size: 20 }]) {
+      await assert.rejects(f.reader.read(operation, args), { code: 'invalid_arguments' })
+    }
+  }
+  assert.equal(f.calls.length, 2)
+})
+
 test('keys project only safe metadata and unknown nested credential fields never reach the caller', async t => {
   const f = fixture(t, () => success('account_list_keys', { page: 1, total: 1, api_key: 'top-secret', unknown: { token: 'nested-secret' }, items: [{ id: 4, credential_id: 'key-4', name: 'Research', masked_key: 'sk-***', is_primary: false, quota_subject: 'account', api_key: 'key-secret', token: 'token-secret', future: { secret: 'future-secret' } }] }))
   const result = await f.reader.read('account_list_keys')

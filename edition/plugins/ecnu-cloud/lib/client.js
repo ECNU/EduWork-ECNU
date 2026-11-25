@@ -5304,6 +5304,19 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				}
 			}))
 		};
+		/**
+		* The text one Workspace is labeled with. A Workspace still carrying the
+		* automatic first-use title reads as the caller's localized default name; every
+		* other title reads verbatim in every language. A title the user typed as
+		* exactly {@link DEFAULT_WORKSPACE_DIRECTORY} is labeled as the default too;
+		* nothing else depends on the distinction.
+		* @param title - stored Workspace title.
+		* @param localizedDefault - the default Workspace name in the active language.
+		* @returns the title to display.
+		*/
+		function workspaceDisplayTitle(title, localizedDefault) {
+			return title === "default-workspace" ? localizedDefault : title;
+		}
 		//#endregion
 		//#region src/continuation.tsx
 		const messages = {
@@ -5431,7 +5444,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 										"aria-haspopup": "menu",
 										"aria-expanded": picker,
 										onClick: () => setPicker(true),
-										children: selected?.title || "选择或新建工作区"
+										children: selected ? workspaceDisplayTitle(selected.title, "默认工作区") : "选择或新建工作区"
 									}),
 									selected && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 										style: {

@@ -91,6 +91,23 @@ test('project moves with identical messages require a fresh preview before impor
   f.move(); assert.equal((await f.ctx.ecnuCloud.cloudImport(input)).state, 'history_changed')
   assert.equal((await f.ctx.sessionPersistence.list()).length, 0)
 })
+test('cancellation after a durable prefix stops attachment and resumes the reserved session', async t => {
+  const f = await fixture(t), w = await f.workspace(), input = await f.input(w.id), controller = new AbortController()
+  const persistence = f.ctx.sessionPersistence, create = persistence.create.bind(persistence)
+  persistence.create = async (...args) => {
+    const handle = await create(...args)
+    return new Proxy(handle, { get(target, key) {
+      if (key === 'append') return async events => { await target.append(events.slice(0, 4)); controller.abort() }
+      const value = Reflect.get(target, key, target); return typeof value === 'function' ? value.bind(target) : value
+    } })
+  }
+  assert.notEqual((await f.ctx.ecnuCloud.cloudImport(input, controller.signal)).state, 'available')
+  assert.equal((await f.ctx.ecnuCloud.conversation('cloud-one')).state, 'unbound')
+  const before = await persistence.list(); assert.equal(before.length, 1)
+  const restored = await f.ctx.ecnuCloud.cloudImport(input)
+  assert.equal(restored.state, 'available'); assert.equal(restored.sessionID, before[0].header.id)
+  assert.equal((await persistence.list()).length, 1)
+})
 test('converter rejects non-user opening and never imports tool or system history', () => {
   assert.throws(() => convertHistory({ importable: false, messages: [{ role: 'system' }] }, 'session-one', 'x'), { code: 'unsupported_history' })
 })

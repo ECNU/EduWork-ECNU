@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Modal } from '@deepseek-ai/dsh-client-ui-primitives'
+import { workspaceDisplayTitle } from '@deepseek-ai/dsh-api-workspace-controller/default-workspace'
 const messages: Record<string, string> = {
   history_changed: '云端历史已变化，请关闭窗口并重新预览后再导入。',
   unsupported_history: '这段历史尚不能完整导入。首期支持以用户消息开始的纯文本会话。',
@@ -56,7 +57,7 @@ export function Continuation({ preview, api, openSession, renderFactorySlot, use
       <p>{preview.summary.title} · {preview.total} 条消息</p>
       <div style={{ margin: '18px 0' }}>
         <p>保存到工作区</p>
-        <Button ref={anchor} variant="outline" data-modal-autofocus disabled={busy || destination?.pending} aria-haspopup="menu" aria-expanded={picker} onClick={() => setPicker(true)}>{selected?.title || '选择或新建工作区'}</Button>
+        <Button ref={anchor} variant="outline" data-modal-autofocus disabled={busy || destination?.pending} aria-haspopup="menu" aria-expanded={picker} onClick={() => setPicker(true)}>{selected ? workspaceDisplayTitle(selected.title, '默认工作区') : '选择或新建工作区'}</Button>
         {selected && <p style={{ fontSize: 12, overflowWrap: 'anywhere' }}>{selected.path}</p>}
         {renderFactorySlot('workspace.picker', { open: picker, anchorRef: anchor, selectedId: workspaceID, onPick: (id: string) => { setWorkspaceID(id); setPicker(false) }, onClose: () => setPicker(false) })}
       </div>

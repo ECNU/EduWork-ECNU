@@ -52,6 +52,7 @@
     "@eduwork/dsh-oidc": "*",
     "zod": "^4.4.3",
     "@deepseek-ai/dsh-client-ui-workspace": "0.2.2-rc.3",
-    "@deepseek-ai/dsh-client-ui-session": "0.2.2-rc.3"
+    "@deepseek-ai/dsh-client-ui-session": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-api-workspace-controller": "0.2.2-rc.3"
   }
 }

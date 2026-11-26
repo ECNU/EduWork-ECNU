@@ -4,7 +4,11 @@ import { createAssistantMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
 import { Session, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
 import { Context, Service } from '@deepseek-ai/cordis'
 import LlmRuntime from '@deepseek-ai/dsh-llm'
-import Oidc from '@eduwork/dsh-oidc'
+import { resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
+const { default: Oidc } = await import(process.env.DSH_OIDC_PACKAGE_ROOT
+  ? pathToFileURL(resolve(process.env.DSH_OIDC_PACKAGE_ROOT, 'lib/index.js')).href
+  : '@eduwork/dsh-oidc')
 import { fixture as oidcFixture } from '../../ecnu-account-resources/test/helpers/oidc-http-fixture.mjs'
 import Feedback from '../lib/index.js'
 import { feedbackTarget, readFeedbackTarget } from '../lib/context.js'

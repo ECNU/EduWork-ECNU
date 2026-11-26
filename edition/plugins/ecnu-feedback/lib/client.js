@@ -29,7 +29,7 @@ window.__ModuleLoader__.load({
 		let react = require("react");
 		react = __toESM(react, 1);
 		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/core.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/core.js
 		var _a$1;
 		/* @__NO_SIDE_EFFECTS__ */
 		function $constructor(name, initializer, params) {
@@ -89,7 +89,7 @@ window.__ModuleLoader__.load({
 			return globalConfig;
 		}
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/util.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/util.js
 		function getEnumValues(entries) {
 			const numericValues = Object.values(entries).filter((v) => typeof v === "number");
 			return Object.entries(entries).filter(([k, _]) => numericValues.indexOf(+k) === -1).map(([_, v]) => v);
@@ -389,7 +389,7 @@ window.__ModuleLoader__.load({
 			return { ...iss };
 		}
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/errors.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/errors.js
 		const initializer$1 = (inst, def) => {
 			inst.name = "$ZodError";
 			Object.defineProperty(inst, "_zod", {
@@ -449,7 +449,7 @@ window.__ModuleLoader__.load({
 			return fieldErrors;
 		}
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/parse.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/parse.js
 		const _parse = (_Err) => (schema, value, _ctx, _params) => {
 			const ctx = _ctx ? {
 				..._ctx,
@@ -563,7 +563,7 @@ window.__ModuleLoader__.load({
 			return _safeParseAsync(_Err)(schema, value, _ctx);
 		};
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/regexes.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/regexes.js
 		/**
 		* @deprecated CUID v1 is deprecated by its authors due to information leakage
 		* (timestamps embedded in the id). Use {@link cuid2} instead.
@@ -624,7 +624,7 @@ window.__ModuleLoader__.load({
 		const lowercase = /^[^A-Z]*$/;
 		const uppercase = /^[^a-z]*$/;
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/checks.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/checks.js
 		const $ZodCheck = /*@__PURE__*/ $constructor("$ZodCheck", (inst, def) => {
 			var _a;
 			inst._zod ?? (inst._zod = {});
@@ -843,7 +843,7 @@ window.__ModuleLoader__.load({
 			};
 		});
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/doc.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/doc.js
 		var Doc = class {
 			constructor(args = []) {
 				this.content = [];
@@ -874,14 +874,14 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/versions.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/versions.js
 		const version = {
 			major: 4,
 			minor: 4,
 			patch: 3
 		};
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/schemas.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/schemas.js
 		const $ZodType = /*@__PURE__*/ $constructor("$ZodType", (inst, def) => {
 			var _a;
 			inst ?? (inst = {});
@@ -1455,7 +1455,7 @@ window.__ModuleLoader__.load({
             })));
           }
         }
-
+        
         if (${id}.value === undefined) {
           if (${k} in input) {
             newResult[${k}] = undefined;
@@ -1463,7 +1463,7 @@ window.__ModuleLoader__.load({
         } else {
           newResult[${k}] = ${id}.value;
         }
-
+        
       `);
 					else if (!isOptionalIn) doc.write(`
         const ${id}_present = ${k} in input;
@@ -1498,7 +1498,7 @@ window.__ModuleLoader__.load({
             path: iss.path ? [${k}, ...iss.path] : [${k}]
           })));
         }
-
+        
         if (${id}.value === undefined) {
           if (${k} in input) {
             newResult[${k}] = undefined;
@@ -1506,7 +1506,7 @@ window.__ModuleLoader__.load({
         } else {
           newResult[${k}] = ${id}.value;
         }
-
+        
       `);
 				}
 				doc.write(`payload.value = newResult;`);
@@ -1960,7 +1960,7 @@ window.__ModuleLoader__.load({
 			}
 		}
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/registries.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/registries.js
 		var _a;
 		var $ZodRegistry = class {
 			constructor() {
@@ -2007,7 +2007,7 @@ window.__ModuleLoader__.load({
 		(_a = globalThis).__zod_globalRegistry ?? (_a.__zod_globalRegistry = registry());
 		const globalRegistry = globalThis.__zod_globalRegistry;
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/api.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/api.js
 		// @__NO_SIDE_EFFECTS__
 		function _string(Class, params) {
 			return new Class({
@@ -2443,7 +2443,7 @@ window.__ModuleLoader__.load({
 			return ch;
 		}
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/to-json-schema.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/to-json-schema.js
 		function initializeContext(params) {
 			let target = params?.target ?? "draft-2020-12";
 			if (target === "draft-4") target = "draft-04";
@@ -2738,7 +2738,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			return finalize(ctx, schema);
 		};
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/json-schema-processors.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/json-schema-processors.js
 		const formatMap = {
 			guid: "uuid",
 			url: "uri",
@@ -2945,7 +2945,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			seen.ref = def.innerType;
 		};
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/iso.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/iso.js
 		const ZodISODateTime = /*@__PURE__*/ $constructor("ZodISODateTime", (inst, def) => {
 			$ZodISODateTime.init(inst, def);
 			ZodStringFormat.init(inst, def);
@@ -2975,7 +2975,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			return /* @__PURE__ */ _isoDuration(ZodISODuration, params);
 		}
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/errors.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/errors.js
 		const initializer = (inst, issues) => {
 			$ZodError.init(inst, issues);
 			inst.name = "ZodError";
@@ -2997,7 +2997,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		};
 		const ZodRealError = /*@__PURE__*/ $constructor("ZodError", initializer, { Parent: Error });
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/parse.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/parse.js
 		const parse = /* @__PURE__ */ _parse(ZodRealError);
 		const parseAsync = /* @__PURE__ */ _parseAsync(ZodRealError);
 		const safeParse = /* @__PURE__ */ _safeParse(ZodRealError);
@@ -3011,7 +3011,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const safeEncodeAsync = /* @__PURE__ */ _safeEncodeAsync(ZodRealError);
 		const safeDecodeAsync = /* @__PURE__ */ _safeDecodeAsync(ZodRealError);
 		//#endregion
-		//#region ../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/schemas.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/schemas.js
 		const _installedGroups = /* @__PURE__ */ new WeakMap();
 		function _installLazyMethods(inst, group, methods) {
 			const proto = Object.getPrototypeOf(inst);
@@ -3811,7 +3811,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		//#endregion
 		//#region src/styles.ts
 		const styles = `
-.ecnu-feedback-action { width: 28px; height: 28px; padding: 0; }
+.ecnu-feedback-action { width: 28px; height: 28px; padding: 0; color: var(--dsw-alias-label-secondary); }
+.ecnu-feedback-action[aria-pressed="true"] { color: var(--dsw-alias-label-primary); }
 .ecnu-feedback-action[aria-disabled="true"] { cursor: default; opacity: .4; }
 .ecnu-feedback-dialog.ecnu-feedback-dialog { width: min(488px, 100%); max-height: 100%; }
 .ecnu-feedback-content { min-height: 0; overflow: auto; }
@@ -4009,7 +4010,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					label,
 					side: "bottom"
 				}, h(_deepseek_ai_dsh_client_ui_primitives.Button, {
-					variant: "toolbar",
+					variant: "ghost",
 					size: "sm",
 					className: "ecnu-feedback-action",
 					"aria-disabled": busy,
@@ -4018,7 +4019,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					onFocus: seed,
 					onPointerEnter: seed,
 					onClick: (event) => choose(favorite, event)
-				}, h(favorite === 1 ? active ? _deepseek_ai_dsh_client_ui_primitives.IconLikeFillRegular : _deepseek_ai_dsh_client_ui_primitives.IconLikeOutlineRegular : active ? _deepseek_ai_dsh_client_ui_primitives.IconDislikeFillRegular : _deepseek_ai_dsh_client_ui_primitives.IconDislikeOutlineRegular, { "aria-hidden": true })));
+				}, h(favorite === 1 ? active ? _deepseek_ai_dsh_client_ui_primitives.IconLikeFillRegular : _deepseek_ai_dsh_client_ui_primitives.IconLikeOutlineRegular : active ? _deepseek_ai_dsh_client_ui_primitives.IconDislikeFillRegular : _deepseek_ai_dsh_client_ui_primitives.IconDislikeOutlineRegular, {
+					"aria-hidden": true,
+					size: 16
+				})));
 			}), !open && notice && h("span", {
 				role: "status",
 				className: "ecnu-feedback-notice"
@@ -4129,3 +4133,5 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		return module.exports;
 	}
 });
+
+//# sourceMappingURL=client.js.map

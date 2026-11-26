@@ -86,7 +86,7 @@ function FeedbackActions({ sessionId, messageId, api, subscribeAccountChanges, c
       const active = current?.favorite === favorite
       const label = active ? (favorite === 1 ? '撤回点赞' : '撤回点踩') : (favorite === 1 ? '点赞' : '点踩')
       const Icon = favorite === 1 ? (active ? IconLikeFillRegular : IconLikeOutlineRegular) : (active ? IconDislikeFillRegular : IconDislikeOutlineRegular)
-      return h(Tooltip, { key: favorite, label, side: 'bottom' }, h(Button, { variant: 'toolbar', size: 'sm', className: 'ecnu-feedback-action', 'aria-disabled': busy, 'aria-label': label, 'aria-pressed': active, onFocus: seed, onPointerEnter: seed, onClick: (event: any) => choose(favorite, event) }, h(Icon, { 'aria-hidden': true })))
+      return h(Tooltip, { key: favorite, label, side: 'bottom' }, h(Button, { variant: 'ghost', size: 'sm', className: 'ecnu-feedback-action', 'aria-disabled': busy, 'aria-label': label, 'aria-pressed': active, onFocus: seed, onPointerEnter: seed, onClick: (event: any) => choose(favorite, event) }, h(Icon, { 'aria-hidden': true, size: 16 })))
     }),
     !open && notice && h('span', { role: 'status', className: 'ecnu-feedback-notice' }, notice),
     toast && h(Toast, { key: toast.id, text: toast.text, tone: 'success', onDone: () => setToast(null) }),

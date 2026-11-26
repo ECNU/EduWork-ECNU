@@ -1,6 +1,7 @@
 // Layout only: controls, modal behavior, icons and feedback use DSH primitives.
 export const styles = `
-.ecnu-feedback-action { width: 28px; height: 28px; padding: 0; }
+.ecnu-feedback-action { width: 28px; height: 28px; padding: 0; color: var(--dsw-alias-label-secondary); }
+.ecnu-feedback-action[aria-pressed="true"] { color: var(--dsw-alias-label-primary); }
 .ecnu-feedback-action[aria-disabled="true"] { cursor: default; opacity: .4; }
 .ecnu-feedback-dialog.ecnu-feedback-dialog { width: min(488px, 100%); max-height: 100%; }
 .ecnu-feedback-content { min-height: 0; overflow: auto; }

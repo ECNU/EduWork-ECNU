@@ -25,11 +25,16 @@
         "@deepseek-ai/dsh-client-ui-layout",
         "@deepseek-ai/dsh-client-ui-sidebar",
         "@deepseek-ai/dsh-client-ui-workspace",
-        "@deepseek-ai/dsh-client-ui-session"
+        "@deepseek-ai/dsh-client-ui-session",
+        "@deepseek-ai/dsh-client-ui-conversation"
       ]
     }
   },
   "license": "MulanPSL-2.0",
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.2.0",
+    "mdast-util-from-markdown": "^2.0.2"
+  },
   "files": [
     "lib",
     "README.md",
@@ -39,6 +44,7 @@
   "peerDependencies": {
     "@deepseek-ai/cordis": "~4.1.0",
     "@deepseek-ai/dsh-session": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.3",
     "@deepseek-ai/dsh-session-persistence": "0.2.2-rc.3",
     "@deepseek-ai/dsh-typert-protocol": "0.2.2-rc.3",
     "@deepseek-ai/dsh-api-remotes": "0.2.2-rc.3",
@@ -53,10 +59,7 @@
     "zod": "^4.4.3",
     "@deepseek-ai/dsh-client-ui-workspace": "0.2.2-rc.3",
     "@deepseek-ai/dsh-client-ui-session": "0.2.2-rc.3",
-    "@deepseek-ai/dsh-api-workspace-controller": "0.2.2-rc.3",
-    "@deepseek-ai/dsh-tools": "0.2.2-rc.3"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/client": "2.2.0"
+    "@deepseek-ai/dsh-client-ui-conversation": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-api-workspace-controller": "0.2.2-rc.3"
   }
 }

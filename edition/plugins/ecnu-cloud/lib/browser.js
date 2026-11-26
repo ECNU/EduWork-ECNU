@@ -7,7 +7,8 @@ const id = z.string().min(1).max(256).regex(/^[\p{L}\p{N}_-]+$/u)
 const page = z.number().int().min(1).max(10000)
 const inputSchema = z.object({ lease: z.string().uuid(), page: page.optional(), conversationID: id.optional() }).strict()
 const fail = code => { throw Object.assign(new Error(code), { code }) }
-const safeCodes = new Set(['not_connected', 'identity_unavailable', 'account_changed', 'not_configured', 'permission_denied', 'sign_in_required', 'rate_limited', 'unsupported_history', 'history_changed', 'too_large', 'invalid_response', 'missing_workspace', 'missing_directory', 'missing_or_moved_session', 'binding_needs_repair', 'workspace_changed'])
+const safeCodes = new Set(['not_connected', 'identity_unavailable', 'account_changed', 'not_configured', 'permission_denied', 'sign_in_required', 'rate_limited', 'unsupported_history', 'history_changed', 'too_large', 'invalid_response', 'missing_workspace', 'missing_directory', 'missing_or_moved_session', 'binding_needs_repair', 'workspace_changed', 'binding_changed', 'workspace_not_linked', 'project_already_linked', 'workspace_already_linked', 'timeout', 'cancelled'])
+for (const code of ['project_mapping_unavailable', 'project_unbound', 'project_workspace_mismatch', 'project_missing_workspace', 'project_missing_directory']) safeCodes.add(code)
 export function normalizeConversations(data, requestedPage, limit) {
   if (!data || !Array.isArray(data.items) || data.items.length > limit || data.page !== requestedPage || data.page_size !== limit || typeof data.has_more !== 'boolean') fail('invalid_response')
   const seen = new Set()
@@ -43,9 +44,11 @@ export function createBrowser(service) {
     return { ...account, lease: active.lease, summaries: active.summaries, pages: active.pages }
   }
   async function current(c) {
+    c.signal?.throwIfAborted()
     service.guard(c)
     const now = await service.account()
     if (now.scope !== c.scope || now.epoch !== c.epoch) fail('account_changed')
+    c.signal?.throwIfAborted()
   }
   async function read(c, operation, args) {
     await current(c)
@@ -57,7 +60,7 @@ export function createBrowser(service) {
   }
   async function run(work) {
     try { return { state: 'available', ...await work() } }
-    catch (error) { return { state: safeCodes.has(error.code) ? error.code : 'unavailable' } }
+    catch (error) { return { state: error.name === 'TimeoutError' ? 'timeout' : error.name === 'AbortError' ? 'cancelled' : safeCodes.has(error.code) ? error.code : 'unavailable' } }
   }
   async function history(c, conversationID) {
     if (!c.summaries.has(conversationID)) fail('account_changed')
@@ -88,8 +91,9 @@ export function createBrowser(service) {
       if (!latest || JSON.stringify(latest) !== JSON.stringify(c.summaries.get(conversationID))) fail('history_changed')
     },
     state: () => run(async () => ({ lease: (await context()).lease })),
-    list: input => run(async () => {
+    list: (input, signal) => run(async () => {
       const parsed = inputSchema.parse(input), c = await context(parsed.lease), number = parsed.page ?? 1
+      c.signal = signal
       const result = normalizeConversations(await read(c, 'account_list_conversations', { page: number, limit: 20 }), number, 20)
       for (const row of result.items) { c.summaries.set(row.conversationID, row); c.pages.set(row.conversationID, number) }
       // Bounded owner-only selection cache, never persist cloud content during browsing.

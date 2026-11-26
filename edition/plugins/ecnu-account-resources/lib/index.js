@@ -41,7 +41,12 @@ export class EcnuAccountResources extends TypertRemoteService {
       if (!currentStatus.credentialReady) return { state: 'not_connected' }
       if (!await account.current()) return { state: account.failureState() }
       return quota
-    } catch { return { state: account.failureState() } }
+    } catch {
+      // Logout can abort transport before its account event reaches this scope.
+      // Reconcile identity before deciding whether this is a network failure.
+      await account.current().catch(() => false)
+      return { state: account.failureState() }
+    }
   }
 }
 for (const method of ['configuration', 'quota', 'points', 'invitation', 'accountState']) Remote(method)(EcnuAccountResources.prototype[method], {

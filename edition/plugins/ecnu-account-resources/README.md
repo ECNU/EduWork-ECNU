@@ -35,4 +35,7 @@ RPC 是本包的 `ecnuAccountResources.configuration()` 和 `quota(profileID)`�
 
 接口仍由服务端校验 `points.read` 和 `invitations.write`。发行方在启用前核实学校客户端注册、现有登录范围与旧登录兼容，沿用已有鉴权配置；UI 不申请或扩大 scope，拒绝访问时显示不可用。额外 RPC `points(profileID)` 和 `invitation(profileID)` 只回传有限的显示字段，不接受任意地址或方法。模型服务基址必须匹配当前学校登录，Worker 与模型服务必须同源。默认要求 HTTPS；HTTP 联调须在本插件和学校登录 Profile 中显式设置 `allowInsecureDevelopment: true`，并由 OIDC Host 核验精确请求地址。邀请链接只允许该服务同源地址，保留返回的环境、路由与邀请码。账号变化与卸载丢弃在途结果。
 
-本地检查使用锁定的 DSH 0.2.2-rc.3 Runtime，运行 `npm run test`；设置 `DSH_OIDC_PACKAGE_ROOT` 指向公版 OIDC 编译包根目录。`test/check-browser.mjs` 验证现有配额，`test/check-points-browser.mjs` 使用具备上述插槽的公共包验证积分、邀请、服务拒绝与账号切换；均使用合成数据，不代表生产 IdP 验收。打包用 `npm pack --ignore-scripts`。
+本地检查使用锁定的 DSH 0.2.2-rc.3 Runtime，运行 `npm run test`；设置 `DSH_OIDC_PACKAGE_ROOT` 指向公版 OIDC 编译包根目录。浏览器检查同时设置 `EDUWORK_TEST_RUNTIME` 为该 Runtime 目录；如其未安装组件源码依赖，可用 `EDUWORK_UI_TEST_DEPS` 指向补充依赖目录。`test/check-browser.mjs` 验证现有配额，`test/check-points-browser.mjs` 使用具备上述插槽的公共包验证积分、邀请、服务拒绝与账号切换；均使用合成数据，不代表生产 IdP 验收。打包用 `npm pack --ignore-scripts`。
+
+
+头像下的紧凑工具行提供模型额度圆环和积分与邀请入口。圆环悬浮显示主要周期的剩余比例，点击查看各周期、重置时间和资源包余额；明细按需展开，管理入口使用服务端给出的账户页面。积分余额在图标悬浮提示中显示，点击查看积分详情和邀请操作。积分与模型额度分开显示，不相加；未知总量不生成百分比。进入额度面板、主动刷新或回到窗口时按需读取，不轮询。具备页脚插槽时，账户菜单只保留账户操作；旧客户端仍使用原有菜单额度详情。

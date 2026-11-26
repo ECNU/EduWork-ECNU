@@ -43,17 +43,27 @@ const ctx = {
     } },
   },
   on: (name, listener) => { if (!localEvents.has(name)) localEvents.set(name, new Set()); localEvents.get(name).add(listener); return () => localEvents.get(name)?.delete(listener) }, get: () => undefined, inject: (_names, callback) => callback(ctx), effect: setup => setup(),
-  slots: { inject: (_name, callback) => callback(), register: (definition, component) => { registrations.push({ ...definition, component }); return () => {} } },
+  slots: { inject: (name, callback) => name === 'oidc.account.footer.details' && new URLSearchParams(location.search).has('legacy') ? () => {} : callback(), register: (definition, component) => { registrations.push({ ...definition, component }); return () => {} } },
 }
 window.__ModuleLoader__ = { load: definition => {
   const plugin = definition.factory(name => {
     if (name === 'react') return window.React
     if (name === 'react-dom') return window.ReactDOM
+    if (name === '@deepseek-ai/dsh-client-ui-primitives') return window.DSHPrimitives
     throw new Error('Unexpected module ' + name)
   })
   loaded.push(Promise.resolve(plugin.apply(ctx)))
 } }
 window.mountFixture = async () => {
+  const sprite = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  sprite.setAttribute('aria-hidden', 'true'); sprite.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'
+  for (const [id, markup] of Object.entries(DSHPrimitives.ICON_SYMBOLS)) {
+    const svg = new DOMParser().parseFromString(markup, 'image/svg+xml').documentElement
+    const symbol = document.createElementNS(svg.namespaceURI, 'symbol'); symbol.id = id
+    for (const { name, value } of svg.attributes) if (!['width', 'height', 'xmlns', 'class', 'aria-hidden'].includes(name)) symbol.setAttribute(name, value)
+    symbol.append(...Array.from(svg.childNodes).map(node => document.importNode(node, true))); sprite.append(symbol)
+  }
+  document.body.prepend(sprite)
   await Promise.all(loaded); await new Promise(resolve => setTimeout(resolve, 0))
   const footer = registrations.find(item => item.name === 'sidebar.footer.action')
   const inject = footer.inject

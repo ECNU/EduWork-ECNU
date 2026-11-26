@@ -116,7 +116,7 @@ test('an ECNU edition does not query quota for a connected non-allowlisted enter
   assert.equal(f.requests.some(r => r.path.endsWith('/quota')), false)
 })
 
-for (const change of ['logout', 'credential-change', 'account-event']) test(`late quota after ${change} is discarded`, async t => {
+for (const change of ['logout', 'credential-change', 'account-event']) test(`late quota after ${change} follows the verified account identity`, async t => {
   let release, entered
   const blocked = new Promise(resolve => { release = resolve }), started = new Promise(resolve => { entered = resolve })
   t.after(() => release())
@@ -128,7 +128,13 @@ for (const change of ['logout', 'credential-change', 'account-event']) test(`lat
   else if (change === 'credential-change') await f.ctx.credentials.set('FIXTURE_AI_API_KEY', 'new-account-key')
   else f.ctx.emit('oidc/accounts-changed', { profileID: 'desktop-test', state: 'signed_out' })
   release()
-  assert.deepEqual(await pending, { state: 'not_connected' })
+  const result = await pending
+  // Replacing a credential under the same verified OIDC identity is a renewal,
+  // while logout or an explicit account event invalidates the pending result.
+  if (change === 'credential-change') {
+    assert.equal(result.state, 'available')
+    assert.equal(result.windows[0].remaining, 90)
+  } else assert.deepEqual(result, { state: 'not_connected' })
 })
 
 test('quota wire validation failure does not break identity or managed models', async t => {

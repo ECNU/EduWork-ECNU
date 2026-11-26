@@ -1,3 +1,4 @@
+import { primitivesAssets, primitivesHead, primitivesScript } from './primitives-fixture.mjs'
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
@@ -7,6 +8,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 const require = createRequire(import.meta.url), { chromium } = require('playwright-core')
 const publicRoot = resolve(process.env.DSH_OIDC_PACKAGE_ROOT || dirname(require.resolve('@eduwork/dsh-oidc/package.json')))
 const assets = new Map([
+  ...await primitivesAssets(),
   ['/react.js', await readFile(join(dirname(require.resolve('react/package.json')), 'umd/react.development.js'))],
   ['/react-dom.js', await readFile(join(dirname(require.resolve('react-dom/package.json')), 'umd/react-dom.development.js'))],
   ['/fixture.js', await readFile(new URL('./browser-fixture.js', import.meta.url))],
@@ -15,9 +17,9 @@ const assets = new Map([
 ])
 const server = createServer((req, res) => {
   const path = new URL(req.url, 'http://127.0.0.1').pathname
-  if (assets.has(path)) { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(assets.get(path)); return }
+  if (assets.has(path)) { res.writeHead(200, { 'content-type': req.url.endsWith('.css') ? 'text/css' : 'text/javascript' }); res.end(assets.get(path)); return }
   res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
-  res.end('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"></head><body style="font-family:system-ui;background:#f6f7fa"><div id="root"></div><script src="/react.js"></script><script src="/react-dom.js"></script><script src="/fixture.js"></script><script src="/public.js"></script><script src="/ecnu.js"></script><script>mountFixture()</script></body></html>')
+  res.end('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'+primitivesHead+'</head><body style="font-family:system-ui;background:#f6f7fa"><div id="root"></div><script src="/react.js"></script><script src="/react-dom.js"></script>'+primitivesScript+'<script src="/fixture.js"></script><script src="/public.js"></script><script src="/ecnu.js"></script><script>mountFixture()</script></body></html>')
 })
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
 const browser = await chromium.launch({ channel: 'msedge', headless: true })
@@ -29,7 +31,7 @@ page.on('pageerror', error => errors.push(error.message)); page.setDefaultTimeou
 const menu = page.getByRole('menu', { name: '账户菜单' })
 const trigger = page.getByRole('button', { name: /账户菜单/ })
 try {
-  await page.goto(`http://127.0.0.1:${server.address().port}`)
+  await page.goto(`http://127.0.0.1:${server.address().port}/?legacy=1`)
   await trigger.click(); await menu.getByRole('menuitem', { name: '配额详情' }).waitFor()
   assert.deepEqual((await page.evaluate(() => window.fixture.declarations()))['oidc.account.menu.details'], { kind: 'single', scope: 'root' })
   assert.equal(await menu.getByRole('progressbar').count(), 1)

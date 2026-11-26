@@ -25,26 +25,30 @@
   "scripts": {
     "build": "tsdown",
     "test": "node --test test/*.test.mjs",
-    "check:browser": "node test/check-browser.mjs"
+    "check:browser": "node test/check-browser.mjs",
+    "check:points": "node test/check-points-browser.mjs",
+    "check:quota-footer": "node test/check-quota-footer.mjs"
   },
   "dsh": {
     "client": {
       "inject": [
         "@deepseek-ai/dsh-client-ui-renderer",
         "@deepseek-ai/dsh-api-remotes",
-        "@eduwork/dsh-oidc"
+        "@eduwork/dsh-oidc",
+        "@deepseek-ai/dsh-client-ui-primitives"
       ],
       "platform": "web",
       "immediately": true
     }
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "4.0.2",
-    "@deepseek-ai/dsh-typert-protocol": "0.1.5-rc.1",
-    "@eduwork/dsh-oidc": "0.2.0-dev.20260910.6",
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.2-rc.3",
+    "@eduwork/dsh-oidc": "^0.3.4",
     "react": "^18.2.0",
     "zod": "^4.4.3",
-    "@deepseek-ai/dsh-api-remotes": "0.1.5-rc.1",
-    "@deepseek-ai/dsh-client-ui-renderer": "0.1.5-rc.1"
+    "@deepseek-ai/dsh-api-remotes": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-client-ui-renderer": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-client-ui-primitives": "0.2.2-rc.3"
   }
 }

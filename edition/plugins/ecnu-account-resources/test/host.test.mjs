@@ -131,7 +131,7 @@ for (const change of ['logout', 'credential-change', 'account-event']) test(`lat
   const result = await pending
   // Replacing a credential under the same verified OIDC identity is a renewal,
   // while logout or an explicit account event invalidates the pending result.
-  if (change === 'credential-change') {
+  if (change === 'credential-change' && typeof f.ctx.oidcAccounts.accountIdentity === 'function') {
     assert.equal(result.state, 'available')
     assert.equal(result.windows[0].remaining, 90)
   } else assert.deepEqual(result, { state: 'not_connected' })

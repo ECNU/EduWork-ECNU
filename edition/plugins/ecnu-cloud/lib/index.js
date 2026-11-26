@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto'
 import { principalOf, Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import { createBrowser } from './browser.js'
 import { createImporter } from './importer.js'
+import { createProjects } from './projects.js'
+import { createKnowledge, registerKnowledgeTools } from './knowledge.js'
 import { defineDomain, domainTable } from '@deepseek-ai/dsh-storage-domain'
 import { z } from 'zod'
 
@@ -23,7 +25,9 @@ function configOf(raw) {
   const base = new URL(raw.modelBaseURL)
   const development = raw.allowInsecureDevelopment === true && base.protocol === 'http:'
   if (base.protocol !== 'https:' && !development || base.username || base.password || base.search || base.hash) fail('invalid_environment')
-  return { profileID: raw.profileID, modelBaseURL: base.href.replace(/\/$/, '') }
+  const worker = new URL(raw.workerBaseURL ?? '/api/worker/v1', base)
+  if (worker.origin !== base.origin || worker.username || worker.password || worker.search || worker.hash) fail('invalid_environment')
+  return { profileID: raw.profileID, modelBaseURL: base.href.replace(/\/$/, ''), workerBaseURL: worker.href.replace(/\/$/, '') }
 }
 
 const initializers = []
@@ -48,7 +52,10 @@ export default class EcnuCloud extends TypertRemoteService {
     ctx.on('credentials/reference-updated', () => { void verify().catch(() => {}) })
     this.browser = createBrowser(this)
     this.importer = createImporter(this)
+    this.projects = createProjects(this)
     this.ready = ctx.storageDomain.open(bindingsDomain).then(domain => { this.domain = domain })
+    this.knowledge = createKnowledge(this)
+    ctx.inject(['tools'], inner => { registerKnowledgeTools(inner, this.knowledge) })
     void this.ready.catch(() => ctx.logger.warn('Cloud bindings storage unavailable'))
     ctx.effect(() => async () => {
       this.closed = true; this.epoch++
@@ -81,6 +88,13 @@ export default class EcnuCloud extends TypertRemoteService {
   cloudPreview(input) { return principalOf(this.ctx.invocation) === undefined ? this.browser.preview(input) : Promise.resolve({ state: 'permission_denied' }) }
   cloudDestination(input) { return principalOf(this.ctx.invocation) === undefined ? this.importer.destination(input) : Promise.resolve({ state: 'permission_denied' }) }
   cloudImport(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.importer.import(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudProjects(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.projects.list(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudProject(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.projects.detail(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudSource(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.projects.source(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudWorkspaceState(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.knowledge.state(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudWorkspaceBindings(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.knowledge.list(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudWorkspaceConnect(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.knowledge.connect(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
+  cloudWorkspaceDisconnect(input, signal) { return principalOf(this.ctx.invocation) === undefined ? this.knowledge.disconnect(input, signal ?? this.ctx.invocation?.signal) : Promise.resolve({ state: 'permission_denied' }) }
   operation(work) {
     // Capture the initiating identity before queuing. A queued operation must
     // not silently execute for a newly signed-in account.
@@ -171,6 +185,6 @@ export default class EcnuCloud extends TypertRemoteService {
     })
   }
 }
-for (const method of ['cloudState', 'cloudList', 'cloudPreview', 'cloudDestination', 'cloudImport']) Remote(method)(EcnuCloud.prototype[method], {
+for (const method of ['cloudState', 'cloudList', 'cloudPreview', 'cloudDestination', 'cloudImport', 'cloudProjects', 'cloudProject', 'cloudSource', 'cloudWorkspaceState', 'cloudWorkspaceConnect', 'cloudWorkspaceDisconnect', 'cloudWorkspaceBindings']) Remote(method)(EcnuCloud.prototype[method], {
   kind: 'method', name: method, static: false, private: false, addInitializer(initialize) { initializers.push(initialize) },
 })

@@ -51,7 +51,7 @@ async function fixture(t, options = {}) {
 test('browser RPC denies delegated principals before exposing an owner lease', async t => {
   const f = await fixture(t)
   const guest = f.ctx.extend({ invocation: { peer: { principal: { kind: 'agent', id: 'guest' } } } })
-  for (const method of ['cloudState', 'cloudList', 'cloudPreview', ...('cloudImport' in guest.ecnuCloud ? ['cloudDestination', 'cloudImport'] : [])]) {
+  for (const method of ['cloudState', 'cloudList', 'cloudPreview', 'cloudProjects', 'cloudProject', 'cloudSource', 'cloudWorkspaceState', 'cloudWorkspaceBindings', 'cloudWorkspaceConnect', 'cloudWorkspaceDisconnect', ...('cloudImport' in guest.ecnuCloud ? ['cloudDestination', 'cloudImport'] : [])]) {
     assert.deepEqual(await guest.ecnuCloud[method]({}), { state: 'permission_denied' })
   }
   assert.equal((await f.ctx.ecnuCloud.cloudState()).state, 'available')

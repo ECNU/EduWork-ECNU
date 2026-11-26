@@ -11,7 +11,7 @@ test('official Gateway accepts import cancellation without serializing signals a
   fibers.push(await ctx.plugin(class extends Service {
     constructor(ctx) {
       super(ctx, 'connection'); this.interactions = 'none'; this.isLoopback = true; this.generation = { getSnapshot: () => undefined }
-      this.rpc = { open: async function* () {}, call: async (path, endpoint, payload, signal) => { calls.push({ path, endpoint, payload, signal }); return { ok: true, value: { state: 'available', sessionID: 'session-synthetic', workspaceID: 'workspace', reused: false } } } }
+      this.rpc = { open: async function* () {}, call: async (path, endpoint, payload, signal) => { calls.push({ path, endpoint, payload, signal }); return { ok: true, value: endpoint.endsWith('cloudImport') ? { state: 'available', sessionID: 'session-synthetic', workspaceID: 'workspace', reused: false } : endpoint.endsWith('cloudWorkspaceBindings') ? { state: 'available', bindings: [{ projectKey: 'notebook-30', title: 'Project', workspaceID: 'workspace' }] } : { state: 'available', workspaceID: 'workspace', bindingState: 'available' } } } }
     }
   }))
   fibers.push(await ctx.plugin(Gateway))
@@ -21,4 +21,11 @@ test('official Gateway accepts import cancellation without serializing signals a
   assert.equal(calls.length, 1); assert.equal(calls[0].endpoint, 'ecnuCloud/cloudImport')
   assert.deepEqual(JSON.parse(JSON.stringify(calls[0].payload)), { args: { input } })
   controller.abort(); assert.equal(calls[0].signal.aborted, true)
+  for (const method of ['cloudWorkspaceState', 'cloudWorkspaceConnect', 'cloudWorkspaceDisconnect', 'cloudWorkspaceBindings']) {
+    const cancellation = new AbortController(), args = { lease: input.lease, ...(method === 'cloudWorkspaceBindings' ? {} : { projectKey: 'notebook-30', workspaceID: 'workspace' }) }
+    assert.equal((await ctx.remote.ecnuCloud[method](args, cancellation.signal)).ok, true)
+    const call = calls.at(-1); assert.equal(call.endpoint, 'ecnuCloud/' + method)
+    assert.deepEqual(JSON.parse(JSON.stringify(call.payload)), { args: { input: args } })
+    cancellation.abort(); assert.equal(call.signal.aborted, true)
+  }
 })

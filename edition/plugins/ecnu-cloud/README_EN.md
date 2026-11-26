@@ -2,13 +2,21 @@
 
 [简体中文](README.md)
 
-Adds a ChatECNU cloud sidebar entry with paginated conversations and complete visible-text previews. It shares the school account service's fixed read operations and existing authentication. Project defaults and conversation mappings remain Host-only.
+Adds a ChatECNU cloud sidebar entry with paginated conversations and complete visible-text previews. It shares the school account service's fixed read operations and existing authentication. The Host also exposes project reads and workspace knowledge grants; their project UI is supplied by the subsequent client integration.
 
 Previews render text without executing HTML, loading external images or replaying tools. Unsupported messages are identified. Each preview is limited to 1,000 messages and 1 MB of text.
 
-Choose a conversation, select Continue in EduWork, and use the existing workspace picker to choose or create a workspace. New messages stay local; reopening the same cloud conversation reuses its local continuation. Remembering a project's default affects future imports only, without moving sessions or downloading sources.
+Choose a conversation, select Continue in EduWork, and use the existing workspace picker to choose or create a workspace. New messages stay local; reopening the same cloud conversation reuses its local continuation. Project conversations require an explicit one-to-one knowledge link and can only continue in that workspace. The old client does not yet provide that setup. Legacy defaults grant no knowledge access, move no sessions and download no sources.
 
 Uses DSH storageDomain and workspaceRegistry. References use stable workspace IDs, so renaming does not break them. Missing directories or moved sessions return explicit states without creating directories, moving sessions or silently clearing bindings.
+
+## Project sources and workspaces
+
+Project reads reuse existing OIDC authentication for fixed read-only Notebook MCP operations: list, detail, sources, retrieval and parsed content. Cloud conversations belong to a project only when the server supplies an explicit mapping; workspace IDs are never guessed to be Notebook IDs.
+
+An explicit link connects one project to one local workspace, and one workspace to one project. Its sessions receive `ecnu_project_search`, `ecnu_project_sources` and `ecnu_project_read_source`. The Host determines scope from the real working directory; the Agent cannot select another project. Account, Profile, model base and Notebook service base partition grants. Each call rechecks the binding, source membership and cloud permissions. Disconnecting preserves local sessions and files and removes knowledge tools. Content is read on demand without original-file downloads, synchronization or cloud writes.
+
+Project binding and listing RPCs are owner-only. Legacy Host defaults remain compatible but are stored separately from knowledge grants. Project import revalidates mappings and binding revisions throughout persistence, preventing continuation into an unlinked or changed workspace.
 
 ## Integration
 
@@ -27,6 +35,8 @@ Storage is partitioned by account identity, profile and environment. No tokens a
 
 Browsing also requires the `ecnuAiconsole` read service for the same school profile. UI and Agent queries share one reader; there is no separate authentication or HTTP client. Missing services or read permissions have explicit states. The UI uses the DSH 0.2.2-rc.3 sidebar, main panel, buttons and icons.
 
+`workerBaseURL` defaults to the model service origin plus `/api/worker/v1`; trusted distribution configuration may supply another same-origin address. UI and Agent inputs cannot provide arbitrary request URLs, MCP methods or credentials. MCP reads reuse Host authentication, cancellation and timeouts without adding OAuth scopes or a consent UI.
+
 The model base requires HTTPS by default. Isolated HTTP testing requires explicit `allowInsecureDevelopment: true` in this plugin and the school login Profile; the OIDC Host still validates the service address. HTTP and HTTPS bases use separate storage partitions and cannot access each other's bindings.
 
 ## Host methods
@@ -41,7 +51,7 @@ The model base requires HTTPS by default. Isolated HTTP testing requires explici
 | forgetConversation(conversationID) | Explicitly repair a mapping without deleting the local session |
 | projectForSession(sessionID) | Resolve only this account/environment/session's project, never a directory-wide project scope |
 
-Only trusted Host adapters may call these methods. UI and Agent callers must not supply account identities, environments or storage keys. A future server adapter must establish project IDs; cloud workspaceId must not be inferred to be a Notebook ID.
+Only trusted Host adapters may call these compatibility methods; they do not grant workspace knowledge access. UI and Agent callers must not supply account identities, environments or storage keys. A future server adapter must establish project IDs; cloud workspaceId must not be inferred to be a Notebook ID.
 
 ## Boundaries and validation
 

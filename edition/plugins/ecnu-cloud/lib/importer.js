@@ -53,23 +53,42 @@ export function createImporter(service) {
   const request = z.object({ lease: z.string().uuid(), conversationID: id, workspaceID: id.optional(), snapshot: z.string().length(64).optional(), rememberProject: z.boolean().optional() }).strict()
   const current = async c => { if (disposed) fail('closed'); if (c.signal?.aborted) fail('cancelled'); await service.browser.current(c); if (c.signal?.aborted) fail('cancelled') }
   const jobKey = c => digest([c.scope, c.conversationID])
+  async function projectDestination(c, conversationID) {
+    const project = await service.projects.forConversation(c, conversationID)
+    if (!project) return null
+    return { ...await service.knowledge.projectState(c, project.projectKey), projectKey: project.projectKey }
+  }
   async function destination(input) {
     const p = request.parse(input), c = await service.browser.context(p.lease)
     if (!c.summaries.has(p.conversationID)) fail('account_changed')
     await ready; await current(c)
+    await service.browser.verifySummary(c, p.conversationID)
     const binding = await service.conversation(p.conversationID)
     const job = domain.table('jobs').get(jobKey({ ...c, conversationID: p.conversationID }))
     const projectID = c.summaries.get(p.conversationID).projectID
-    const preferred = projectID ? await service.projectWorkspace(projectID) : { state: 'unbound' }
+    const preferred = await projectDestination(c, p.conversationID)
+    const misplaced = preferred && binding.workspaceID && preferred.workspaceID !== binding.workspaceID
     await current(c)
-    return { bindingState: binding.state, sessionID: binding.sessionID, workspaceID: binding.workspaceID ?? job?.workspaceID ?? (preferred.state === 'available' ? preferred.workspaceID : undefined), pending: !!job && job.phase !== 'bound', rememberProject: job?.rememberProject ?? false, projectID }
+    return { bindingState: misplaced ? 'project_workspace_mismatch' : preferred && preferred.state !== 'available' ? 'project_' + preferred.state : binding.state, sessionID: binding.sessionID, workspaceID: preferred?.workspaceID ?? binding.workspaceID ?? job?.workspaceID, projectKey: preferred?.projectKey, pending: !!job && job.phase !== 'bound', rememberProject: job?.rememberProject ?? false, projectID }
   }
   async function perform(input, c) {
     await ready; await current(c)
     const table = domain.table('jobs'), key = jobKey({ ...c, conversationID: input.conversationID })
     let job = table.get(key)
+    await service.browser.verifySummary(c, input.conversationID)
+    const project = await projectDestination(c, input.conversationID)
+    const checkProject = async workspaceID => {
+      if (!project) return
+      const now = await projectDestination(c, input.conversationID)
+      if (now.state !== 'available') fail('project_' + now.state)
+      if (now.workspaceID !== workspaceID) fail('project_workspace_mismatch')
+      if (now.revision !== project.revision) fail('binding_changed')
+    }
+    if (project && project.state !== 'available') fail('project_' + project.state)
+    if (project && input.workspaceID && input.workspaceID !== project.workspaceID) fail('project_workspace_mismatch')
     const existing = await service.conversation(input.conversationID)
     if (existing.state === 'available') {
+      await checkProject(existing.workspaceID)
       if (job && job.phase !== 'bound') {
         if (job.sessionID !== existing.sessionID || job.workspaceID !== existing.workspaceID) fail('binding_needs_repair')
         await current(c)
@@ -80,10 +99,11 @@ export function createImporter(service) {
     }
     if (existing.state !== 'unbound') fail(existing.state)
     if (job && job.phase === 'bound') fail('binding_needs_repair')
-    const workspaceID = job?.workspaceID ?? id.parse(input.workspaceID)
+    const workspaceID = job?.workspaceID ?? project?.workspaceID ?? id.parse(input.workspaceID)
     if (job && input.workspaceID !== workspaceID) fail('workspace_changed')
     const checkWorkspace = async () => {
       await current(c)
+      await checkProject(workspaceID)
       const status = await service.workspace(workspaceID)
       if (status.state !== 'available') fail(status.state)
       const workspace = service.ctx.workspaceRegistry.get(workspaceID)
@@ -121,11 +141,11 @@ export function createImporter(service) {
     job = { ...job, phase: 'persisted' }; await table.put(key, job)
     workspace = await checkWorkspace()
     await workspace.attachSession(job.sessionID)
-    await current(c)
+    await current(c); await checkProject(workspaceID)
     await service.rememberConversation(job.conversationID, job.sessionID, workspaceID, job.projectID)
     await current(c)
     if (job.rememberProject && job.projectID) await service.bindProject(job.projectID, workspaceID)
-    await current(c)
+    await current(c); await checkProject(workspaceID)
     await table.put(key, { ...job, phase: 'bound', events: [] })
     return { sessionID: job.sessionID, workspaceID, reused: false }
   }

@@ -20,7 +20,22 @@ async function fixture(t, reuse) {
   const stop = async () => { if (closed) return; closed = true; for (const fiber of fibers.toReversed()) await fiber.dispose() }
   t.after(stop)
   for (const [plugin, config] of [[Storage], [Json, { root: join(root, 'store') }], [Domains, { backend: 'json' }], [Persistence, { root: join(root, 'sessions') }], [Workspaces]]) fibers.push(await ctx.plugin(plugin, config))
-  fibers.push(await ctx.plugin(class extends Service { constructor(ctx) { super(ctx, 'oidcAccounts') } async modelAuthorization() { return true } async accountIdentity() { return { profileID: 'school', accountID: identity } } }))
+  fibers.push(await ctx.plugin(class extends Service {
+    constructor(ctx) { super(ctx, 'oidcAccounts') }
+    async modelAuthorization() { return true }
+    async accountIdentity() { return { profileID: 'school', accountID: identity } }
+    async authorizedFetch(_profile, url, init) {
+      if (url.endsWith('/conversations/cloud-one')) return Response.json({ workspaceId: project, workspaceContext: { workspace_id: project, legacy_notebook_id: 30 } })
+      assert.ok(url.endsWith('/mcp/notebook'))
+      if (init.method === 'GET') return new Response(null, { status: 405 })
+      const req = JSON.parse(init.body)
+      if (req.method === 'notifications/initialized') return new Response(null, { status: 202 })
+      if (req.method === 'initialize') return Response.json({ jsonrpc: '2.0', id: req.id, result: { protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'synthetic', version: '1' } } })
+      const { name } = req.params
+      const data = name === 'notebook_list' ? { code: 0, result: [{ id: 30, name: 'Project' }], next: null } : { code: 0, result: { id: 30 } }
+      return Response.json({ jsonrpc: '2.0', id: req.id, result: { content: [{ type: 'text', text: JSON.stringify(data) }] } })
+    }
+  }))
   fibers.push(await ctx.plugin(class extends Service {
     constructor(ctx) { super(ctx, 'ecnuAiconsole'); this.profileID = 'school' }
     async read(operation, args) { return { data: operation === 'account_list_conversations'
@@ -33,7 +48,7 @@ async function fixture(t, reuse) {
   fibers.push(await ctx.plugin(Cloud, { profileID: 'school', modelBaseURL: 'https://example.org/open/api/v1' })); await ctx.ecnuCloud.ready; await ctx.ecnuCloud.importer.ready
   return { ctx, root, stop, move() { project = 'project-two' }, edit() { text = 'CHANGED' }, change() { identity = 'b'; ctx.emit('oidc/accounts-changed', { profileID: 'school', state: 'connected', authorizationChanged: true }) },
     async workspace(name = 'work') { const path = join(root, name); await mkdir(path, { recursive: true }); return ctx.workspaceRegistry.create(path) },
-    async input(workspaceID) { const state = await ctx.ecnuCloud.cloudState(); await ctx.ecnuCloud.cloudList({ lease: state.lease }); const p = await ctx.ecnuCloud.cloudPreview({ lease: state.lease, conversationID: 'cloud-one' }); assert.equal(p.state, 'available'); return { lease: state.lease, conversationID: 'cloud-one', workspaceID, snapshot: p.snapshot, rememberProject: true } },
+    async input(workspaceID, connect = true) { const state = await ctx.ecnuCloud.cloudState(); await ctx.ecnuCloud.cloudList({ lease: state.lease }); assert.equal((await ctx.ecnuCloud.cloudProjects({ lease: state.lease })).state, 'available'); if (connect) assert.equal((await ctx.ecnuCloud.cloudWorkspaceConnect({ lease: state.lease, projectKey: 'notebook-30', workspaceID })).state, 'available'); const p = await ctx.ecnuCloud.cloudPreview({ lease: state.lease, conversationID: 'cloud-one' }); assert.equal(p.state, 'available'); return { lease: state.lease, conversationID: 'cloud-one', workspaceID, snapshot: p.snapshot, rememberProject: true } },
   }
 }
 test('official Session validates imported visible history without model execution; concurrent imports deduplicate and survive restart', async t => {
@@ -56,7 +71,7 @@ test('changed source snapshot and invalid workspace are rejected before any sess
   f.edit(); assert.equal((await f.ctx.ecnuCloud.cloudImport(input)).state, 'history_changed')
   assert.equal((await f.ctx.sessionPersistence.list()).length, 0)
   const fresh = await f.input(w.id); await rename(w.path, join(f.root, 'moved'))
-  assert.equal((await f.ctx.ecnuCloud.cloudImport(fresh)).state, 'missing_directory')
+  assert.equal((await f.ctx.ecnuCloud.cloudImport(fresh)).state, 'project_missing_directory')
   assert.equal((await f.ctx.sessionPersistence.list()).length, 0)
 })
 test('append, flush, attach and mapping failures resume the same durable job across restart', async t => {
@@ -110,4 +125,18 @@ test('cancellation after a durable prefix stops attachment and resumes the reser
 })
 test('converter rejects non-user opening and never imports tool or system history', () => {
   assert.throws(() => convertHistory({ importable: false, messages: [{ role: 'system' }] }, 'session-one', 'x'), { code: 'unsupported_history' })
+})
+
+test('project import requires the explicit unique knowledge binding and rejects another destination even on reuse', async t => {
+  const f = await fixture(t), w = await f.workspace(), other = await f.workspace('other'), input = await f.input(w.id, false)
+  assert.equal((await f.ctx.ecnuCloud.cloudDestination(input)).bindingState, 'project_unbound')
+  assert.equal((await f.ctx.ecnuCloud.cloudImport(input)).state, 'project_unbound')
+  assert.equal((await f.ctx.sessionPersistence.list()).length, 0)
+  await f.ctx.ecnuCloud.cloudWorkspaceConnect({ lease: input.lease, projectKey: 'notebook-30', workspaceID: w.id })
+  assert.equal((await f.ctx.ecnuCloud.cloudImport({ ...input, workspaceID: other.id })).state, 'project_workspace_mismatch')
+  const accepted = await f.ctx.ecnuCloud.cloudImport(input); assert.equal(accepted.state, 'available')
+  assert.equal((await f.ctx.ecnuCloud.cloudImport({ ...input, workspaceID: other.id })).state, 'project_workspace_mismatch')
+  await f.ctx.ecnuCloud.cloudWorkspaceDisconnect({ lease: input.lease, projectKey: 'notebook-30', workspaceID: w.id })
+  assert.equal((await f.ctx.ecnuCloud.cloudImport(input)).state, 'project_unbound')
+  assert.equal((await f.ctx.sessionPersistence.list()).length, 1)
 })

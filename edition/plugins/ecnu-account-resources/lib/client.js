@@ -21,15 +21,17 @@ window.__ModuleLoader__.load({
 			}
 			return to;
 		};
-		var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+		var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp.call(mod, "default") ? __defProp(target, "default", {
 			value: mod,
 			enumerable: true
 		}) : target, mod));
 		//#endregion
 		let react = require("react");
 		react = __toESM(react, 1);
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/core.js
+		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/core.js
 		var _a$1;
+		/* @__NO_SIDE_EFFECTS__ */
 		function $constructor(name, initializer, params) {
 			function init(inst, def) {
 				if (!inst._zod) Object.defineProperty(inst, "_zod", {
@@ -87,7 +89,7 @@ window.__ModuleLoader__.load({
 			return globalConfig;
 		}
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/util.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/util.js
 		function getEnumValues(entries) {
 			const numericValues = Object.values(entries).filter((v) => typeof v === "number");
 			return Object.entries(entries).filter(([k, _]) => numericValues.indexOf(+k) === -1).map(([_, v]) => v);
@@ -103,7 +105,6 @@ window.__ModuleLoader__.load({
 					Object.defineProperty(this, "value", { value });
 					return value;
 				}
-				throw new Error("cached value already set");
 			} };
 		}
 		function nullish(input) {
@@ -149,7 +150,10 @@ window.__ModuleLoader__.load({
 		}
 		function mergeDefs(...defs) {
 			const mergedDescriptors = {};
-			for (const def of defs) Object.assign(mergedDescriptors, Object.getOwnPropertyDescriptors(def));
+			for (const def of defs) {
+				const descriptors = Object.getOwnPropertyDescriptors(def);
+				Object.assign(mergedDescriptors, descriptors);
+			}
 			return Object.defineProperties({}, mergedDescriptors);
 		}
 		function esc(str) {
@@ -399,7 +403,7 @@ window.__ModuleLoader__.load({
 			return { ...iss };
 		}
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/errors.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/errors.js
 		const initializer$1 = (inst, def) => {
 			inst.name = "$ZodError";
 			Object.defineProperty(inst, "_zod", {
@@ -416,8 +420,8 @@ window.__ModuleLoader__.load({
 				enumerable: false
 			});
 		};
-		const $ZodError = $constructor("$ZodError", initializer$1);
-		const $ZodRealError = $constructor("$ZodError", initializer$1, { Parent: Error });
+		const $ZodError = /* @__PURE__ */ $constructor("$ZodError", initializer$1);
+		const $ZodRealError = /* @__PURE__ */ $constructor("$ZodError", initializer$1, { Parent: Error });
 		function flattenError(error, mapper = (issue) => issue.message) {
 			const fieldErrors = {};
 			const formErrors = [];
@@ -459,7 +463,7 @@ window.__ModuleLoader__.load({
 			return fieldErrors;
 		}
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/parse.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/parse.js
 		const _parse = (_Err) => (schema, value, _ctx, _params) => {
 			const ctx = _ctx ? {
 				..._ctx,
@@ -573,7 +577,7 @@ window.__ModuleLoader__.load({
 			return _safeParseAsync(_Err)(schema, value, _ctx);
 		};
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/regexes.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/regexes.js
 		/**
 		* @deprecated CUID v1 is deprecated by its authors due to information leakage
 		* (timestamps embedded in the id). Use {@link cuid2} instead.
@@ -611,7 +615,7 @@ window.__ModuleLoader__.load({
 		const httpProtocol = /^https?$/;
 		const e164 = /^\+[1-9]\d{6,14}$/;
 		const dateSource = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`;
-		const date$1 = /*@__PURE__*/ new RegExp(`^${dateSource}$`);
+		const date$3 = /*@__PURE__*/ new RegExp(`^${dateSource}$`);
 		function timeSource(args) {
 			const hhmm = `(?:[01]\\d|2[0-3]):[0-5]\\d`;
 			return typeof args.precision === "number" ? args.precision === -1 ? `${hhmm}` : args.precision === 0 ? `${hhmm}:[0-5]\\d` : `${hhmm}:[0-5]\\d\\.\\d{${args.precision}}` : `${hhmm}(?::[0-5]\\d(?:\\.\\d+)?)?`;
@@ -636,7 +640,7 @@ window.__ModuleLoader__.load({
 		const lowercase = /^[^A-Z]*$/;
 		const uppercase = /^[^a-z]*$/;
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/checks.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/checks.js
 		const $ZodCheck = /*@__PURE__*/ $constructor("$ZodCheck", (inst, def) => {
 			var _a;
 			inst._zod ?? (inst._zod = {});
@@ -654,8 +658,10 @@ window.__ModuleLoader__.load({
 			inst._zod.onattach.push((inst) => {
 				const bag = inst._zod.bag;
 				const curr = (def.inclusive ? bag.maximum : bag.exclusiveMaximum) ?? Number.POSITIVE_INFINITY;
-				if (def.value < curr) if (def.inclusive) bag.maximum = def.value;
-				else bag.exclusiveMaximum = def.value;
+				if (def.value < curr) {
+					if (def.inclusive) bag.maximum = def.value;
+					else bag.exclusiveMaximum = def.value;
+				}
 			});
 			inst._zod.check = (payload) => {
 				if (def.inclusive ? payload.value <= def.value : payload.value < def.value) return;
@@ -676,8 +682,10 @@ window.__ModuleLoader__.load({
 			inst._zod.onattach.push((inst) => {
 				const bag = inst._zod.bag;
 				const curr = (def.inclusive ? bag.minimum : bag.exclusiveMinimum) ?? Number.NEGATIVE_INFINITY;
-				if (def.value > curr) if (def.inclusive) bag.minimum = def.value;
-				else bag.exclusiveMinimum = def.value;
+				if (def.value > curr) {
+					if (def.inclusive) bag.minimum = def.value;
+					else bag.exclusiveMinimum = def.value;
+				}
 			});
 			inst._zod.check = (payload) => {
 				if (def.inclusive ? payload.value >= def.value : payload.value > def.value) return;
@@ -994,7 +1002,7 @@ window.__ModuleLoader__.load({
 			};
 		});
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/doc.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/doc.js
 		var Doc = class {
 			constructor(args = []) {
 				this.content = [];
@@ -1025,14 +1033,14 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/versions.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/versions.js
 		const version = {
 			major: 4,
 			minor: 4,
 			patch: 3
 		};
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/schemas.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/schemas.js
 		const $ZodType = /*@__PURE__*/ $constructor("$ZodType", (inst, def) => {
 			var _a;
 			inst ?? (inst = {});
@@ -1263,7 +1271,7 @@ window.__ModuleLoader__.load({
 			$ZodStringFormat.init(inst, def);
 		});
 		const $ZodISODate = /*@__PURE__*/ $constructor("$ZodISODate", (inst, def) => {
-			def.pattern ?? (def.pattern = date$1);
+			def.pattern ?? (def.pattern = date$3);
 			$ZodStringFormat.init(inst, def);
 		});
 		const $ZodISOTime = /*@__PURE__*/ $constructor("$ZodISOTime", (inst, def) => {
@@ -1630,7 +1638,7 @@ window.__ModuleLoader__.load({
             })));
           }
         }
-
+        
         if (${id}.value === undefined) {
           if (${k} in input) {
             newResult[${k}] = undefined;
@@ -1638,7 +1646,7 @@ window.__ModuleLoader__.load({
         } else {
           newResult[${k}] = ${id}.value;
         }
-
+        
       `);
 					else if (!isOptionalIn) doc.write(`
         const ${id}_present = ${k} in input;
@@ -1673,7 +1681,7 @@ window.__ModuleLoader__.load({
             path: iss.path ? [${k}, ...iss.path] : [${k}]
           })));
         }
-
+        
         if (${id}.value === undefined) {
           if (${k} in input) {
             newResult[${k}] = undefined;
@@ -1681,7 +1689,7 @@ window.__ModuleLoader__.load({
         } else {
           newResult[${k}] = ${id}.value;
         }
-
+        
       `);
 				}
 				doc.write(`payload.value = newResult;`);
@@ -1917,7 +1925,7 @@ window.__ModuleLoader__.load({
 			inst._zod.optin = "optional";
 			inst._zod.optout = "optional";
 			defineLazy(inst._zod, "values", () => {
-				return def.innerType._zod.values ? new Set([...def.innerType._zod.values, void 0]) : void 0;
+				return def.innerType._zod.values ? /* @__PURE__ */ new Set([...def.innerType._zod.values, void 0]) : void 0;
 			});
 			defineLazy(inst._zod, "pattern", () => {
 				const pattern = def.innerType._zod.pattern;
@@ -1951,7 +1959,7 @@ window.__ModuleLoader__.load({
 				return pattern ? new RegExp(`^(${cleanRegex(pattern.source)}|null)$`) : void 0;
 			});
 			defineLazy(inst._zod, "values", () => {
-				return def.innerType._zod.values ? new Set([...def.innerType._zod.values, null]) : void 0;
+				return def.innerType._zod.values ? /* @__PURE__ */ new Set([...def.innerType._zod.values, null]) : void 0;
 			});
 			inst._zod.parse = (payload, ctx) => {
 				if (payload.value === null) return payload;
@@ -2117,7 +2125,7 @@ window.__ModuleLoader__.load({
 			}
 		}
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/registries.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/registries.js
 		var _a;
 		var $ZodRegistry = class {
 			constructor() {
@@ -2164,7 +2172,7 @@ window.__ModuleLoader__.load({
 		(_a = globalThis).__zod_globalRegistry ?? (_a.__zod_globalRegistry = registry());
 		const globalRegistry = globalThis.__zod_globalRegistry;
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/api.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/api.js
 		// @__NO_SIDE_EFFECTS__
 		function _string(Class, params) {
 			return new Class({
@@ -2662,7 +2670,7 @@ window.__ModuleLoader__.load({
 			return ch;
 		}
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/to-json-schema.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/to-json-schema.js
 		function initializeContext(params) {
 			let target = params?.target ?? "draft-2020-12";
 			if (target === "draft-4") target = "draft-04";
@@ -2878,8 +2886,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					defs[seen.defId] = seen.def;
 				}
 			}
-			if (ctx.external) {} else if (Object.keys(defs).length > 0) if (ctx.target === "draft-2020-12") result.$defs = defs;
-			else result.definitions = defs;
+			if (ctx.external) {} else if (Object.keys(defs).length > 0) {
+				if (ctx.target === "draft-2020-12") result.$defs = defs;
+				else result.definitions = defs;
+			}
 			try {
 				const finalized = JSON.parse(JSON.stringify(result));
 				Object.defineProperty(finalized, "~standard", {
@@ -2955,7 +2965,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			return finalize(ctx, schema);
 		};
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/core/json-schema-processors.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/core/json-schema-processors.js
 		const formatMap = {
 			guid: "uuid",
 			url: "uri",
@@ -2992,16 +3002,18 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			const exMin = typeof exclusiveMinimum === "number" && exclusiveMinimum >= (minimum ?? Number.NEGATIVE_INFINITY);
 			const exMax = typeof exclusiveMaximum === "number" && exclusiveMaximum <= (maximum ?? Number.POSITIVE_INFINITY);
 			const legacy = ctx.target === "draft-04" || ctx.target === "openapi-3.0";
-			if (exMin) if (legacy) {
-				json.minimum = exclusiveMinimum;
-				json.exclusiveMinimum = true;
-			} else json.exclusiveMinimum = exclusiveMinimum;
-			else if (typeof minimum === "number") json.minimum = minimum;
-			if (exMax) if (legacy) {
-				json.maximum = exclusiveMaximum;
-				json.exclusiveMaximum = true;
-			} else json.exclusiveMaximum = exclusiveMaximum;
-			else if (typeof maximum === "number") json.maximum = maximum;
+			if (exMin) {
+				if (legacy) {
+					json.minimum = exclusiveMinimum;
+					json.exclusiveMinimum = true;
+				} else json.exclusiveMinimum = exclusiveMinimum;
+			} else if (typeof minimum === "number") json.minimum = minimum;
+			if (exMax) {
+				if (legacy) {
+					json.maximum = exclusiveMaximum;
+					json.exclusiveMaximum = true;
+				} else json.exclusiveMaximum = exclusiveMaximum;
+			} else if (typeof maximum === "number") json.maximum = maximum;
 			if (typeof multipleOf === "number") json.multipleOf = multipleOf;
 		};
 		const neverProcessor = (_schema, _ctx, json, _params) => {
@@ -3160,7 +3172,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			seen.ref = def.innerType;
 		};
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/classic/iso.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/iso.js
 		const ZodISODateTime = /*@__PURE__*/ $constructor("ZodISODateTime", (inst, def) => {
 			$ZodISODateTime.init(inst, def);
 			ZodStringFormat.init(inst, def);
@@ -3172,7 +3184,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			$ZodISODate.init(inst, def);
 			ZodStringFormat.init(inst, def);
 		});
-		function date(params) {
+		function date$2(params) {
 			return /* @__PURE__ */ _isoDate(ZodISODate, params);
 		}
 		const ZodISOTime = /*@__PURE__*/ $constructor("ZodISOTime", (inst, def) => {
@@ -3190,7 +3202,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			return /* @__PURE__ */ _isoDuration(ZodISODuration, params);
 		}
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/classic/errors.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/errors.js
 		const initializer = (inst, issues) => {
 			$ZodError.init(inst, issues);
 			inst.name = "ZodError";
@@ -3212,7 +3224,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		};
 		const ZodRealError = /*@__PURE__*/ $constructor("ZodError", initializer, { Parent: Error });
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/classic/parse.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/parse.js
 		const parse = /* @__PURE__ */ _parse(ZodRealError);
 		const parseAsync = /* @__PURE__ */ _parseAsync(ZodRealError);
 		const safeParse = /* @__PURE__ */ _safeParse(ZodRealError);
@@ -3226,7 +3238,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const safeEncodeAsync = /* @__PURE__ */ _safeEncodeAsync(ZodRealError);
 		const safeDecodeAsync = /* @__PURE__ */ _safeDecodeAsync(ZodRealError);
 		//#endregion
-		//#region ../../../../../eduwork-litellm-20260921/EduWork/resources/product/d/node_modules/zod/v4/classic/schemas.js
+		//#region ../../../../../oidc-account-footer/packages/dsh-oidc/node_modules/zod/v4/classic/schemas.js
 		const _installedGroups = /* @__PURE__ */ new WeakMap();
 		function _installLazyMethods(inst, group, methods) {
 			const proto = Object.getPrototypeOf(inst);
@@ -3472,7 +3484,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			inst.cidrv6 = (params) => inst.check(/* @__PURE__ */ _cidrv6(ZodCIDRv6, params));
 			inst.e164 = (params) => inst.check(/* @__PURE__ */ _e164(ZodE164, params));
 			inst.datetime = (params) => inst.check(datetime(params));
-			inst.date = (params) => inst.check(date(params));
+			inst.date = (params) => inst.check(date$2(params));
 			inst.time = (params) => inst.check(time(params));
 			inst.duration = (params) => inst.check(duration(params));
 		});
@@ -3739,11 +3751,12 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			});
 		});
 		function object(shape, params) {
-			return new ZodObject({
+			const def = {
 				type: "object",
 				shape: shape ?? {},
 				...normalizeParams(params)
-			});
+			};
+			return new ZodObject(def);
 		}
 		const ZodUnion = /*@__PURE__*/ $constructor("ZodUnion", (inst, def) => {
 			$ZodUnion.init(inst, def);
@@ -3801,9 +3814,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			};
 		});
 		function _enum(values, params) {
+			const entries = Array.isArray(values) ? Object.fromEntries(values.map((v) => [v, v])) : values;
 			return new ZodEnum({
 				type: "enum",
-				entries: Array.isArray(values) ? Object.fromEntries(values.map((v) => [v, v])) : values,
+				entries,
 				...normalizeParams(params)
 			});
 		}
@@ -3982,7 +3996,38 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			schema,
 			create: () => schema
 		});
-		const configurationResult = strict("Configuration", object({ profileIDs: array(string().max(64)).max(64) }).strict());
+		const configurationResult = strict("Configuration", object({
+			profileIDs: array(string().max(64)).max(64),
+			pointsProfileID: string().max(64).nullable().optional()
+		}).strict());
+		const serviceState = _enum([
+			"available",
+			"unavailable",
+			"not_connected",
+			"not_configured",
+			"permission_denied",
+			"expired"
+		]);
+		const accountRevision = string().uuid().optional();
+		const accountStateResult = strict("AccountState", object({
+			state: serviceState,
+			accountRevision
+		}).strict());
+		const pointsResult = strict("Points", object({
+			state: serviceState,
+			accountRevision,
+			currentPoints: number().nonnegative().optional(),
+			nextExpiryAt: string().nullable().optional(),
+			nextExpiryPoints: nullableNumber.optional(),
+			expiryNotice: string().max(2e3).optional()
+		}).strict());
+		const invitationResult = strict("Invitation", object({
+			state: serviceState,
+			accountRevision,
+			referralCode: string().max(256).optional(),
+			expiresAt: string().optional(),
+			inviteURL: string().url().max(4096).optional()
+		}).strict());
 		const quotaResult = strict("Quota", object({
 			state: _enum([
 				"available",
@@ -4014,20 +4059,37 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		//#region lib/typert.remote-client.js
 		const TYPERT_REMOTE = {
 			package: "@chatecnu-work/dsh-ecnu-account-resources",
-			descriptors: [[
-				"configuration",
-				[],
-				configurationResult
-			], [
-				"quota",
-				[{
-					name: "profileID",
-					wire: "profileID",
-					source: "json",
-					codec: strict("ProfileID", string().min(1).max(64))
-				}],
-				quotaResult
-			]].map(([method, parameters, result]) => ({
+			descriptors: [
+				[
+					"configuration",
+					[],
+					configurationResult
+				],
+				[
+					"quota",
+					[{
+						name: "profileID",
+						wire: "profileID",
+						source: "json",
+						codec: strict("ProfileID", string().min(1).max(64))
+					}],
+					quotaResult
+				],
+				...[
+					["points", pointsResult],
+					["invitation", invitationResult],
+					["accountState", accountStateResult]
+				].map(([method, result]) => [
+					method,
+					[{
+						name: "profileID",
+						wire: "profileID",
+						source: "json",
+						codec: strict("ProfileID", string().min(1).max(64))
+					}],
+					result
+				])
+			].map(([method, parameters, result]) => ({
 				id: `${pkg}#ecnuAccountResources/${method}`,
 				service: "ecnuAccountResources",
 				namespace: "ecnuAccountResources",
@@ -4066,6 +4128,475 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			};
 		}
 		//#endregion
+		//#region src/points-styles.ts
+		const pointsStyles = `
+.ecnu-rewards-footer{display:flex;align-items:center;gap:3px;padding:0;font-size:12px;min-width:0;color:var(--dsw-alias-label-secondary)}
+.ecnu-rewards-balance{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:none;border:0;background:transparent;color:inherit;border-radius:7px;cursor:pointer;padding:0}
+.ecnu-rewards-balance:hover,.ecnu-rewards-balance[aria-expanded=true]{background:var(--dsw-alias-interactive-bg-hover)}.ecnu-rewards-balance:disabled{opacity:.55;cursor:default}.ecnu-rewards-footer button:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:1px}
+.ecnu-rewards-rail{padding:0;justify-content:center}
+.ecnu-rewards-dialog{width:480px;max-width:100%;max-height:100%;color:var(--dsw-alias-label-primary)}.ecnu-rewards-content{min-height:0;overflow-y:auto}
+.ecnu-rewards-summary{padding:0 0 20px}.ecnu-rewards-summary-heading{display:flex;align-items:center;justify-content:space-between;color:var(--dsw-alias-label-secondary);font-size:12px}
+.ecnu-rewards-total{display:flex;align-items:baseline;gap:8px;font-size:36px;font-weight:600;line-height:1.25;letter-spacing:-1px;font-variant-numeric:tabular-nums;margin:4px 0 10px}.ecnu-rewards-total>span{font-size:12px;font-weight:400;letter-spacing:0;color:var(--dsw-alias-label-secondary)}
+.ecnu-rewards-expiry{margin:3px 0 0;font-size:12px;line-height:1.7;color:var(--dsw-alias-label-secondary)}.ecnu-rewards-expiry strong{font-weight:500}.ecnu-rewards-unavailable{margin:10px 0;color:var(--dsw-alias-label-secondary)}
+.ecnu-rewards-sharing{border-top:1px solid var(--dsw-alias-border-l2);padding-top:20px}.ecnu-rewards-sharing-heading{display:flex;align-items:center;gap:10px;margin-bottom:18px}.ecnu-rewards-gift{display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border-radius:10px;background:var(--dsw-alias-state-business-accent,#a3233e0d);color:var(--dsw-alias-state-business-primary)}
+.ecnu-rewards-sharing h3{margin:0;font-size:14px;font-weight:600}.ecnu-rewards-sharing-heading p{margin:4px 0 0;font-size:12px;line-height:1.6;color:var(--dsw-alias-label-secondary)}
+.ecnu-rewards-primary{color:#fff!important}.ecnu-rewards-rule{margin:14px 0 0;font-size:11px;line-height:1.6;color:var(--dsw-alias-label-secondary)}
+.ecnu-rewards-link-label{display:block;font-size:12px;color:var(--dsw-alias-label-secondary);margin-bottom:7px}.ecnu-rewards-link{display:flex;gap:6px;align-items:center;padding:6px;border:1px solid var(--dsw-alias-border-l2);border-radius:9px;background:var(--dsw-alias-interactive-bg-hover)}.ecnu-rewards-link:focus-within{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:1px}
+.ecnu-rewards-link input{font:inherit;font-size:12px;min-width:0;flex:1;border:0;outline:none;background:transparent;color:inherit;padding:4px 6px;text-overflow:ellipsis}.ecnu-rewards-link button{flex:none}.ecnu-rewards-link-meta{display:flex;flex-direction:column;gap:4px;margin-top:10px;font-size:11px;color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}.ecnu-rewards-code{font-variant-numeric:tabular-nums}
+.ecnu-rewards-notice{margin:10px 0 0;font-size:12px;line-height:1.6;color:var(--dsw-alias-label-secondary)}.ecnu-rewards-notice:empty{display:none}.ecnu-rewards-error{font-size:12px;color:var(--dsw-alias-state-error-primary);line-height:1.6}
+`;
+		//#endregion
+		//#region src/points.ts
+		const h$2 = react.default.createElement;
+		const date$1 = (value) => new Date(value).toLocaleString("zh-CN", {
+			timeZone: "Asia/Shanghai",
+			hour12: false,
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+			hour: "2-digit",
+			minute: "2-digit"
+		}) + "（北京时间）";
+		const messages = {
+			unavailable: "服务暂不可用，请稍后重试。",
+			not_configured: "此功能尚未启用。",
+			not_connected: "请重新登录学校账户。",
+			permission_denied: "当前账户暂时无法使用此功能，请到 ChatECNU 查看或联系管理员。",
+			expired: "邀请链接已过期，请重新获取。"
+		};
+		const gift = h$2("svg", {
+			viewBox: "0 0 24 24",
+			width: 18,
+			height: 18,
+			fill: "none",
+			stroke: "currentColor",
+			strokeWidth: 1.6,
+			"aria-hidden": true
+		}, h$2("path", { d: "M4 10h16v11H4zM3 6h18v4H3zM12 6v15M12 6H8a2.5 2.5 0 1 1 2.5-2.5L12 6Zm0 0h4a2.5 2.5 0 1 0-2.5-2.5L12 6Z" }));
+		function PointsFooter({ profile, status, wide, pointsProfileID, readPoints, getInvitation, watchAccount }) {
+			const enabled = profile.id === pointsProfileID && status?.credentialReady;
+			const [points, setPoints] = (0, react.useState)(null), [invite, setInvite] = (0, react.useState)(null);
+			const [open, setOpen] = (0, react.useState)(false), [busy, setBusy] = (0, react.useState)(false), [notice, setNotice] = (0, react.useState)("");
+			const [checking, setChecking] = (0, react.useState)(false), [accountReady, setAccountReady] = (0, react.useState)(false);
+			const [identityChecking, setIdentityChecking] = (0, react.useState)(false);
+			const generation = (0, react.useRef)(0), dialogGeneration = (0, react.useRef)(0), readVersion = (0, react.useRef)(0);
+			const pending = (0, react.useRef)(false), restoreFocus = (0, react.useRef)(false), opener = (0, react.useRef)(null);
+			const accountRevision = (0, react.useRef)(void 0), previousProfile = (0, react.useRef)(""), previousStatus = (0, react.useRef)(null);
+			const identitySupport = (0, react.useRef)(null);
+			const reset = () => {
+				generation.current++;
+				dialogGeneration.current++;
+				pending.current = false;
+				setInvite(null);
+				setNotice("");
+				setBusy(false);
+				setOpen(false);
+				setAccountReady(false);
+			};
+			const read = async () => {
+				const stamp = generation.current, version = ++readVersion.current;
+				const current = () => stamp === generation.current && version === readVersion.current;
+				setChecking(true);
+				setAccountReady(false);
+				try {
+					const value = await readPoints(profile.id);
+					if (!current()) return;
+					if (accountRevision.current && value.accountRevision !== accountRevision.current) reset();
+					accountRevision.current = value.accountRevision;
+					identitySupport.current = Boolean(value.accountRevision);
+					setPoints(value);
+					setAccountReady(Boolean(value.accountRevision) || value.state === "available");
+				} catch {
+					if (current()) setPoints({ state: "unavailable" });
+				} finally {
+					if (version === readVersion.current) setChecking(false);
+				}
+			};
+			(0, react.useEffect)(() => {
+				const changed = previousProfile.current !== profile.id || !enabled;
+				const legacyStatusChange = previousStatus.current && previousStatus.current !== status && identitySupport.current === false;
+				if (changed || legacyStatusChange) {
+					reset();
+					accountRevision.current = void 0;
+					identitySupport.current = null;
+					setPoints(null);
+				}
+				previousProfile.current = profile.id;
+				previousStatus.current = status;
+				if (enabled) read();
+			}, [
+				profile.id,
+				status,
+				enabled,
+				readPoints
+			]);
+			(0, react.useEffect)(() => () => {
+				generation.current++;
+				readVersion.current++;
+			}, []);
+			(0, react.useEffect)(() => watchAccount?.(profile.id, (state) => {
+				if (!state) {
+					setIdentityChecking(true);
+					return;
+				}
+				setIdentityChecking(false);
+				if (state.state !== "available") {
+					setAccountReady(false);
+					if (state.state === "not_connected") {
+						reset();
+						accountRevision.current = void 0;
+						setPoints(null);
+					}
+					return;
+				}
+				if (!state.accountRevision || accountRevision.current && state.accountRevision !== accountRevision.current) {
+					reset();
+					accountRevision.current = state.accountRevision;
+					identitySupport.current = Boolean(state.accountRevision);
+					setPoints(null);
+					if (enabled) read();
+				} else {
+					accountRevision.current = state.accountRevision;
+					identitySupport.current = true;
+					setAccountReady(true);
+				}
+			}), [
+				profile.id,
+				enabled,
+				readPoints,
+				watchAccount
+			]);
+			(0, react.useEffect)(() => {
+				if (!open && restoreFocus.current) {
+					restoreFocus.current = false;
+					opener.current?.focus();
+				}
+			}, [open]);
+			const act = async (kind) => {
+				if (pending.current || checking || identityChecking || kind === "invite" && !accountReady) return;
+				const stamp = generation.current, dialogStamp = dialogGeneration.current;
+				const current = () => stamp === generation.current && dialogStamp === dialogGeneration.current;
+				pending.current = true;
+				setBusy(true);
+				setNotice("");
+				try {
+					if (kind === "points") await read();
+					else {
+						const value = await getInvitation(profile.id);
+						if (current()) {
+							if (accountRevision.current && value.accountRevision !== accountRevision.current) {
+								reset();
+								read();
+							} else setInvite(value);
+						}
+					}
+				} catch (error) {
+					if (current()) setNotice(error?.message || "操作未完成，请稍后重试。");
+				} finally {
+					if (current()) {
+						pending.current = false;
+						setBusy(false);
+					}
+				}
+			};
+			const show = (event) => {
+				opener.current = event.currentTarget;
+				setOpen(true);
+			};
+			const close = () => {
+				dialogGeneration.current++;
+				pending.current = false;
+				restoreFocus.current = true;
+				setBusy(false);
+				setOpen(false);
+			};
+			const copy = async () => {
+				if (checking || identityChecking || !accountReady) return;
+				if (!invite?.inviteURL || Date.parse(invite.expiresAt) <= Date.now()) {
+					setInvite({ state: "expired" });
+					return;
+				}
+				try {
+					await navigator.clipboard.writeText(invite.inviteURL);
+					setNotice("邀请链接已复制。");
+				} catch {
+					setNotice("无法自动复制，请选中链接手动复制。");
+				}
+			};
+			if (!enabled) return null;
+			const balance = points?.state === "available" ? `${points.currentPoints.toLocaleString()} 积分` : points ? "积分暂不可用" : "积分读取中…";
+			const available = points?.state === "available";
+			const hint = [
+				balance,
+				points?.expiryNotice,
+				"点击查看积分与邀请"
+			].filter(Boolean).join(" · ");
+			return h$2(react.default.Fragment, null, h$2("style", null, pointsStyles), h$2("div", { className: "ecnu-rewards-footer" + (wide ? "" : " ecnu-rewards-rail") }, h$2(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+				label: hint,
+				side: "right",
+				delayMs: 350,
+				portal: true,
+				disabled: open
+			}, h$2("button", {
+				type: "button",
+				className: "ecnu-rewards-balance",
+				disabled: busy,
+				"aria-label": `积分与邀请 · ${balance}`,
+				"aria-haspopup": "dialog",
+				"aria-expanded": open,
+				onClick: show
+			}, h$2(_deepseek_ai_dsh_client_ui_primitives.IconSparkleRegular, { size: 17 })))), h$2(_deepseek_ai_dsh_client_ui_primitives.Modal, {
+				open,
+				onClose: close,
+				title: "积分与邀请",
+				closeLabel: "关闭",
+				className: "ecnu-rewards-dialog",
+				contentClassName: "ecnu-rewards-content"
+			}, h$2("section", {
+				className: "ecnu-rewards-summary",
+				"aria-label": "积分余额"
+			}, h$2("div", { className: "ecnu-rewards-summary-heading" }, h$2("span", null, "当前积分"), h$2(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+				label: "刷新积分",
+				side: "left",
+				delayMs: 350
+			}, h$2(_deepseek_ai_dsh_client_ui_primitives.Button, {
+				variant: "ghost",
+				size: "sm",
+				"aria-label": "刷新积分",
+				disabled: busy || checking || identityChecking,
+				onClick: () => void act("points")
+			}, h$2(_deepseek_ai_dsh_client_ui_primitives.IconRefreshOutlineRegular, { size: 15 })))), available ? h$2("div", { className: "ecnu-rewards-total" }, points.currentPoints.toLocaleString(), h$2("span", null, "积分")) : h$2("p", { className: "ecnu-rewards-unavailable" }, balance), points?.expiryNotice && h$2("p", { className: "ecnu-rewards-expiry" }, points.expiryNotice), !points?.expiryNotice && points?.nextExpiryAt && h$2("p", { className: "ecnu-rewards-expiry" }, h$2("strong", null, `${points.nextExpiryPoints ?? "部分"} 积分`), `将于 ${date$1(points.nextExpiryAt)}到期`)), h$2("section", {
+				className: "ecnu-rewards-sharing",
+				"aria-labelledby": "ecnu-invite-heading"
+			}, h$2("div", { className: "ecnu-rewards-sharing-heading" }, h$2("span", { className: "ecnu-rewards-gift" }, gift), h$2("div", null, h$2("h3", { id: "ecnu-invite-heading" }, "邀请好友"), h$2("p", null, "分享 ChatECNU，符合条件即可获得积分。"))), invite?.state === "available" ? h$2(react.default.Fragment, null, h$2("label", {
+				htmlFor: "ecnu-invite-link",
+				className: "ecnu-rewards-link-label"
+			}, "专属邀请链接"), h$2("div", { className: "ecnu-rewards-link" }, h$2("input", {
+				id: "ecnu-invite-link",
+				readOnly: true,
+				value: invite.inviteURL,
+				onFocus: (event) => event.currentTarget.select()
+			}), h$2(_deepseek_ai_dsh_client_ui_primitives.Button, {
+				variant: "ghost",
+				size: "sm",
+				disabled: checking || identityChecking || !accountReady,
+				onClick: () => void copy()
+			}, h$2(_deepseek_ai_dsh_client_ui_primitives.IconCopyOutlineRegular, { size: 14 }), "复制链接")), h$2("div", { className: "ecnu-rewards-link-meta" }, h$2("span", null, "邀请码 ", h$2("span", { className: "ecnu-rewards-code" }, invite.referralCode)), h$2("span", null, `有效期至 ${date$1(invite.expiresAt)}`))) : h$2(react.default.Fragment, null, invite && h$2("p", {
+				role: "status",
+				className: "ecnu-rewards-error"
+			}, messages[invite.state] || messages.unavailable), h$2(_deepseek_ai_dsh_client_ui_primitives.Button, {
+				variant: "primary",
+				className: "ecnu-rewards-primary",
+				disabled: busy || checking || identityChecking || !accountReady,
+				onClick: () => void act("invite")
+			}, busy ? "正在处理…" : "获取邀请链接")), h$2("p", { className: "ecnu-rewards-rule" }, "奖励与邀请资格以 ChatECNU 当前规则为准。")), h$2("p", {
+				role: "status",
+				"aria-live": "polite",
+				className: "ecnu-rewards-notice"
+			}, notice || (busy || checking || identityChecking ? "正在读取…" : ""))));
+		}
+		//#endregion
+		//#region src/quota-footer.ts
+		const h$1 = react.default.createElement;
+		const amount$1 = (value) => typeof value === "number" && Number.isFinite(value) ? value.toLocaleString() : "未提供";
+		const periodName = (type) => ({
+			fixed_168h: "7 天额度",
+			fixed_24h: "24 小时额度",
+			fixed_5h: "5 小时额度"
+		})[type] || type;
+		const date = (value) => new Date(value).toLocaleString("zh-CN", {
+			month: "numeric",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false
+		});
+		function QuotaFooter({ profile, status, profileIDs, readQuota }) {
+			const enabled = profileIDs.includes(profile.id) && Boolean(profile.provider) && Boolean(status?.credentialReady);
+			const [value, setValue] = (0, react.useState)(null), [reading, setReading] = (0, react.useState)(false);
+			const [open, setOpen] = (0, react.useState)(false), [expanded, setExpanded] = (0, react.useState)(false);
+			const generation = (0, react.useRef)(0), latest = (0, react.useRef)(status), pending = (0, react.useRef)(false), readAt = (0, react.useRef)(0);
+			const previousIdentity = (0, react.useRef)("");
+			latest.current = status;
+			const read = (0, react.useCallback)(async (replace = false) => {
+				if (!enabled || pending.current && !replace) return;
+				const current = ++generation.current, snapshot = latest.current;
+				pending.current = true;
+				setReading(true);
+				try {
+					const next = await readQuota(profile.id);
+					if (current === generation.current && snapshot === latest.current) {
+						setValue(next);
+						readAt.current = Date.now();
+					}
+				} catch {
+					if (current === generation.current) {
+						setValue({ state: "unavailable" });
+						readAt.current = Date.now();
+					}
+				} finally {
+					if (current === generation.current) {
+						pending.current = false;
+						setReading(false);
+					}
+				}
+			}, [
+				enabled,
+				profile.id,
+				readQuota
+			]);
+			(0, react.useEffect)(() => {
+				const identity = `${profile.id}\0${status?.userName ?? ""}\0${enabled}`;
+				if (previousIdentity.current !== identity) {
+					setOpen(false);
+					setExpanded(false);
+				}
+				previousIdentity.current = identity;
+				setValue(null);
+				readAt.current = 0;
+				if (enabled) read(true);
+				else {
+					pending.current = false;
+					setReading(false);
+				}
+				return () => {
+					generation.current++;
+					pending.current = false;
+				};
+			}, [
+				profile.id,
+				status,
+				enabled,
+				read
+			]);
+			const readIfStale = (0, react.useCallback)(() => {
+				if (Date.now() - readAt.current > 3e4) read();
+			}, [read]);
+			(0, react.useEffect)(() => {
+				window.addEventListener("focus", readIfStale);
+				return () => window.removeEventListener("focus", readIfStale);
+			}, [readIfStale]);
+			if (!enabled) return null;
+			const quota = value?.state === "available" ? value : null;
+			const summary = quotaSummary(quota), percent = summary.windowPercent;
+			const tooltip = quota ? summary.window ? `${periodName(summary.window.type)} · ${percent === null ? "余量比例未提供" : `剩余 ${percent}%`}` : summary.poolRemaining !== null ? `资源包余额 · ${amount$1(summary.poolRemaining)} ${quota.unit || ""}` : "暂无额度数据" : reading ? "额度读取中…" : "额度暂不可用，点击重试";
+			const rows = quota?.windows ?? [], packs = quota?.resourcePacks ?? [];
+			const ring = h$1("svg", {
+				width: 21,
+				height: 21,
+				viewBox: "0 0 24 24",
+				fill: "none",
+				"aria-hidden": true
+			}, h$1("circle", {
+				cx: 12,
+				cy: 12,
+				r: 9,
+				stroke: "currentColor",
+				strokeWidth: 2,
+				opacity: .18
+			}), percent !== null ? h$1("circle", {
+				cx: 12,
+				cy: 12,
+				r: 9,
+				pathLength: 100,
+				stroke: "currentColor",
+				strokeWidth: 2,
+				strokeDasharray: `${percent} 100`,
+				transform: "rotate(-90 12 12)"
+			}) : h$1("path", {
+				d: "M9 12h6",
+				stroke: "currentColor",
+				strokeWidth: 1.5,
+				strokeLinecap: "round"
+			}));
+			const anchor = h$1(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+				label: tooltip,
+				side: "right",
+				delayMs: 300,
+				disabled: open,
+				portal: true
+			}, h$1("button", {
+				type: "button",
+				className: "ecnu-quota-trigger" + (percent !== null && percent <= 10 ? " ecnu-quota-low" : ""),
+				"aria-label": `用量与额度 · ${tooltip}`,
+				"aria-haspopup": "menu",
+				"aria-expanded": open,
+				onPointerEnter: readIfStale,
+				onFocus: readIfStale,
+				onClick: () => {
+					if (!open) {
+						setExpanded(false);
+						read();
+					}
+					setOpen(!open);
+				},
+				onKeyDown: (event) => {
+					if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+						event.preventDefault();
+						setOpen(true);
+						read();
+					}
+				}
+			}, ring));
+			const footer = quota?.consoleURL ? [{
+				id: "manage",
+				label: "管理用量"
+			}] : void 0;
+			const details = expanded && h$1("div", { className: "ecnu-quota-details" }, ...rows.map((row, index) => h$1("section", { key: `window-${index}` }, h$1("strong", null, periodName(row.type)), h$1("p", null, `剩余 ${amount$1(row.remaining)} ${quota.unit || ""}`), h$1("p", null, `已用 ${amount$1(row.used)} · 总量 ${amount$1(row.limit)}`), h$1("p", null, `重置于 ${row.resetAt ? new Date(row.resetAt).toLocaleString() : "未提供"}`))), ...packs.map((pack, index) => h$1("section", { key: `pack-${index}` }, h$1("strong", null, pack.name || pack.id || "资源包"), h$1("p", null, `剩余 ${amount$1(pack.remaining)} ${quota.unit || ""}`), h$1("p", null, `已用 ${amount$1(pack.used)} · 总量 ${amount$1(pack.total)}`), pack.expiresAt && h$1("p", null, `到期 ${new Date(pack.expiresAt).toLocaleString()}`), pack.status && h$1("p", null, `状态 ${pack.status}`))));
+			return h$1(react.default.Fragment, null, h$1(_deepseek_ai_dsh_client_ui_primitives.Menu, {
+				open,
+				anchor,
+				side: "top",
+				align: "start",
+				portal: true,
+				compact: true,
+				autoFocus: true,
+				className: "ecnu-quota-anchor",
+				listClassName: "ecnu-quota-popover",
+				footer,
+				onClose: () => setOpen(false),
+				onSelect: (id) => {
+					if (id === "manage" && quota?.consoleURL) {
+						window.open(quota.consoleURL, "_blank", "noopener,noreferrer");
+						setOpen(false);
+					}
+				}
+			}, h$1("div", { className: "ecnu-quota-heading" }, h$1("span", null, `额度来源：${profile.organization || profile.displayName || "学校账户"}`), h$1(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+				label: "刷新额度",
+				side: "top",
+				delayMs: 350
+			}, h$1(_deepseek_ai_dsh_client_ui_primitives.Button, {
+				variant: "ghost",
+				size: "sm",
+				role: "menuitem",
+				"aria-label": "刷新额度",
+				disabled: reading,
+				onClick: () => void read()
+			}, h$1(_deepseek_ai_dsh_client_ui_primitives.IconRefreshOutlineRegular, { size: 14 })))), quota ? h$1("div", { className: "ecnu-quota-summary" }, ...rows.map((row, index) => {
+				const ratio = remainingPercent(row.remaining, row.limit);
+				return h$1("div", {
+					key: index,
+					className: "ecnu-quota-window"
+				}, h$1("div", { className: "ecnu-quota-line" }, h$1("span", null, periodName(row.type)), h$1("strong", null, ratio === null ? `剩余 ${amount$1(row.remaining)}` : `剩余 ${ratio}%`)), ratio !== null && h$1("progress", {
+					max: 100,
+					value: ratio,
+					"aria-label": `${periodName(row.type)}剩余`
+				}), row.resetAt && h$1("p", { className: "ecnu-quota-reset" }, `${date(row.resetAt)} 重置`));
+			}), packs.length > 0 && h$1("div", { className: "ecnu-quota-line ecnu-quota-pool" }, h$1("span", null, "资源包余额"), h$1("strong", null, amount$1(summary.poolRemaining))), !rows.length && !packs.length && h$1("p", { className: "ecnu-quota-empty" }, "暂无额度数据")) : h$1("p", {
+				role: "status",
+				className: "ecnu-quota-empty"
+			}, reading ? "正在读取额度…" : "暂时无法读取额度，可稍后刷新。"), details, quota && (rows.length > 0 || packs.length > 0) && h$1(_deepseek_ai_dsh_client_ui_primitives.MenuItemButton, { onSelect: () => setExpanded(!expanded) }, expanded ? "收起明细" : "查看明细")));
+		}
+		//#endregion
+		//#region src/quota-styles.ts
+		const quotaStyles = `
+.ecnu-account-tools{display:flex;align-items:center;gap:3px;padding:0 4px 2px;margin-top:-3px;min-width:0}.ecnu-account-tools-rail{flex-direction:column;gap:2px;margin-top:0;padding:0}
+.ecnu-quota-anchor{display:inline-flex;flex:none}.ecnu-quota-trigger{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:0;border-radius:7px;background:transparent;color:var(--dsw-alias-label-secondary);cursor:pointer;padding:0}.ecnu-quota-trigger:hover,.ecnu-quota-trigger[aria-expanded=true]{background:var(--dsw-alias-interactive-bg-hover)}.ecnu-quota-trigger:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:1px}.ecnu-quota-low{color:var(--dsw-alias-state-warn-primary)}
+.ecnu-quota-popover{width:296px;max-width:calc(100vw - 24px);font-size:12px;color:var(--dsw-alias-label-primary)}.ecnu-quota-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px 7px;color:var(--dsw-alias-label-secondary);font-size:12px}.ecnu-quota-heading>span{min-width:0;overflow-wrap:anywhere}.ecnu-quota-heading button{flex:none}
+.ecnu-quota-summary{padding:0 8px 8px;display:grid;gap:12px}.ecnu-quota-line{display:flex;align-items:baseline;justify-content:space-between;gap:14px}.ecnu-quota-line strong{font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}.ecnu-quota-window progress{display:block;width:100%;height:4px;margin-top:8px;border:0;border-radius:4px;overflow:hidden;appearance:none;background:var(--dsw-alias-interactive-bg-hover)}.ecnu-quota-window progress::-webkit-progress-bar{background:var(--dsw-alias-interactive-bg-hover);border-radius:4px}.ecnu-quota-window progress::-webkit-progress-value{background:var(--dsw-alias-label-secondary);border-radius:4px}.ecnu-quota-reset{margin:6px 0 0;font-size:11px;color:var(--dsw-alias-label-secondary)}.ecnu-quota-pool{padding:3px 0}.ecnu-quota-empty{margin:6px 8px 12px;line-height:1.6;color:var(--dsw-alias-label-secondary)}
+.ecnu-quota-details{padding:10px 8px;display:grid;gap:12px;border-top:1px solid var(--dsw-alias-border-l2);font-size:12px;line-height:1.6}.ecnu-quota-details strong{font-weight:500}.ecnu-quota-details p{margin:2px 0;color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}
+`;
+		//#endregion
 		//#region src/client.ts
 		const h = react.default.createElement;
 		const zh = typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("zh");
@@ -4102,12 +4633,17 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		};
 		const secondary = "var(--dsw-alias-label-secondary, #69717f)";
 		const amount = (value) => typeof value === "number" && Number.isFinite(value) ? value.toLocaleString() : copy.unknown;
-		function QuotaDetails({ profile, status, busy, run, refreshAccount, defaultContent, readQuota, profileIDs }) {
+		const label = (type) => ({
+			fixed_168h: zh ? "7 天额度" : "7-day allowance",
+			fixed_24h: zh ? "24 小时额度" : "24-hour allowance",
+			fixed_5h: zh ? "5 小时额度" : "5-hour allowance"
+		})[type] || type;
+		function QuotaDetails({ profile, status, busy, run, refreshAccount, defaultContent, readQuota, profileIDs, quotaInFooter }) {
 			const [expanded, setExpanded] = (0, react.useState)(false);
 			const [value, setValue] = (0, react.useState)(null), [reading, setReading] = (0, react.useState)(false);
 			const generation = (0, react.useRef)(0), latest = (0, react.useRef)(status);
 			latest.current = status;
-			const enabled = profileIDs.includes(profile.id) && Boolean(profile.provider) && status?.credentialReady;
+			const enabled = !quotaInFooter && profileIDs.includes(profile.id) && Boolean(profile.provider) && status?.credentialReady;
 			const read = async () => {
 				const current = ++generation.current, snapshot = latest.current;
 				if (!enabled) {
@@ -4191,7 +4727,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				overflowY: "auto",
 				display: "grid",
 				gap: 10
-			} }, quota.resourcePacks?.length > 0 && h("strong", null, copy.packs), ...(quota.resourcePacks ?? []).map((pack, index) => h("div", {
+			} }, ...(quota.windows ?? []).map((period, index) => h("div", {
+				key: `window-${index}`,
+				style: { color: secondary }
+			}, h("strong", null, label(period.type)), h("div", null, `${amount(period.remaining)}${quota.unit ? ` ${quota.unit}` : ""} ${copy.remaining}`), h("div", { style: { fontSize: 11 } }, `${copy.used} ${amount(period.used)} · ${copy.total} ${amount(period.limit)}`), h("div", { style: { fontSize: 11 } }, `${copy.resets} ${period.resetAt ? new Date(period.resetAt).toLocaleString() : copy.unknown}`))), quota.resourcePacks?.length > 0 && h("strong", null, copy.packs), ...(quota.resourcePacks ?? []).map((pack, index) => h("div", {
 				key: `${pack.id}-${index}`,
 				style: { color: secondary }
 			}, h("div", null, pack.name || pack.id || copy.packs), h("div", null, `${amount(pack.remaining)}${quota.unit ? ` ${quota.unit}` : ""} ${copy.remaining}`), (pack.total !== null || pack.used !== null) && h("div", { style: { fontSize: 11 } }, `${copy.used} ${amount(pack.used)} · ${copy.total} ${amount(pack.total)}`), pack.expiresAt && h("div", { style: { fontSize: 11 } }, `${copy.expires} ${new Date(pack.expiresAt).toLocaleString()}`), pack.status && h("div", { style: { fontSize: 11 } }, `${copy.status} ${pack.status}`)))), quota.consoleURL && h("a", {
@@ -4222,17 +4761,43 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				}
 			}, busy ? copy.processing : copy.refresh));
 		}
+		function AccountFooter(props) {
+			if (!props.status?.credentialReady || !props.profileIDs.includes(props.profile.id)) return null;
+			return h("div", { className: "ecnu-account-tools" + (props.wide ? "" : " ecnu-account-tools-rail") }, h("style", null, quotaStyles), h(QuotaFooter, props), h(PointsFooter, props));
+		}
 		const inject = ["slots", "remote"];
 		async function apply(ctx) {
 			const unmount = await ctx.remote.$mount(TYPERT_REMOTE);
 			ctx.inject(["remote.ecnuAccountResources"], (inner) => {
-				let disposed = false, unregister = () => {};
+				let disposed = false, quotaInFooter = false, unregister = () => {}, unregisterPoints = () => {};
 				const unwrap = async (value) => {
 					const response = await value;
 					if (response.ok) return response.value;
 					throw new Error("ECNU account resource unavailable");
 				};
 				const readQuota = (id) => unwrap(inner.remote.ecnuAccountResources.quota(id));
+				const readPoints = (id) => unwrap(inner.remote.ecnuAccountResources.points(id));
+				const getInvitation = (id) => unwrap(inner.remote.ecnuAccountResources.invitation(id));
+				const watchAccount = (id, changed) => {
+					let version = 0, active = true;
+					const refresh = async () => {
+						const current = ++version;
+						changed(null);
+						try {
+							const state = await unwrap(inner.remote.ecnuAccountResources.accountState(id));
+							if (active && version === current) changed(state);
+						} catch {
+							if (active && version === current) changed({ state: "unavailable" });
+						}
+					};
+					const dispose = inner.remote.$on?.("credentials/reference-updated", refresh);
+					const disposeConnection = inner.on?.("connection/reset", refresh);
+					return () => {
+						active = false;
+						dispose?.();
+						disposeConnection?.();
+					};
+				};
 				unwrap(inner.remote.ecnuAccountResources.configuration()).then((configuration) => {
 					if (disposed) return;
 					unregister = inner.slots.inject("oidc.account.menu.details", () => inner.slots.register({
@@ -4241,13 +4806,35 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						priority: -100,
 						inject: () => ({
 							readQuota,
-							profileIDs: configuration.profileIDs
+							profileIDs: configuration.profileIDs,
+							quotaInFooter
 						})
 					}, QuotaDetails));
+					unregisterPoints = inner.slots.inject("oidc.account.footer.details", () => {
+						quotaInFooter = true;
+						const dispose = inner.slots.register({
+							name: "oidc.account.footer.details",
+							id: "ecnu-account-resources-footer",
+							priority: -100,
+							inject: () => ({
+								readQuota,
+								readPoints,
+								getInvitation,
+								watchAccount,
+								profileIDs: configuration.profileIDs,
+								pointsProfileID: configuration.pointsProfileID
+							})
+						}, AccountFooter);
+						return () => {
+							quotaInFooter = false;
+							dispose();
+						};
+					});
 				}).catch(() => {});
 				inner.effect(() => () => {
 					disposed = true;
 					unregister();
+					unregisterPoints();
 				}, "ecnu-account-resources: account details");
 			});
 			return () => unmount();
@@ -4258,3 +4845,5 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		return module.exports;
 	}
 });
+
+//# sourceMappingURL=client.js.map

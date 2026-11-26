@@ -1,0 +1,126 @@
+import { primitivesAssets, primitivesHead, primitivesScript } from './primitives-fixture.mjs'
+import assert from 'node:assert/strict'
+import { createServer } from 'node:http'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
+import { readFile, mkdir, writeFile } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
+const require = createRequire(import.meta.url), { chromium } = require('playwright-core')
+if (!process.env.DSH_OIDC_PACKAGE_ROOT) throw Error('Use a built OIDC package with footer slot support')
+const assets = new Map([
+  ...await primitivesAssets(),
+  ['/react.js', await readFile(join(dirname(require.resolve('react/package.json')), 'umd/react.development.js'))],
+  ['/react-dom.js', await readFile(join(dirname(require.resolve('react-dom/package.json')), 'umd/react-dom.development.js'))],
+  ['/fixture.js', await readFile(new URL('./browser-fixture.js', import.meta.url))],
+  ['/public.js', await readFile(join(process.env.DSH_OIDC_PACKAGE_ROOT, 'lib/client.js'))],
+  ['/ecnu.js', await readFile(new URL('../lib/client.js', import.meta.url))],
+])
+const server = createServer((req, res) => {
+  const asset = assets.get(new URL(req.url, 'http://127.0.0.1').pathname)
+  if (asset) { res.writeHead(200, { 'content-type': req.url.endsWith('.css') ? 'text/css' : 'text/javascript' }); res.end(asset); return }
+  res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
+  res.end('<html lang="zh-CN"><head><meta charset="utf-8">'+primitivesHead+'</head><body style="font-family:system-ui;background:#f6f7fa"><div id="root"></div><script src="/react.js"></script><script src="/react-dom.js"></script>'+primitivesScript+'<script src="/fixture.js"></script><script src="/public.js"></script><script src="/ecnu.js"></script><script>mountFixture()</script></body></html>')
+})
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+const browser = await chromium.launch({ channel: 'msedge', headless: true })
+const context = await browser.newContext({ locale: 'zh-CN', viewport: { width: 900, height: 800 } })
+const page = await context.newPage(), errors = [], checks = []
+page.on('pageerror', error => errors.push(error.message)); page.setDefaultTimeout(10000)
+const output = new URL('../browser-evidence/', import.meta.url); await mkdir(output, { recursive: true })
+const url = `http://127.0.0.1:${server.address().port}/?points=1`
+const trigger = page.getByRole('button', { name: /^用量与额度/ })
+const menu = page.locator('.ecnu-quota-popover')
+await page.addInitScript(() => { window.open = (...args) => { window.openedUsage = args; return null } })
+try {
+  await page.goto(url)
+  await page.getByRole('button', { name: '用量与额度 · 7 天额度 · 剩余 90%' }).waitFor()
+  assert.equal(await page.evaluate(() => window.fixture.reads()), 1)
+  await trigger.hover(); await page.getByRole('tooltip').filter({ hasText: '7 天额度 · 剩余 90%' }).waitFor()
+  await page.screenshot({ path: fileURLToPath(new URL('quota-footer-tooltip.png', output)) })
+  await trigger.click(); await menu.waitFor()
+  await menu.getByText('剩余 90%', { exact: true }).waitFor()
+  await menu.getByText('985', { exact: true }).waitFor()
+  assert.equal(await menu.getByText('科研资源包', { exact: true }).count(), 0)
+  await menu.screenshot({ path: fileURLToPath(new URL('quota-popover.png', output)) })
+  checks.push('footer initially reads once; hover shows a summary; click shows allowance/reset and the separately calculated resource pool')
+  await menu.getByRole('menuitem', { name: '查看明细' }).click()
+  for (const text of ['剩余 90 credits', '已用 10 · 总量 100', '科研资源包', '剩余 930 credits', '已用 70 · 总量 1,000', '状态 active', '补充资源包', '剩余 55 credits']) assert.ok((await menu.innerText()).includes(text), text)
+  await menu.getByRole('menuitem', { name: /管理用量/ }).click()
+  assert.deepEqual(await page.evaluate(() => window.openedUsage), ['https://example.org/allowance', '_blank', 'noopener,noreferrer'])
+  await menu.waitFor({ state: 'hidden' })
+  checks.push('progressive details retain every quota field; management opens only the server-provided URL in an isolated tab')
+  await trigger.press('ArrowUp'); await menu.waitFor()
+  await menu.getByRole('menuitem', { name: '刷新额度' }).waitFor()
+  await page.evaluate(() => window.fixture.setRemaining(77))
+  await menu.getByRole('menuitem', { name: '刷新额度' }).click()
+  await page.getByRole('button', { name: '用量与额度 · 7 天额度 · 剩余 77%' }).waitFor()
+  await menu.press('Escape'); await menu.waitFor({ state: 'hidden' })
+  assert.equal(await trigger.evaluate(node => node === document.activeElement), true)
+  await page.getByRole('button', { name: /账户菜单/ }).click()
+  const account = page.getByRole('menu', { name: '账户菜单' })
+  await account.getByRole('menuitem', { name: '刷新账户' }).waitFor()
+  assert.equal(await account.getByRole('progressbar').count(), 0)
+  await account.press('Escape')
+  checks.push('keyboard opening/Escape restores focus; refresh updates the ring; the account menu does not duplicate allowance statistics')
+  await trigger.click(); await menu.waitFor()
+  for (const mode of ['unavailable', 'rpc']) {
+    await page.evaluate(mode => window.fixture.failQuota(mode), mode)
+    await menu.getByRole('menuitem', { name: '刷新额度' }).click()
+    await menu.getByText('暂时无法读取额度，可稍后刷新。').waitFor()
+    assert.equal(await menu.getByRole('progressbar').count(), 0)
+    await page.getByRole('button', { name: /用量与额度 · 额度暂不可用/ }).waitFor()
+    await page.getByRole('button', { name: '积分与邀请 · 156 积分' }).waitFor()
+    await page.evaluate(() => window.fixture.failQuota(null))
+    await menu.getByRole('menuitem', { name: '刷新额度' }).click()
+    await menu.getByText('剩余 77%', { exact: true }).waitFor()
+  }
+  checks.push('quota failure clears stale percentages without disabling points or requesting authorization; explicit refresh recovers')
+  await page.evaluate(() => window.fixture.setQuota({ state: 'available', providerID: 'fixture-ai', unit: 'credits', windows: [{ type: 'fixed_168h', limit: 100, used: 100, remaining: 0, resetAt: null }], resourcePacks: [] }))
+  await menu.getByRole('menuitem', { name: '刷新额度' }).click()
+  await page.getByRole('button', { name: '用量与额度 · 7 天额度 · 剩余 0%' }).waitFor()
+  assert.equal(await menu.getByRole('progressbar').getAttribute('value'), '0')
+  await page.evaluate(() => window.fixture.setQuota({ state: 'available', providerID: 'fixture-ai', unit: 'credits', windows: [{ type: 'fixed_24h', limit: null, used: null, remaining: null, resetAt: null }, { type: 'fixed_5h', limit: 100, used: 30, remaining: 70, resetAt: null }], resourcePacks: [] }))
+  await menu.getByRole('menuitem', { name: '刷新额度' }).click()
+  await page.getByRole('button', { name: '用量与额度 · 24 小时额度 · 余量比例未提供' }).waitFor()
+  assert.equal(await menu.getByRole('progressbar').count(), 1)
+  await menu.getByText('剩余 未提供', { exact: true }).waitFor()
+  checks.push('exhausted allowance remains zero, unknown totals never become a percentage, and individual windows are not added together')
+  await page.evaluate(() => window.fixture.setQuota(null))
+  await page.evaluate(() => window.fixture.delay())
+  await menu.getByRole('menuitem', { name: '刷新额度' }).click()
+  await page.evaluate(() => window.fixture.renew())
+  await page.evaluate(() => window.fixture.release())
+  await menu.getByText('剩余 77%', { exact: true }).waitFor()
+  assert.equal(await menu.isVisible(), true)
+  checks.push('same-account renewal replaces pending reads while preserving the open usage panel')
+  await page.evaluate(() => window.fixture.delay())
+  await menu.getByRole('menuitem', { name: '刷新额度' }).click()
+  const before = await page.evaluate(() => window.fixture.reads())
+  await page.evaluate(() => window.fixture.switch('third-party'))
+  await trigger.waitFor({ state: 'hidden' })
+  await menu.waitFor({ state: 'hidden' })
+  await page.evaluate(() => window.fixture.release())
+  assert.equal(await page.evaluate(() => window.fixture.reads()), before)
+  assert.equal(await page.getByText('科研资源包', { exact: true }).count(), 0)
+  checks.push('switching identity unmounts the quota panel, discards late responses and makes no calls for other providers')
+  await page.goto(url); await page.getByRole('button', { name: '用量与额度 · 7 天额度 · 剩余 90%' }).waitFor()
+  await page.evaluate(() => window.fixture.collapse())
+  assert.equal(await page.evaluate(() => document.querySelector('aside').scrollWidth > document.querySelector('aside').clientWidth), false)
+  await trigger.press('Enter'); await menu.waitFor()
+  await menu.getByText('剩余 90%', { exact: true }).waitFor()
+  await page.evaluate(() => document.body.toggleAttribute('data-ds-dark-theme', true))
+  await menu.screenshot({ path: fileURLToPath(new URL('quota-dark.png', output)) })
+  await page.setViewportSize({ width: 360, height: 400 })
+  await menu.getByRole('menuitem', { name: '查看明细' }).click()
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
+  await menu.getByRole('menuitem', { name: /管理用量/ }).scrollIntoViewIfNeeded()
+  await page.screenshot({ path: fileURLToPath(new URL('quota-narrow.png', output)) })
+  checks.push('collapsed sidebar retains keyboard access; the themed panel scrolls on narrow/short windows without horizontal overflow')
+  assert.deepEqual(errors, [])
+  await writeFile(new URL('quota-footer-result.json', output), JSON.stringify({ passed: true, checks, errors }, null, 2))
+  console.log(`${checks.length} quota footer checks passed`)
+} catch (error) {
+  await page.screenshot({ path: fileURLToPath(new URL('quota-footer-failure.png', output)) })
+  console.error(JSON.stringify({ errors, checks, text: await page.locator('body').innerText() }))
+  throw error
+} finally { await browser.close(); await new Promise(resolve => { server.close(resolve); server.closeAllConnections() }) }

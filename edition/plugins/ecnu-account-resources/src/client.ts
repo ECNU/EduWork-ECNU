@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import remote from '../lib/typert.remote-client.js'
 import { quotaSummary } from '../lib/summary.js'
+import { PointsFooter } from './points.js'
+import { QuotaFooter } from './quota-footer.js'
+import { quotaStyles } from './quota-styles.js'
 const h = React.createElement
 const zh = typeof navigator !== 'undefined' && navigator.language.toLowerCase().startsWith('zh')
 const copy = zh ? { quota: '模型额度', loading: '正在读取额度…', unavailable: '暂时无法读取额度，可稍后刷新。', unknown: '未提供', remaining: '剩余', resets: '重置于', refresh: '刷新配额', processing: '正在刷新…', packs: '资源包', details: '配额详情', used: '已用', total: '总量', expires: '到期', status: '状态' }
@@ -8,12 +11,12 @@ const copy = zh ? { quota: '模型额度', loading: '正在读取额度…', una
 const secondary = 'var(--dsw-alias-label-secondary, #69717f)'
 const amount = (value: any) => typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString() : copy.unknown
 const label = (type: string) => ({ fixed_168h: zh ? '7 天额度' : '7-day allowance', fixed_24h: zh ? '24 小时额度' : '24-hour allowance', fixed_5h: zh ? '5 小时额度' : '5-hour allowance' } as any)[type] || type
-function QuotaDetails({ profile, status, busy, run, refreshAccount, defaultContent, readQuota, profileIDs }: any) {
+function QuotaDetails({ profile, status, busy, run, refreshAccount, defaultContent, readQuota, profileIDs, quotaInFooter }: any) {
   const [expanded, setExpanded] = useState(false)
   const [value, setValue] = useState<any>(null), [reading, setReading] = useState(false)
   const generation = useRef(0), latest = useRef(status)
   latest.current = status
-  const enabled = profileIDs.includes(profile.id) && Boolean(profile.provider) && status?.credentialReady
+  const enabled = !quotaInFooter && profileIDs.includes(profile.id) && Boolean(profile.provider) && status?.credentialReady
   const read = async () => {
     const current = ++generation.current, snapshot = latest.current
     if (!enabled) { setValue(null); setReading(false); return }
@@ -37,6 +40,11 @@ function QuotaDetails({ profile, status, busy, run, refreshAccount, defaultConte
       meter(zh ? '资源池' : 'Resource pool', summary.poolPercent, summary.poolRemaining===null?copy.unknown:amount(summary.poolRemaining)+' '+(quota.unit||'')+' '+copy.remaining),
       h('button',{type:'button',role:'menuitem','aria-expanded':expanded,onClick:()=>setExpanded(!expanded),style:{border:0,background:'transparent',color:'inherit',cursor:'pointer',textAlign:'left',padding:0}},expanded?'收起配额明细':'展开配额明细'),
       expanded && h('div',{style:{maxHeight:220,overflowY:'auto',display:'grid',gap:10}},
+      ...(quota.windows ?? []).map((period: any, index: number) => h('div', { key: `window-${index}`, style: { color: secondary } },
+        h('strong', null, label(period.type)),
+        h('div', null, `${amount(period.remaining)}${quota.unit ? ` ${quota.unit}` : ''} ${copy.remaining}`),
+        h('div', { style: { fontSize: 11 } }, `${copy.used} ${amount(period.used)} · ${copy.total} ${amount(period.limit)}`),
+        h('div', { style: { fontSize: 11 } }, `${copy.resets} ${period.resetAt ? new Date(period.resetAt).toLocaleString() : copy.unknown}`))),
       quota.resourcePacks?.length > 0 && h('strong', null, copy.packs),
       ...(quota.resourcePacks ?? []).map((pack: any, index: number) => h('div', { key: `${pack.id}-${index}`, style: { color: secondary } },
         h('div', null, pack.name || pack.id || copy.packs), h('div', null, `${amount(pack.remaining)}${quota.unit ? ` ${quota.unit}` : ''} ${copy.remaining}`),
@@ -48,19 +56,43 @@ function QuotaDetails({ profile, status, busy, run, refreshAccount, defaultConte
     h('button', { type: 'button', role: 'menuitem', disabled: busy || reading, onClick: () => void run(async () => { await refreshAccount(); await read() }),
       style: { width: '100%', textAlign: 'left', border: 0, borderRadius: 7, padding: '9px 10px', marginTop: 10, font: 'inherit', cursor: 'pointer', background: 'var(--dsw-alias-bg-layer-2, #f5f6f8)', color: 'inherit' } }, busy ? copy.processing : copy.refresh))
 }
+function AccountFooter(props: any) {
+  if (!props.status?.credentialReady || !props.profileIDs.includes(props.profile.id)) return null
+  return h('div', { className: 'ecnu-account-tools' + (props.wide ? '' : ' ecnu-account-tools-rail') },
+    h('style', null, quotaStyles), h(QuotaFooter, props), h(PointsFooter, props))
+}
 export const inject = ['slots', 'remote']
 export async function apply(ctx: any) {
   const unmount = await ctx.remote.$mount(remote)
   ctx.inject(['remote.ecnuAccountResources'], (inner: any) => {
-    let disposed = false, unregister = () => {}
+    let disposed = false, quotaInFooter = false, unregister = () => {}, unregisterPoints = () => {}
     const unwrap = async (value: any) => { const response = await value; if (response.ok) return response.value; throw new Error('ECNU account resource unavailable') }
     const readQuota = (id: string) => unwrap(inner.remote.ecnuAccountResources.quota(id))
+    const readPoints = (id: string) => unwrap(inner.remote.ecnuAccountResources.points(id))
+    const getInvitation = (id: string) => unwrap(inner.remote.ecnuAccountResources.invitation(id))
+    const watchAccount = (id: string, changed: (state: any) => void) => {
+      let version = 0, active = true
+      const refresh = async () => {
+        const current = ++version; changed(null)
+        try { const state = await unwrap(inner.remote.ecnuAccountResources.accountState(id)); if (active && version === current) changed(state) }
+        catch { if (active && version === current) changed({ state: 'unavailable' }) }
+      }
+      const dispose = inner.remote.$on?.('credentials/reference-updated', refresh)
+      const disposeConnection = inner.on?.('connection/reset', refresh)
+      return () => { active = false; dispose?.(); disposeConnection?.() }
+    }
     void unwrap(inner.remote.ecnuAccountResources.configuration()).then(configuration => {
       if (disposed) return
       unregister = inner.slots.inject('oidc.account.menu.details', () => inner.slots.register({ name: 'oidc.account.menu.details', id: 'ecnu-account-resources', priority: -100,
-        inject: () => ({ readQuota, profileIDs: configuration.profileIDs }) }, QuotaDetails))
+        inject: () => ({ readQuota, profileIDs: configuration.profileIDs, quotaInFooter }) }, QuotaDetails))
+      unregisterPoints = inner.slots.inject('oidc.account.footer.details', () => {
+        quotaInFooter = true
+        const dispose = inner.slots.register({ name: 'oidc.account.footer.details', id: 'ecnu-account-resources-footer', priority: -100,
+          inject: () => ({ readQuota, readPoints, getInvitation, watchAccount, profileIDs: configuration.profileIDs, pointsProfileID: configuration.pointsProfileID }) }, AccountFooter)
+        return () => { quotaInFooter = false; dispose() }
+      })
     }).catch(() => { /* Keep the public refresh action if extension configuration is unavailable. */ })
-    inner.effect(() => () => { disposed = true; unregister() }, 'ecnu-account-resources: account details')
+    inner.effect(() => () => { disposed = true; unregister(); unregisterPoints() }, 'ecnu-account-resources: account details')
   })
   return () => unmount()
 }

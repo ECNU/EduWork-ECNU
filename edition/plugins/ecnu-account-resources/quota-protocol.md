@@ -27,7 +27,7 @@ Cache-Control: no-store
 
 | 字段 | 要求与显示语义 |
 | --- | --- |
-| `provider_id` | 必须与 Profile Provider ID 完全匹配 |
+| `provider_id` | 服务端额度标识；默认与 Profile Provider ID 完全匹配。若设置 `quotaProviderIDs[profileID]`，则必须与该显式值匹配；它与本地模型路由 ID 分开，不改变请求的账号或服务地址 |
 | `unit` | 显示单位；不要求 credits，缺失时不推测币种或计费规则 |
 | `windows` | 必须是数组，最多 64 项；空数组表示没有周期窗口 |
 | `type` | 窗口标识，如 `fixed_168h`；时间边界由服务器决定，不按自然周自行重置 |
@@ -37,4 +37,8 @@ Cache-Control: no-store
 | `ops_console_url` | 可选 HTTPS 详情链接，无 URL 用户名密码；兼容 `console_url` 旧别名 |
 
 窗口与资源包可以是独立计费池，不得盲目相加。UI 的百分比只在有效 `limit>0` 和 `remaining` 时计算并限制在 0–100%；金额/次数仍显示服务端数值。返回 401/403/404/429/5xx 时配额独立标为不可用，不清除有效模型 Key。当前查询不会自动轮换模型 Key，也不依据配额不足阻止一次模型请求；实际授权与扣费必须由模型网关执行。
+
+### 客户端账户状态
+
+学校插件的 `points`、`invitation` 以及只读 `accountState` RPC 可返回 `accountRevision`（UUID 字符串）。这是 Host 为当前授权周期生成的随机修订号，与上面的额度 HTTP 协议无关。普通 Token 续期不改变它；退出、换账号、新授权或插件重启会改变它。该字段不包含身份或凭据，只用于清除旧界面结果，不能用于授权。缺少稳定身份能力的旧 OIDC 不返回此字段，客户端保持保守失效行为。`accountState` 只复核本机已有学校授权，不调用积分或邀请业务接口；具体字段以 `lib/typert-schemas.js` 为准。
 

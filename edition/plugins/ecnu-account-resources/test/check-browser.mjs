@@ -1,3 +1,4 @@
+import { primitivesAssets, primitivesHead, primitivesScript } from './primitives-fixture.mjs'
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
@@ -7,6 +8,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 const require = createRequire(import.meta.url), { chromium } = require('playwright-core')
 const publicRoot = resolve(process.env.DSH_OIDC_PACKAGE_ROOT || dirname(require.resolve('@eduwork/dsh-oidc/package.json')))
 const assets = new Map([
+  ...await primitivesAssets(),
   ['/react.js', await readFile(join(dirname(require.resolve('react/package.json')), 'umd/react.development.js'))],
   ['/react-dom.js', await readFile(join(dirname(require.resolve('react-dom/package.json')), 'umd/react-dom.development.js'))],
   ['/fixture.js', await readFile(new URL('./browser-fixture.js', import.meta.url))],
@@ -15,9 +17,9 @@ const assets = new Map([
 ])
 const server = createServer((req, res) => {
   const path = new URL(req.url, 'http://127.0.0.1').pathname
-  if (assets.has(path)) { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(assets.get(path)); return }
+  if (assets.has(path)) { res.writeHead(200, { 'content-type': req.url.endsWith('.css') ? 'text/css' : 'text/javascript' }); res.end(assets.get(path)); return }
   res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
-  res.end('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"></head><body style="font-family:system-ui;background:#f6f7fa"><div id="root"></div><script src="/react.js"></script><script src="/react-dom.js"></script><script src="/fixture.js"></script><script src="/public.js"></script><script src="/ecnu.js"></script><script>mountFixture()</script></body></html>')
+  res.end('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'+primitivesHead+'</head><body style="font-family:system-ui;background:#f6f7fa"><div id="root"></div><script src="/react.js"></script><script src="/react-dom.js"></script>'+primitivesScript+'<script src="/fixture.js"></script><script src="/public.js"></script><script src="/ecnu.js"></script><script>mountFixture()</script></body></html>')
 })
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
 const browser = await chromium.launch({ channel: 'msedge', headless: true })
@@ -29,9 +31,9 @@ page.on('pageerror', error => errors.push(error.message)); page.setDefaultTimeou
 const menu = page.getByRole('menu', { name: '账户菜单' })
 const trigger = page.getByRole('button', { name: /账户菜单/ })
 try {
-  await page.goto(`http://127.0.0.1:${server.address().port}`)
+  await page.goto(`http://127.0.0.1:${server.address().port}/?legacy=1`)
   await trigger.click(); await menu.getByRole('menuitem', { name: '配额详情' }).waitFor()
-  assert.deepEqual(await page.evaluate(() => window.fixture.declarations()), { 'oidc.account.menu.details': { kind: 'single', scope: 'root' } })
+  assert.deepEqual((await page.evaluate(() => window.fixture.declarations()))['oidc.account.menu.details'], { kind: 'single', scope: 'root' })
   assert.equal(await menu.getByRole('progressbar').count(), 1)
   assert.equal(await menu.getByRole('progressbar').getAttribute('value'), '90')
   assert.ok((await menu.innerText()).includes('使用情况'))
@@ -39,7 +41,7 @@ try {
   assert.ok(!(await menu.innerText()).includes('科研资源包'))
   await menu.getByRole('menuitem', { name: '展开配额明细' }).click()
   const content = await menu.innerText()
-  for (const text of ['使用情况', '重置', '科研资源包', '930 credits 剩余', '已用 70 · 总量 1,000', '到期', '状态 active', '补充资源包', '55 credits 剩余']) assert.ok(content.includes(text), text)
+  for (const text of ['使用情况', '重置', '7 天额度', '90 credits 剩余', '已用 10 · 总量 100', '科研资源包', '930 credits 剩余', '已用 70 · 总量 1,000', '到期', '状态 active', '补充资源包', '55 credits 剩余']) assert.ok(content.includes(text), text)
   assert.equal(await menu.getByRole('menuitem', { name: '配额详情' }).getAttribute('href'), 'https://example.org/allowance')
   await page.screenshot({ path: fileURLToPath(new URL('ecnu-quota-menu.png', output)) })
   checks.push('compiled public child slot + ECNU quota windows/reset/complete packs and safe detail link')
@@ -53,6 +55,43 @@ try {
   await menu.getByRole('menuitem', { name: '刷新配额' }).click()
   await page.waitForFunction(() => document.querySelector('progress')?.value === 77)
   checks.push('explicit refresh updates actual allowance')
+  for (const mode of ['unavailable', 'rpc']) {
+    await page.evaluate(mode => window.fixture.failQuota(mode), mode)
+    await menu.getByRole('menuitem', { name: '刷新配额' }).click()
+    await menu.getByText('暂时无法读取额度，可稍后刷新。').waitFor()
+    assert.equal(await menu.getByRole('progressbar').count(), 0)
+    await page.evaluate(() => window.fixture.failQuota(null))
+    await menu.getByRole('menuitem', { name: '刷新配额' }).click()
+    await page.waitForFunction(() => document.querySelector('progress')?.value === 77)
+  }
+  checks.push('service and RPC failures clear stale balances; manual refresh recovers without changing sign-in')
+  await page.evaluate(() => window.fixture.delay())
+  await menu.press('Escape'); await trigger.click(); await menu.getByText('正在读取额度…').waitFor()
+  await page.evaluate(() => window.fixture.renew())
+  await page.evaluate(() => window.fixture.release())
+  await page.waitForFunction(() => document.querySelector('progress')?.value === 77)
+  assert.equal(await menu.isVisible(), true)
+  checks.push('pending quota reads recover across the standard same-account credential renewal event')
+  await page.evaluate(() => window.fixture.setQuota({ state: 'available', providerID: 'fixture-ai', unit: 'credits', windows: [{ type: 'fixed_168h', limit: 2500, used: 275, remaining: 2225, resetAt: '2099-09-17T00:00:00Z' }], resourcePacks: [] }))
+  await menu.getByRole('menuitem', { name: '刷新配额' }).click()
+  await menu.getByRole('menuitem', { name: '展开配额明细' }).click()
+  await menu.getByText('2,225 credits 剩余', { exact: true }).waitFor()
+  assert.equal(await menu.getByText('7 天额度', { exact: true }).count(), 1)
+  assert.equal(await menu.getByText('已用 275 · 总量 2,500', { exact: true }).count(), 1)
+  const resetText = await page.evaluate(() => '重置于 ' + new Date('2099-09-17T00:00:00Z').toLocaleString())
+  assert.equal(await menu.getByText(resetText, { exact: true }).count(), 1)
+  assert.equal(await menu.getByText('资源包', { exact: true }).count(), 0)
+  checks.push('a window without resource packs expands to its actual balance, used/limit and reset timestamp')
+  await page.evaluate(() => window.fixture.setQuota({ state: 'available', providerID: 'fixture-ai', unit: 'credits', windows: [
+    { type: 'fixed_24h', limit: null, used: null, remaining: null, resetAt: null },
+    { type: 'fixed_5h', limit: 100, used: 100, remaining: 0, resetAt: null },
+  ], resourcePacks: [] }))
+  await menu.getByRole('menuitem', { name: '刷新配额' }).click()
+  await menu.getByText('24 小时额度', { exact: true }).waitFor()
+  for (const text of ['5 小时额度', '未提供 credits 剩余', '0 credits 剩余', '已用 未提供 · 总量 未提供', '已用 100 · 总量 100']) assert.equal(await menu.getByText(text, { exact: true }).count(), 1, text)
+  assert.equal(await menu.getByText('重置于 未提供', { exact: true }).count(), 2)
+  checks.push('each quota window renders separately and unknown quantities or reset dates stay distinct from zero')
+  await page.evaluate(() => window.fixture.setQuota(null))
   const beforeOther = await page.evaluate(() => window.fixture.reads())
   await page.evaluate(() => window.fixture.switch('third-party'))
   await menu.getByRole('menuitem', { name: '刷新账户' }).waitFor()

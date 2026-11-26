@@ -21,7 +21,7 @@ export async function fixture(t, options = {}) {
       userinfo_endpoint: `${origin}/userinfo`, jwks_uri: `${origin}/jwks`, revocation_endpoint: `${origin}/revoke`,
       response_types_supported: ['code'], grant_types_supported: ['authorization_code','refresh_token'],
       token_endpoint_auth_methods_supported: ['none'], revocation_endpoint_auth_methods_supported: ['none'],
-      scopes_supported: ['openid','profile','offline_access','llm:models:read','llm:invoke','llm:profile'],
+      scopes_supported: ['openid','profile','offline_access','llm:models:read','llm:invoke','llm:profile', ...(options.scopes ?? [])],
       id_token_signing_alg_values_supported: ['RS256'], subject_types_supported: ['public'],
       oidc_llm: {version:'0.1',resource:origin,api_base:`${origin}/v1`,identity_modes_supported:['oauth','oidc'],client_registration_methods_supported:['static']},
       code_challenge_methods_supported: ['S256'],

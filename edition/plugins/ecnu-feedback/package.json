@@ -1,0 +1,8 @@
+{
+  "name": "@chatecnu-work/dsh-ecnu-feedback", "version": "0.1.0-dev", "private": true,
+  "description": "School answer feedback with explicit visible-text disclosure", "type": "module", "license": "MulanPSL-2.0",
+  "main": "lib/index.js", "exports": { ".": "./lib/index.js", "./client": "./lib/client.js", "./typert": "./lib/typert.host.js" },
+  "files": ["lib/*.js", "README.md", "README_EN.md", "LICENSE"], "scripts": { "build": "tsdown", "test": "node --test test/*.test.mjs" },
+  "dsh": { "client": { "inject": ["@deepseek-ai/dsh-client-ui-renderer", "@deepseek-ai/dsh-api-remotes", "@eduwork/dsh-oidc"], "platform": "web", "immediately": true } },
+  "peerDependencies": { "@deepseek-ai/cordis": "~4.1.0", "@deepseek-ai/dsh-session": "0.2.2-rc.3", "@deepseek-ai/dsh-typert-protocol": "0.2.2-rc.3", "@deepseek-ai/dsh-client-ui-primitives": "0.2.2-rc.3", "@eduwork/dsh-oidc": "^0.3.4", "react": "^18.2.0", "react-dom": "^18.2.0", "zod": "^4.4.3" }
+}

@@ -8,3 +8,4 @@ private-config/
 *.log
 .DS_Store
 Thumbs.db
+edition/plugins/ecnu-feedback/browser-evidence/
